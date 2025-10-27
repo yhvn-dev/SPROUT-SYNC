@@ -1,7 +1,8 @@
 import { Droplet, Activity,SquarePen } from "lucide-react";
 import { useState } from "react";
+import { ThresholdModal } from "./thresholdModal";
 
-export function BedMonitor({ bedNum = "bed_1", bedName = "Bed 1" }) {
+export function BedMonitor({ bedNum = "bed_1", bedName = "Bed 1" ,setOpenTModal}) {
   const [threshold, setThreshold] = useState(60);
 
 
@@ -27,28 +28,22 @@ export function BedMonitor({ bedNum = "bed_1", bedName = "Bed 1" }) {
   };
 
 
-
   const bedData = sensorData[bedNum] || [];
   const avgMoisture = (bedData.reduce((sum, s) => sum + s.moisture, 0) / bedData.length).toFixed(1);
   const avgPh = (bedData.reduce((sum, s) => sum + s.ph, 0) / bedData.length).toFixed(2);
 
-  const handleThresholdChange = () => {
-    const newThreshold = prompt(`Set new moisture threshold for ${bedName}`, threshold);
-    if (newThreshold && !isNaN(newThreshold)) {
-      setThreshold(parseFloat(newThreshold));
-    }
-  };
+  // const handleThresholdChange = () => {
+  //   const newThreshold = prompt(`Set new moisture threshold for ${bedName}`, threshold);
+  //   if (newThreshold && !isNaN(newThreshold)) {
+  //     setThreshold(parseFloat(newThreshold));
+  //   }
+  // };
 
   return (
     <div className="w-full overflow-x-auto pb-4">
       <div className="min-w-max px-6 py-8">
         <div
-          className="relative rounded-xl p-6 shadow-lg"
-          style={{
-            backgroundColor: "var(--sage-lighter)",
-            border: "2px solid var(--sage-light)",
-          }}
-        >
+          className="relative rounded-xl p-6 shadow-lg bg-[var(--sage-lighter)] border-[var(--sage-light)]">
           {/* Header */}
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center justify-start">
@@ -60,13 +55,16 @@ export function BedMonitor({ bedNum = "bed_1", bedName = "Bed 1" }) {
               </div>
             </div>
             <button
-              onClick={handleThresholdChange}
-              className="center bg-[var(--sancgb)] text-white rounded-lg px-4 py-2 hover:bg-[var(--sancgd)] transition"
+              onClick={() => setOpenTModal(true)}
+              className="center border-1 border-[var(--sage)] text-[var(--accd-darkb)] rounded-lg px-4 py-2 hover:bg-[var(--sancgb)] hover:text-white transition"
             > 
-              <SquarePen className="mr-2"/>
-              Modify Threshold
+              <SquarePen size={18} className="mr-2"/>
+              Modify
             </button>
           </div>
+
+
+
 
           {/* Average Readings */}
           <div className="grid grid-cols-3 gap-4 mb-6">

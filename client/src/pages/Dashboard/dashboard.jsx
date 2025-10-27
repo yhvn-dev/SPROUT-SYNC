@@ -4,8 +4,11 @@ import { Db_Header } from "../../components/Global/db_header"
 import { Quick_Stats } from "./quick_stats" 
 import { Workspace } from "./workspace"
 import { Welcome_box } from "../../components/Global/welcome_box"
-
+import { ThresholdModal } from "./thresholdModal"
+import Random from "./random"
 import { Droplets, Sun, Wind, Activity } from 'lucide-react';
+
+
 
 import "./dashboard.css"
 import "./dashboard_responsive.css"
@@ -49,9 +52,11 @@ const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
 function Dashboard() {
   const [user,setUser] = useState(null);
   const [activeBed, setActiveBed] = useState("bed_1")
+  const [isOpenTModal,setOpenTModal] = useState(false);
+
   const token = localStorage.getItem("accessToken")
   
-
+  console.log("MODAL STATUS",isOpenTModal)
 
   useEffect(() =>{
     const fetchUser = async () =>{
@@ -127,9 +132,12 @@ function Dashboard() {
           {/* WORKSPACE */}
             <Workspace      
               bed={activeBed}
+              setOpenTModal={setOpenTModal}
             />
             
             
+
+
           {/* NAVIGATION */}
           <nav className="bg-white p-4 rounded-[10px] flex items-center justify-end flex-col 
           col-start-4 col-end-4 row-start-3 row-end-4 ">
@@ -137,7 +145,8 @@ function Dashboard() {
               <button
                 key={item}
                 onClick={() => setActiveBed(item)}
-                className="px-4 py-2 rounded-lg text-sm my-4 font-medium transition-all shadow-xl w-full"
+                className="px-4 py-2 rounded-lg text-sm my-4 font-medium shadow-xl w-full 
+                hover:bg-[var(--sancgb)] hover:text-white transition"
                 style={{
                   backgroundColor: activeBed === item ? 'var(--sancgb)' : 'white',
                   color: activeBed === item ? 'white' : 'var(--acc-darka)',
@@ -148,7 +157,8 @@ function Dashboard() {
               ))}
           </nav>
 
-
+          {isOpenTModal && <ThresholdModal isOpen={setOpenTModal} />}
+            
       </section>    
     </>
   )

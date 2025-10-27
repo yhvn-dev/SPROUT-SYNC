@@ -109,27 +109,3 @@
     --dis-6-8:6.84rem;
 }
 
-
-
-@media screen and (max-width:800px) {            
-
-    body{
-        @apply relative;
-    }
-    .container.sidebar{
-        @apply fixed flex flex-row items-center justify-center bottom-[20px] left-[0px] w-full h-[10%] rounded-[10px] z-2; 
-        border: 2px solid var(--pal2-whiteb);
-        background-color: white;   
-    }   
-
-        .sidebar .logo_div{
-            @apply flex items-center justify-center w-[10%];
-        }
-        .sb-btn{
-            @apply flex items-center justify-center w-full;
-            margin: 0rem var(--dis-0-6);
-        } 
-        .btn_div_a {
-            @apply flex items-center justify-center w-[90%];
-        }
-}

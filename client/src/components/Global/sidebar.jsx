@@ -15,8 +15,12 @@ export function Sidebar() {
         LOGO
       </div>
 
+
+  
       {/* Nav Buttons */}
       <div className="flex flex-col items-center justify-start gap-2 flex-grow h-full w-full">
+        
+        
         {/* Dashboard */}
         <NavLink
           to="/Dashboard"
@@ -30,8 +34,8 @@ export function Sidebar() {
               }`
           }>
                         
-          <LayoutPanelTop  className="ml-2 mr-1" strokeWidth={1.5} size={18}/>
-          <p className="text-sm">Dashboard</p>
+          <LayoutPanelTop  className="mx-1" strokeWidth={1.5} size={18}/>
+          <p className="text-sm mr-2">Dashboard</p>
         </NavLink>
 
 
@@ -48,11 +52,11 @@ export function Sidebar() {
               }`
           }>
 
-          <User className="ml-2 mr-1"  strokeWidth={1.5} size={18}/>
-          <p className="text-sm">Users</p>
+          <User className="mx-1"  strokeWidth={1.5} size={18}/>
+          <p className="text-sm mr-2">Users</p>
         </NavLink>
 
-
+        
         {/* Analytics */}
         <NavLink
           to="/analytics"
@@ -65,8 +69,10 @@ export function Sidebar() {
               }`
           }>
             
-          <ChartNoAxesCombined  className="ml-2 mr-1" strokeWidth={1.5} size={18}/>
-          <p className="text-sm">Analytics</p>
+
+
+        <ChartNoAxesCombined  className="mx-1" strokeWidth={1.5} size={18}/>
+          <p className="text-sm mr-2">Analytics</p>
         </NavLink>
               
       </div>

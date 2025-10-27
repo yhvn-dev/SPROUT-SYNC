@@ -3,7 +3,7 @@ import {BedMonitor} from "./beds"
 import {Leaf} from "lucide-react"
 
 
-export function Workspace({ bed }) {
+export function Workspace({ bed,setOpenTModal}) {
     
   return (
     <section className='bg-white
@@ -34,9 +34,9 @@ export function Workspace({ bed }) {
         rounded-[10px]">
 
         <div className="w-full h-full">                    
-          {bed === "bed_1" && <BedMonitor bedNum="bed_1" bedName="Bed 1" />}
-          {bed === "bed_2" && <BedMonitor bedNum="bed_2" bedName="Bed 2" />}
-          {bed === "bed_3" && <BedMonitor bedNum="bed_3" bedName="Bed 3" />}
+          {bed === "bed_1" && <BedMonitor bedNum="bed_1" bedName="Bed 1 " setOpenTModal={setOpenTModal}  />}
+          {bed === "bed_2" && <BedMonitor bedNum="bed_2" bedName="Bed 2"  setOpenTModal={setOpenTModal} />}
+          {bed === "bed_3" && <BedMonitor bedNum="bed_3" bedName="Bed 3"  setOpenTModal={setOpenTModal} />}
         </div>
 
       </div>
