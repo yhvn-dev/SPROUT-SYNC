@@ -55,7 +55,7 @@ export function Dashboard_Mockup() {
                     { color: '#b0e892',chart:<GaugeChart value={6.8} max={14} label="Temperature" unit="" icon={Sun} color="var(--sancgc)" /> },
                     { color: '#7BA591',chart:<GaugeChart value={6.8} max={14} label="Humidity" unit="" icon={Wind} color="var(--sage)" /> },
                     { color: '#009983',chart:<GaugeChart value={6.8} max={14} label="pH Level" unit="" icon={Activity} color="#009983" /> },
-                    { color: '#5A8F73',chart:<GaugeChart value={6.8} max={14} label="pH Level" unit="" icon={Droplets} color="var(--purpluish--" /> }
+                    { color: '#5A8F73',chart:<GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="var(--purpluish--" /> }
                   ].map((stat, index) => (
                     <div key={index} className="bg-white rounded-2xl p-4 shadow-lg">
                       <div className="relateive flex flex-col items-center text-center ">

@@ -70,12 +70,6 @@ function Dashboard() {
 
   
 
-
-
-
-  
-
-
   return (
     <>
         <section className="bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] page dashboard grid grid-cols-[12fr_30fr_48fr_10fr] grid-rows-[8vh_40vh_52vh] 

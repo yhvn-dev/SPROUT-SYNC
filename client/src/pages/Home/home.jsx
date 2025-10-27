@@ -1,12 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Droplets, Sun, Wind, Activity, Leaf, TrendingUp, MapPin, Mail, Phone, Menu, X } from 'lucide-react';
 
 import {Link} from "react-router-dom"
 import {Header} from "../../components/Global/header"
 import {Dashboard_Mockup} from "./dashboard_mockup"
+import {Footer} from "../../components/Global/footer"
+
 
 import "./home.css"
-
 function Home(){
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   
@@ -455,6 +456,9 @@ function Home(){
             </div>
           </div>
         </div>
+
+        <Footer/>
+
       </section>
 
     </div>

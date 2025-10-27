@@ -1,10 +1,10 @@
 import { Leaf, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, ArrowRight } from 'lucide-react';
 
 
-
-export default function Footer() {
+export function Footer() {
+  
   return (
-    <footer className="bg-[#003333] text-white">
+    <footer className="bg-[#003333] text-white mt-24">
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Main Footer Content */}
         <div className="grid md:grid-cols-4 gap-8 mb-8">
@@ -14,8 +14,10 @@ export default function Footer() {
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#027c68] to-[#009983] flex items-center justify-center">
                 <Leaf className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold">EcoVerde</span>
+              <span className="text-xl font-bold">GREENLINK</span>
             </div>
+
+
             <p className="text-[#A8C7B8] mb-6 max-w-md">
               Committed to sustainable solutions and environmental innovation. Building a greener future, one step at a time.
             </p>
@@ -108,11 +110,9 @@ export default function Footer() {
               <input
                 type="email"
                 placeholder="Enter your email"
-                className="flex-1 px-4 py-2 rounded-lg bg-[#027c68] text-white placeholder-[#A8C7B8] focus:outline-none focus:ring-2 focus:ring-[#b0e892]"
+                className="flex-1 px-4 py-2 rounded-lg bg-transparent outline-2 text-white placeholder-[#A8C7B8] focus:outline-none focus:ring-2 focus:ring-[#b0e892]"
               />
-              <button className="px-6 py-2 bg-[#b0e892] text-[#003333] rounded-lg font-semibold hover:bg-[#009983] hover:text-white transition-colors">
-                Subscribe
-              </button>
+            
             </div>
           </div>
         </div>
@@ -120,7 +120,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-[#027c68] pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[#A8C7B8] text-sm">
-            © 2025 EcoVerde. All rights reserved.
+            © 2025 GREENLINK. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm">
             <a href="#" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors">
@@ -135,6 +135,8 @@ export default function Footer() {
           </div>
         </div>
       </div>
+
+      
     </footer>
   );
 }

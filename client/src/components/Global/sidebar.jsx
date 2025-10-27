@@ -30,7 +30,7 @@ export function Sidebar() {
               }`
           }>
                         
-          <LayoutPanelTop  className=" mx-2" strokeWidth={1.5} size={18}/>
+          <LayoutPanelTop  className="ml-2 mr-1" strokeWidth={1.5} size={18}/>
           <p className="text-sm">Dashboard</p>
         </NavLink>
 
@@ -48,7 +48,7 @@ export function Sidebar() {
               }`
           }>
 
-          <User className="mx-2"  strokeWidth={1.5} size={18}/>
+          <User className="ml-2 mr-1"  strokeWidth={1.5} size={18}/>
           <p className="text-sm">Users</p>
         </NavLink>
 
@@ -63,11 +63,12 @@ export function Sidebar() {
                   ? "text-white bg-[var(--sancgb)] shadow-lg"
                   : "text-[var(--acc-darkb)] hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)] "
               }`
-          }
-        >
-          <ChartNoAxesCombined  className="mx-2" strokeWidth={1.5} size={18}/>
+          }>
+            
+          <ChartNoAxesCombined  className="ml-2 mr-1" strokeWidth={1.5} size={18}/>
           <p className="text-sm">Analytics</p>
-        </NavLink>      
+        </NavLink>
+              
       </div>
 
       {/* Logout Section */}

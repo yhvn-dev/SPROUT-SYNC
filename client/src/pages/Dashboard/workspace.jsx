@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import * as Beds from "./beds"
+import {BedMonitor} from "./beds"
 import {Leaf} from "lucide-react"
 
 
@@ -33,15 +33,13 @@ export function Workspace({ bed }) {
         row-start-2 col-span-1 overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] 
         rounded-[10px]">
 
-        <div className="w-full h-full">
-            {bed === "bed_1" ? <Beds.Bed_1 bedNum={bed} /> :
-            bed === "bed_2" ? <Beds.Bed_2 bedNum={bed} /> :
-                                <Beds.Bed_3 bedNum={bed}/>}
+        <div className="w-full h-full">                    
+          {bed === "bed_1" && <BedMonitor bedNum="bed_1" bedName="Bed 1" />}
+          {bed === "bed_2" && <BedMonitor bedNum="bed_2" bedName="Bed 2" />}
+          {bed === "bed_3" && <BedMonitor bedNum="bed_3" bedName="Bed 3" />}
         </div>
 
       </div>
-
-
     </section>
     
   )

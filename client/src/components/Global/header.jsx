@@ -34,7 +34,6 @@ export function Header({navChildren}) {
             <Logos.Img_Logo/>
           </div>
 
-
           <div className="flex flex-col items-end justify-start h-full w-full ">
               {navChildren}
           </div>

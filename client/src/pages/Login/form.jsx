@@ -1,5 +1,5 @@
 import React, { useState,useRef } from 'react'
-import { User,Lock } from "react-feather";
+import {User,Lock} from "lucide-react"
 import { colors } from "./../../utils/colors"
 
 export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef}) {
@@ -44,7 +44,7 @@ export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef
 
                     <input ref={loginInputRef} className="px-2 py-[1px] border-2 border-[var(--acc-darkc)]" name="username-email-inp" placeholder=""/>
                     <label>Username or Email</label>
-                    <svg><User size={16} color={colors.accDarkc}/></svg>                           
+                    <User size={16} color={colors.accDarkc}/>                     
                 </div>
                 <ol className="formMsg_box flex">
                     {errorMsg.loginInput && <p className="formMsg errMsg justify-start">{errorMsg.loginInput}</p>}
@@ -55,7 +55,7 @@ export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef
                 <div className="form_box input_box">
                     <input ref={passwordRef} className="px-2 py-[1px] border-2  border-[var(--acc-darkc)]" type="text" name="password-inp" placeholder=""/>
                     <label>Password</label>
-                    <svg><Lock size={16} color={colors.accDarkc}/></svg>
+                    <Lock size={10} color={colors.accDarkc}/>
                 </div>
                 <ol className="formMsg_box flex m-t">
                     {errorMsg.password && <p className="formMsg errMsg justify-start">{errorMsg.password}</p>} 

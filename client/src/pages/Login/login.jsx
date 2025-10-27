@@ -69,7 +69,7 @@ function Login() {
 
         <Header navChildren={
             <>
-              <Link to="/">Home</Link>
+              <Link to="/" className="text-[#5A8F73] border-2 rounded-2xl px-4 py-[1px]">Home</Link>
             </>
         }/>
         <section className="center row-start-2 row-end-3 col-start-1 col-end-2 w-full h-full ">
