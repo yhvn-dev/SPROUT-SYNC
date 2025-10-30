@@ -1,4 +1,6 @@
 
+@import "tailwindcss";
+
 :root{
 
     
@@ -114,15 +116,11 @@
 .container{
     @apply bg-[var(--pal2-whitea)];
 }
-.u_th{ 
-    @apply bg-[var(--acc-darkb)] p-[0.4rem] text-[var(--pal2-whitea)] h-[10%] min-h-[10%] max-h-[10%];
-}
-
 .u_tr{
     @apply rounded-[10px];
 }
 .u_td {
-   @apply p-[1rem] text-[0.9rem] text-start break-words ;
+   @apply p-8 text-[0.9rem] text-start break-words ;
 }
 
 

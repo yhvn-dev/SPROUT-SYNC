@@ -70,7 +70,7 @@ export function Dashboard_Mockup() {
                   <div className="text-sm font-semibold text-[#003333] mb-4">BED 1 - MONITORING</div>
                   <div className="grid grid-cols-3 md:grid-cols-6 gap-3 my-2">
                     {['A1', 'A2', 'A3', 'A4', 'A5', 'A6'].map((zone) => (
-                        <>
+                       
                         <div key={zone} className="flex items-center justify-center flex-col bg-[#E8F3ED] rounded-xl p-3 text-center">
                             <p className="text-xs font-bold text-[#027c68] mb-1">{zone}</p>
                             <p className="text-lg font-bold text-[#003333]">65%</p> 
@@ -78,8 +78,7 @@ export function Dashboard_Mockup() {
                             
                             <p className="text-xs text-[#5A8F73]">Optimal</p>
                         </div>
-                        </>
-                      
+                     
                     ))}
                   </div>
 

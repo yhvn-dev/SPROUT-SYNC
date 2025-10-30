@@ -232,28 +232,28 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                     justify-evenly h-full '>
 
                       <ul className="input_box flex flex-col items-center justify-center 
-                        h-[70%] w-[80%]">
+                        h-[70%] w-[80%] ">
                   
                         <img src={preview || Pfp} className='border-[3px]  
                         border-[var(--pal2-whiteb)] rounded-full profile-img 
                         max-w-[10rem] max-h-[10rem] h-[8rem] w-[8rem]' alt={Pfp} width={200}/>
                   
-                        <label className="mt-4 center rounded-[10px] bg-[var(--pal2-whiteb)]">
-                          <input type="file" className="center px-2 py-1" name="profile_picture"
+                       
+                          <input type="file" className="center px-2 py-1 text-sm" name="profile_picture"
                           onChange={handleFileChanges}/>
                          
-                        </label>
+                     
                 
                       </ul>
                   
                   
                       {/* Role & Status */}
                       <ul className="input_box w-full 
-                      flex justify-evenly items-center m-y-2 h-1/2 ">
+                      flex justify-evenly items-center my-8 h-1/2 ">
   
                         <select 
                           name="status" 
-                          className="status rounded-[10px] p-h-0-6 nav-com w-full m-x-6" 
+                          className="status rounded-[10px] p-h-0-6 nav-com w-full mx-4" 
                           value={status} 
                           onChange={(e) => setStatus(e.target.value)}>
                           <option value="">Select Status</option>
@@ -263,7 +263,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                               
                         <select 
                           name="roles" 
-                          className="roles rounded-[10px] p-h-0-6 nav-com  w-full m-x-6" 
+                          className="roles rounded-[10px] p-h-0-6 nav-com  w-full mx-4" 
                           value={role} 
                           onChange={(e) => setRole(e.target.value)}>
                           <option value="">Select Role</option>

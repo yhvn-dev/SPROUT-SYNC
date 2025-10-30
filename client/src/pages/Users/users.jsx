@@ -10,9 +10,6 @@ import { Quick_Stats } from "./quick_stats"
 import { Welcome_box } from '../../components/Global/welcome_box';
 import * as Chart from "./charts"
 
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
-import { RefreshCw } from 'lucide-react';
-
 
 import "./users.css"
 import "./users_responsive.css"
@@ -106,16 +103,8 @@ function Users() {
         />
 
       {/* Data like graphs and charts */}
-      <Quick_Stats       
-        
-        logs={
-         <>
-          <Chart.CircleProgressChart percentage={percentage} circleWidth="200"/>
-
-            <input type="range" onChange={(e) => setPercentage(e.target.value)} min="1" max="10" step="1" value={percentage}/>
-         </>
-        }
-
+      <Quick_Stats           
+  
         data_boxes={
           <>
             <div className='rounded-2xl logs_card col-start-1 col-end-1

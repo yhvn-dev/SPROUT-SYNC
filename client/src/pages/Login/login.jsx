@@ -2,14 +2,10 @@ import {useState,useRef} from "react"
 import api from "../../utils/api"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
-
 import { Form } from "./form.jsx"
 import { Header } from "../../components/Global/header.jsx" 
-
-import {Home as HomeIcon} from "react-feather"
-import {Phone,Info} from "react-feather"
-
 import * as validate from "../../utils/userValidations"
+
 
 function Login() {
   const loginInputRef = useRef(null)
@@ -18,7 +14,6 @@ function Login() {
   const [successMsg,setsuccessMsg] = useState("")
   const [mode,setMode] = useState("notLoggedIn");
 
-  const [showNav,setShowNav] = useState(false);
   const navigate = useNavigate(); 
   
   const handleSubmit = async (e) =>{
@@ -76,9 +71,6 @@ function Login() {
             <Form handleSubmit={handleSubmit} errorMsg={errorMsg} successMsg={successMsg} loginInputRef={loginInputRef} passwordRef={passwordRef} /> 
         </section>
             
-      
-         
-        
     </section>
 
 

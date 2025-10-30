@@ -138,12 +138,7 @@
 ::-webkit-scrollbar-track{
     @apply bg-transparent;
 }
-svg{
-    @apply cursor-pointer flex items-center justify-center; 
-}
 img{object-fit: cover;}
-
-
 button{
     transition: 0.4s;
 }
@@ -310,28 +305,6 @@ button{
     box-shadow: 5px 5px 20px 1px var(--shad-alpha-d);
 }
 
-
-
-
-.formMsg_box{
-    @apply flex items-center justify-start w-[85%];
-    margin: var(--dis-0-6) 0rem;
-}
-    .formMsg_box .formMsg{
-        font-size: var(--fns-down-1); padding:0.1rem var(--dis-0-6);  ;border-radius: 8px;
-        width: 100%;
-    }
-    .errMsg{padding:0.1rem var(--dis-0-6);  ;border-radius: 8px; background: var(--color-danger-c);  width: 85;}
-    
-    .formMsg_box.successMsgBox{
-        margin-top: 1rem;
-    }
-    .formMsg_box .succMsg {
-        @apply bg-[var(--color-success-a-soft)] flex items-center justify-center;
-        border: 1px solid var(--color-success-a);
-        padding: var(--dis-0-6) var(--dis-1);
-}
-
 .error-txt{
     @apply text-[0.8rem] pointer-events-none z-10 bg-white 
     absolute left-[40%] bottom-[-30%] text-[var(--color-danger-a)];
@@ -346,10 +319,9 @@ button{
 
 
 /* FORM CONTAINERS */
-.form_box{
-    @apply flex flex-col items-center justify-center relative w-[85%];
-    margin: 1rem 0rem;
-}
+
+
+
 .form_box label{
    @apply absolute left-[4%] bg-white py-0 px-2 text-sm pointer-events-none text-[var(--acc-darkc)];
     top: 50%;
@@ -378,27 +350,6 @@ select{
     @apply rounded-[10px] cursor-pointer;
 }
 
-
-
-
-/* MEASUREMENTS ===== ===== ===== ===== ===== ===== ===== ===== =====  */
-/* margin 0.6 */
-.m-r-6{margin-right:0.6rem};
-.m-l-6{margin-left:0.6rem}
-.m-x-6{ margin: 0rem 0.6rem}
-
-/* margin 1 */
-.m-x{ margin: 0rem 1rem; } .m-y{ margin:1rem 0rem} .m-t{ margin-top:1rem; }; .m-1{margin:1rem} 
-.m-x-0-6{margin:0rem var(--dis-0-6)};
-.m-r-0-6{margin:0rem var(--dis-0-6)}
-
-/* margin 2 */
-.m-x-2{margin: 0rem 2rem}; .m-y-2{ margin:2rem 0rem} .m-t-2{ margin-top:2rem; }; .m-1-2{margin:2rem} 
-
-
-.p-x{ padding: 0rem 1rem; } .p-t{ padding: 1rem 0rem}; .p-1{ padding:1rem} 
-.p-0-6{padding:var(--dis-0-6)};
-.p-h-0-6{ padding:0.2rem var(--dis-0-6)};
 
 
 /* ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====  */

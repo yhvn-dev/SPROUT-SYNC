@@ -28,6 +28,8 @@ export function BedMonitor({ bedNum = "bed_1", bedName = "Bed 1" ,setOpenTModal}
   };
 
 
+  
+
   const bedData = sensorData[bedNum] || [];
   const avgMoisture = (bedData.reduce((sum, s) => sum + s.moisture, 0) / bedData.length).toFixed(1);
   const avgPh = (bedData.reduce((sum, s) => sum + s.ph, 0) / bedData.length).toFixed(2);
@@ -68,7 +70,9 @@ export function BedMonitor({ bedNum = "bed_1", bedName = "Bed 1" ,setOpenTModal}
 
           {/* Average Readings */}
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="rounded-lg p-4 shadow-md bg-white border-2 border-[var(--sancgb)]">
+
+            
+            <div className="rounded-lg p-4 shadow-md bg-white border-2 border-[var(--sage)]">
               <div className="flex items-center gap-2 mb-2">
                 <Droplet size={18} style={{ color: "var(--sancgb)" }} />
                 <span className="text-sm font-medium text-[var(--acc-darka)]">
@@ -83,7 +87,7 @@ export function BedMonitor({ bedNum = "bed_1", bedName = "Bed 1" ,setOpenTModal}
               </div>
             </div>
 
-            <div className="rounded-lg p-4 shadow-md bg-white border-2 border-[var(--sancgd)]">
+            <div className="rounded-lg p-4 shadow-md bg-white border-2 border-[var(--sage-light)]">
               <div className="flex items-center gap-2 mb-2">
                 <Activity size={18} style={{ color: "var(--sancgd)" }} />
                 <span className="text-sm font-medium text-[var(--acc-darka)]">
@@ -93,7 +97,7 @@ export function BedMonitor({ bedNum = "bed_1", bedName = "Bed 1" ,setOpenTModal}
               <div className="text-3xl font-bold text-[var(--sancgd)]">{avgPh}</div>
             </div>
 
-            <div className="rounded-lg p-4 shadow-md bg-white border-2 border-[var(--sage-medium)]">
+            <div className="rounded-lg p-4 shadow-md bg-white border-2 border-[var(--sage-lighter)]">
               <div className="text-sm font-medium text-[var(--acc-darka)] mb-2">Threshold</div>
               <div className="text-3xl font-bold text-[var(--sage-dark)]">
                 {threshold}%

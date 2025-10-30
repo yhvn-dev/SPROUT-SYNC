@@ -1,8 +1,11 @@
+import Logo from "../../assets/Images/GREENLINK LOGO.png"
+
 
 export function Text_Logo() {
   return (
     <>
-      <span className='logo logo_text wrap'>GREENLINK</span>
+        <span className="logo-text text-3xl text-[var(--sancgb)]">GREEN</span>
+        <span className="logo-text text-3xl">LINK</span>
     </>    
   )
 }
@@ -10,9 +13,31 @@ export function Text_Logo() {
 export function Img_Logo(){
     return (
       <>
-      <div className="mx-4">
-        <span className="logo-text text-3xl text-[var(--sancgb)]">GREEN</span>
-        <span className="logo-text text-3xl">LINK</span>
+      <div className="center mx-4">
+        <img src={Logo} className="w-5 h-auto mr-2"/>
+        <span className="logo-text text-3xl text-[var(--sancgb)] font-medium">GREEN</span>
+        <span className="logo-text text-3xl font-medium">LINK</span>
+      </div>
+     
+      </>
+    )
+}
+
+export function Img(){
+    return (
+      <>
+      <img src={Logo} className="w-5 h-auto mr-2"/>
+      </>
+    )
+}
+
+export function Img_Logo_BIG(){
+    return (
+      <>
+      <div className="center mx-4">
+        <img src={Logo} className="w-30 h-auto mr-2 drop-shadow-2xl"/>
+        <span className="logo-text text-9xl text-[var(--sancgb)] font-medium">GREEN</span>
+        <span className="logo-text text-9xl font-medium">LINK</span>
       </div>
      
       </>
@@ -22,7 +47,11 @@ export function Img_Logo(){
 export function Db_Logo(){
     return (
       <>
-         <span className='logo logo_img  wrap'>GREENLINK IMG</span>
-      </>
+        <div className="center mx-4">
+            <img src={Logo} className="w-5 h-auto mr-2"/>
+            <span className="logo-text text-3xl text-[var(--sancgb)] font-medium">GREEN</span>
+            <span className="logo-text text-3xl font-medium">LINK</span>
+        </div>
+      </> 
     )
 }

@@ -1,6 +1,6 @@
 "use client";
 import { PieChart, Pie, Cell, Tooltip } from "recharts";
-import { User } from "react-feather";
+import { User } from "lucide-react";
 
 import * as color from "../../utils/colors"
 import { div } from "three/tsl";
@@ -39,9 +39,9 @@ export function RoleChart({chartData}) {
   return (
     <div className="flex  items-center justify-center w-auto max-w-[100%] h-full relative">
 
-      <ul className="flex items-center justify-center absolute top-0 left-0 m-1">
-        <svg className="svg_icons user-chart-icon flex items-center justify-center"><User size={16}/></svg>
-          <p>User Roles</p>
+      <ul className="flex items-center justify-center absolute top-0 left-0 m-4">
+           <User size={18}/>
+          <p className="mx-2">User Roles</p>
       </ul>
       
       <ul className="flex flex-col items-center justify-center absolute rounded-full ">

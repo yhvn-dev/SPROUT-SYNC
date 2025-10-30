@@ -143,13 +143,13 @@ export function Workspace({refreshChart,searchValue}) {
                 <span className='text-2xl'>Users</span>
             </ol>
             <ol className='h_part right flex flex-row-reverse items-center w-1/2'>
-                <button className="btn-p m-x text-[0.9rem]" 
+                <button className="btn-p mx-4 text-[0.9rem] " 
                onClick={() => 
                 {setMode("insert");
                 setSelectedUser(null);
                 setOpen(true)}}>ADD USER</button>
 
-                <select onChange={(e) => {handleFilter(e)}} className="mx-4  px-[1px] py-[1px] border-1 border-[var(--acc-darkc)] rounded-[10px] p-h-0-6 text-sm shadow-xl">
+                <select onChange={(e) => {handleFilter(e)}} className=" px-[1px] py-[2px] border-1 border-[var(--acc-darkc)] rounded-[10px] p-h-0-6 text-sm shadow-xl">
                     <option value="all" class="options">Filter</option>
                     <option value="username" class="options">Username</option>
                     <option value="fullname" class="options">Fullname</option>

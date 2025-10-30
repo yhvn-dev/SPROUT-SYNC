@@ -3,8 +3,9 @@ import { Leaf, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, Arro
 
 export function Footer() {
   
+  
   return (
-    <footer className="bg-[#003333] text-white mt-24">
+    <footer className="bg-[#003333] text-white ">
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Main Footer Content */}
         <div className="grid md:grid-cols-4 gap-8 mb-8">
@@ -81,21 +82,18 @@ export function Footer() {
               <li className="flex items-start gap-3">
                 <MapPin className="w-5 h-5 text-[#027c68] mt-0.5 flex-shrink-0" />
                 <span className="text-[#A8C7B8] text-sm">
-                  123 Green Street<br />
-                  Eco City, EC 12345
+                   Mamala 2 Sariaya Quezon <br />
+                   4322, Quezon Province 
                 </span>
               </li>
               <li className="flex items-center gap-3">
                 <Phone className="w-5 h-5 text-[#027c68] flex-shrink-0" />
                 <a href="tel:+1234567890" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors text-sm">
-                  +1 (234) 567-890
+                  +63 915 684 3701
                 </a>
               </li>
               <li className="flex items-center gap-3">
-                <Mail className="w-5 h-5 text-[#027c68] flex-shrink-0" />
-                <a href="mailto:info@ecoverde.com" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors text-sm">
-                  info@ecoverde.com
-                </a>
+               
               </li>
             </ul>
           </div>
@@ -130,7 +128,7 @@ export function Footer() {
               Terms of Service
             </a>
             <a href="#" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors">
-              Cookie Policy
+              Security Policy
             </a>
           </div>
         </div>

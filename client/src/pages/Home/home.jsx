@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Droplets, Sun, Wind, Activity, Leaf, TrendingUp, MapPin, Mail, Phone, Menu, X } from 'lucide-react';
+import { Droplets, Sun, Wind, Activity, TrendingUp, Menu, X } from 'lucide-react';
 
 import {Link} from "react-router-dom"
 import {Header} from "../../components/Global/header"
 import {Dashboard_Mockup} from "./dashboard_mockup"
+import { Farm_Info_Section } from './form_info_section';
+import { Contact_Section } from './contact_section';
+import {Logo_Page} from "./logo_page"
 import {Footer} from "../../components/Global/footer"
 
 
@@ -250,87 +253,6 @@ function Home(){
 
     
 
-      {/* Farm Information Section */}
-      <section id="farm" className="py-24 bg-gradient-to-b from-[#E8F3ED] to-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div>
-              <div className="inline-block px-4 py-2 bg-white rounded-full mb-6 shadow-md">
-                <span className="text-[#027c68] font-semibold text-sm">Our Implementation</span>
-              </div>
-              <h2 className="text-5xl md:text-6xl font-bold text-[#003333] mb-6">
-                FLOR and Daisy's Farm
-              </h2>
-              <p className="text-xl text-[#5A8F73] leading-relaxed mb-8">
-                Located in the heart of sustainable agriculture, FLOR and Daisy's Farm serves as the testing ground for our innovative automatic plant watering system. Our technology helps maintain optimal growing conditions across multiple cultivation beds.
-              </p>
-              
-              <div className="space-y-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-white shadow-lg flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-6 h-6 text-[#027c68]" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-[#003333] mb-2">Strategic Location</h3>
-                    <p className="text-[#5A8F73]">Positioned to maximize sunlight exposure and natural water drainage</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-white shadow-lg flex items-center justify-center flex-shrink-0">
-                    <Leaf className="w-6 h-6 text-[#027c68]" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-[#003333] mb-2">Sustainable Practices</h3>
-                    <p className="text-[#5A8F73]">Water conservation through smart irrigation and sensor-driven automation</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-white shadow-lg flex items-center justify-center flex-shrink-0">
-                    <TrendingUp className="w-6 h-6 text-[#027c68]" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-bold text-[#003333] mb-2">Proven Results</h3>
-                    <p className="text-[#5A8F73]">30% water savings and 25% yield improvement since implementation</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="relative">
-              <div className="rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-[#027c68] to-[#009983] p-8">
-                <div className="bg-white rounded-2xl p-8 text-center space-y-6">
-                  <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] rounded-full flex items-center justify-center">
-                    <Leaf className="w-12 h-12 text-[#027c68]" />
-                  </div>
-                  <h3 className="text-3xl font-bold text-[#003333]">Farm Statistics</h3>
-                  <div className="grid grid-cols-2 gap-6 pt-4">
-                    <div className="bg-[#E8F3ED] rounded-xl p-4">
-                      <div className="text-3xl font-bold text-[#027c68]">3</div>
-                      <div className="text-sm text-[#5A8F73] mt-1">Cultivation Beds</div>
-                    </div>
-                    <div className="bg-[#E8F3ED] rounded-xl p-4">
-                      <div className="text-3xl font-bold text-[#027c68]">18</div>
-                      <div className="text-sm text-[#5A8F73] mt-1">Sensor Zones</div>
-                    </div>
-                    <div className="bg-[#E8F3ED] rounded-xl p-4">
-                      <div className="text-3xl font-bold text-[#027c68]">500+</div>
-                      <div className="text-sm text-[#5A8F73] mt-1">Plants Monitored</div>
-                    </div>
-                    <div className="bg-[#E8F3ED] rounded-xl p-4">
-                      <div className="text-3xl font-bold text-[#027c68]">24/7</div>
-                      <div className="text-sm text-[#5A8F73] mt-1">Monitoring</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-
 
 
       {/* Benefits Section */}
@@ -367,99 +289,10 @@ function Home(){
         </div>
       </section>
 
-
-
-                    
-
-
-
-
-      {/* Contact Section */}
-      <section id="contact" className="py-24 bg-gradient-to-b from-[#E8F3ED] to-[#C4DED0]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-5xl md:text-6xl font-bold text-[#003333] mb-6">
-                Get in Touch
-              </h2>
-              <p className="text-xl text-[#5A8F73] mb-8 leading-relaxed">
-                Interested in implementing GreenLink at your farm? We'd love to discuss how our automatic plant watering system can transform your agricultural operations.
-              </p>
-              
-              <div className="space-y-6">
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-white shadow-lg flex items-center justify-center">
-                    <Mail className="w-6 h-6 text-[#027c68]" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-[#5A8F73]">Email Us</div>
-                    <div className="text-lg font-semibold text-[#003333]">info@greenlink.farm</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-white shadow-lg flex items-center justify-center">
-                    <Phone className="w-6 h-6 text-[#027c68]" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-[#5A8F73]">Call Us</div>
-                    <div className="text-lg font-semibold text-[#003333]">+63 XXX XXX XXXX</div>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-4">
-                  <div className="w-14 h-14 rounded-2xl bg-white shadow-lg flex items-center justify-center">
-                    <MapPin className="w-6 h-6 text-[#027c68]" />
-                  </div>
-                  <div>
-                    <div className="text-sm text-[#5A8F73]">Visit Us</div>
-                    <div className="text-lg font-semibold text-[#003333]">FLOR and Daisy's Farm</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-3xl p-8 shadow-2xl">
-              <h3 className="text-2xl font-bold text-[#003333] mb-6">Send a Message</h3>
-              <form className="space-y-5">
-                <div>
-                  <label className="block text-sm font-medium text-[#5A8F73] mb-2">Name</label>
-                  <input 
-                    type="text"
-                    className="w-full px-4 py-3 rounded-xl border-2 border-[#C4DED0] focus:border-[#027c68] focus:outline-none transition-colors"
-                    placeholder="Your name"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#5A8F73] mb-2">Email</label>
-                  <input 
-                    type="email"
-                    className="w-full px-4 py-3 rounded-xl border-2 border-[#C4DED0] focus:border-[#027c68] focus:outline-none transition-colors"
-                    placeholder="your@email.com"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-[#5A8F73] mb-2">Message</label>
-                  <textarea 
-                    rows="4"
-                    className="w-full px-4 py-3 rounded-xl border-2 border-[#C4DED0] focus:border-[#027c68] focus:outline-none transition-colors resize-none"
-                    placeholder="Tell us about your farm..."
-                  ></textarea>
-                </div>
-                <button 
-                  type="submit"
-                  className="w-full py-4 bg-gradient-to-r from-[#027c68] to-[#009983] text-white rounded-xl font-semibold text-lg hover:shadow-xl transition-all"
-                >
-                  Send Message
-                </button>
-              </form>
-            </div>
-          </div>
-        </div>
-
+        <Farm_Info_Section/>
+        <Logo_Page/>
         <Footer/>
-
-      </section>
+     
 
     </div>
 

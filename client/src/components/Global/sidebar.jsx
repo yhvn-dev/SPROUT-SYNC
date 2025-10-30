@@ -3,6 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Logout } from "./logout";
 import { LogoutModal } from "./logoutModal";
 import {User,LayoutPanelTop,ChartNoAxesCombined,LogOut} from "lucide-react"
+import * as Logo from "../../components/Global/logo"
 
 
 export function Sidebar() {
@@ -12,15 +13,11 @@ export function Sidebar() {
     <section className="bg-white  flex flex-col col-start-1 col-end-2 row-start-1 row-end-4 p-4 rounded-[10px] shadow-lg">
       
       <div className="logo_div flex items-center justify-center h-[10%] w-[95%] mb-6 text-xl font-bold text-green-600">
-        LOGO
+        <Logo.Db_Logo/>
       </div>
 
-
-  
       {/* Nav Buttons */}
-      <div className="flex flex-col items-center justify-start gap-2 flex-grow h-full w-full">
-        
-        
+      <div className="flex flex-col items-center justify-start gap-2 flex-grow h-full w-full">  
         {/* Dashboard */}
         <NavLink
           to="/Dashboard"
@@ -30,15 +27,11 @@ export function Sidebar() {
               ${
                 isActive
                   ? "text-white bg-[var(--sancgb)] shadow-lg"
-                  : "text-[var(--acc-darkb)]  hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)] "
-              }`
-          }>
+                  : "text-[var(--acc-darkb)]  hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)] "}` }>
                         
           <LayoutPanelTop  className="mx-1" strokeWidth={1.5} size={18}/>
           <p className="text-sm mr-2">Dashboard</p>
         </NavLink>
-
-
 
         {/* Users */}
         <NavLink
