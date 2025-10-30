@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Droplets, Sun, Wind, Activity, TrendingUp, Menu, X } from 'lucide-react';
+import {Img_Logo} from "../../components/Global/logo"
 
 import {Link} from "react-router-dom"
 import {Header} from "../../components/Global/header"
@@ -13,55 +14,71 @@ import {Footer} from "../../components/Global/footer"
 import "./home.css"
 function Home(){
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  
+  const [showLogo, setShowLogo] = useState(true);
+ 
+  useEffect(() => {
+    const hasVisited = sessionStorage.getItem("hasVisitedHome")
+
+    if(!hasVisited){
+      setShowLogo(true)
+      sessionStorage.setItem("hasVisitedHome","true")
+
+      const timer = setTimeout(() => setShowLogo(false), 4000); 
+      return () => clearTimeout(timer);
+    }else{
+      setShowLogo(false)
+    }
+  }, []);
   return (
-    
 
+  
     <div className="min-h-screen bg-white overflow-x-hidden">
-
-      {/* Navigation */}
-      <Header navChildren={
-        <>
-        
-          <div className="hidden md:flex  flex-row-reverse items-center gap-8">
-            <Link to="/login" className="px-6 py-1 bg-[var(--sancgb)]  text-white rounded-full font-medium hover:shadow-lg transition-all">
-              Get Started
-            </Link>
-            
-            <a href="#features" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
-              Features
-            </a>
-            <a href="#dashboard" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
-              Dashboard
-            </a>
-            <a href="#farm" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
-              Our Farm
-            </a>
-            <a href="#contact" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
-              Contact
-            </a>
-          
-          </div>
-
-
-
-          <div className='flex items-center justify-end w-full  '>
-              <button 
-              className="md:hidden text-[#003333] mx-4 rounded-2xl shadow-lg p-2"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
-            </button>  
-          </div>
-          
       
-          {mobileMenuOpen && (
-            <div className="md:hidden  space-y-3">
-              <a href="#features" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Features</a>
-              <a href="#dashboard" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Dashboard</a>
-              <a href="#farm" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Our Farm</a>
-              <a href="#contact" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Contact</a>
-            </div>
-        )}
+      {showLogo ? (
+        <div className="fixed inset-0 bg-white flex items-center justify-center z-[9999]">
+            <Img_Logo/>
+        </div>
+      ) : (
+          <>
+              <Header navChildren={
+                 <>
+            
+              <div className="hidden md:flex  flex-row-reverse items-center gap-8">
+                <Link to="/login" className="px-6 py-1 bg-[var(--sancgb)]  text-white rounded-full font-medium hover:shadow-lg transition-all">
+                  Get Started
+                </Link>
+                
+                <a href="#features" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
+                  Features
+                </a>
+                <a href="#dashboard" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
+                  Dashboard
+                </a>
+                <a href="#farm" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
+                  Our Farm
+                </a>
+                <a href="#contact" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
+                  Contact
+                </a>
+              
+              </div>
+
+              <div className='flex items-center justify-end w-full  '>
+                  <button 
+                  className="md:hidden text-[#003333] mx-4 rounded-2xl shadow-lg p-2"
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
+                  {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>  
+              </div>
+
+              {mobileMenuOpen && (
+                <div className="md:hidden  space-y-3">
+                  <a href="#features" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Features</a>
+                  <a href="#dashboard" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Dashboard</a>
+                  <a href="#farm" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Our Farm</a>
+                  <a href="#contact" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Contact</a>
+                </div>
+            )}
 
         </>
       }
@@ -290,10 +307,17 @@ function Home(){
       </section>
 
         <Farm_Info_Section/>
+        <Contact_Section/>
         <Logo_Page/>
         <Footer/>
-     
 
+          
+          </>
+
+
+      )}
+       
+   
     </div>
 
     )
