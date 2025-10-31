@@ -77,7 +77,7 @@ function Dashboard() {
 
   return (
     <>
-        <section className="bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] page dashboard grid grid-cols-[12fr_30fr_48fr_10fr] grid-rows-[8vh_40vh_52vh] 
+        <section className="bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] page dashboard grid grid-cols-[12fr_30fr_48fr_10fr] grid-rows-[8vh_30vh_62vh] 
         h-[100vh] w-[100%] gap-x-4 overflow-y-auto  relative">
 
           <Welcome_box
@@ -110,20 +110,32 @@ function Dashboard() {
             data_box={
               <>
                 {/* Gauges Row */}
-                <div className="bg-white w-full rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                  <GaugeChart value={48} max={100} label="Moisture" unit="%" icon={Droplets} color="#027c68" />
+                <div className="bg-white w-full rounded-2xl  shadow-lg hover:shadow-xl transition-all">
+                    <div className="scale-90 origin-center">
+                        <GaugeChart value={48} max={100} label="Moisture" unit="%" icon={Droplets} color="#027c68" />
+                    </div>
                 </div>
-                <div className="bg-white not-odd:w-full rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                  <GaugeChart value={24} max={40} label="Temperature" unit="°C" icon={Sun} color="#b0e892" />
+                
+                <div className="bg-white not-odd:w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                  <div className="scale-90 origin-center">
+                     <GaugeChart value={24} max={40} label="Temperature" unit="°C" icon={Sun} color="#b0e892" />
+                  </div>   
                 </div>
-                <div className="bg-white w-full rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                  <GaugeChart value={65} max={100} label="Humidity" unit="%" icon={Wind} color="#7BA591" />
+                <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                  <div className="scale-90 origin-center">
+                       <GaugeChart value={65} max={100} label="Humidity" unit="%" icon={Wind} color="#7BA591" />
+                  </div>            
                 </div>
-                <div className="bg-white w-full rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                  <GaugeChart value={6.8} max={14} label="pH Level" unit="" icon={Activity} color="#009983" />
+                <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                  <div className="scale-90 origin-center">
+                      <GaugeChart value={6.8} max={14} label="pH Level" unit="" icon={Activity} color="#009983" />
+                  </div>
+                
                 </div>
-                 <div className="bg-white w-full rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                  <GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="#8f9bbc" />
+                 <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                  <div className="scale-90 origin-center">
+                      <GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="#8f9bbc" />
+                  </div>            
                 </div>
                
               </>

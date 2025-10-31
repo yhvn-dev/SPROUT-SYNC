@@ -1,15 +1,12 @@
 import { useEffect, useState } from 'react'
 import axios from "axios";
-
-
 import * as userService from "../../data/userService"
 import { Sidebar } from "../../components/Global/sidebar"
 import { Db_Header } from "../../components/Global/db_header"
 import { Workspace } from "./workspace"
-import { Quick_Stats } from "./quick_stats"
-import { Welcome_box } from '../../components/Global/welcome_box';
-import * as Chart from "./charts"
 
+import { Welcome_box } from '../../components/Global/welcome_box';
+import { UserInsights } from './userInsights';
 
 import "./users.css"
 import "./users_responsive.css"
@@ -20,7 +17,9 @@ function Users() {
   const [searchValue,setSearchValue] = useState("");
   const [percentage,setPercentage] = useState(35);
   const token = localStorage.getItem("accessToken")
+  const [activeTab, setActiveTab] = useState('Overview');
 
+  
   // Fetch Login User
   const fetchUser =  async () =>{
     try{
@@ -63,17 +62,9 @@ function Users() {
       setSearchValue(value)
       console.log("Search Value:",value)
   }
-
-
-
   
-
-
-
-
-
   return (
-    <section className="page users grid grid-cols-[12fr_30fr_58fr] grid-rows-[8vh_40vh_52vh] 
+    <section className="page users grid grid-cols-[12fr_30fr_58fr] grid-rows-[8vh_8vh_84vh] 
         h-[100vh] w-[100%] gap-x-4 overflow-y-auto
         relative bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
 
@@ -100,29 +91,40 @@ function Users() {
         />
   
       <Sidebar
-        />
-
-      {/* Data like graphs and charts */}
-      <Quick_Stats           
-  
-        data_boxes={
-          <>
-            <div className='rounded-2xl logs_card col-start-1 col-end-1
-            bg-white backdrop-blur-[100px]  shadow-lg'>Logs Card</div>
-            <div className='rounded-2xl chart_card col-start-2 col-end-2
-            bg-white backdrop-blur-[80px]  shadow-lg'><Chart.RoleChart chartData={chartData}/></div>
-          </>
-        }
-        
       />
 
+
+
+      {/* Tab Navigation */}
+      <div className='flex col-start-2 col-span-full row-start-2 row-end-2 gap-4 pt-4'>
+          <button onClick={() => setActiveTab("Overview")} 
+              className={`${activeTab === "Overview" ? "bg-white shadow-lg" : "bg-[--sage-lighter]"} 
+            px-6 py-2 text-sm rounded-lg hover:bg-white text-[var(--sage)] transition-all duration-200`}>
+              Overview
+          </button>
+        
+          <button onClick={() => setActiveTab("User Insights")} 
+            className={`${activeTab === "User Insights" ?  "bg-white shadow-lg" : "bg-[--sage-lighter]"}
+            px-6 py-2 text-sm rounded-lg hover:bg-white text-[var(--sage)] transition-all duration-200`}>
+            User Insights
+          </button>   
+      </div>
+
+      <main className='w-full h-full col-start-2 col-span-full row-start-3 row-span-full pt-4 rounded-[10px] '>
+        {activeTab === "Overview" ?   <Workspace searchValue={searchValue}/> 
+          : <UserInsights chartData={chartData}/>} 
+      </main>
       {/* Users Table with navigations and filters */}
-      <Workspace chartData={chartData} refreshChart={fetchChartData} searchValue={searchValue}/>
+    
 
-
-          
     </section>
+
+
+      
+
   )
+
+ 
 }
 
 export default Users

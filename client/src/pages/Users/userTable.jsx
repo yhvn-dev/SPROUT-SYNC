@@ -20,8 +20,6 @@ export function UserTable({users,setOpen, setMode, setSelectedUser}) {
           </tr>
         </tbody>
       
-  
-
         <tbody className="userTbody">
           <>
           {users.map((u) => (        

@@ -131,61 +131,71 @@ export function Workspace({refreshChart,searchValue}) {
     }
   }
   
-   
     // ================================================================================
     return (
-      <div className="bg-white workspace flex flex-col h-[100%] w-full row-start-3 row-end-3
-      col-start-2 col-end-4 overflow-y-auto gap-x- rounded-[10px]">
+   
+        <main className="flex items-center justify-start flex-col full">
 
-        <div className="wp_header flex w-full h-[20%] ">
-            <ol className='h_part left flex items-center justify-start w-1/2 '>
-               <User className="mx-4" size={24}/>
-                <span className='text-2xl'>Users</span>
-            </ol>
-            <ol className='h_part right flex flex-row-reverse items-center w-1/2'>
-                <button className="btn-p mx-4 text-[0.9rem] " 
-               onClick={() => 
-                {setMode("insert");
-                setSelectedUser(null);
-                setOpen(true)}}>ADD USER</button>
+          <div className="flex items-center justify-center h-[30%] w-full gap-4 mb-4">
+            <div className="bg-white rounded-[10px] shadow-lg center w-full h-full">a</div>
+            <div className="bg-white rounded-[10px] shadow-lg center w-full h-full">b</div>
+            <div className="bg-white rounded-[10px] shadow-lg center w-full h-full">c</div>
+          </div>
+          
+          <div className="bg-white workspace flex flex-col h-[100%] w-full row-start-4 row-end-4
+          col-start-2 col-end-4 overflow-y-auto gap-x- rounded-[10px]">
 
-                <select onChange={(e) => {handleFilter(e)}} className=" px-[1px] py-[2px] border-1 border-[var(--acc-darkc)] rounded-[10px] p-h-0-6 text-sm shadow-xl">
-                    <option value="all" class="options">Filter</option>
-                    <option value="username" class="options">Username</option>
-                    <option value="fullname" class="options">Fullname</option>
-                    <option value="email" class="options">Email</option>
-                    <option value="role" class="options">Role</option>
-                    <option value="status" class="options">Status</option>  
-                    <option value="created_at" class="options">Date</option>  
-                </select>
-            </ol>
-      </div>
+            <div className="wp_header flex w-full h-[20%] ">
+                <ol className='h_part left flex items-center justify-start w-1/2 '>
+                  <User className="mx-4" size={24}/>
+                    <span className='text-2xl'>Users</span>
+                </ol>
+                <ol className='h_part right flex flex-row-reverse items-center w-1/2'>
+                    <button className="btn-p mx-4 text-[0.9rem] " 
+                  onClick={() => 
+                    {setMode("insert");
+                    setSelectedUser(null);
+                    setOpen(true)}}>ADD USER</button>
 
-      
+                    <select onChange={(e) => {handleFilter(e)}} className=" px-[1px] py-[2px] border-1 border-[var(--acc-darkc)] rounded-[10px] p-h-0-6 text-sm shadow-xl">
+                        <option value="all" class="options">Filter</option>
+                        <option value="username" class="options">Username</option>
+                        <option value="fullname" class="options">Fullname</option>
+                        <option value="email" class="options">Email</option>
+                        <option value="role" class="options">Role</option>
+                        <option value="status" class="options">Status</option>  
+                        <option value="created_at" class="options">Date</option>  
+                    </select>
+                </ol>
+          </div>
 
-        <SucessMsgs txt={sucessMsg} clearMsg={clearMsg}/>
-        
-        <div className="bg-white table_holder flex flex-col items-center justify-start h-full w-full  overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] rounded-[10px]">
-            <UserTable
-              users={filtered.length > 0 ? filtered : allUsers}
-              setOpen={setOpen}
-              setMode={setMode}
-              setSelectedUser={setSelectedUser}
-            />
-        </div>
+          
 
-        {open && ( <Modal 
-            isOpen={open}
-            onClose={() => setOpen(false)}
-            mode={mode}
-            handleSubmit={mode === "insert" ? handleInsert :
-                          mode === "update" ? handleUpdate :
-                                              handleDelete}
-            userData={selectedUser}
-            backendError={backendError}
-            setBackendError={setBackendError}
-        />)}       
-      </div>
+            <SucessMsgs txt={sucessMsg} clearMsg={clearMsg}/>
+            
+            <div className="bg-white table_holder flex flex-col items-center justify-start h-full w-full  overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] rounded-[10px]">
+                <UserTable
+                  users={filtered.length > 0 ? filtered : allUsers}
+                  setOpen={setOpen}
+                  setMode={setMode}
+                  setSelectedUser={setSelectedUser}
+                />
+            </div>
+
+            {open && ( <Modal 
+                isOpen={open}
+                onClose={() => setOpen(false)}
+                mode={mode}
+                handleSubmit={mode === "insert" ? handleInsert :
+                              mode === "update" ? handleUpdate :
+                                                  handleDelete}
+                userData={selectedUser}
+                backendError={backendError}
+                setBackendError={setBackendError}
+            />)}       
+          </div>
+
+    </main>
 
     )
 
