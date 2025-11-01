@@ -5,7 +5,6 @@ import { Quick_Stats } from "./quick_stats"
 import { Workspace } from "./workspace"
 import { Welcome_box } from "../../components/Global/welcome_box"
 import { ThresholdModal } from "./thresholdModal"
-import Random from "./random"
 import { Droplets, Sun, Wind, Activity } from 'lucide-react';
 
 

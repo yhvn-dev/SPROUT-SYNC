@@ -1,4 +1,4 @@
-import * as userController from '../../controllers/user.controller.js'
+import * as userController from "../../controllers/user.Controller.js"
 import { verifyAccessToken, verifyRefreshToken } from '../../middlewares/authMiddleware.js';
 import * as authController  from "../../controllers/auth.Controller.js" 
 import * as userValidation from "../../middlewares/userValidation.js"
@@ -26,6 +26,7 @@ export const upload = multer({ storage });
 router.get("/users", verifyAccessToken, userController.getUsers);
 router.get("/users/count",verifyAccessToken, userController.getUsersCount)
 router.get("/users/roles",verifyAccessToken, userController.getUserCountByRole)
+router.get("/users/status",userController.getUserByStatus)
 router.get("/users/me",verifyAccessToken,userController.getLoggedUser)     
 router.get("/users/filter",userController.getFilteredUser)
 router.get("/users/search",userController.searchUser);         

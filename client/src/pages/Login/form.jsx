@@ -8,7 +8,7 @@ export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef
 
   return (
 
-    <form onSubmit={handleSubmit} className="h-[80%] w-[90%] md:w-[40%]  bg-white rounded-[10px] shadow-xl">
+    <form onSubmit={handleSubmit} className="h-[80%] w-[90%] md:w-[35%]  bg-white rounded-[10px] shadow-xl">
 
 
         {/* right */}                            
@@ -29,7 +29,7 @@ export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef
                 <User size={16}  className='mt-[1px]' color={colors.accDarkc}/>                     
             </div>
             <ol className="center  flex mt-4">
-                {errorMsg.loginInput && <p className=" bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg">{errorMsg.loginInput}</p>}
+                {errorMsg.loginInput && <p className="bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm">{errorMsg.loginInput}</p>} 
             </ol>
             
 
@@ -40,7 +40,7 @@ export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef
                 <Lock size={8} className='mt-[1px]' color="var(--acc-darkc)"/>
             </div>
             <ol className="center flex mt-4">
-                {errorMsg.password && <p className=" bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg">{errorMsg.password}</p>} 
+                {errorMsg.password && <p className=" bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm">{errorMsg.password}</p>} 
             </ol>
         
             

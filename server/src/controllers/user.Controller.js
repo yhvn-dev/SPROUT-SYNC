@@ -56,6 +56,15 @@ export const getUserCountByRole = async(req,res) =>{
   }
 }
 
+export const getUserByStatus = async (req,res) =>{
+  try {
+      const status = await userModels.countUserByStatus()
+      res.status(200).json(status)
+      console.log("Status",status)
+  } catch (err) {
+    return res.status(500).json({message:"CONTROLLER: Error Counting Users by Status"})
+  }
+}
 
 
 

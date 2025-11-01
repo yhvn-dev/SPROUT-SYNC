@@ -138,7 +138,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                       <section className='form_part left w-1/2  flex flex-col items-center 
                       justify-evenly'>
                       {/* username */}
-                      <ul className="input_box form_box relative">
+                      <ul className="input_box form_box relative my-4">
                         <input 
                           type="text" 
                           placeholder="" 
@@ -158,7 +158,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                       </ul>
 
                       {/* fullname */}
-                      <ul className="input_box form_box relative">
+                      <ul className="input_box form_box relative my-4">
                         <input 
                           type="text" 
                           placeholder='' 
@@ -175,7 +175,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                       </ul>
 
                       {/* email */}
-                      <ul className="input_box form_box relative">
+                      <ul className="input_box form_box relative my-4">
                         <input 
                           type="text" 
                           placeholder='' 
@@ -196,7 +196,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                       
 
                       {/* phone number */}
-                      <ul className="input_box form_box relative">
+                      <ul className="input_box form_box relative my-4">
                         <input 
                           type="text" 
                           placeholder='' 
@@ -209,7 +209,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                       </ul>
 
                       {/* password */}
-                      <ul className="input_box form_box relative">
+                      <ul className="input_box form_box relative my-4">
                         <input 
                           type="text" 
                           placeholder='' 
@@ -253,7 +253,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
   
                         <select 
                           name="status" 
-                          className="status rounded-[10px] p-h-0-6 nav-com w-full mx-4" 
+                          className="status rounded-[10px] p-h-0-6 nav-com w-full mx-4 my-4" 
                           value={status} 
                           onChange={(e) => setStatus(e.target.value)}>
                           <option value="">Select Status</option>
@@ -263,7 +263,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                               
                         <select 
                           name="roles" 
-                          className="roles rounded-[10px] p-h-0-6 nav-com  w-full mx-4" 
+                          className="roles rounded-[10px] p-h-0-6 nav-com  w-full mx-4 my-4" 
                           value={role} 
                           onChange={(e) => setRole(e.target.value)}>
                           <option value="">Select Role</option>
@@ -303,8 +303,9 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
               </>  
             )}     
 
-          </motion.div>
 
+
+          </motion.div>
         </motion.div>
 
         </>

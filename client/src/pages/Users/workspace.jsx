@@ -2,12 +2,39 @@
 import { UserTable } from "./userTable"
 import { useEffect, useState } from "react"
 import { Modal } from "./modal"
-
 import {User} from "react-feather"
-import * as userService from "../../data/userService"
 import {SucessMsgs} from "../../components/Global/sucessMsgs"
+import { Users, UserCheck,  Activity } from 'lucide-react'
+import { PieChart, Pie, Cell, ResponsiveContainer,  Tooltip } from 'recharts';
 
-export function Workspace({refreshChart,searchValue}) {
+import * as userService from "../../data/userService"
+
+
+
+
+
+export function StatusChartLegend({statusCount,colors}){
+  return(
+    <>
+      <div className="mt-4 space-y-1">
+        {statusCount.map((sc, index) => (
+          <div key={sc.role} className="flex items-center gap-2">
+            <div
+              className="w-3 h-3 rounded-full" style={{ backgroundColor: colors[index % colors.length] }}
+            ></div>
+            <span>
+              {sc.status}: {sc.total_users}
+            </span>
+          </div>
+        ))}
+      </div>
+
+    </>
+
+  )
+}
+
+export function Workspace({refreshChart,searchValue,userCount,statusData,refreshStatus}) {
   const [open,setOpen] = useState(false)
   const [mode,setMode] = useState("")
   const [sucessMsg,setSucessMsg] = useState("");
@@ -27,10 +54,14 @@ export function Workspace({refreshChart,searchValue}) {
     try{
         const users = await userService.fetchAllUsers();
         setAllUsers(users)
+        return users; 
     }catch(err){
       console.error("Error Rendering Users",err)
     }
   }
+
+
+
 
   // SEARCH USER
   useEffect(() =>{
@@ -61,6 +92,7 @@ export function Workspace({refreshChart,searchValue}) {
         const newUser = await userService.insertUsers(data);
         await renderUsers()
         await refreshChart()
+        await refreshStatus()
 
         console.log("NEW USER:",newUser)
         setOpen(false)
@@ -82,6 +114,7 @@ export function Workspace({refreshChart,searchValue}) {
       const updatedUser = await userService.updateUsers(selectedUser.user_id,data,setAllUsers)
       await renderUsers();
       await refreshChart()
+      await refreshStatus()
       setOpen(false)
 
       setSucessMsg(`${selectedUser.fullname} is now updated`)
@@ -95,21 +128,30 @@ export function Workspace({refreshChart,searchValue}) {
   }
 
 
-  const handleDelete = async () =>{
-    try{
-      if(!selectedUser?.user_id) return;
-      await userService.deleteUsers(selectedUser.user_id,setAllUsers)
-      await renderUsers();
-      await refreshChart()
-      setOpen(false)
-      setSucessMsg(`${selectedUser.fullname} is deleted successfully`)
-      console.log("UPDATED USER:",selectedUser) 
-    }catch(err){
-      console.error("Error Deleting Users",err)
-      throw err
-    }
-  }
+  const handleDelete = async () => {
+    try {
+      if (!selectedUser?.user_id) return;
+      
+      await userService.deleteUsers(selectedUser.user_id);
+      const updatedUsers = await userService.fetchAllUsers(); // <-- refetch latest users
 
+      setAllUsers(updatedUsers); // <-- set explicitly
+      setFiltered([]); // <-- clear any filter/search
+
+      await refreshChart();
+      await refreshStatus();
+
+      setOpen(false);
+      setSucessMsg(`${selectedUser.fullname} was deleted successfully`);
+      console.log("Deleted:", selectedUser);
+    } catch (err) {
+      console.error("Error Deleting Users", err);
+      throw err;
+    }
+  };
+
+
+  
   const handleFilter = async (e) =>{
     try {
         const target = e.target.value
@@ -130,24 +172,124 @@ export function Workspace({refreshChart,searchValue}) {
       throw err
     }
   }
-  
+
+    const newUsersThisMonth = 143;
+    const COLORS = ['#7BA591',"#6b7070"];
+
+    
+ 
     // ================================================================================
     return (
    
         <main className="flex items-center justify-start flex-col full">
+          <div className="grid grid-rows-1 grid-cols-[4fr_3fr_3fr] h-[30%] w-full gap-4 mb-4">
 
-          <div className="flex items-center justify-center h-[30%] w-full gap-4 mb-4">
-            <div className="bg-white rounded-[10px] shadow-lg center w-full h-full">a</div>
-            <div className="bg-white rounded-[10px] shadow-lg center w-full h-full">b</div>
-            <div className="bg-white rounded-[10px] shadow-lg center w-full h-full">c</div>
+           
+
+            {/* CARD A USER STATUS */}
+           <div className="center bg-white rounded-lg shadow-lg border border-gray-200 w-full h-full p-6 pointer-events-none">     
+            
+             <div className="h-full column-t w-[25%]">
+              <p className="text-sm font-medium text-gray-500 mb-1">User Status</p>
+            </div>
+
+            {Array.isArray(statusData) && statusData.length > 0 ?(
+              <>
+              <div className=" w-full h-full flex scale-80 origin-center items-center justify-center">
+                <ResponsiveContainer width="100%" height={250}>
+                  <PieChart>
+                    <Pie
+                      data={statusData}
+                      dataKey="total_users"
+                      nameKey="status"
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={40}    
+                      outerRadius={80}
+                      label={({ status, total_users, percent }) => 
+                        `${status}: ${total_users} (${(percent * 100).toFixed(0)}%)`
+                      }>
+
+                      {statusData.map((entry, index) => (
+                        <Cell 
+                          key={`cell-${index}`} 
+                          fill={COLORS[index % COLORS.length]}/>
+                      ))}
+                    </Pie>
+                    <Tooltip />
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+
+
+              <div className="w-[20%]">
+                  {statusData.map((count) => (
+                    <>         
+                      <div className="flex items-center flex-row-reverse py-4">
+                        <div className={`${count.status === "active" ? "bg-[var(--sage)]" : "bg-[var(--acc-darkc)]"} w-5 h-5 rounded-sm shadow-md`}>
+                        </div>
+                        <span className="mx-2 text-sm text-[var(--acc-darkc)]">{count.status} </span>
+                      </div>
+                    
+                      </>
+                  ))}
+              </div>
+              
+                    
+            </>
+                
+                      
+          ) : (
+            <p className="text-gray-500 text-center">No status data available</p>
+          )}
+        </div>
+
+        {/* CARD B USER COUNT */}
+          <div className="bg-white rounded-lg shadow-lg border border-gray-200 w-full h-full p-6 flex flex-col justify-between">
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">Total Users</p>
+                <h2 className="text-4xl font-bold text-gray-900">{userCount}</h2>
+              </div>
+            
+                <Users className="w-6 h-6 text-[var(--acc-darkb)]" />
+              
+            </div>
+
           </div>
+                 
+              
+          {/* Card A: New Users This Month */}
+          <div className="bg-white rounded-lg shadow-lg border border-gray-200 w-full h-full p-6 flex flex-col justify-between">
+
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-sm font-medium text-gray-500 mb-1">New Users</p>
+                <h2 className="text-4xl font-bold text-gray-900">{newUsersThisMonth}</h2>
+                <p className="text-xs text-gray-500 mt-1">this month</p>
+              </div>
+                <Activity className="w-6 h-6 text-[var(--acc-darkb)]" />
+            </div>
+            <div className="mt-4 space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <UserCheck className="w-4 h-4 text-green-600" />
+                  <span className="text-gray-600">Verified</span>
+                </div>
+           
+              </div>
+            </div>
+          </div>
+            
+        </div>
+            
+            
           
           <div className="bg-white workspace flex flex-col h-[100%] w-full row-start-4 row-end-4
           col-start-2 col-end-4 overflow-y-auto gap-x- rounded-[10px]">
-
             <div className="wp_header flex w-full h-[20%] ">
                 <ol className='h_part left flex items-center justify-start w-1/2 '>
-                  <User className="mx-4" size={24}/>
+                    <User className="mx-4" size={24}/>
                     <span className='text-2xl'>Users</span>
                 </ol>
                 <ol className='h_part right flex flex-row-reverse items-center w-1/2'>
@@ -156,15 +298,14 @@ export function Workspace({refreshChart,searchValue}) {
                     {setMode("insert");
                     setSelectedUser(null);
                     setOpen(true)}}>ADD USER</button>
-
                     <select onChange={(e) => {handleFilter(e)}} className=" px-[1px] py-[2px] border-1 border-[var(--acc-darkc)] rounded-[10px] p-h-0-6 text-sm shadow-xl">
-                        <option value="all" class="options">Filter</option>
-                        <option value="username" class="options">Username</option>
-                        <option value="fullname" class="options">Fullname</option>
-                        <option value="email" class="options">Email</option>
-                        <option value="role" class="options">Role</option>
-                        <option value="status" class="options">Status</option>  
-                        <option value="created_at" class="options">Date</option>  
+                        <option value="all" className="options">Filter</option>
+                        <option value="username" className="options">Username</option>
+                        <option value="fullname" className="options">Fullname</option>
+                        <option value="email" className="options">Email</option>
+                        <option value="role" className="options">Role</option>
+                        <option value="status" className="options">Status</option>  
+                        <option value="created_at" className="options">Date</option>  
                     </select>
                 </ol>
           </div>
@@ -176,7 +317,7 @@ export function Workspace({refreshChart,searchValue}) {
             <div className="bg-white table_holder flex flex-col items-center justify-start h-full w-full  overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] rounded-[10px]">
                 <UserTable
                   users={filtered.length > 0 ? filtered : allUsers}
-                  setOpen={setOpen}
+                  setOpen={() => setOpen(true)}
                   setMode={setMode}
                   setSelectedUser={setSelectedUser}
                 />

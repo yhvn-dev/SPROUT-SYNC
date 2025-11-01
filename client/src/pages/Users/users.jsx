@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import axios from "axios";
+import axios, { all } from "axios";
 import * as userService from "../../data/userService"
 import { Sidebar } from "../../components/Global/sidebar"
 import { Db_Header } from "../../components/Global/db_header"
@@ -9,13 +9,13 @@ import { Welcome_box } from '../../components/Global/welcome_box';
 import { UserInsights } from './userInsights';
 
 import "./users.css"
-import "./users_responsive.css"
+
 
 function Users() {
   const [user,setUser] = useState(false)
-  const [chartData,setChartData] = useState({count: { total_users: 0}, roleCount: []})
+  const [chartData,setChartData] = useState({count: {total_users:0}, roleCount: []})
+  const [statusData,setStatusData] = useState([])
   const [searchValue,setSearchValue] = useState("");
-  const [percentage,setPercentage] = useState(35);
   const token = localStorage.getItem("accessToken")
   const [activeTab, setActiveTab] = useState('Overview');
 
@@ -36,7 +36,8 @@ function Users() {
     try {
         const [userCount,userCountByRole] = await Promise.all([
           userService.getUsersCount(),
-          userService.getUsersCountByRole()
+          userService.getUsersCountByRole(),
+          userService.getUsersByStatus()
         ]);
         
         setChartData({
@@ -47,14 +48,35 @@ function Users() {
               total_users:Number(rc.total_users)
             }))
         })
+        
     } catch (err) {
-        console.error("Error Fetching Chart")
+      console.error("Error Fetching Chart")
     }
-  }
+    }
+
+    
+
+    const fetchStatusData = async () =>{
+      try{
+        const userCountByStatus = await userService.getUsersByStatus()
+        console.log("STATUS DATA",userCountByStatus)
+
+        setStatusData(userCountByStatus.map(sc => ({
+          status:sc.status,
+          total_users: Number(sc.total_users || 0)
+        })))
+
+      }catch(err){
+        console.error("Error Fetching Status Data")
+      }
+      
+    }
+
 
   useEffect(() =>{
     fetchUser();
     fetchChartData();
+    fetchStatusData()
   },[token])
 
   const handleSearchChange = async (e) =>{
@@ -81,9 +103,9 @@ function Users() {
   
         input={
         <>
-          <div class="form_box center h-full">
+          <div className="form_box center h-full">
             <input className="border-[1px] border-[var(--acc-darkc)] rounded-2xl px-4" onChange={handleSearchChange} type="text" value={searchValue} placeholder='' />
-            <label for="">Search  For Users</label>
+            <label htmlFor="">Search  For Users</label>
           </div>    
         </>}
           
@@ -92,8 +114,6 @@ function Users() {
   
       <Sidebar
       />
-
-
 
       {/* Tab Navigation */}
       <div className='flex col-start-2 col-span-full row-start-2 row-end-2 gap-4 pt-4'>
@@ -110,9 +130,16 @@ function Users() {
           </button>   
       </div>
 
+
       <main className='w-full h-full col-start-2 col-span-full row-start-3 row-span-full pt-4 rounded-[10px] '>
-        {activeTab === "Overview" ?   <Workspace searchValue={searchValue}/> 
-          : <UserInsights chartData={chartData}/>} 
+        {activeTab === "Overview" ? 
+        <Workspace refreshChart={fetchChartData} 
+        refreshStatus={fetchStatusData}
+        searchValue={searchValue} 
+        userCount={chartData.count.total_users}
+        statusData={statusData}/> 
+    
+        : <UserInsights chartData={chartData}/>} 
       </main>
       {/* Users Table with navigations and filters */}
     

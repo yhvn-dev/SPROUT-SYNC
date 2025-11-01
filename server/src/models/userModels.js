@@ -34,6 +34,15 @@ export const countUserByRole = async () => {
     console.log(`MODELS: Error Counting Users By Roles ${err}`);
   }
 };
+
+export const countUserByStatus = async () =>{
+  try {
+    const { rows } = await query(`SELECT status, COUNT(*) AS total_users from users GROUP BY status ORDER BY status`) 
+    return rows;
+  } catch (err) {
+       console.log(`MODELS: Error Counting Users By Status ${err}`);
+  }
+}
                 
 
 export const getUsers = async () =>{

@@ -27,7 +27,18 @@ export const getUsersCountByRole = async () =>{
         const res = await api.get("/users/roles")
         return res.data
     }catch(err){
-        console.err("Error Fetching Users",err);
+        console.err("Error Fetching Users By Count",err);
+        throw err
+    }
+}
+
+export const getUsersByStatus = async () => {
+    try {
+        const res = await api.get("/users/status")
+        console.log(res.data)
+        return res.data
+    } catch (error) {
+        console.err("Error Fetching Users By Status",err);
         throw err
     }
 }

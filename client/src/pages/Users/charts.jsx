@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { PieChart, Pie} from "recharts";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { User } from "lucide-react";
 import * as color from "../../utils/colors"
 
 export function UserChartLegend({roleCount,colors}){
@@ -47,10 +46,12 @@ export function RoleChart({chartData}) {
           </p>
       </ul>
       
-      <ul className="flex flex-col items-center justify-center absolute rounded-full ">
-          <p className="t-gray">Total</p>
+      <ul className="flex flex-col items-center justify-center absolute rounded-full mb-12 ">
+          <p className="">Total</p>
           <p className="num_data">{count?.total_users ?? 0}</p>
       </ul>
+      
+      
 
       <PieChart width={550} height={430}>
         <defs>
@@ -81,11 +82,21 @@ export function RoleChart({chartData}) {
         <Tooltip />
       </PieChart>
 
-      <div className="center gap-4 ">
-          <div></div>
-          <div>b</div>
-          <div>c</div>
-      </div>
+  
+        
+      <div className="center mt-4 gap-12 ">
+          {roleCount.map((rc, index) => (
+            <div key={rc.role} className="flex items-center justify-start flex-col gap-2">
+              <div
+                className="w-4 h-4 rounded-sm shadow-md"style={{ backgroundColor: colors[index % colors.length] }}
+              ></div>
+              <span className="text-sm">
+                {rc.role}: {rc.total_users}
+              </span>
+            </div>
+          ))}
+        </div>
+
       
     </div>
   );
@@ -114,7 +125,6 @@ const CustomTooltip = ({ active, payload }) => {
   }
   return null;
 };
-
 
 export  function LoginsBarChart() {
 
@@ -152,7 +162,7 @@ export  function LoginsBarChart() {
       </div>
 
       <ResponsiveContainer width="100%" height={400} >
-        <BarChart data={data} margin={{ top: 20, right: 30, left: 20, bottom: 60 }}>
+        <BarChart data={data} margin={{ top: 20, right: 30, left: 20 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E8F3ED" />
           <XAxis 
             dataKey="username" 
@@ -181,8 +191,7 @@ export  function LoginsBarChart() {
         </BarChart>
       </ResponsiveContainer>
       
-
-      <div className="mt-6 flex items-center justify-center gap-6 text-sm">
+      <div className="mt-6 flex items-center justify-center gap-6 text-sm ">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded" style={{ backgroundColor: '#7BA591' }}></div>
           <span className="text-gray-600">Regular Activity</span>
@@ -193,8 +202,10 @@ export  function LoginsBarChart() {
         </div>
       </div>
     </div>
-    ) 
-
     
-
+    ) 
   }
+
+
+  
+  
