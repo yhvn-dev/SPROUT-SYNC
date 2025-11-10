@@ -185,7 +185,6 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
           <div className="grid grid-rows-1 grid-cols-[4fr_3fr_3fr] h-[30%] w-full gap-4 mb-4">
 
            
-
             {/* CARD A USER STATUS */}
            <div className="center bg-white rounded-lg shadow-lg border border-gray-200 w-full h-full p-6 pointer-events-none">     
             

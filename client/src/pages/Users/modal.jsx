@@ -239,7 +239,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                         max-w-[10rem] max-h-[10rem] h-[8rem] w-[8rem]' alt={Pfp} width={200}/>
                   
                        
-                          <input type="file" className="center px-2 py-1 text-sm" name="profile_picture"
+                          <input type="file" className="bg-[var(--pal2-whiteb)] my-4 center px-10 py-1 text-sm" name="profile_picture"
                           onChange={handleFileChanges}/>
                          
                      
@@ -253,7 +253,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
   
                         <select 
                           name="status" 
-                          className="status rounded-[10px] p-h-0-6 nav-com w-full mx-4 my-4" 
+                          className="status rounded-[10px] p-h-0-6 nav-com w-full mx-2 my-4 px-2" 
                           value={status} 
                           onChange={(e) => setStatus(e.target.value)}>
                           <option value="">Select Status</option>
@@ -263,7 +263,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                               
                         <select 
                           name="roles" 
-                          className="roles rounded-[10px] p-h-0-6 nav-com  w-full mx-4 my-4" 
+                          className="roles rounded-[10px] p-h-0-6 nav-com  w-full mx-2 my-4 px-2" 
                           value={role} 
                           onChange={(e) => setRole(e.target.value)}>
                           <option value="">Select Role</option>

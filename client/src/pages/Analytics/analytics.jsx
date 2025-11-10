@@ -307,12 +307,6 @@ const Analytics = () => {
   };
 
 
-
-
-
-
-
-  
   return (
     <div className="grid grid-cols-[12fr_30fr_58fr] grid-rows-[8vh_92vh] 
         h-[100vh] w-[100%] gap-4 overflow-y-auto relative  min-h-screen bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] ">

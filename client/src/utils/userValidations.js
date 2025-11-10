@@ -16,6 +16,9 @@ export const loginValidation = ({ loginInput, password }) => {
   return errors;
 };
 
+
+
+
 export const validateUserEmptyFields = (payload, password, mode) => {
   let errors = {};
 

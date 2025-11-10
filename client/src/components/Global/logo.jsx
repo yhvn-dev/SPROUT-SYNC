@@ -23,6 +23,19 @@ export function Img_Logo(){
     )
 }
 
+export function Load_Logo() {
+   return (
+      <>
+      <div className="center mx-4">
+        <img src={Logo} className="w-10 h-auto mr-2"/>
+        <span className="logo-text text-5xl text-[var(--sancgb)] font-medium">GREEN</span>
+        <span className="logo-text text-5xl font-medium">LINK</span>
+      </div>
+     
+      </>
+    )
+}
+
 export function Img(){
     return (
       <>

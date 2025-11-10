@@ -2,7 +2,6 @@ import {query} from "../config/db.js"
 import * as utils from "../utils/hashPass.js"
 
 export const findUser = async (loginInput) =>{
-
     try{
         const { rows } = await query("SELECT * FROM users WHERE username = $1 OR email = $1",[loginInput]) 
         return rows[0]

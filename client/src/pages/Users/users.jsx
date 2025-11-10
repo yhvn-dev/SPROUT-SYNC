@@ -131,7 +131,7 @@ function Users() {
       </div>
 
 
-      <main className='w-full h-full col-start-2 col-span-full row-start-3 row-span-full pt-4 rounded-[10px] '>
+      <main className='w-full h-full col-start-2 col-span-full row-start-3 row-span-full pt-4 rounded-lg '>
         {activeTab === "Overview" ? 
         <Workspace refreshChart={fetchChartData} 
         refreshStatus={fetchStatusData}

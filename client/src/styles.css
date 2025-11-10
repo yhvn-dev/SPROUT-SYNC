@@ -349,24 +349,21 @@ button{
     transform: translateY(-150%); font-size: var(--fns-default-down-0-6);
 }
 
-
-
 .succes_msg_pro{
     @apply bg-[var(--color-success-a-soft)] flex items-center justify-center rounded-[10px] m-1;
     border:2px solid var(--ptl-greenb);
     padding: var(--dis-0-6);
 }
-
 select{
     @apply rounded-[10px] cursor-pointer;
 }
 
 
 
-/* ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====  */
 
+/* ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====  */
 .viewer_color{
-    @apply  bg-[hsl(0, 0%, 90%)] rounded-[10px] px-[0.3rem] py-[0.3rem];
+    @apply  bg-[var(--acc-darkc)] rounded-[10px] px-[0.3rem] py-[0.3rem];
 }
 .admin_color{
     @apply  bg-[var(--color-warning-c)] rounded-[10px] px-[0.3rem] py-[0.3rem];
@@ -374,5 +371,4 @@ select{
 .owner_color{
     @apply  bg-[var(--color-danger-c)] rounded-[10px] px-[0.3rem] py-[0.3rem];
 }
-
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Droplets, Sun, Wind, Activity, TrendingUp, Menu, X } from 'lucide-react';
-import {Img_Logo} from "../../components/Global/logo"
+import {Load_Logo} from "../../components/Global/logo"
 
 import {Link} from "react-router-dom"
 import {Header} from "../../components/Global/header"
@@ -22,12 +22,12 @@ function Home(){
     if(!hasVisited){
       setShowLogo(true)
       sessionStorage.setItem("hasVisitedHome","true")
-
       const timer = setTimeout(() => setShowLogo(false), 4000); 
       return () => clearTimeout(timer);
     }else{
       setShowLogo(false)
     }
+
   }, []);
   return (
 
@@ -36,7 +36,7 @@ function Home(){
       
       {showLogo ? (
         <div className="fixed inset-0 bg-white flex items-center justify-center z-[9999]">
-            <Img_Logo/>
+            <Load_Logo/>
         </div>
       ) : (
           <>
