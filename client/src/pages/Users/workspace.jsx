@@ -2,10 +2,11 @@
 import { UserTable } from "./userTable"
 import { useEffect, useState } from "react"
 import { Modal } from "./modal"
-import {User} from "react-feather"
-import {SucessMsgs} from "../../components/Global/sucessMsgs"
+import { User} from "react-feather"
+import { SucessMsgs} from "../../components/Global/sucessMsgs"
 import { Users, UserCheck,  Activity } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer,  Tooltip } from 'recharts';
+import { StatusChart } from "./charts"
 
 import * as userService from "../../data/userService"
 
@@ -177,115 +178,74 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
     const COLORS = ['#7BA591',"#6b7070"];
 
     
+
+
+
+
  
     // ================================================================================
     return (
-   
+ 
         <main className="flex items-center justify-start flex-col full">
-          <div className="grid grid-rows-1 grid-cols-[4fr_3fr_3fr] h-[30%] w-full gap-4 mb-4">
 
-           
-            {/* CARD A USER STATUS */}
-           <div className="center bg-white rounded-lg shadow-lg border border-gray-200 w-full h-full p-6 pointer-events-none">     
+        {/* USER CHART ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
+          <div className="grid grid-rows-1 grid-cols-[4fr_3fr_3fr] h-[35%] w-full gap-4 ">
             
-             <div className="h-full column-t w-[25%]">
-              <p className="text-sm font-medium text-gray-500 mb-1">User Status</p>
-            </div>
+          {/* CARD A USER STATUS */}
+            <div className="center  rounded-lg shadow-lg border 
+            border-gray-200 w-full h-full p-4 pointer-events-none relative bg-white ">     
+              <p className="absolute top-4 left-4 text-[var(--acc-darkc)] text-sm">User status</p>
+              {<StatusChart statusData={statusData} COLORS={COLORS}/>}   
+           </div>
 
-            {Array.isArray(statusData) && statusData.length > 0 ?(
-              <>
-              <div className=" w-full h-full flex scale-80 origin-center items-center justify-center">
-                <ResponsiveContainer width="100%" height={250}>
-                  <PieChart>
-                    <Pie
-                      data={statusData}
-                      dataKey="total_users"
-                      nameKey="status"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={40}    
-                      outerRadius={80}
-                      label={({ status, total_users, percent }) => 
-                        `${status}: ${total_users} (${(percent * 100).toFixed(0)}%)`
-                      }>
-
-                      {statusData.map((entry, index) => (
-                        <Cell 
-                          key={`cell-${index}`} 
-                          fill={COLORS[index % COLORS.length]}/>
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-
-
-              <div className="w-[20%]">
-                  {statusData.map((count) => (
-                    <>         
-                      <div className="flex items-center flex-row-reverse py-4">
-                        <div className={`${count.status === "active" ? "bg-[var(--sage)]" : "bg-[var(--acc-darkc)]"} w-5 h-5 rounded-sm shadow-md`}>
-                        </div>
-                        <span className="mx-2 text-sm text-[var(--acc-darkc)]">{count.status} </span>
-                      </div>
-                    
-                      </>
-                  ))}
-              </div>
-              
-                    
-            </>
-                
-                      
-          ) : (
-            <p className="text-gray-500 text-center">No status data available</p>
-          )}
-        </div>
-
-        {/* CARD B USER COUNT */}
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 w-full h-full p-6 flex flex-col justify-between">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-500 mb-1">Total Users</p>
-                <h2 className="text-4xl font-bold text-gray-900">{userCount}</h2>
-              </div>
-            
-                <Users className="w-6 h-6 text-[var(--acc-darkb)]" />
-              
-            </div>
-
-          </div>
-                 
-              
-          {/* Card A: New Users This Month */}
-          <div className="bg-white rounded-lg shadow-lg border border-gray-200 w-full h-full p-6 flex flex-col justify-between">
-
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-sm font-medium text-gray-500 mb-1">New Users</p>
-                <h2 className="text-4xl font-bold text-gray-900">{newUsersThisMonth}</h2>
-                <p className="text-xs text-gray-500 mt-1">this month</p>
-              </div>
-                <Activity className="w-6 h-6 text-[var(--acc-darkb)]" />
-            </div>
-            <div className="mt-4 space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <UserCheck className="w-4 h-4 text-green-600" />
-                  <span className="text-gray-600">Verified</span>
+             {/* CARD B USER COUNT */}
+            <div className="bg-white rounded-lg shadow-lg border border-gray-200 w-full h-full p-6 flex flex-col justify-between">
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500 mb-1">Total Users</p>
+                  <h2 className="text-4xl font-bold text-gray-900">{userCount}</h2>
                 </div>
-           
+              
+                  <Users className="w-6 h-6 text-[var(--acc-darkb)]" />
+                
+              </div>
+
+            </div>
+                 
+
+             {/* Card C: New Users This Month */}
+            <div className="bg-white rounded-lg shadow-lg border border-gray-200 w-full h-full p-6 flex flex-col justify-between">
+
+              <div className="flex items-start justify-between">
+                <div>
+                  <p className="text-sm font-medium text-gray-500 mb-1">New Users</p>
+                  <h2 className="text-4xl font-bold text-gray-900">{newUsersThisMonth}</h2>
+                  <p className="text-xs text-gray-500 mt-1">this month</p>
+                </div>
+                  <Activity className="w-6 h-6 text-[var(--acc-darkb)]" />
+              </div>
+              <div className="mt-4 space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <div className="flex items-center gap-2">
+                    <UserCheck className="w-4 h-4 text-green-600" />
+                    <span className="text-gray-600">Verified</span>
+                  </div>
+            
+                </div>
               </div>
             </div>
-          </div>
             
         </div>
             
+
+
+
+
+
             
-          
+          {/* USER TABLE ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
           <div className="bg-white workspace flex flex-col h-[100%] w-full row-start-4 row-end-4
-          col-start-2 col-end-4 overflow-y-auto gap-x- rounded-[10px]">
+          col-start-2 col-end-4 overflow-y-auto gap-x- rounded-[10px] my-4">
             <div className="wp_header flex w-full h-[20%] ">
                 <ol className='h_part left flex items-center justify-start w-1/2 '>
                     <User className="mx-4" size={24}/>

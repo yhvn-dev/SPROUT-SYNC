@@ -29,7 +29,6 @@ app.use('',userRoutes)
 app.use('/auth',publicRoutes)
 app.use('/page',pageRoutes)
  
-
 app.get("/hello",(req,res)=>{
     res.send("<p>Hello World</p>")
 })

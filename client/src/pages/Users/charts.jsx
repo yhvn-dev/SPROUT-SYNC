@@ -8,7 +8,7 @@ export function UserChartLegend({roleCount,colors}){
   return(
     <>
 
-      <div className="mt-4 space-y-1">
+      <div className="space-y-1">
         {roleCount.map((rc, index) => (
           <div key={rc.role} className="flex items-center gap-2">
             <div
@@ -26,13 +26,10 @@ export function UserChartLegend({roleCount,colors}){
   )
 }
 
-
-
 export function RoleChart({chartData}) {
  const { count, roleCount } = chartData || {};
  
   const colors = [color.setRoleColor.adminColor,
-                  color.setRoleColor.ownerColor,
                   color.setRoleColor.viewerColor];
 
   return (
@@ -53,35 +50,36 @@ export function RoleChart({chartData}) {
       
       
 
+    <ResponsiveContainer width="100%" height={300}>
       <PieChart width={550} height={430}>
-        <defs>
-          <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow dx="5" dy="10" stdDeviation="3" floodColor="rgba(0,0,0,0.1)" />
-          </filter>
-        </defs>
+            <defs>
+              <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+                <feDropShadow dx="5" dy="10" stdDeviation="3" floodColor="rgba(0,0,0,0.1)" />
+              </filter>
+            </defs>
 
-       <Pie
-        data={roleCount}
-        dataKey="total_users"
-        nameKey="role"
-        cx="50%"
-        cy="50%"
-        innerRadius={60}    
-        outerRadius={120} 
-        label={({ role, total_users }) => `${role}: ${total_users}`}>
-          
-        {Array.isArray(roleCount) && roleCount.map((entry, index) => (
-          <Cell
-            key={`cell-${index}`}
-            fill={colors[index % colors.length]}
-            filter="url(#shadow)"
-          />
-        ))}
+          <Pie
+            data={roleCount}
+            dataKey="total_users"
+            nameKey="role"
+            cx="50%"
+            cy="50%"
+            innerRadius={60}    
+            outerRadius={120} 
+            label={({ role, total_users }) => `${role}: ${total_users}`}>
+              
+            {Array.isArray(roleCount) && roleCount.map((entry, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={colors[index % colors.length]}
+                filter="url(#shadow)"
+              />
+            ))}
 
-      </Pie>
+          </Pie>
         <Tooltip />
       </PieChart>
-
+   </ResponsiveContainer>
   
         
       <div className="center mt-4 gap-12 ">
@@ -103,8 +101,6 @@ export function RoleChart({chartData}) {
  
 }
 
-
-
 export function chartBg({}){
   <PieChart width={450} height={230}></PieChart>
 }
@@ -112,10 +108,15 @@ export function chartBg({}){
 
 
 
+
+
+
+
+
 const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white px-4 py-3 rounded-xl shadow-lg border border-gray-100">
+      <div className="bg-white px-4 py-3 rounded-xl shadow-lg border border-gray-100 ">
         <p className="text-sm font-semibold text-gray-800">{payload[0].payload.username}</p>
         <p className="text-xs text-gray-600 mt-1">
           Logins: <span className="font-bold" style={{ color: '#027c68' }}>{payload[0].value}</span>
@@ -126,7 +127,9 @@ const CustomTooltip = ({ active, payload }) => {
   return null;
 };
 
-export  function LoginsBarChart() {
+
+
+export function LoginsBarChart() {
 
     const initialData = [
     { username: 'User 1', logins: 45 },
@@ -161,7 +164,7 @@ export  function LoginsBarChart() {
         </div>
       </div>
 
-      <ResponsiveContainer width="100%" height={400} >
+      <ResponsiveContainer width="100%" height={350} >
         <BarChart data={data} margin={{ top: 20, right: 30, left: 20 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="#E8F3ED" />
           <XAxis 
@@ -191,7 +194,7 @@ export  function LoginsBarChart() {
         </BarChart>
       </ResponsiveContainer>
       
-      <div className="mt-6 flex items-center justify-center gap-6 text-sm ">
+      <div className=" flex items-center justify-center gap-6 text-sm ">
         <div className="flex items-center gap-2">
           <div className="w-4 h-4 rounded" style={{ backgroundColor: '#7BA591' }}></div>
           <span className="text-gray-600">Regular Activity</span>
@@ -202,10 +205,64 @@ export  function LoginsBarChart() {
         </div>
       </div>
     </div>
-    
     ) 
   }
 
+
+
+
+export function StatusChart({statusData,COLORS}){
+
+  return(
+
+    <>
+         {Array.isArray(statusData) && statusData.length > 0 ?(
+
+        <div className="w-full h-full flex scale-80 origin-center items-center justify-center  ">
+          <ResponsiveContainer width="100%" height={300}>
+            <PieChart>
+              <Pie
+                data={statusData}
+                dataKey="total_users" 
+                nameKey="status"
+                cx="50%"
+                cy="50%"
+                innerRadius={40}    
+                outerRadius={80}
+                label={({ status, total_users, percent }) => 
+                  `${status}: ${total_users} (${(percent * 100).toFixed(0)}%)`
+                }>
+
+                {statusData.map((entry, index) => (
+                  <Cell 
+                    key={`cell-${index}`} 
+                    fill={COLORS[index % COLORS.length]}/>
+                ))}
+              </Pie>
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+
+          
+        <div className="w-[20%]">
+            {statusData.map((count,index) => (      
+                <div  key={count.status || index} className="flex items-start justify-start  py-4">           
+                  <div className={`${count.status === "active" ? "bg-[var(--sage)]" : "bg-[var(--acc-darkc)]"} w-5 h-5 rounded-sm shadow-md`}>
+                  </div>
+                    <span className="ml-2 text-sm text-[var(--acc-darkc)]">{count.status} </span>              
+                </div>                
+            ))}
+        </div>
+        
+        </div>              
+    ) : (
+      <p className="text-gray-500 text-center">No status data available</p>
+    )}
+
+    </>
+
+  )
+}
 
   
   

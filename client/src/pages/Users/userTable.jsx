@@ -9,14 +9,14 @@ export function UserTable({users,setOpen, setMode, setSelectedUser}) {
 
         <tbody >
           <tr>
-              <th className="p-4 bg-[var(--sage)] text-white w-[5%]"><input type="checkbox"/></th>
-              <th className="p-4 bg-[var(--sage)] text-white w-[10%]">Username</th>
-              <th className="p-4 bg-[var(--sage)] text-white w-[20%]">Fullname</th>
-              <th className="p-4 bg-[var(--sage)] text-white">Email</th>
-              <th className="p-4 bg-[var(--sage)] text-white">Phone Number</th>
-              <th className="p-4 bg-[var(--sage)] text-white w-[10%]">Role</th>
-              <th className="p-4 bg-[var(--sage)] text-white w-[15%]">Status</th>
-              <th className="p-4 bg-[var(--sage)] text-white w-[15%]">Action</th>
+              <th className="p-2 bg-[var(--sage)] text-white w-[5%]"><input type="checkbox"/></th>
+              <th className="p-2 bg-[var(--sage)] text-white w-[10%]">Username</th>
+              <th className="p-2 bg-[var(--sage)] text-white w-[20%]">Fullname</th>
+              <th className="p-2 bg-[var(--sage)] text-white">Email</th>
+              <th className="p-2 bg-[var(--sage)] text-white">Phone Number</th>
+              <th className="p-2 bg-[var(--sage)] text-white w-[10%]">Role</th>
+              <th className="p-2 bg-[var(--sage)] text-white w-[15%]">Status</th>
+              <th className="p-2 bg-[var(--sage)] text-white w-[15%]">Action</th>
           </tr>
         </tbody>
       
@@ -36,9 +36,7 @@ export function UserTable({users,setOpen, setMode, setSelectedUser}) {
             <td  className="u_td flex justify-start items-start">
               <p
                 className={`${
-                  u.role === "owner"
-                    ? "owner_color"
-                    : u.role === "admin"
+                  u.role === "admin"
                     ? "admin_color"
                     : "viewer_color"
                 }`}>

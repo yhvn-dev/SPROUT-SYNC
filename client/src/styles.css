@@ -359,11 +359,9 @@ select{
 }
 
 
-
-
 /* ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====  */
 .viewer_color{
-    @apply  bg-[var(--acc-darkc)] rounded-[10px] px-[0.3rem] py-[0.3rem];
+    @apply  bg-gray-200 rounded-[10px] px-[0.3rem] py-[0.3rem];
 }
 .admin_color{
     @apply  bg-[var(--color-warning-c)] rounded-[10px] px-[0.3rem] py-[0.3rem];

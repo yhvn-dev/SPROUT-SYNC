@@ -267,7 +267,6 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                           value={role} 
                           onChange={(e) => setRole(e.target.value)}>
                           <option value="">Select Role</option>
-                          <option value="owner">Owner</option>
                           <option value="admin">Admin</option>
                           <option value="viewer">Viewer</option>
                         </select>

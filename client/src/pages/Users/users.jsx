@@ -59,7 +59,6 @@ function Users() {
     const fetchStatusData = async () =>{
       try{
         const userCountByStatus = await userService.getUsersByStatus()
-        console.log("STATUS DATA",userCountByStatus)
 
         setStatusData(userCountByStatus.map(sc => ({
           status:sc.status,
@@ -86,8 +85,8 @@ function Users() {
   }
   
   return (
-    <section className="page users grid grid-cols-[12fr_30fr_58fr] grid-rows-[8vh_8vh_84vh] 
-        h-[100vh] w-[100%] gap-x-4 overflow-y-auto
+    <section className="page users grid grid-cols-[12fr_30fr_58fr] grid-rows-[8vh_10vh_86vh] 
+        h-[100vh] w-[100%] gap-x-4 overflow-y-auto bg-amber-400
         relative bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
 
       <Welcome_box
@@ -116,22 +115,21 @@ function Users() {
       />
 
       {/* Tab Navigation */}
-      <div className='flex col-start-2 col-span-full row-start-2 row-end-2 gap-4 pt-4'>
+      <div className='flex col-start-2 col-span-full row-start-2 row-end-2 my-4 '>
           <button onClick={() => setActiveTab("Overview")} 
               className={`${activeTab === "Overview" ? "bg-white shadow-lg" : "bg-[--sage-lighter]"} 
-            px-6 py-2 text-sm rounded-lg hover:bg-white text-[var(--sage)] transition-all duration-200`}>
+            mr-2 px-6 py-2 text-sm rounded-lg hover:bg-white text-[var(--sage)] transition-all duration-200`}>
               Overview
           </button>
         
           <button onClick={() => setActiveTab("User Insights")} 
             className={`${activeTab === "User Insights" ?  "bg-white shadow-lg" : "bg-[--sage-lighter]"}
-            px-6 py-2 text-sm rounded-lg hover:bg-white text-[var(--sage)] transition-all duration-200`}>
+            ml-2 px-6 py-2 text-sm rounded-lg hover:bg-white text-[var(--sage)] transition-all duration-200`}>
             User Insights
           </button>   
       </div>
 
-
-      <main className='w-full h-full col-start-2 col-span-full row-start-3 row-span-full pt-4 rounded-lg '>
+      <main className='w-full h-full col-start-2 col-span-full row-start-3 row-span-full rounded-lg '>
         {activeTab === "Overview" ? 
         <Workspace refreshChart={fetchChartData} 
         refreshStatus={fetchStatusData}
