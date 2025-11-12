@@ -1,20 +1,16 @@
-import { Droplet, X, Save, AlertCircle } from "lucide-react";
+import { Droplet, X, Save, AlertCircle, Repeat } from "lucide-react";
 import { useState } from "react";
 
-export function ThresholdModal({isOpen,onSave }) {
-
-    
-  // Sample threshold data for each bed
-  const [thresholds, setThresholds] = useState([
-    { bed_id: 1, bed_name: "Bed 1", moisture_threshold: 60, zones: 6 },
-    { bed_id: 2, bed_name: "Bed 2", moisture_threshold: 55, zones: 3 },
-    { bed_id: 3, bed_name: "Bed 3", moisture_threshold: 65, zones: 2 },
+export function ThresholdModal({ isOpen, onSave }) {
+  const [beds, setBeds] = useState([
+    { bed_id: 1, bed_name: "Bed 1", moisture_threshold: 60, hysteresis: 10, zones: 6 },
   ]);
 
-  const [tempThresholds, setTempThresholds] = useState([...thresholds]);
+  const [tempBeds, setTempBeds] = useState([...beds]);
+
   const handleThresholdChange = (bedId, value) => {
-    setTempThresholds(prev =>
-      prev.map(bed =>
+    setTempBeds((prev) =>
+      prev.map((bed) =>
         bed.bed_id === bedId
           ? { ...bed, moisture_threshold: parseFloat(value) || 0 }
           : bed
@@ -22,24 +18,30 @@ export function ThresholdModal({isOpen,onSave }) {
     );
   };
 
-  
+  const handleHysteresisChange = (bedId, value) => {
+    setTempBeds((prev) =>
+      prev.map((bed) =>
+        bed.bed_id === bedId
+          ? { ...bed, hysteresis: parseFloat(value) || 0 }
+          : bed
+      )
+    );
+  };
 
   const handleSave = () => {
-    setThresholds([...tempThresholds]);
+    setBeds([...tempBeds]);
     if (onSave) {
-      onSave(tempThresholds);
+      onSave(tempBeds);
     }
-    isOpen(false)
+    isOpen(false);
   };
 
   const handleCancel = () => {
-    setTempThresholds([...thresholds]);
-     isOpen(false)
+    setTempBeds([...beds]);
+    isOpen(false);
   };
 
-
-
-  if(!isOpen) return null;
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent bg-opacity-40 backdrop-blur-2xl">
@@ -53,26 +55,26 @@ export function ThresholdModal({isOpen,onSave }) {
               </div>
               <div>
                 <h2 className="text-lg font-semibold text-[var(--sancga)]">
-                  Moisture Threshold Settings
+                  Moisture & Hysteresis Settings
                 </h2>
                 <p className="text-sm text-[var(--acc-darkb)] mt-0.5">
-                  Adjust moisture thresholds for optimal bed monitoring
+                  Adjust thresholds and hysteresis levels for optimal soil control
                 </p>
               </div>
             </div>
             <button
               onClick={handleCancel}
-              className="p-2 rounded-lg hover:bg-white hover:shadow-sm transition-all text-[var(--acc-darkb)] hover:text-[var(--sancga)]">
+              className="p-2 rounded-lg hover:bg-white hover:shadow-sm transition-all text-[var(--acc-darkb)] hover:text-[var(--sancga)]"
+            >
               <X size={20} />
             </button>
           </div>
-
         </div>
 
         {/* Content */}
         <div className="px-6 py-6 max-h-[500px] overflow-y-auto">
           <div className="space-y-4">
-            {tempThresholds.map((bed) => (
+            {tempBeds.map((bed) => (
               <div
                 key={bed.bed_id}
                 className="rounded-lg p-5 bg-[var(--sage-lighter)] border border-[var(--sage-light)] shadow-sm hover:shadow-md transition-all"
@@ -88,48 +90,103 @@ export function ThresholdModal({isOpen,onSave }) {
                   </div>
                 </div>
 
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <label className="text-sm font-medium text-[var(--acc-darka)] flex items-center gap-2">
-                      <Droplet size={14} style={{ color: "var(--sancgb)" }} />
-                      Moisture Threshold
-                    </label>
-                    <span className="text-sm text-[var(--acc-darkc)]">
-                      Current: {thresholds.find(b => b.bed_id === bed.bed_id)?.moisture_threshold}%
-                    </span>
-                  </div>
+                {/* Moisture Threshold */}
+                <div className="column space-y-4">
+                  <div className="column">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium text-[var(--acc-darka)] flex items-center gap-2">
+                        <Droplet size={14} style={{ color: "var(--sancgb)" }} />
+                        Moisture Threshold
+                      </label>
+                      <span className="text-sm text-[var(--acc-darkc)]">
+                        Current: {bed.moisture_threshold}%
+                      </span>
+                    </div>
 
-                  <div className="flex items-center gap-4">
-                    <i  nput
-                      type="range"
-                      min="0"
-                      max="100"
-                      step="1"
-                      value={bed.moisture_threshold}
-                      onChange={(e) => handleThresholdChange(bed.bed_id, e.target.value)}
-                      className="flex-1 h-2 rounded-full appearance-none cursor-pointer"
-                      style={{
-                        background: `linear-gradient(to right, var(--sancgb) 0%, var(--sancgb) ${bed.moisture_threshold}%, var(--sage-medium) ${bed.moisture_threshold}%, var(--sage-medium) 100%)`
-                      }}
-                    />
-                    <div className="flex items-center gap-2 bg-white rounded-lg px-4 py-2 border border-[var(--sage-light)] shadow-sm min-w-[100px]">
+                    <div className="flex items-center justify-between py-2">
                       <input
-                        type="number"
+                        type="range"
                         min="0"
                         max="100"
+                        step="1"
                         value={bed.moisture_threshold}
-                        onChange={(e) => handleThresholdChange(bed.bed_id, e.target.value)}
-                        className="w-full text-lg font-bold text-[var(--sancgb)] bg-transparent outline-none"
+                        onChange={(e) =>
+                          handleThresholdChange(bed.bed_id, e.target.value)
+                        }
+                        className="flex-1 h-2 rounded-full appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, var(--sancgb) 0%, var(--sancgb) ${bed.moisture_threshold}%, var(--sage-medium) ${bed.moisture_threshold}%, var(--sage-medium) 100%)`,
+                        }}
                       />
-                      <span className="text-sm text-[var(--acc-darkb)] font-medium">%</span>
+                      <div className="ml-4 flex items-center gap-2 bg-white rounded-lg px-4 py-2 border border-[var(--sage-light)] shadow-sm">
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={bed.moisture_threshold}
+                          onChange={(e) =>
+                            handleThresholdChange(bed.bed_id, e.target.value)
+                          }
+                          className="w-16 text-lg font-bold text-[var(--sancgb)] bg-transparent outline-none"
+                        />
+                        <span className="text-sm text-[var(--acc-darkb)] font-medium">
+                          %
+                        </span>
+                      </div>
                     </div>
                   </div>
 
-                  {/* Visual Indicator */}
+                  {/* Hysteresis */}
+                  <div className="column">
+                    <div className="flex items-center justify-between">
+                      <label className="text-sm font-medium text-[var(--acc-darka)] flex items-center gap-2">
+                        <Repeat size={14} style={{ color: "var(--sancgb)" }} />
+                        Hysteresis
+                      </label>
+                      <span className="text-sm text-[var(--acc-darkc)]">
+                        Current: {bed.hysteresis}%
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between py-2">
+                      <input
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value={bed.hysteresis}
+                        onChange={(e) =>
+                          handleHysteresisChange(bed.bed_id, e.target.value)
+                        }
+                        className="flex-1 h-2 rounded-full appearance-none cursor-pointer"
+                        style={{
+                          background: `linear-gradient(to right, var(--sancgb) 0%, var(--sancgb) ${bed.hysteresis}%, var(--sage-medium) ${bed.hysteresis}%, var(--sage-medium) 100%)`,
+                        }}
+                      />
+                      <div className="ml-4 flex items-center gap-2 bg-white rounded-lg px-4 py-2 border border-[var(--sage-light)] shadow-sm">
+                        <input
+                          type="number"
+                          min="0"
+                          max="100"
+                          value={bed.hysteresis}
+                          onChange={(e) =>
+                            handleHysteresisChange(bed.bed_id, e.target.value)
+                          }
+                          className="w-16 text-lg font-bold text-[var(--sancgb)] bg-transparent outline-none"
+                        />
+                        <span className="text-sm text-[var(--acc-darkb)] font-medium">
+                          %
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Info */}
                   <div className="flex items-center gap-2 text-xs text-[var(--acc-darkc)] pt-2">
                     <AlertCircle size={12} />
                     <span>
-                      Sensors will alert when moisture drops below this threshold
+                      The system uses hysteresis to avoid frequent ON/OFF
+                      switching around the threshold point.
                     </span>
                   </div>
                 </div>
@@ -140,11 +197,15 @@ export function ThresholdModal({isOpen,onSave }) {
           {/* Info Box */}
           <div className="mt-6 p-4 rounded-lg bg-blue-50 border border-blue-200">
             <div className="flex gap-3">
-              <AlertCircle size={16} className="text-blue-600 flex-shrink-0 mt-0.5" />
+              <AlertCircle
+                size={16}
+                className="text-blue-600 flex-shrink-0 mt-0.5"
+              />
               <div className="text-sm text-blue-800">
-                <p className="font-medium mb-1">About Thresholds</p>
+                <p className="font-medium mb-1">About Thresholds & Hysteresis</p>
                 <p className="text-xs leading-relaxed">
-                  These values determine when irrigation systems activate. Set thresholds based on crop requirements and soil conditions.
+                  Threshold defines when irrigation activates, while hysteresis
+                  adds a small range buffer to prevent rapid toggling.
                 </p>
               </div>
             </div>
@@ -152,17 +213,18 @@ export function ThresholdModal({isOpen,onSave }) {
         </div>
 
 
-
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-end gap-3">
           <button
             onClick={handleCancel}
-            className="px-5 py-2 rounded-lg text-sm font-medium text-[var(--acc-darka)] hover:bg-gray-200 transition-all">
+            className="px-5 py-2 rounded-lg text-sm font-medium text-[var(--acc-darka)] hover:bg-gray-200 transition-all"
+          >
             Cancel
           </button>
           <button
             onClick={handleSave}
-            className="px-5 py-2 rounded-lg text-sm font-medium bg-[var(--sancgb)] text-white hover:bg-[var(--sancga)] transition-all shadow-sm hover:shadow-md flex items-center gap-2">
+            className="px-5 py-2 rounded-lg text-sm font-medium bg-[var(--sancgb)] text-white hover:bg-[var(--sancga)] transition-all shadow-sm hover:shadow-md flex items-center gap-2"
+          >
             <Save size={16} />
             Save Changes
           </button>
@@ -170,6 +232,6 @@ export function ThresholdModal({isOpen,onSave }) {
       </div>
     </div>
   );
+
   
 }
-
