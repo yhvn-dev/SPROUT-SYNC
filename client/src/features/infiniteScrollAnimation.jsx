@@ -1,5 +1,5 @@
 
-import { Img_Logo, Img_Logo_BIG } from "../components/Global/logo";
+import { Img_Logo } from "../components/logo";
 import { useEffect,useRef } from "react";
 
 export function InfiniteScrollAnimation() {
@@ -55,8 +55,8 @@ export function InfiniteScrollAnimation() {
           <div
             key={i}
             ref={i === 0 ? firstBatchRef : null}
-            className="flex items-center justify-center text-[16.08rem]  w-auto h-auto rounded-[10px] shrink-0">
-                <Img_Logo_BIG/>
+            className="flex items-center justify-center text-2xl  w-auto h-auto rounded-[10px] shrink-0">
+                <Img_Logo/>
           </div>
         ))}
       </div>

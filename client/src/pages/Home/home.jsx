@@ -1,14 +1,14 @@
 import { useState, useEffect } from 'react';
 import { Droplets, Sun, Wind, Activity, TrendingUp, Menu, X } from 'lucide-react';
-import {Load_Logo} from "../../components/Global/logo"
+import {Load_Logo} from "../../components/logo"
 
 import {Link} from "react-router-dom"
-import {Header} from "../../components/Global/header"
+import {Header} from "../../components/header"
 import {Dashboard_Mockup} from "./dashboard_mockup"
 import { Farm_Info_Section } from './form_info_section';
 import { Contact_Section } from './contact_section';
 import {Logo_Page} from "./logo_page"
-import {Footer} from "../../components/Global/footer"
+import {Footer} from "../../components/footer"
 
 
 import "./home.css"

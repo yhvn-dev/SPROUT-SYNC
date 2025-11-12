@@ -100,7 +100,7 @@ export function ThresholdModal({isOpen,onSave }) {
                   </div>
 
                   <div className="flex items-center gap-4">
-                    <input
+                    <i  nput
                       type="range"
                       min="0"
                       max="100"

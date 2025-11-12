@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { LineChart, Line, BarChart, Bar, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { Droplets, Sun, Wind, Activity, AlertTriangle, Thermometer,Waves, TrendingUp, Clock, Leaf } from 'lucide-react';
-import { Sidebar } from '../../components/Global/sidebar';
-import { Db_Header } from '../../components/Global/db_header';
-import { Welcome_box } from '../../components/Global/welcome_box';
+import { Sidebar } from '../../components/sidebar';
+import { Db_Header } from '../../components/db_header';
+import { Welcome_box } from '../../components/welcome_box';
 
 
 import axios from "axios"

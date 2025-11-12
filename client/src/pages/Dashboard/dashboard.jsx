@@ -1,9 +1,9 @@
 import axios from "axios"
-import { Sidebar } from "../../components/Global/sidebar"
-import { Db_Header } from "../../components/Global/db_header"
+import { Sidebar } from "../../components/sidebar"
+import { Db_Header } from "../../components/db_header"
 import { Quick_Stats } from "./quick_stats" 
 import { Workspace } from "./workspace"
-import { Welcome_box } from "../../components/Global/welcome_box"
+import { Welcome_box } from "../../components/welcome_box"
 import { ThresholdModal } from "./thresholdModal"
 import { Droplets, Sun, Wind, Activity } from 'lucide-react';
 
@@ -17,6 +17,8 @@ import { useEffect } from "react"
 const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
   const percentage = (value / max) * 100;
   const rotation = (percentage / 100) * 180 - 90;
+  
+
   
   return (
     <div className="flex flex-col items-center justify-center h-full">

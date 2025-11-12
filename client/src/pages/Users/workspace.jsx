@@ -3,7 +3,7 @@ import { UserTable } from "./userTable"
 import { useEffect, useState } from "react"
 import { Modal } from "./modal"
 import { User} from "react-feather"
-import { SucessMsgs} from "../../components/Global/sucessMsgs"
+import { SucessMsgs} from "../../components/sucessMsgs"
 import { Users, UserCheck,  Activity } from 'lucide-react'
 import { PieChart, Pie, Cell, ResponsiveContainer,  Tooltip } from 'recharts';
 import { StatusChart } from "./charts"
@@ -185,11 +185,10 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
  
     // ================================================================================
     return (
- 
         <main className="flex items-center justify-start flex-col full">
 
         {/* USER CHART ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
-          <div className="grid grid-rows-1 grid-cols-[4fr_3fr_3fr] h-[35%] w-full gap-4 ">
+          <div className="grid grid-rows-1 grid-cols-[4fr_3fr_3fr] h-[30%] w-full gap-4 ">
             
           {/* CARD A USER STATUS */}
             <div className="center  rounded-lg shadow-lg border 

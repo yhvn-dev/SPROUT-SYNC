@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import * as Loader from "../../components/Global/loaders";
+import * as Loader from "../../components/loaders";
 import api from "../../utils/api";
 
 export const ProtectedRoute = ({ children }) => {

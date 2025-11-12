@@ -1,4 +1,4 @@
-import Logo from "../../assets/Images/GREENLINK LOGO.png"
+import Logo from "../assets/Images/GREENLINK LOGO.png"
 
 
 export function Text_Logo() {

@@ -1,11 +1,11 @@
 import { Droplet, Activity,SquarePen } from "lucide-react";
 import { useState } from "react";
-import { ThresholdModal } from "./thresholdModal";
 
 export function BedMonitor({ bedNum = "bed_1", bedName = "Bed 1" ,setOpenTModal}) {
   const [threshold, setThreshold] = useState(60);
 
 
+  
   // Sample data for multiple beds
   const sensorData = {
     bed_1: [
@@ -27,6 +27,10 @@ export function BedMonitor({ bedNum = "bed_1", bedName = "Bed 1" ,setOpenTModal}
     ],
   };
 
+  const handleOpenModal = () =>{
+      
+
+  }
 
   
 

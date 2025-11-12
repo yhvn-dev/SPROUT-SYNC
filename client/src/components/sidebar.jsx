@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 import { Logout } from "./logout";
 import { LogoutModal } from "./logoutModal";
 import {User,LayoutPanelTop,ChartNoAxesCombined,LogOut} from "lucide-react"
-import * as Logo from "../../components/Global/logo"
+import * as Logo from "../components/logo"
 
 
 export function Sidebar() {
@@ -62,13 +62,12 @@ export function Sidebar() {
               }`
           }>
             
-
-
         <ChartNoAxesCombined  className="mx-1" strokeWidth={1.5} size={18}/>
           <p className="text-sm mr-2">Analytics</p>
-        </NavLink>
-              
+        </NavLink>    
       </div>
+
+
 
       {/* Logout Section */}
       <div className="flex items-center justify-start flex-col w-full h-[50%]  ">

@@ -3,7 +3,7 @@ import api from "../../utils/api"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { Form } from "./form.jsx"
-import { Header } from "../../components/Global/header.jsx" 
+import { Header } from "../../components/header.jsx" 
 import * as validate from "../../utils/userValidations"
 
 
@@ -12,7 +12,7 @@ function Login() {
   const passwordRef = useRef(null)
   const [errorMsg,setErrorMsg] = useState({});
   const [successMsg,setsuccessMsg] = useState("")
-  const [mode,setMode] = useState("notLoggedIn");
+  const [status,setStatus] = useState("notLoggedIn");
 
   const navigate = useNavigate(); 
   
@@ -36,15 +36,16 @@ function Login() {
       });
  
       localStorage.setItem("accessToken",data.accessToken)
-    
       setsuccessMsg("Login Sucessfull!");
-      setMode("loggedIn")
+      setStatus("loggingIn")
+
       setTimeout(() => {
         navigate("/dashboard")       
       }, 1500);
  
-      setErrorMsg({}) 
 
+
+      setErrorMsg({}) 
     }catch(err){
 
       if(err.response){
@@ -68,7 +69,13 @@ function Login() {
             </>
         }/>
         <section className="center row-start-2 row-end-3 col-start-1 col-end-2 w-full h-full ">
-            <Form handleSubmit={handleSubmit} errorMsg={errorMsg} successMsg={successMsg} loginInputRef={loginInputRef} passwordRef={passwordRef} /> 
+            <Form 
+            handleSubmit={handleSubmit} 
+            errorMsg={errorMsg} 
+            successMsg={successMsg} 
+            loginInputRef={loginInputRef} 
+            passwordRef={passwordRef}
+            status={status} /> 
         </section>
             
     </section>

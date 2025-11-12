@@ -1,4 +1,4 @@
-import Pfp from "../../assets/Images/Default Profile Picture 2.jpg"
+import Pfp from "../assets/Images/Default Profile Picture 2.jpg"
 import { Search } from "./search"
 
 export function Db_Header({input,user}) {

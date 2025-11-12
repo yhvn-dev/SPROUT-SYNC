@@ -4,7 +4,8 @@ import {Leaf} from "lucide-react"
 
 
 export function Workspace({ bed,setOpenTModal}) {
-    
+  
+
   return (
     <section className='bg-white
       grid h-full col-start-2 col-end-4 row-start-3 row-end-3

@@ -121,8 +121,6 @@ export const searchUser = async (term) => {
 };
 
 
-
-
 export const insertUsers = async(userData) => {    
     try{
 

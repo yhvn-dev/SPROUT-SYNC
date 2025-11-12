@@ -1,7 +1,7 @@
 import { Droplets, Sun, Wind, Activity, User ,LayoutPanelTop ,ChartNoAxesCombined, LogOut } from 'lucide-react';
 
-import {Img_Logo} from "../../components/Global/logo"
-import {GaugeChart}  from '../../components/Global/charts';
+import {Img_Logo} from "../../components/logo"
+import {GaugeChart}  from '../../components/charts';
 
 export function Dashboard_Mockup() {
   return (

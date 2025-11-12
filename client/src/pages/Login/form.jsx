@@ -1,9 +1,9 @@
 import React, { useState,useRef } from 'react'
 import {User,Lock} from "lucide-react"
 import { colors } from "./../../utils/colors"
-import * as Logo from "../../components/Global/logo"
+import * as Logo from "../../components/logo"
 
-export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef}) {
+export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef,status}) {
     
 
   return (
@@ -45,17 +45,14 @@ export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef
         
             
             <div className="w-1/2 mt-12">
-                <button  className="btn-p-full" type="submit">Login</button>
+                <button  className="btn-p-full" type="submit">{status === "loggingIn" ? "Logging In" : "Login"}</button>
             </div>
 
             <ol className="successMsgBox mt-4">
                 {errorMsg.server && <p className="justify-start text-sm bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg">{errorMsg.server}</p>}
                 {errorMsg.message && <p className="justify-start text-sm bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg">{errorMsg.message}</p>}
                 {successMsg && <p className="formMsg succMsg text-sm  bg-green-50 border-1 border-green-200 px-4 py-1 rounded-lg">{successMsg}</p>}
-            </ol>
-
-            <div className="form_box social_login_box"></div>
-            
+            </ol>            
         </ul>
     
 

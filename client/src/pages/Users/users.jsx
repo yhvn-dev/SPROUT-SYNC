@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import axios, { all } from "axios";
 import * as userService from "../../data/userService"
-import { Sidebar } from "../../components/Global/sidebar"
-import { Db_Header } from "../../components/Global/db_header"
+import { Sidebar } from "../../components/sidebar"
+import { Db_Header } from "../../components/db_header"
 import { Workspace } from "./workspace"
 
-import { Welcome_box } from '../../components/Global/welcome_box';
+import { Welcome_box } from '../../components/welcome_box';
 import { UserInsights } from './userInsights';
 
 import "./users.css"
@@ -67,10 +67,8 @@ function Users() {
 
       }catch(err){
         console.error("Error Fetching Status Data")
-      }
-      
+      }  
     }
-
 
   useEffect(() =>{
     fetchUser();
