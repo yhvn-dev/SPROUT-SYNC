@@ -13,7 +13,7 @@ export const generateAccessToken = (user) => {
       token_version:user.token_version    
     },    
      process.env.ACCESS_TOKEN_SECRET,         // secret
-    { expiresIn: "30m" }                 
+    { expiresIn: "1m" }                 
   );
 };
 

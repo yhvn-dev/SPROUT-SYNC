@@ -1,16 +1,16 @@
 import { useState, useEffect } from 'react';
-import { Droplets, Sun, Wind, Activity, TrendingUp, Menu, X } from 'lucide-react';
+import { Droplets, Sun, Wind, Menu, X } from 'lucide-react';
 import {Load_Logo} from "../../components/logo"
 
-import {Link} from "react-router-dom"
-import {Header} from "../../components/header"
-import {Dashboard_Mockup} from "./dashboard_mockup"
-import { Farm_Info_Section } from './form_info_section';
-import { Contact_Section } from './contact_section';
-import {Logo_Page} from "./logo_page"
-import {Footer} from "../../components/footer"
-
-
+import { Link } from "react-router-dom"
+import { Header } from "../../components/header"
+import { Dashboard_Mockup } from "./dashboard_mockup"
+import { FeatureSection } from './features_section';
+import { BenefitSection } from './benifits_section';
+import { Farm_Info_Section  } from './farm_info_section';
+import { Contact_Section  } from './contact_section';
+import { Logo_Page } from "./logo_page"
+import { Footer } from "../../components/footer"
 import "./home.css"
 function Home(){
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -30,8 +30,6 @@ function Home(){
 
   }, []);
   return (
-
-  
     <div className="min-h-screen bg-white overflow-x-hidden">
       
       {showLogo ? (
@@ -79,14 +77,12 @@ function Home(){
                   <a href="#contact" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Contact</a>
                 </div>
             )}
-
         </>
       }
       />
 
-
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden bg-white">
+      <section className="relative min-h-screen flex items-center pt-4 overflow-hidden bg-white">
         {/* Backdrop Blobs */}
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute top-20 -left-20 w-96 h-96 bg-[#E8F3ED] rounded-full blur-3xl opacity-60 animate-pulse"></div>
@@ -102,7 +98,7 @@ function Home(){
                 <span className="text-[#027c68] font-semibold text-sm">Smart Agriculture Solution</span>
               </div>
               
-              <h1 className="hook-txt-a text-6xl md:text-7xl lg:text-8xl font-bold text-[#003333] leading-none">
+              <h1 className="hook-txt-a text-6xl md:text-5xl lg:text-7xl font-bold text-[#003333] leading-none">
                 Nurture
                 <br/>
                   <span className="text-[var(--sancgb)] font-bold">
@@ -112,32 +108,32 @@ function Home(){
                 Effortlessly
               </h1>
                 
-              <p className="text-xl text-[#5A8F73] leading-relaxed max-w-lg">
+              <p className="text-lg text-[#5A8F73] leading-relaxed max-w-lg">
                 Revolutionize your farming with our intelligent automatic plant watering system. Monitor soil moisture, temperature, humidity, pH levels, and water levels in real-time.
               </p>
 
               <div className="flex flex-wrap gap-4">
-                <button className="px-8 py-4 bg-gradient-to-r from-[#027c68] to-[#009983] text-white rounded-2xl font-semibold text-lg hover:shadow-2xl transition-all transform hover:-translate-y-1">
+                <button className="px-4 py-2 bg-gradient-to-r from-[#027c68] to-[#009983] text-white rounded-2xl font-semibold text-lg hover:shadow-2xl transition-all transform hover:-translate-y-1">
                   Explore Dashboard
                 </button>
-                <button className="px-8 py-4 border-2 border-[#7BA591] text-[#003333] rounded-2xl font-semibold text-lg hover:bg-[#E8F3ED] transition-all">
+                <button className="px-4 py-2  border-2 border-[#7BA591] text-[#003333] rounded-2xl font-semibold text-lg hover:bg-[#E8F3ED] transition-all">
                   Learn More
                 </button>
               </div>
 
               <div className="flex items-center gap-8 pt-4">
                 <div>
-                  <div className="text-3xl font-bold text-[#027c68]">24/7</div>
+                  <div className="text-2xl font-bold text-[#027c68]">24/7</div>
                   <div className="text-sm text-[#5A8F73]">Monitoring</div>
                 </div>
                 <div className="w-px h-12 bg-[#C4DED0]"></div>
                 <div>
-                  <div className="text-3xl font-bold text-[#027c68]">100%</div>
+                  <div className="text-2xl font-bold text-[#027c68]">100%</div>
                   <div className="text-sm text-[#5A8F73]">Automated</div>
                 </div>
                 <div className="w-px h-12 bg-[#C4DED0]"></div>
                 <div>
-                  <div className="text-3xl font-bold text-[#027c68]">Smart</div>
+                  <div className="text-2xl font-bold text-[#027c68]">Smart</div>
                   <div className="text-sm text-[#5A8F73]">Analytics</div>
                 </div>
               </div>
@@ -179,12 +175,8 @@ function Home(){
                       </div>
                     </div>
 
-                    
-
+                
                   </div>
-
-
-
                 </div>
               </div>
               
@@ -194,127 +186,13 @@ function Home(){
         </div>
       </section>
 
-      {/* Features Section */}
-      <section id="features" className="py-24 bg-gradient-to-b from-white to-[#E8F3ED]">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-bold text-[#003333] mb-6">
-              Intelligent Monitoring
-            </h2>
-            <p className="text-xl text-[#5A8F73] max-w-2xl mx-auto">
-              Our system tracks critical environmental factors to ensure optimal plant growth conditions
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {[
-              {
-                icon: Droplets,
-                title: 'Soil Moisture',
-                description: 'Real-time soil moisture monitoring ensures plants receive the perfect amount of water',
-                color: '#027c68',
-                bg: '#E8F3ED'
-              },
-              {
-                icon: Sun,
-                title: 'Temperature',
-                description: 'Track ambient and soil temperature to maintain ideal growing conditions',
-                color: '#b0e892',
-                bg: '#f0f9e8'
-              },
-              {
-                icon: Wind,
-                title: 'Humidity Levels',
-                description: 'Monitor air humidity to prevent disease and optimize plant health',
-                color: '#7BA591',
-                bg: '#E8F3ED'
-              },
-              {
-                icon: Activity,
-                title: 'pH Balance',
-                description: 'Continuous pH level tracking ensures nutrient absorption efficiency',
-                color: '#009983',
-                bg: '#E8F3ED'
-              },
-              {
-                icon: Droplets,
-                title: 'Water Level',
-                description: 'Smart water reservoir monitoring with automatic refill alerts',
-                color: '#5A8F73',
-                bg: '#E8F3ED'
-              },
-              {
-                icon: TrendingUp,
-                title: 'Growth Analytics',
-                description: 'Historical data analysis to optimize watering schedules and patterns',
-                color: '#027c68',
-                bg: '#E8F3ED'
-              }
-            ].map((feature, index) => (
-              <div key={index} className="group bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-[#E8F3ED]">
-                <div 
-                  className="w-16 h-16 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform"
-                  style={{ backgroundColor: feature.bg }}
-                >
-                  <feature.icon className="w-8 h-8" style={{ color: feature.color }} />
-                </div>
-                <h3 className="text-2xl font-bold text-[#003333] mb-4">{feature.title}</h3>
-                <p className="text-[#5A8F73] leading-relaxed">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <Dashboard_Mockup/>
-
-    
-
-
-
-      {/* Benefits Section */}
-      <section className="py-24 bg-white">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-bold text-[#003333] mb-6">
-              Why Choose GreenLink
-            </h2>
-            <p className="text-xl text-[#5A8F73] max-w-2xl mx-auto">
-              Transform your agricultural practices with data-driven automation
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-3xl p-8 shadow-lg">
-              <div className="text-6xl font-bold text-[#027c68] mb-4">30%</div>
-              <h3 className="text-2xl font-bold text-[#003333] mb-3">Water Savings</h3>
-              <p className="text-[#5A8F73]">Reduce water consumption through precise, need-based irrigation</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-3xl p-8 shadow-lg">
-              <div className="text-6xl font-bold text-[#027c68] mb-4">25%</div>
-              <h3 className="text-2xl font-bold text-[#003333] mb-3">Yield Increase</h3>
-              <p className="text-[#5A8F73]">Optimal growing conditions lead to healthier, more productive plants</p>
-            </div>
-
-            <div className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-3xl p-8 shadow-lg">
-              <div className="text-6xl font-bold text-[#027c68] mb-4">50%</div>
-              <h3 className="text-2xl font-bold text-[#003333] mb-3">Time Saved</h3>
-              <p className="text-[#5A8F73]">Automation reduces manual monitoring and irrigation tasks</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
+        <FeatureSection/>
+        <Dashboard_Mockup/>
         <Farm_Info_Section/>
-        <Contact_Section/>
+        <BenefitSection/>
         <Logo_Page/>
-        <Footer/>
-
-          
-          </>
-
-
+        <Footer/>     
+      </>
       )}
        
    

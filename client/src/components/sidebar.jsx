@@ -2,7 +2,7 @@ import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Logout } from "./logout";
 import { LogoutModal } from "./logoutModal";
-import {User,LayoutPanelTop,ChartNoAxesCombined,LogOut} from "lucide-react"
+import {User,LayoutPanelTop,ChartNoAxesCombined,Cable} from "lucide-react"
 import * as Logo from "../components/logo"
 
 
@@ -65,9 +65,23 @@ export function Sidebar() {
         <ChartNoAxesCombined  className="mx-1" strokeWidth={1.5} size={18}/>
           <p className="text-sm mr-2">Analytics</p>
         </NavLink>    
+
+
+        <NavLink
+          to="/device_management"
+          className={({ isActive }) =>
+            `flex justify-start items-center gap-2 py-1 transition-colors duration-300 rounded-[10px]  px-2 my-2 w-full
+              ${
+                isActive
+                  ? "text-white bg-[var(--sancgb)] shadow-lg"
+                  : "text-[var(--acc-darkb)] hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)] "
+              }`
+          }>
+            
+        <Cable className="mx-1" strokeWidth={1.5} size={22}/>
+          <p className="text-sm mr-2">Device Management</p>
+        </NavLink>    
       </div>
-
-
 
       {/* Logout Section */}
       <div className="flex items-center justify-start flex-col w-full h-[50%]  ">

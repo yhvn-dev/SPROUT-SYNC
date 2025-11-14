@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react'
-import axios, { all } from "axios";
+import axios from "axios";
 import * as userService from "../../data/userService"
 import { Sidebar } from "../../components/sidebar"
 import { Db_Header } from "../../components/db_header"
 import { Workspace } from "./workspace"
-
 import { Welcome_box } from '../../components/welcome_box';
 import { UserInsights } from './userInsights';
 
 import "./users.css"
-
-
 function Users() {
   const [user,setUser] = useState(false)
   const [chartData,setChartData] = useState({count: {total_users:0}, roleCount: []})
@@ -23,9 +20,8 @@ function Users() {
   // Fetch Login User
   const fetchUser =  async () =>{
     try{
-      const res = await axios.get("http://localhost:5000/users/me",
-        {headers:{Authorization:`Bearer ${token}`}})
-        setUser(res.data)
+        const loggedUser = await userService.fetchLoggedUser()
+        setUser(loggedUser)
     }catch(err){
       console.error("Error Fetching Users")
     }
@@ -105,8 +101,6 @@ function Users() {
             <label htmlFor="">Search  For Users</label>
           </div>    
         </>}
-          
-        user={user}
         />
   
       <Sidebar

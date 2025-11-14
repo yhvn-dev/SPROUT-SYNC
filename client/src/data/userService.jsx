@@ -1,5 +1,8 @@
-import { Return } from "three/tsl";
 import api from "../utils/api";
+import axios from "axios"
+const API_BASE_URL = "http://localhost:5000";
+
+
 
 
 export const fetchAllUsers = async () => {
@@ -10,6 +13,19 @@ export const fetchAllUsers = async () => {
         console.err("Error Fetching Users",err);
         throw err
     }
+}
+
+export const fetchLoggedUser = async () => {
+  try {
+    const token = localStorage.getItem("accessToken")
+    const res = await axios.get(`${API_BASE_URL}/users/me`, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return res.data; 
+  } catch (error) {
+    console.error("Error Fetching Users", error);
+    throw error;
+  }
 }
 
 export const getUsersCount = async () =>{
@@ -107,21 +123,18 @@ export const updateUsers = async (selectedUser,data,setAllUsers) =>{
 }
 
 
-export const deleteUsers = async (selectedUser,setAllUsers) => {
+export const deleteUsers = async (selectedUser) => {
 
     if (!selectedUser) { console.error("No user selected for delete"); return;
     }
 
     try{
 
-    console.log("Deleting user:", selectedUser); 
-    const res = await api.delete(`/users/${selectedUser}`);
-    console.log("User Deleted Successfully");
+        console.log("Deleting user:", selectedUser); 
+        const res = await api.delete(`/users/${selectedUser}`);
+        console.log("User Deleted Successfully");
 
-    setAllUsers((prev) =>
-        prev.filter((u) => u.user_id !== selectedUser.user_id));
-
-    return res.data
+        return res.data
 
     } catch (err) {
         console.error("Error Deleting Users:",

@@ -1,4 +1,4 @@
-import axios from "axios"
+import * as userService from "../../data/userService"
 import { Sidebar } from "../../components/sidebar"
 import { Db_Header } from "../../components/db_header"
 import { Quick_Stats } from "./quick_stats" 
@@ -6,7 +6,6 @@ import { Workspace } from "./workspace"
 import { Welcome_box } from "../../components/welcome_box"
 import { ThresholdModal } from "./thresholdModal"
 import { Droplets, Sun, Wind, Activity } from 'lucide-react';
-
 
 import "./dashboard.css"
 import "./dashboard_responsive.css"
@@ -19,7 +18,6 @@ const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
   const rotation = (percentage / 100) * 180 - 90;
   
 
-  
   return (
     <div className="flex flex-col items-center justify-center h-full">
       <div className="relative w-32 h-32">
@@ -53,25 +51,19 @@ function Dashboard() {
   const [user,setUser] = useState(null);
   const [activeBed, setActiveBed] = useState("bed_1")
   const [isOpenTModal,setOpenTModal] = useState(false);
-
-  const token = localStorage.getItem("accessToken")
   
-  console.log("MODAL STATUS",isOpenTModal)
-
   useEffect(() =>{
-    const fetchUser = async () =>{
+    fetchUser() 
+  },[])
+
+  const fetchUser = async () =>{
       try{
-        const res = await axios.get("http://localhost:5000/users/me",{
-          headers:{Authorization : `Bearer ${token}`}
-        })  
-        console.log(res.data)
-        setUser(res.data)
+        const loggedUser = await userService.fetchLoggedUser()
+        setUser(loggedUser)
       }catch(err){
         console.error(err);
       }
     }
-    fetchUser() 
-  },[token])
 
 
   return (
@@ -90,16 +82,12 @@ function Dashboard() {
           />
 
           <Db_Header
-            left={
-                <>
-                </>
-            }   
+          
               input={               
                 <>
                 <input type="text" placeholder='' className='border-[1px] border-[var(--acc-darkc)] rounded-2xl px-4'/>
                 <label>Search For Readings</label>
-              </>} 
-            user={user}/>
+              </>}/>
          
           <Sidebar/>  
 

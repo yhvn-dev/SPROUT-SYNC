@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard/dashboard.jsx";
 import Users from "./pages/Users/users.jsx"
 import Analytics from './pages/Analytics/analytics.jsx';
 import ControlPanel from "./pages/ControlPanel/control_panel.jsx"
+import DeviceManagement from "./pages/DeviceManagement/deviceManagement.jsx"
 
 
 import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";
@@ -30,7 +31,7 @@ function App() {
               <Route path='/users' element={<ProtectedRoute> <Users/> </ProtectedRoute>} />
               <Route path='/analytics' element={<ProtectedRoute> <Analytics/> </ProtectedRoute>}/> 
               <Route path='/control_panel' element={<ProtectedRoute> <ControlPanel/> </ProtectedRoute>}/>
-
+              <Route path="/device_management" element={<ProtectedRoute> <DeviceManagement/> </ProtectedRoute>}/>
           </Routes>
 
         </BrowserRouter>

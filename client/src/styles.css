@@ -171,6 +171,9 @@ button{
 .center-tr{
       @apply flex items-start justify-start;
 }
+.center-l{
+      @apply flex items-center justify-start;
+}
 .center-r{
       @apply flex items-center justify-start;
 }
