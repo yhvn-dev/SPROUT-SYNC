@@ -70,7 +70,7 @@ function Dashboard() {
     <>
         <section className="bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] page dashboard 
         grid grid-cols-[12fr_30fr_48fr_10fr] grid-rows-[8vh_30vh_57vh] gap-4 
-        h-[100vh] w-[100%] gap-x-4 overflow-y-auto  relative">
+        h-[100vh] w-[100%] gap-x-4 overflow-y-auto relative">
 
           <Welcome_box
             text={

@@ -1,32 +1,59 @@
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import { Db_Header } from '../../components/db_header';
 import { Sidebar } from '../../components/sidebar';
 
 import BedsScreen from './bedsScreen';
-import SensorsScreen from './sensorsScreen';
+import ViewBedDetails from './viewBedDetails';
 import BedModal from './bedsModal';
+import SensorModal from "./sensorModal"
 
+import * as bedService from "../../data/bedServices"
+import { fetchLoggedUser } from '../../data/userService';
 
 // Main Component
 const DeviceManagement = () => {
   const [activeTab, setActiveTab] = useState('beds');
+
   const [bed,setBedData] = useState([])
-  const [open,setOpen] = useState(false)
-  const [mode,setMode] = useState("")
+  const [openBed,setOpenBed] = useState(false)
+  const [bedMode,setBedMode] = useState("")
+  const [selectedBed,setSelectedBed] = useState([])
+  
+  const [openSensor,setOpenSensor] = useState(false)
+  const [sensorMode,setSensorMode] = useState("")
+  const [selectedSensor,setSelectedSensor] = useState([])
 
-  const COLORS = [
-    'var(--ptl-greena)',
-    'var(--ptl-greenb)',
-    'var(--ptl-greenc)',
-    'var(--ptl-greend)',
-    'var(--ptl-greene)',
-    'var(--sage)',
-    'var(--sage-medium)'
-  ];
+  const [user,setUser] = useState(null);
+  
+      useEffect(() =>{ 
+        fetchUser() 
+       },[])
+  
+      const fetchUser = async () =>{
+        try{
+          const loggedUser = await fetchLoggedUser()
+          setUser(loggedUser)
+        }catch(err){
+          console.error(err);
+        }
+    }
 
+  useEffect(() =>{
+    loadBedData()
+  },[])
+
+  const loadBedData = async () =>{
+    try{
+        const data = await bedService.fetchAllBeds()
+        console.log("BED DATA",data)
+        setBedData(data)
+    }catch(err){
+        console.error(err)
+    }
+  }
 
   return (
-    <section className="grid grid-cols-[12fr_30fr_58fr] grid-rows-[8vh_90vh] 
+    <section className="grid grid-cols-[12fr_30fr_58fr] grid-rows-[8vh_88vh] 
     h-[100vh] w-[100%] gap-4 overflow-y-auto relative 
     bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
         
@@ -37,7 +64,7 @@ const DeviceManagement = () => {
             <label>Search For Beds</label>
             </>}
         />
-         
+  
       <Sidebar />
       
       
@@ -46,7 +73,6 @@ const DeviceManagement = () => {
             
         
         <div className='w-full py-4 row-start-2 row-end-2 col-start-2 col-span-full center '>
-
             <nav className='center-l h-full w-1/2'>        
                 <button
                     onClick={() => setActiveTab('beds')}
@@ -58,7 +84,7 @@ const DeviceManagement = () => {
                     Beds
                 </button>
                 <button
-                    onClick={() => setActiveTab('sensors')}
+                    onClick={() => setActiveTab('view_details')}
                     className={`px-4 py-2 rounded-lg text-sm font-medium ml-2 transition-all ${
                     activeTab === 'sensors'
                         ? 'bg-white text-[#027c68] shadow-md' 
@@ -75,25 +101,43 @@ const DeviceManagement = () => {
                     Manage and monitor all connected devices, including beds and sensors, within your automated watering system      
                 </p>
             </div>
-
-
         </div>
             
-    
-        {/* Beds Tab */}
-        {activeTab === 'beds' && (
-        <BedsScreen setOpen={setOpen} onClose={setOpen} setMode={setMode} />
-        )}
+          {/* Beds Tab */}
+          {activeTab === 'beds' && (
+          <BedsScreen  
+          setOpenBed={setOpenBed} onBedClose={setOpenBed} setBedMode={setBedMode} setSelectedBed={setSelectedBed} bed={bed}
+          setOpenSensor={setOpenSensor}  setSensorMode={setSensorMode}
+          
+          />
+          )}
 
-        {/* Sensors Tab */}
-        {activeTab === 'sensors' && (
-          <SensorsScreen/>
-        )}
+          {/* Sensors Tab */}
+          {activeTab === 'view_details' && (
+            <ViewBedDetails/>
+          )}
+
       </main>
 
-    {open && <BedModal isOpen={setOpen} onClose={() => setOpen(false)} mode={mode}/>}
-        
+     {openBed && 
+     <BedModal 
+     isBedOpen={setOpenBed} 
+     onBedClose={() => setOpenBed(false)} 
+     bedMode={bedMode} 
+     selectedBed={selectedBed}
+     loadBedData={loadBedData}
+     />}
 
+    {openSensor  && 
+    <SensorModal
+      isSensorOpen={setOpenSensor}
+      onSensorClose={() => setOpenSensor(false)}
+      sensorMode={sensorMode}
+    />}
+
+
+
+  
     </section>
   );
 };

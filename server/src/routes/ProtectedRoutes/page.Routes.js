@@ -11,6 +11,8 @@ const router = express.Router()
     );
 
     router.get("/users",verifyAccessToken)
+    router.get("/analytics",verifyAccessToken)
+    router.get("/device_analytics",verifyAccessToken)
 
 
     

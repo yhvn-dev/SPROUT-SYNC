@@ -13,22 +13,20 @@ export const fetchAllBeds = async () => {
 
 export const insertBeds = async (data) =>{
     try{
-        const res = await api.post("/beds/post/beds",[data]);
-        console.log("API",res)
-        return res        
+        const res = await api.post("/beds/post/beds",data);
+        const beds = res.data.data
+        return beds        
     }catch(err){
         throw err
     }
 } 
 
-export const updateBeds = async (bedData,bedID) =>{
-
-    if(!selectedUser){console.error("No user selected for update"); }
+export const updateBeds = async (bedData,bed_id) =>{
 
     try{
-        const res = await api.put("/beds/put/beds",[bedData,bedID]);
-        console.log("UPDATED DATA",res)
-        return res
+        const res = await api.put(`/beds/put/beds/${bed_id}`,bedData);
+        const beds = res.data.data
+        return beds        
     }catch(err){
         console.error("Error Updating Users",err)
         throw err
@@ -36,15 +34,15 @@ export const updateBeds = async (bedData,bedID) =>{
 }
 
 
-export const deleteUsers = async (selectedUser,setAllUsers) => {
 
-    if (!selectedUser) { console.error("No user selected for delete"); return;
 
-    }
+export const deleteBed = async (bed_id) => {
+
     try{
-
+        console.log(bed_id)
+        await api.delete(`beds/delete/beds/${bed_id}`)
     } catch (err) {
         console.error("Error Deleting Beds")
-    }z
+    }
 };
 

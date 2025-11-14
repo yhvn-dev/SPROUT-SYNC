@@ -1,137 +1,200 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { X, Plus, Edit,Delete } from "lucide-react";
+import * as bedService from "../../data/bedServices"
 
-function BedModal({ isOpen,onClose, mode}) {
+function BedModal({ isBedOpen,onBedClose,bedMode,selectedBed,loadBedData}) {
+  const [formData,setFormData] = useState({bed_number:"",
+                                          bed_code:"",
+                                          bed_name:"",
+                                          location:"",
+                                          status:"",
+                                          hysteresis:""})
+                                          
+    useEffect(() =>{
+        if(bedMode === "insert"){
+            setFormData({bed_number:"",
+                        bed_code:"",
+                        bed_name:"",
+                        location:"",
+                        status:"",
+                        hysteresis:""})
+        }else{
+            setFormData({bed_number:selectedBed.bed_number,
+                        bed_code:selectedBed.bed_code,
+                        bed_name:selectedBed.bed_name,
+                        location:selectedBed.location,
+                        status:selectedBed.status,
+                        hysteresis:selectedBed.hysteresis})
+        }
+    },[isBedOpen,bedMode,onBedClose])
 
- if(!isOpen) return null
+    const handleChange = (e) =>{
+        const {name,value} = e.target
+
+        setFormData(prev =>({
+            ...prev,[name]:value
+        }))
+    }
+
+    const handleSubmit = async (e) =>{
+        e.preventDefault()
+        try {
+            if(bedMode === "insert"){
+                await bedService.insertBeds(formData)
+                loadBedData()
+                isBedOpen(false)
+            }else if(bedMode === "update"){             
+                const bed = await bedService.updateBeds(formData,selectedBed.bed_id)
+                loadBedData()
+                isBedOpen(false)
+                console.log(bed)
+            }else{
+                await bedService.deleteBed(selectedBed.bed_id)
+                loadBedData()
+                isBedOpen(false)
+            }
+        } catch (error) {
+            console.error("Submit Error")
+        }
+    }
+
+               
+  if(!isBedOpen) return null
 
   return (
-    <div className="fixed column inset-0 z-50 flex items-center justify-center ">
+    <div className="fixed column inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-2xl ">
 
-        <main className={`rounded-xl overflow-hidden column bg-white  ${mode === "insert" || mode === "update" ? "w-[45%]" : "h-[40%]"   } ` }>
-        
+        <main className={`rounded-xl overflow-hidden column bg-white  
+            ${bedMode  === "insert" || bedMode === "update" ? "w-[45%]" : "h-[40%]"   } ` }>
              {/* Header */}
             <header className="flex items-center justify-between p-6 bg-[var(--sage-light)] rounded-t-xl">
             <div className="flex items-center gap-3">
-                {mode === "insert" ? <Plus/> : mode === "update" ? <Edit/> : <Delete fill="rgb(53,53,53,0.2)" stroke="white"/>}
+                {bedMode === "insert" ? <Plus stroke="white"/> : bedMode  === "update" ? <Edit stroke="white"/> : <Delete fill="rgb(53,53,53,0.2)" stroke="white"/>}
                 <h2 className="text-xl font-semibold text-white">
-                {mode === "insert" ? "Add New Bed" : mode === "update" ?  "Update Bed" : "Delete Bed"}
+                {bedMode  === "insert" ? "Add New Bed" 
+                : bedMode  === "update" ?  "Update Bed" 
+                : "Delete Bed"}
                 </h2>
             </div>
 
             <button
-                onClick={onClose}
+                onClick={onBedClose}
                 className="text-white hover:bg-white/20 rounded-lg p-1 transition-colors">
                 <X className="w-6 h-6" />
             </button>
             </header>
 
-            {mode === "delete" ? (
-                <>
+            {bedMode  === "delete" ? (
                 <div className="full flex items-start flex-col justify-center p-8 rounded-xl">
                     <p>Are you sure you want to delete this bed?</p>  
                     <div className="center-l full ">
-                        <button onClick={onClose} className="flex-1 mx-4 px-4 py-2.5 bg-[var(--sage-lighter)] text-[var(--ptl-greenh)] rounded-lg hover:bg-[var(--sage-light)] transition-colors font-semibold text-[0.9rem]">Cancel</button>       
-                        <button className={`flex-1 mx-4 px-4 py-2.5              
+                        <button onClick={onBedClose} className="flex-1 mx-4 px-4 py-2.5 bg-[var(--sage-lighter)] text-[var(--ptl-greenh)] rounded-lg hover:bg-[var(--sage-light)] transition-colors font-semibold text-[0.9rem]">Cancel</button>       
+                        <button onClick={handleSubmit} type="button" className={`flex-1 mx-4 px-4 py-2.5              
                     text-white rounded-lg bg-[var(--color-danger-b)] hover:shadow-lg transition-all font-semibold text-[0.9rem]`}>Delete</button>       
                     </div>                
-                </div>
-              
-             
-                </>
-              
-            
-            ):(
-            <>
+                </div>        
+            ) :
+            (
+                <>      
+            {/* Bed Form */}
+            <form  className="grid grid-cols-2 grid-rows-[8fr_2fr] p-6 space-y-4">   
 
-            {/* Form */}
-            <form className="bg-white p-6 space-y-4">               
-                {/* Bed Name */}
-                <div>
-                    <label className="block text-sm font-semibold text-[var(--ptl-greenh)] mb-2">
-                    Bed Name
-                    </label>
-                    <input
-                    type="text"
-                    name="bed_name"
+                <div className="flex items-center justify-evenly flex-col full col-start-1 col-end-1 row-start-1 row-end-1 p-4">
+    
+                    {/* Bed Number */}
+                    <div className="form_box input-box relative center">                  
+                        <input
+                        type="text"
+                        name="bed_number"
+                        onChange={handleChange}
+                        value={formData.bed_number}                           
+                        className="w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
+                        placeholder=""/>
+                        <label className="absolute text-sm px-4 pointer-events-none left-0  text-[var(--acc-darkc)]">Bed Number</label>
+                    </div>
+                        
+                    {/* Bed Code */}
+                    <div className="form_box input-box relative center">                
+                        <input
+                        type="text"
+                        name="bed_code"
+                        onChange={handleChange}      
+                        value={formData.bed_code}                                         
+                        className="w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
+                        placeholder=""/>
+                        <label className="absolute text-sm px-4 pointer-events-none left-0 text-[var(--acc-darkc)]">Bed Code</label>
+                    </div>
+
+                    {/* Bed Name */}
+                    <div className="form_box input-box relative center">                  
+                        <input
+                        type="text"
+                        name="bed_name"   
+                        onChange={handleChange}         
+                        value={formData.bed_name}                        
+                        className="w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
+                        placeholder=""/>
+                        <label className="absolute text-sm px-4 pointer-events-none left-0  text-[var(--acc-darkc)]">Bed Name</label>
+                    </div>                        
+                </div>
+
                 
-                    required
-                    className="w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
-                    placeholder="Enter bed name"
-                    />
-                </div>
+                <div className="flex items-center justify-evenly flex-col  full p-4 col-start-2 col-end-2 row-start-1 row-end-1">
 
-                {/* Location */}
-                <div>
-                    <label className="block text-sm font-semibold text-[var(--ptl-greenh)] mb-2">
-                    Location
-                    </label>
-                    <input
-                    type="text"
-                    name="location"
-            
-                    required
-                    className="w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
-                    placeholder="Enter location"
-                    />
-                </div>
-
-                {/* Hysteresis */}
-                <div>
-                    <label className="block text-sm font-semibold text-[var(--ptl-greenh)] mb-2">
-                    Hysteresis
-                    </label>
-                    <input
-                    type="number"
-                    name="hysteresis"
-                
-                    required
-                    step="0.1"
-                    className="w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
-                    placeholder="Enter hysteresis value"
-                    />
-                </div>
-
-                {/* Status Toggle */}
-                <div className="flex items-center justify-between p-4 bg-[var(--sage-lighter)] rounded-lg">
-                    <label className="text-sm font-semibold text-[var(--ptl-greenh)]">
-                    Active Status
-                    </label>
-                    <label className="relative inline-flex items-center cursor-pointer">
-                    <input
-                        type="checkbox"
-                        name="is_active"
+                    {/* Location */}
+                    <div className="form_box input-box relative center">                   
+                        <input
+                        type="text"
+                        name="location" 
+                        onChange={handleChange}    
+                        value={formData.location}                         
+                        className="w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
+                        placeholder=""/>
+                        <label className="absolute text-sm px-4 pointer-events-none left-0 text-[var(--acc-darkc)]">Location</label>
+                    </div>
                     
-                        className="sr-only peer"
-                    />
-                    <div className="w-11 h-6 bg-gray-300 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[var(--ptl-greena)]/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[var(--ptl-greenb)]"></div>
-                    </label>
+                    {/* Hysteresis */}
+                    <div className="relative center">                      
+                        <input
+                        type="number"
+                        name="hysteresis"  
+                        onChange={handleChange}    
+                        value={formData.hysteresis}                      
+                        step="0.1"
+                        className="w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
+                        placeholder="Hysteresis"/>                    
+                    </div>
+
+                    {/* Status Toggle */}
+                    <div className="flex items-center justify-between  p-2 bg-[var(--sage-lighter)] rounded-lg">                            
+                        <p>Status</p>
+                    </div>
+
                 </div>
+
 
                 {/* Action Buttons */}
-                <div className="flex gap-3 pt-4">
+                <div className="flex items-center justify-end col-start-1 col-span-full gap-3 pt-4">
                     <button
-                    type="button"
-                    onClick={onClose}
-                    className="flex-1 px-4 py-2.5 bg-[var(--sage-lighter)] text-[var(--ptl-greenh)] rounded-lg hover:bg-[var(--sage-light)] transition-colors font-semibold text-[0.9rem]"
-                    >
-                    Cancel
+                        type="button"
+                        onClick={onBedClose}
+                        className=" px-4 py-2.5 bg-[var(--sage-lighter)] text-[var(--ptl-greenh)] rounded-lg hover:bg-[var(--sage-light)] transition-colors font-semibold text-[0.9rem]">
+                        Cancel
                     </button>
                     
                     <button
-                    type="button"
-
-                    
-                    className={`flex-1 px-4 py-2.5 
-                    ${mode === "insert" ? "bg-gradient-to-r from-[var(--ptl-greenb)] to-[var(--ptl-greenc)]" : 
+                    type="submit"  
+                    onClick={handleSubmit}               
+                    className={` px-4 py-2.5 
+                    ${bedMode === "insert" ? "bg-gradient-to-r from-[var(--ptl-greenb)] to-[var(--ptl-greenc)]" : 
                     "bg-gradient-to-r from-[var(--white-blple--)] to-[var(--purpluish--)]" }
                     text-white rounded-lg hover:shadow-lg transition-all font-semibold text-[0.9rem]`}
                     >
-                    {mode === "insert" ? "Add Bed" : "Update Bed"}
+                    {bedMode  === "insert" ? "Add Bed" : "Update Bed"}
                     </button>
                 </div>
             </form>
-            </>
+             </>
             )}
 
 

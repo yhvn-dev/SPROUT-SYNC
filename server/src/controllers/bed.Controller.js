@@ -26,7 +26,6 @@ export const selectBed = async (req, res) => {
     console.error(`CONTROLLER:`, err);
     res.status(500).json({ message: `CONTROLLER: Error Selecting Bed` });
   }
-
 };
 
 export const insertBeds = async (req, res) => {
@@ -45,18 +44,30 @@ export const insertBeds = async (req, res) => {
 
 export const updateBeds = async (req, res) => {
   try {
-    const {bed_id} = req.params
-    const bedData = req.body
-    const bed = await bedModel.createBed(bedData,bed_id)
-    console.log(bed)   
-    res.status(200).json({message:"Bed Feteched Succesfully",data:bed})
+    const { bed_id } = req.params;
+    const bedData = req.body;
+
+    if(!bed_id) { return res.status(201).json({error:"Bed Id Doesn't Exist"})}
+
+    const existingBed = await bedModel.readBed(bed_id)
+    if(!existingBed) { return res.status(201).json({error:"Bed Doesn't Exist"})}
+
+    const bed = await bedModel.updateBed(bedData, bed_id);
+    return res.status(200).json({
+      message: "Bed Updated Successfully",
+      data: bed
+    });
+
   } catch (err) {
     console.error(`CONTROLLER:`, err);
-    res.status(500).json({ message: `CONTROLLER: Error Updating Beds`, err });
+    return res.status(500).json({
+      message: "CONTROLLER: Error Updating Beds",
+      err
+    });
   }
 
+  
 };
-
 
 
 export const deleteBeds = async (req, res) => {

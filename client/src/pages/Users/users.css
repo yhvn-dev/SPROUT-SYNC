@@ -149,7 +149,6 @@ input{
     @apply flex items-center justify-center rounded-[10px] w-full h-full bg-[var(--pal2-whitea)];
     box-shadow:0px 5px 10px 2px var(--shad-alpha-e);
 }                   
-
     .input-error {
         border: 1px solid var(--color-danger-b);
     }
@@ -157,7 +156,3 @@ input{
         border: 2px solid var(--acc-darkc); 
     }
    
-.form-inp{
-    @apply border-2  border-[var(--acc-darkb)] ;
-    padding:0.1rem 0.6rem;
-}

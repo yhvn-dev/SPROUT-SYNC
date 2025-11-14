@@ -314,7 +314,6 @@ button{
 
 /* TEXT AND TITLES ================================================================== */
 
-
 .forms{
     box-shadow: 5px 5px 20px 1px var(--shad-alpha-d);
 }
@@ -333,9 +332,6 @@ button{
 
 
 /* FORM CONTAINERS */
-
-
-
 .form_box label{
    @apply absolute left-[4%] bg-white py-0 px-2 text-sm pointer-events-none text-[var(--acc-darkc)];
     top: 50%;
@@ -343,13 +339,12 @@ button{
     transform: translateY(-50%); 
 }
 
-
-.form_box svg{
-    @apply absolute top-[5px] right-4 w-5 h-5;
+.form_box svg{   @apply absolute top-[5px] right-4 w-5 h-5;
 }
+
 .form_box input:focus ~ label,
 .form_box input:not(:placeholder-shown) ~ label{
-    transform: translateY(-150%); font-size: var(--fns-default-down-0-6);
+    transform: translateY(-200%); font-size: var(--fns-default-down-0-6);
 }
 
 .succes_msg_pro{

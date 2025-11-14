@@ -8,7 +8,7 @@ export function Db_Header({input}) {
  
   useEffect(() =>{ 
       fetchUser() 
-      },[])
+  },[])
 
     const fetchUser = async () =>{
       try{

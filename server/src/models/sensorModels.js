@@ -24,13 +24,13 @@ export const readBed = async (bed_id) =>{
 }
 
 
-export const createBed = async (bedData) =>{
+export const createBed = async (sensorData) =>{
     try {
-        const {bed_number,bed_code,bed_name,location,is_active,hysteresis} = bedData
+        const {bed_id,sensor_type,sensor_name,sensor_code,unit,status} = sensorData
         const { rows } = await query(`INSERT INTO beds 
             (bed_number,bed_code,bed_name,location,is_active,hysteresis) 
             VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
-            [bed_number,bed_code,bed_name,location,is_active,hysteresis]) 
+            [bed_id,sensor_type,sensor_name,sensor_code,unit,status]) 
         console.log("NEW BEDS:",rows)   
         return rows[0]
     } catch (err) {
@@ -39,7 +39,7 @@ export const createBed = async (bedData) =>{
     }
 }
 
-export const updateBed = async (bedData,bed_id) =>{
+export const updateBed = async (sensorData,sensor_id) =>{
     try {
         const {bed_number,bed_code,bed_name,location,is_active,hysteresis} = bedData
         const { rows } = await query(`UPDATE beds SET 
@@ -51,22 +51,22 @@ export const updateBed = async (bedData,bed_id) =>{
                                     hysteresis = $6 WHERE bed_id = $7
                                     RETURNING *`,  
                                     [bed_number,bed_code,bed_name,location,is_active,hysteresis,bed_id]) 
-        console.log("UPDATED BEDS:",rows)
+        console.log("UPDATED SENSORS:",rows)
         return rows[0]
     } catch (err) {
-         console.log(`MODELS: Error Updating beds ${err}`, )
+         console.log(`MODELS: Error Updating SENSORS ${err}`, )
         throw err
     }
 }
 
 
-export const deleteBed = async (bed_id) =>{
+export const deleteBed = async (sensor_id) =>{
     try {
-        const { rows } = await query("DELETE FROM beds WHERE bed_id = $1",[bed_id]) 
-        console.log("UPDATED BEDS:",rows)
+        const { rows } = await query("DELETE FROM sensors WHERE sensor_id = $1",[sensor_id]) 
+        console.log("UPDATED SENSORS:",rows)
         return rows[0]
     } catch (err) {
-         console.log(`MODELS: Error Creating beds ${err}`, )
+         console.log(`MODELS: Error Creating SENSORS ${err}`, )
         throw err
     }
 }

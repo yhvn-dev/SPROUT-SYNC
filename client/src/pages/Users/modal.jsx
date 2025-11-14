@@ -145,7 +145,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                           name='username'
                           value={username}
                           onChange={(e) => setUsername(e.target.value)} 
-                          className={`form-inp username`}
+                          className={`form-inp username w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]`}
                         />
                         <label>Username</label>
 
@@ -165,7 +165,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                           name='fullname'
                           value={fullname}
                           onChange={(e) => setFullname(e.target.value)} 
-                          className="form-inp fullname"/>
+                          className="form-inp fullname w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"/>
                         <label>Fullname</label>       
 
                         {errors.fullname && !fullname && (
@@ -182,7 +182,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                           name='email'
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="form-inp email"
+                          className="form-inp email w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
                         />
                         <label>Email</label> 
 
@@ -203,7 +203,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                           name='phone_number'
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
-                          className="form-inp phone_number"
+                          className="form-inp phone_number w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
                         />
                         <label>Phone Number</label>
                       </ul>
@@ -216,7 +216,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                           name='password'
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="form-inp password"
+                          className="form-inp password w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
                         />
                         <label>Password</label>
                         
@@ -236,14 +236,9 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                   
                         <img src={preview || Pfp} className='border-[3px]  
                         border-[var(--pal2-whiteb)] rounded-full profile-img 
-                        max-w-[10rem] max-h-[10rem] h-[8rem] w-[8rem]' alt={Pfp} width={200}/>
-                  
-                       
-                          <input type="file" className="bg-[var(--pal2-whiteb)] my-4 center px-10 py-1 text-sm" name="profile_picture"
-                          onChange={handleFileChanges}/>
-                         
-                     
-                
+                        max-w-[10rem] max-h-[10rem] h-[8rem] w-[8rem]' alt={Pfp} width={200}/>                             
+                          <input type="file" className="cursor-pointer  shadow-lg bg-[var(--pal2-whiteb)] my-4 center px-10 py-1 text-sm" name="profile_picture"
+                          onChange={handleFileChanges}/>                                          
                       </ul>
                   
                   
@@ -253,7 +248,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
   
                         <select 
                           name="status" 
-                          className="status rounded-[10px] p-h-0-6 nav-com w-full mx-2 my-4 px-2" 
+                          className="status rounded-[10px] p-1 nav-com w-full mx-2 my-4 px-2 text-sm" 
                           value={status} 
                           onChange={(e) => setStatus(e.target.value)}>
                           <option value="">Select Status</option>
@@ -263,7 +258,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                               
                         <select 
                           name="roles" 
-                          className="roles rounded-[10px] p-h-0-6 nav-com  w-full mx-2 my-4 px-2" 
+                          className="roles rounded-[10px] p-1 nav-com w-full mx-2 my-4 px-2 text-sm" 
                           value={role} 
                           onChange={(e) => setRole(e.target.value)}>
                           <option value="">Select Role</option>

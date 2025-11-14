@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import {Trash2,Pencil,DiamondPlus} from "lucide-react";
+
 import { Tooltip,  ResponsiveContainer,BarChart,CartesianGrid,XAxis,YAxis,Legend,Bar } from 'recharts';
 import {Plus} from "lucide-react"
-import * as bedService from "../../data/bedServices"
-import BedModal from "./bedsModal"
 
 const StatusBadge = ({ status }) => (
     <span className={`px-3 py-1 rounded-full text-xs font-medium ${
@@ -16,42 +15,32 @@ const StatusBadge = ({ status }) => (
 );
 
 
-function BedsScreen({setOpen,setMode}) {
-  const [bed,setBedData] = useState([])
-
-  useEffect(() =>{
-    loadBedData()
-  },[])
-
-  const loadBedData = async () =>{
-    try{
-        const data = await bedService.fetchAllBeds()
-        console.log("BED DATA",data)
-        setBedData(data)
-    }catch(err){
-        console.error(err)
-    }
-  }
-
-
+function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
+                    setOpenSensor
+                    }) {
+ 
   const handleOpenInsert = () => {
-    setMode("insert");
-    setOpen(true);
-    console.log("INSERT")
+    setBedMode("insert");
+    setOpenBed(true);
+    console.log("INSERT CLICKED")
   };
 
-   const handleOpenUpdate = () => {
-    setMode("update");
-    setOpen(true);
-    console.log("UPDATE")
+   const handleOpenUpdate = (value) => {
+    setBedMode("update");
+    setOpenBed(true);
+    setSelectedBed(value)
+    console.log("UPDATE CLICKED")
   };
 
- const handleOpenDelete = () => {
-    setMode("delete");
-    setOpen(true);
-    console.log("DELETE")   
+ const handleOpenDelete = (value) => {
+    setBedMode("delete");
+    setOpenBed(true);
+    setSelectedBed(value)
   };
 
+ const handleOpenSensor = (value) => {
+    setOpenSensor(true)
+  };
 
 
   return (
@@ -97,11 +86,12 @@ function BedsScreen({setOpen,setMode}) {
             </button>
         </div>
 
-
         <div className="overflow-x-auto">
             <table className="w-full">
             <thead className="bg-[var(--sage-light)]">
                 <tr>
+                    <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Bed Number</th>
+                    <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Bed Code</th>
                     <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Bed Name</th>
                     <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Location</th>
                     <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Status</th>
@@ -111,22 +101,24 @@ function BedsScreen({setOpen,setMode}) {
                 </tr>
             </thead>
 
-            
-
             <tbody className="divide-y divide-[var(--sage-lighter)]">
                 {bed.length > 0 && bed.map((b) =>{
                 return(
                     <tr key={b.bed_id}>
+                        <td className="p-8 text-[0.9rem] text-start break-words">{b.bed_number}</td>
+                        <td className="p-8 text-[0.9rem] text-start break-words">{b.bed_code}</td>
                         <td className="p-8 text-[0.9rem] text-start break-words">{b.bed_name}</td>
                         <td className="p-8 text-[0.9rem] text-start break-words">{b.location}</td>
                         <td className="p-8 text-[0.9rem] text-start break-words">{b.is_active === true ? "Active" : "Inactive"}</td>
                         <td className="p-8 text-[0.9rem] text-start break-words">{b.hysteresis}</td>
                         <td className="p-8 text-[0.9rem] text-start break-words">{b.created_at}</td>
-                        <td className="flex items-center justify-around h-full w-full p-8 text-[0.9rem] text-start break-words">
-                            <button onClick={handleOpenUpdate}
-                            className="u_btn shadow-lg bg-[var(--white-blple--)] text-white">UPDATE</button>
-                            <button onClick={handleOpenDelete}
-                            className="u_btn shadow-lg bg-[var(--color-danger-b)] text-white  ">DELETE</button>
+                        <td className="flex  items-center justify-between h-full w-full p-8 text-[0.9rem] text-start break-words">
+                            <button onClick={() => handleOpenSensor(b)}
+                                className="center px-3 py-2 rounded-lg mx-2 shadow-lg bg-[var(--color-warning-a)] hover:bg-amber-400 text-white"><DiamondPlus size={16}/></button>
+                            <button onClick={() => handleOpenUpdate(b)}
+                                className="center px-3 py-2 rounded-lg mx-2 shadow-lg bg-[var(--white-blple--)] hover:bg-blue-400 text-white"><Pencil size={16}/></button>
+                            <button onClick={() => handleOpenDelete(b)}
+                                className="center px-3 py-2 rounded-lg mx-2 shadow-lg bg-[var(--color-danger-b)] hover:bg-red-400 not-only-of-type: text-white"><Trash2 size={16}/></button>
                          </td> 
                     </tr>
                     )
