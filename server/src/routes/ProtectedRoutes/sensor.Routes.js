@@ -1,12 +1,12 @@
 import express from "express"
-import * as bedController from "../../controllers/bed.Controller.js"
+import * as sensorController from "../../controllers/sensor.Controller.js"
 
 const router = express.Router()
 
-router.get("/get/sensors",bedController.selectBeds)
-router.get("/get/sensors/:sensor",bedController.selectBed)
-router.post("/post/sensors",bedController.insertBeds)
-router.put("/put/sensors/:bed_id",bedController.updateBeds)
-router.delete("/delete/sensors/:bed_id",bedController.deleteBeds)
+router.get("/get/sensors",sensorController.selectSensors)
+router.get("/get/sensors/:sensor_id",sensorController.selectSensors)
+router.post("/post/sensors",sensorController.insertSensor)
+router.put("/put/sensors/:sensor_id",sensorController.updateSensor)
+router.delete("/delete/sensors/:sensor_id",sensorController.deleteSensor)
 
 export default router

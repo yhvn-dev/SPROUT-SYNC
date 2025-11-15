@@ -1,56 +1,56 @@
 import {query} from "../config/db.js"
 
 
-export const readBeds = async () =>{
+export const readSensors = async () =>{
     try{
-        const { rows } = await query("SELECT * FROM beds") 
-        console.log("BEDS:",rows)
+        const { rows } = await query("SELECT * FROM sensors") 
+        console.log("Sensors:",rows)
         return rows
     }catch(err){
-        console.log(`MODELS: Error Getting beds ${err}`, )
+        console.log(`MODELS: Error Getting Sensors ${err}`, )
         throw err
     }
 }
 
-export const readBed = async (bed_id) =>{
+export const readSensor = async (sensor_id) =>{
     try{
-        const { rows } = await query("SELECT * FROM beds WHERE bed_id = $1",[bed_id]) 
+        const { rows } = await query("SELECT * FROM sensors WHERE sensor_id = $1",[sensor_id]) 
         console.log("BEDS:",rows)
         return rows[0]
     }catch(err){
-        console.log(`MODELS: Error Getting beds ${err}`, )
+        console.log(`MODELS: Error Getting Sensors ${err}`, )
         throw err
     }
 }
 
 
-export const createBed = async (sensorData) =>{
+export const createSensor = async (sensorData) =>{
     try {
         const {bed_id,sensor_type,sensor_name,sensor_code,unit,status} = sensorData
-        const { rows } = await query(`INSERT INTO beds 
-            (bed_number,bed_code,bed_name,location,is_active,hysteresis) 
+        const { rows } = await query(`INSERT INTO sensors 
+            (bed_id,sensor_type,sensor_name,sensor_code,unit,status) 
             VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
             [bed_id,sensor_type,sensor_name,sensor_code,unit,status]) 
-        console.log("NEW BEDS:",rows)   
+        console.log("NEW Sensors:",rows)   
         return rows[0]
     } catch (err) {
-         console.log(`MODELS: Error Creating beds ${err}`, )
+         console.log(`MODELS: Error Creating Sensors ${err}`, )
         throw err
     }
 }
 
-export const updateBed = async (sensorData,sensor_id) =>{
+export const updateSensor = async (sensorData,sensor_id) =>{
     try {
-        const {bed_number,bed_code,bed_name,location,is_active,hysteresis} = bedData
+        const {bed_id,sensor_type,sensor_name,sensor_code,unit,status} = sensorData
         const { rows } = await query(`UPDATE beds SET 
-                                    bed_number = $1, 
-                                    bed_code = $2, 
-                                    bed_name = $3, 
-                                    location = $4, 
-                                    is_active = $5,
-                                    hysteresis = $6 WHERE bed_id = $7
+                                    bed_id = $1, 
+                                    sensor_type = $2, 
+                                    sensor_name = $3, 
+                                    sensor_code = $4, 
+                                    unit = $5,
+                                    status = $6 WHERE sensor_id = $7
                                     RETURNING *`,  
-                                    [bed_number,bed_code,bed_name,location,is_active,hysteresis,bed_id]) 
+                                    [bed_id,sensor_type,sensor_name,sensor_code,unit,status,sensor_id]) 
         console.log("UPDATED SENSORS:",rows)
         return rows[0]
     } catch (err) {
@@ -60,7 +60,7 @@ export const updateBed = async (sensorData,sensor_id) =>{
 }
 
 
-export const deleteBed = async (sensor_id) =>{
+export const deleteSensor = async (sensor_id) =>{
     try {
         const { rows } = await query("DELETE FROM sensors WHERE sensor_id = $1",[sensor_id]) 
         console.log("UPDATED SENSORS:",rows)

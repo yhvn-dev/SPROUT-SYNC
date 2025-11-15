@@ -1,0 +1,85 @@
+import * as sensorModel from "../models/sensorModels.js"
+
+
+export const selectSensors = async (req, res) => {
+  try {
+    const sensor = await sensorModel.readSensors()
+    console.log("Sensors",sensor)
+    res.status(200).json({message:"Sensors Feteched Succesfully",data:sensor})
+  } catch (err) {
+    console.error(`CONTROLLER:`, err);
+    res.status(500).json({ message: "CONTROLLER: Error Getting Sensors" });
+  }
+};
+
+
+export const selectSensor = async (req, res) => {
+  try {
+    const {sensor_id} = req.params
+    const sensor = await sensorModel.readSensor(sensor_id)
+    
+    if(!sensor) res.status(201).json({error:"Sensor Doesn't Exist"})
+    console.log(sensor)   
+
+    res.status(200).json({message:"Sensor Feteched Succesfully",data:sensor})
+  } catch (err) {
+    console.error(`CONTROLLER:`, err);
+    res.status(500).json({ message: `CONTROLLER: Error Selecting Sensor` });
+  }
+};
+
+export const insertSensor = async (req, res) => {
+  try {
+        const sensorData = req.body
+        const sensor = await sensorModel.createSensor(sensorData)
+        console.log(sensor)   
+        res.status(200).json({message:"Sensor Inserted Succesfully",data:sensor})
+  } catch (err) {
+    console.error("CONTROLLER: Error Inserting Sensor", err);
+    res.status(500).json({ message: "Error Inserting Sensor", error: err.message });
+  }
+};
+
+
+
+export const updateSensor = async (req, res) => {
+  try {
+    const { sensor_id } = req.params;
+    const sensorData = req.body;
+
+    if(!sensor_id) { return res.status(201).json({error:"Sensor Id Doesn't Exist"})}
+
+    const existingSensor = await sensorModel.updateSensor(sensorData,sensor_id)
+    if(!existingSensor) { return res.status(201).json({error:"Sensor Doesn't Exist"})}
+
+    const Sensor = await sensorModel.updateSensor(sensorData, sensor_id);
+    return res.status(200).json({
+      message: "Sensor Updated Successfully",
+      data: Sensor
+    });
+
+  } catch (err) {
+    console.error(`CONTROLLER:`, err);
+    return res.status(500).json({
+      message: "CONTROLLER: Error Updating Sensor",
+      err
+    });
+  }
+
+  
+};
+
+
+export const deleteSensor = async (req, res) => {
+  try {
+    const {sensor_id} = req.params
+    await sensorModel.updateSensor(sensor_id)
+    res.status(200).json({message:"Sensor Deleted Succesfully"})
+    console.log("CONTROLLER: Sensor Deleted Successfully");
+  } catch (err) {
+    console.error("CONTROLLER: Error Deleting Sensor", err);
+    res.status(500).json({ message: "Error Deleting Sensor", err });
+  }
+};
+
+
