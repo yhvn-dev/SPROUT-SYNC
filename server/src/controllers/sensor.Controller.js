@@ -49,13 +49,13 @@ export const updateSensor = async (req, res) => {
 
     if(!sensor_id) { return res.status(201).json({error:"Sensor Id Doesn't Exist"})}
 
-    const existingSensor = await sensorModel.updateSensor(sensorData,sensor_id)
-    if(!existingSensor) { return res.status(201).json({error:"Sensor Doesn't Exist"})}
+    // const existingSensor = await sensorModel.readSensor(sensor_id)
+    // if(!existingSensor) { return res.status(201).json({error:"Sensor Doesn't Exist"})}
 
-    const Sensor = await sensorModel.updateSensor(sensorData, sensor_id);
+    const sensor = await sensorModel.updateSensor(sensorData,sensor_id);
     return res.status(200).json({
       message: "Sensor Updated Successfully",
-      data: Sensor
+      data: sensor
     });
 
   } catch (err) {
@@ -73,7 +73,7 @@ export const updateSensor = async (req, res) => {
 export const deleteSensor = async (req, res) => {
   try {
     const {sensor_id} = req.params
-    await sensorModel.updateSensor(sensor_id)
+    await sensorModel.deleteSensor(sensor_id)
     res.status(200).json({message:"Sensor Deleted Succesfully"})
     console.log("CONTROLLER: Sensor Deleted Successfully");
   } catch (err) {

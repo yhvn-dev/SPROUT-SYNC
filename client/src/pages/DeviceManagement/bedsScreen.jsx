@@ -40,6 +40,7 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
 
  const handleOpenSensor = (value) => {
     setOpenSensor(true)
+    setSelectedBed(value)
   };
 
 

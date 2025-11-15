@@ -7,6 +7,7 @@ import ViewBedDetails from './viewBedDetails';
 import BedModal from './bedsModal';
 import SensorModal from "./sensorModal"
 
+
 import * as bedService from "../../data/bedServices"
 import { fetchLoggedUser } from '../../data/userService';
 
@@ -73,29 +74,6 @@ const DeviceManagement = () => {
             
         
         <div className='w-full py-4 row-start-2 row-end-2 col-start-2 col-span-full center '>
-            <nav className='center-l h-full w-1/2'>        
-                <button
-                    onClick={() => setActiveTab('beds')}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium  mr-2 transition-all ${
-                    activeTab === 'beds'
-                        ? 'bg-white text-[#027c68] shadow-md' 
-                        : 'bg-white/50 text-[#5A8F73] hover:bg-white/70'
-                    }`}>
-                    Beds
-                </button>
-                <button
-                    onClick={() => setActiveTab('view_details')}
-                    className={`px-4 py-2 rounded-lg text-sm font-medium ml-2 transition-all ${
-                    activeTab === 'sensors'
-                        ? 'bg-white text-[#027c68] shadow-md' 
-                        : 'bg-white/50 text-[#5A8F73] hover:bg-white/70'
-                    }`}
-                >
-                    Sensors
-                </button>
-                
-            </nav>
-
             <div className='center h-full w-1/2 0'>     
                 <p className='text-sm text-[var(--acc-darkc)] text-end'>
                     Manage and monitor all connected devices, including beds and sensors, within your automated watering system      
@@ -107,11 +85,9 @@ const DeviceManagement = () => {
           {activeTab === 'beds' && (
           <BedsScreen  
           setOpenBed={setOpenBed} onBedClose={setOpenBed} setBedMode={setBedMode} setSelectedBed={setSelectedBed} bed={bed}
-          setOpenSensor={setOpenSensor}  setSensorMode={setSensorMode}
-          
+          setOpenSensor={setOpenSensor}  setSensorMode={setSensorMode}   
           />
           )}
-
           {/* Sensors Tab */}
           {activeTab === 'view_details' && (
             <ViewBedDetails/>
@@ -133,6 +109,7 @@ const DeviceManagement = () => {
       isSensorOpen={setOpenSensor}
       onSensorClose={() => setOpenSensor(false)}
       sensorMode={sensorMode}
+      selectedBed={selectedBed}
     />}
 
 

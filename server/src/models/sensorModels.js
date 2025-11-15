@@ -66,7 +66,7 @@ export const deleteSensor = async (sensor_id) =>{
         console.log("UPDATED SENSORS:",rows)
         return rows[0]
     } catch (err) {
-         console.log(`MODELS: Error Creating SENSORS ${err}`, )
+         console.log(`MODELS: Error Deleting SENSORS ${err}`, )
         throw err
     }
 }

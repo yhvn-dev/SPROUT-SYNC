@@ -28,8 +28,6 @@ export function BedMonitor({ bedNum = "bed_1", bedName = "Bed 1" ,setOpenTModal}
   };
 
   const handleOpenModal = () =>{
-      
-
   }
 
   
