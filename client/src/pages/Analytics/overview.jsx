@@ -153,7 +153,7 @@ export function Overview(){
 
 
             {/* Moisture Trend Chart */}
-            <div className="col-span-5 row-span-2 bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all">
+            <div className="col-span-8 row-span-2 bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all">
                 <h3 className="text-sm font-semibold text-[#003333] mb-4">Soil Moisture Trend</h3>
                 <ResponsiveContainer width="100%" height="85%">
                 <LineChart data={moistureData}>
@@ -180,29 +180,8 @@ export function Overview(){
                 </LineChart>
                 </ResponsiveContainer>
             </div>
-            
-            {/* Water Usage Chart */}
-            <div className="col-span-3 row-span-2 bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all">
-                <h3 className="text-sm font-semibold text-[#003333] mb-4">Water Usage</h3>
-                <ResponsiveContainer width="100%" height="85%">
-                <BarChart data={waterUsageData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#E8F3ED" />
-                    <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#5A8F73' }} />
-                    <YAxis tick={{ fontSize: 11, fill: '#5A8F73' }} />
-                    <Tooltip 
-                    contentStyle={{ 
-                        backgroundColor: 'white', 
-                        border: 'none', 
-                        borderRadius: '8px', 
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
-                        fontSize: '12px'
-                    }} 
-                    />
-                    <Bar dataKey="usage" fill="#7BA591" radius={[8, 8, 0, 0]} />
-                </BarChart>
-                </ResponsiveContainer>
-            </div>
-            
+         
+           
             {/* Alerts */}
             <div className="col-span-4 bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all overflow-y-auto">
                 <h3 className="text-sm font-semibold text-[#003333] mb-4">Recent Alerts</h3>

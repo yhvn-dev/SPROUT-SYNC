@@ -59,7 +59,6 @@ export const updateSensor = async (sensorData,sensor_id) =>{
     }
 }
 
-
 export const deleteSensor = async (sensor_id) =>{
     try {
         const { rows } = await query("DELETE FROM sensors WHERE sensor_id = $1",[sensor_id]) 
