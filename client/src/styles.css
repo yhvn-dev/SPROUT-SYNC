@@ -344,13 +344,14 @@ button{
 }
 
 .succes_msg_pro{
-    @apply bg-[var(--color-success-a-soft)] flex items-center justify-center rounded-[10px] m-1;
-    border:2px solid var(--ptl-greenb);
-    padding: var(--dis-0-6);
+    @apply bg-green-100  flex items-center justify-center rounded-[10px] p-4 border-2 border-[var(--sancgb)];
 }
+
 select{
     @apply rounded-[10px] cursor-pointer;
 }
+
+
 
 
 /* ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====  */

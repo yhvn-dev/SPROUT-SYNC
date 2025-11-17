@@ -13,6 +13,7 @@ export const selectSensors = async (req, res) => {
 };
 
 
+
 export const selectSensor = async (req, res) => {
   try {
     const {sensor_id} = req.params
@@ -27,6 +28,36 @@ export const selectSensor = async (req, res) => {
     res.status(500).json({ message: `CONTROLLER: Error Selecting Sensor` });
   }
 };
+
+export const countSensorByBed = async (req,res) => {
+  try {
+      const {bed_id} = req.params;
+
+      if(!bed_id){
+        return res.status(201).json({error:"Bed Doesnt Exist!"})
+      } 
+      const count = await sensorModel.countSensorOnBed(bed_id)
+      
+      res.status(200).json({message:"Number of Sensors By Bed Retreived!",data:count})  
+
+  } catch (err) {
+    console.error(`CONTROLLER:`, err);
+    res.status(500).json({ message: `CONTROLLER: Error Counting Sensor By Bed` });
+  }
+}
+
+
+export const countSensors = async (req,res) => {
+  try {
+  
+      const count = await sensorModel.countSensors()
+      res.status(200).json({message:"Total Sensors Retreived!",data:count})  
+
+  } catch (err) {
+    console.error(`CONTROLLER:`, err);
+    res.status(500).json({ message: `CONTROLLER: Error Counting Sensor By Bed` });
+  }
+}
 
 export const insertSensor = async (req, res) => {
   try {
@@ -44,13 +75,13 @@ export const insertSensor = async (req, res) => {
 
 export const updateSensor = async (req, res) => {
   try {
-    const { sensor_id } = req.params;
+    const { sensor_id } = req.params
     const sensorData = req.body;
 
     if(!sensor_id) { return res.status(201).json({error:"Sensor Id Doesn't Exist"})}
 
-    // const existingSensor = await sensorModel.readSensor(sensor_id)
-    // if(!existingSensor) { return res.status(201).json({error:"Sensor Doesn't Exist"})}
+    const existingSensor = await sensorModel.readSensor(sensor_id)
+    if(!existingSensor) { return res.status(201).json({error:"Sensor Doesn't Exist"})}
 
     const sensor = await sensorModel.updateSensor(sensorData,sensor_id);
     return res.status(200).json({

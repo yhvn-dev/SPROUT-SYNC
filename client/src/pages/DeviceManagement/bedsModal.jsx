@@ -2,13 +2,14 @@ import { useState,useEffect } from "react";
 import { X, Plus, Edit,Delete } from "lucide-react";
 import * as bedService from "../../data/bedServices"
 
-function BedModal({ isBedOpen,onBedClose,bedMode,selectedBed,loadBedData}) {
+function BedModal({ isBedOpen,onBedClose,bedMode,selectedBed,loadBedData,scsMsg,errMsg}) {
   const [formData,setFormData] = useState({bed_number:"",
                                           bed_code:"",
                                           bed_name:"",
                                           location:"",
                                           status:"",
                                           hysteresis:""})
+                        
                                           
     useEffect(() =>{
         if(bedMode === "insert"){
@@ -43,16 +44,18 @@ function BedModal({ isBedOpen,onBedClose,bedMode,selectedBed,loadBedData}) {
                 await bedService.insertBeds(formData)
                 loadBedData()
                 isBedOpen(false)
+                scsMsg(`${formData.bed_name} Added`)
             }else if(bedMode === "update"){             
-                const bed = await bedService.updateBeds(formData,selectedBed.bed_id)
-                loadBedData()
+                await bedService.updateBeds(formData,selectedBed.bed_id)
+                loadBedData() 
                 isBedOpen(false)
-                console.log(bed)
+                scsMsg(`${formData.bed_name} Updated`)
             }else{
                 await bedService.deleteBed(selectedBed.bed_id)
-                loadBedData()
+                loadBedData()   
                 isBedOpen(false)
-            }
+                scsMsg(`${formData.bed_name} Deleted`)
+        }    
         } catch (error) {
             console.error("Submit Error")
         }
