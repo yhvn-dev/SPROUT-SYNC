@@ -203,6 +203,9 @@ export function BedMonitor({ bedNum = "bed_1", bedName = "Bed 1" ,setOpenTModal}
             ))}
           </div>
 
+
+          
+
           {/* Footer */}
           <div className="mt-6 pt-4 border-t border-[var(--sage-light)]">
             <div className="h-3 rounded-full bg-[var(--sage-dark)] opacity-30" />

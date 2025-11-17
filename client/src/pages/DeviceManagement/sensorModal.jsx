@@ -30,10 +30,8 @@ function SensorModal({ isSensorOpen,onSensorClose,sensorMode,selectedBed}) {
               </button>
             </header>
 
-
             {/* Bed Form */}
             <BedSimulation/>
-          
                    
         </main>    
     </div>

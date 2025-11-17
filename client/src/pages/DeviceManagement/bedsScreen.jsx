@@ -1,4 +1,4 @@
-import {Trash2,Pencil,DiamondPlus} from "lucide-react";
+import {Trash2,Pencil,DiamondPlus,SquarePen,Activity,Droplet} from "lucide-react";
 
 import { Tooltip,  ResponsiveContainer,BarChart,CartesianGrid,XAxis,YAxis,Legend,Bar } from 'recharts';
 import {Plus} from "lucide-react"
@@ -87,48 +87,118 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
             </button>
         </div>
 
-        <div className="overflow-x-auto">
-            <table className="w-full">
-            <thead className="bg-[var(--sage-light)]">
-                <tr>
-                    <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Bed Number</th>
-                    <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Bed Code</th>
-                    <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Bed Name</th>
-                    <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Location</th>
-                    <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Status</th>
-                    <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Hysteresis</th>
-                    <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Created At</th>
-                    <th className="px-6 py-3 text-left text-[0.9rem] font-semibold text-[var(--ptl-greenh)]">Actions</th>
-                </tr>
-            </thead>
+         <div className="w-full overflow-x-auto pb-4 ">
+      <div className="min-w-max px-6 py-8 ">
 
-            <tbody className="divide-y divide-[var(--sage-lighter)]">
-                {bed.length > 0 && bed.map((b) =>{
-                return(
-                    <tr key={b.bed_id}>
-                        <td className="p-8 text-[0.9rem] text-start break-words">{b.bed_number}</td>
-                        <td className="p-8 text-[0.9rem] text-start break-words">{b.bed_code}</td>
-                        <td className="p-8 text-[0.9rem] text-start break-words">{b.bed_name}</td>
-                        <td className="p-8 text-[0.9rem] text-start break-words">{b.location}</td>
-                        <td className="p-8 text-[0.9rem] text-start break-words">{b.is_active === true ? "Active" : "Inactive"}</td>
-                        <td className="p-8 text-[0.9rem] text-start break-words">{b.hysteresis}</td>
-                        <td className="p-8 text-[0.9rem] text-start break-words">{b.created_at}</td>
-                        <td className="flex  items-center justify-between h-full w-full p-8 text-[0.9rem] text-start break-words">
-                            <button onClick={() => handleOpenSensor(b)}
-                                className="center px-3 py-2 rounded-lg mx-2 shadow-lg bg-[var(--color-warning-a)] hover:bg-amber-400 text-white"><DiamondPlus size={16}/></button>
-                            <button onClick={() => handleOpenUpdate(b)}
-                                className="center px-3 py-2 rounded-lg mx-2 shadow-lg bg-[var(--white-blple--)] hover:bg-blue-400 text-white"><Pencil size={16}/></button>
-                            <button onClick={() => handleOpenDelete(b)}
-                                className="center px-3 py-2 rounded-lg mx-2 shadow-lg bg-[var(--color-danger-b)] hover:bg-red-400 not-only-of-type: text-white"><Trash2 size={16}/></button>
-                         </td> 
-                    </tr>
-                    )
-                })}
+    
+        {bed.length > 0 && bed.map((b) =>{
+            return(
+              
+            <div className="relative rounded-xl p-6 shadow-lg bg-[var(--sage-lighter)] border-[var(--sage-light)] my-4">
+
+            {/* Header */}
+            <div className="mb-6 flex items-center justify-between">
+                <div className="flex items-center justify-start">
+                <h3 className="text-sm font-semibold tracking-wide text-[var(--sancga)]">
+                    {b.bed_number} - MONITORING
+                </h3>
+                <div className="text-sm px-3 py-1 mx-4 rounded-full bg-[var(--sage-medium)] text-[var(--sage-dark)]">
+                    Zones Active
+                </div>
+                </div>
+        
+            </div>
+            
+            {/* Sensor Cards */}
+            <div className="center-l gap-4 bg-amber-200 ">
+        
+                <div className="relative rounded-lg p-4 shadow-lg transition-all hover:shadow-xl bg-white border border-[var(--sage-light)] w-auto]">
+                    <div className="absolute -top-3 left-3 px-2 py-1 rounded text-sm font-semibold bg-[var(--sancgb)] text-white">
+                        Zone 1
+                    </div>
+                        <div className="mt-4 space-y-3  ">
+                        {/* Moisture */}
+                        <div className="space-y-1 ">
+
+                            {/* label */}
+                            <div className="flex items-center gap-2">
+                            <Droplet size={14} />
+                            <span className="text-sm font-medium text-[var(--acc-darka)]">
+                                Moisture
+                            </span>
+                            </div>
+
+
+                            {/* numbers */}
+                            <div className="flex items-baseline gap-1">
+                            <span className="text-2xl font-bold text-[var(--sancgb)]">
+                            
+                            </span>
+                            <span className="text-sm text-[var(--acc-darkb)]">65%</span>
+                            </div>
+
+                            {/* range */}
+                            <div className="w-full h-1.5 rounded-full bg-[var(--sage-lighter)] overflow-hidden">
+                            <div
+                                className="h-full rounded-full transition-all"                    
+                            />
+                            </div>
+                        </div>
+
+            
+                        </div>
+
+                        {/* Status */}
+                        <div className="mt-3 pt-3 border-t border-[var(--sage-light)]">
+                        <div className="flex items-center justify-between">
+                            <span className="text-sm text-[var(--acc-darkc)]">Status</span>
+                            <div className="flex items-center gap-1">
+                            <div
+                                className="w-2 h-2 rounded-full"
+                            
+                            />
+                            <span
+                                className="text-sm font-medium"
+                            
+                            >
+                            
+                            </span>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
                 
-            </tbody>
-            </table>
-      
-        </div>
+                </div>
+
+                    <div className="w-full h-1/2 center bg-amber-300">
+
+                        <div className="space-y-1 bg-amber-700" >
+                            <div className="flex items-center gap-2">
+                        
+                                <span className="text-sm font-medium text-[var(--acc-darka)]">
+                                pH Level
+                                </span>
+                            </div>
+                            <div className="text-2xl font-bold text-[var(--sancgd)]">
+                            
+                            </div>
+                            <div className="flex gap-0.5">
+                            
+                            </div>
+                        </div>
+
+
+                    </div>
+                        
+                </div>
+
+                )
+            })}
+       
+      </div>
+    </div>
+
+    
         </div>
 
  

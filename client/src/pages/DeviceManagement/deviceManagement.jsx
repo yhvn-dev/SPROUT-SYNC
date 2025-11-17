@@ -3,9 +3,11 @@ import { Db_Header } from '../../components/db_header';
 import { Sidebar } from '../../components/sidebar';
 
 import BedsScreen from './bedsScreen';
+import SensorsScreen from './sensorsScreen';
 import ViewBedDetails from './viewBedDetails';
 import BedModal from './bedsModal';
 import SensorModal from "./sensorModal"
+
 
 
 import * as bedService from "../../data/bedServices"
@@ -74,6 +76,34 @@ const DeviceManagement = () => {
             
         
         <div className='w-full py-4 row-start-2 row-end-2 col-start-2 col-span-full center '>
+
+            <nav className='center-l px-4  h-full w-1/2 0'>     
+                  {/* Navigation Tabs */}
+        
+          <button
+            onClick={() => setActiveTab('beds')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              activeTab === 'beds' 
+                ? 'bg-white text-[#027c68] shadow-md' 
+                : 'bg-white/50 text-[#5A8F73] hover:bg-white/70'
+            }`}>
+            Beds
+          </button>
+
+          <button
+            onClick={() => setActiveTab('sensors')}
+            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+              activeTab === 'sensors' 
+                ? 'bg-white text-[#027c68] shadow-md' 
+                : 'bg-white/50 text-[#5A8F73] hover:bg-white/70'
+            }`}>
+            Trends
+          </button>
+
+
+
+            </nav>
+
             <div className='center h-full w-1/2 0'>     
                 <p className='text-sm text-[var(--acc-darkc)] text-end'>
                     Manage and monitor all connected devices, including beds and sensors, within your automated watering system      
@@ -88,9 +118,12 @@ const DeviceManagement = () => {
           setOpenSensor={setOpenSensor}  setSensorMode={setSensorMode}   
           />
           )}
+          
           {/* Sensors Tab */}
-          {activeTab === 'view_details' && (
-            <ViewBedDetails/>
+          {activeTab === 'sensors' && (
+            <>
+              <SensorsScreen/>
+            </>
           )}
 
       </main>
