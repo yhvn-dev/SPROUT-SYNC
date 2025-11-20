@@ -9,11 +9,10 @@ export const generateAccessToken = (user) => {
     { user_id: user.user_id,   
       username: user.username,
       email: user.email,              // payload
-      role: user.role,
-      token_version:user.token_version    
+      role: user.role
     },    
      process.env.ACCESS_TOKEN_SECRET,         // secret
-    { expiresIn: "1m" }                 
+    { expiresIn: "10s" }                 
   );
 };
 

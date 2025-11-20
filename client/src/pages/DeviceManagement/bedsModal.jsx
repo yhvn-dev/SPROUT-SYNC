@@ -7,27 +7,25 @@ function BedModal({ isBedOpen,onBedClose,bedMode,selectedBed,loadBedData,scsMsg,
                                           bed_code:"",
                                           bed_name:"",
                                           location:"",
-                                          status:"",
-                                          hysteresis:""})
-                        
-                                          
+                                          status:""})
+                                                    
     useEffect(() =>{
         if(bedMode === "insert"){
             setFormData({bed_number:"",
                         bed_code:"",
                         bed_name:"",
                         location:"",
-                        status:"",
-                        hysteresis:""})
+                        status:""})
         }else{
             setFormData({bed_number:selectedBed.bed_number,
                         bed_code:selectedBed.bed_code,
                         bed_name:selectedBed.bed_name,
                         location:selectedBed.location,
-                        status:selectedBed.status,
-                        hysteresis:selectedBed.hysteresis})
+                        status:selectedBed.status})
         }
     },[isBedOpen,bedMode,onBedClose])
+
+
 
     const handleChange = (e) =>{
         const {name,value} = e.target
@@ -143,7 +141,6 @@ function BedModal({ isBedOpen,onBedClose,bedMode,selectedBed,loadBedData,scsMsg,
 
                 
                 <div className="flex items-center justify-evenly flex-col  full p-4 col-start-2 col-end-2 row-start-1 row-end-1">
-
                     {/* Location */}
                     <div className="form_box input-box relative center">                   
                         <input
@@ -154,25 +151,11 @@ function BedModal({ isBedOpen,onBedClose,bedMode,selectedBed,loadBedData,scsMsg,
                         className="w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
                         placeholder=""/>
                         <label className="absolute text-sm px-4 pointer-events-none left-0 text-[var(--acc-darkc)]">Location</label>
-                    </div>
-                    
-                    {/* Hysteresis */}
-                    <div className="relative center">                      
-                        <input
-                        type="number"
-                        name="hysteresis"  
-                        onChange={handleChange}    
-                        value={formData.hysteresis}                      
-                        step="0.1"
-                        className="w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
-                        placeholder="Hysteresis"/>                    
-                    </div>
-
+                    </div> 
                     {/* Status Toggle */}
                     <div className="flex items-center justify-between  p-2 bg-[var(--sage-lighter)] rounded-lg">                            
                         <p>Status</p>
                     </div>
-
                 </div>
 
 

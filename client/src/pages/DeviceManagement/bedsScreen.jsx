@@ -1,4 +1,4 @@
-import {Trash2,Pencil,DiamondPlus,SquarePen,Activity,Droplet} from "lucide-react";
+import {Trash2,Pencil,Columns2,Droplet} from "lucide-react";
 
 import { Tooltip,  ResponsiveContainer,BarChart,CartesianGrid,XAxis,YAxis,Legend,Bar } from 'recharts';
 import {Plus} from "lucide-react"
@@ -14,9 +14,8 @@ const StatusBadge = ({ status }) => (
     </span>
 );
 
-
 function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
-                    setOpenSensor,sensors,sensorCount}) {
+                    setOpenSensor,sensors,sensorCount,setSelectedSensor,sensorMode}) {
  
   const handleOpenInsert = () => {
     setBedMode("insert");
@@ -36,10 +35,17 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
     setSelectedBed(value)
   };
 
- const handleOpenSensor = (value) => {
+ const handleAddSensor = (bedValue) => {
     setOpenSensor(true)
-    setSelectedBed(value)
+    const bedSensors = sensors.filter(s => s.bed_id === bedValue.bed_id)
+    sensorMode("insert")
+    setSelectedBed(bedValue)
+    setSelectedSensor(bedSensors)
   };
+
+  
+
+
 
   return (
     <div className="space-y-6">
@@ -80,8 +86,9 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
             
             <div className="flex justify-between items-center p-4 bg-[var(--sage-lighter)]">
                 <h3 className="text-lg font-semibold text-[var(--ptl-greenh)]">Beds Management</h3>
-                <button onClick={handleOpenInsert} className="flex items-center gap-2 bg-[var(--ptl-greenb)] text-white px-4 py-2 rounded-lg hover:bg-[var(--ptl-greenc)] transition-colors text-[0.9rem] shadow-md">
-                    <Plus className="w-4 h-4" />
+                <button onClick={handleOpenInsert} className="flex items-center gap-2 bg-[var(--ptl-greenb)] text-white px-4 py-2 
+                rounded-lg hover:bg-[var(--ptl-greenc)] transition-colors text-[0.9rem] shadow-md">
+                    <Columns2 className="w-4 h-4" />
                     Add Bed
                 </button>
             </div>
@@ -107,106 +114,119 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
                         
                         
                             {/* BED CARD */}
-                            <div className="grid grid-cols-[9fr_1fr] grid-rows-[6fr_4fr] gap-4  ">                       
-                                {/* Sensor Cards */}
-                                <div className="flex gap-4">
-                                    {sensors && sensors
+                            <div className="flex-col  ">                                                                   
+                                {/* Sensor Cards */}                                
+                                <div className="grid grid-cols-[1fr] grid-rows-[6fr_2fr_2fr] gap-4">
+                                    <div className="flex gap-4">
+                                        {sensors && sensors
                                         .filter((s) => s.bed_id === b.bed_id) //
                                         .map((s) => (
-                                            <div
-                                                key={s.sensor_id}
-                                                className="relative rounded-lg p-4 shadow-lg transition-all hover:shadow-xl bg-white border border-[var(--sage-light)] w-35" >
-                                                {/* ZONE LABEL */}
-                                                <div className="absolute -top-3 left-3 px-2 py-1 rounded text-sm font-semibold bg-[var(--sancgb)] text-white">
-                                                    Zone {s.zone_number}
-                                                </div>
+                                        <div
+                                            key={s.sensor_id}
+                                            className="relative rounded-lg p-4 shadow-lg transition-all hover:shadow-xl bg-white border border-[var(--sage-light)] w-35" >
+                                            {/* ZONE LABEL */}
+                                            <div className="absolute -top-3 left-3 px-2 py-1 rounded text-sm font-semibold bg-[var(--sancgb)] text-white">
+                                                Zone {s.zone_number}
+                                            </div>
 
-                                                {/* SENSOR TYPE */}
-                                                <div className="mt-4 space-y-3">
-                                                    <div className="space-y-1">
-                                                        <div className="flex items-center gap-2">
-                                                            <Droplet size={14} />
-                                                            <span className="text-sm font-medium text-[var(--acc-darka)]">
-                                                                {s.sensor_type}
-                                                            </span>
-                                                        </div>
-
-                                                        {/* VALUE */}
-                                                        <div className="flex items-baseline gap-1">
-                                                            <span className="text-2xl font-bold text-[var(--sancgb)]">
-                                                                {s.value ?? "--"}
-                                                            </span>
-                                                            <span className="text-sm text-[var(--acc-darkb)]">
-                                                                {s.sensor_type === "moisture" ? "%" : ""}
-                                                            </span>
-                                                        </div>
-
-                                                        {/* RANGE BAR */}
-                                                        <div className="w-full h-1.5 rounded-full bg-[var(--sage-lighter)] overflow-hidden">
-                                                            <div className="h-full rounded-full transition-all bg-[var(--sancgb)] w-[65%]" />
-                                                        </div>
+                                            {/* SENSOR TYPE */}
+                                            <div className="mt-4 space-y-3">
+                                                <div className="space-y-1">
+                                                    <div className="flex items-center gap-2">
+                                                        <Droplet size={14} />
+                                                        <span className="text-sm font-medium text-[var(--acc-darka)]">
+                                                            {s.sensor_type}
+                                                        </span>
                                                     </div>
-                                                </div>
 
+                                                    {/* VALUE */}
+                                                    <div className="flex items-baseline gap-1">
+                                                        <span className="text-2xl font-bold text-[var(--sancgb)]">
+                                                            {s.value ?? "--"}
+                                                        </span>
+                                                        <span className="text-sm text-[var(--acc-darkb)]">
+                                                            {s.sensor_type === "moisture" ? "%" : ""}
+                                                        </span>
+                                                    </div>
 
-
-
-                                                {/* STATUS */}
-                                                <div className="mt-3 pt-3 border-t border-[var(--sage-light)]">
-                                                    <div className="flex items-center justify-between">
-                                                        <span className="text-sm text-[var(--acc-darkc)]">Status</span>
-
-                                                        <div className="flex items-center gap-1">
-                                                            <div
-                                                                className={`w-2 h-2 rounded-full ${
-                                                                    s.status === "active" ? "bg-[var(--color-success-a)]" : "bg-[var(--color-danger-b)]"
-                                                                }`}
-                                                            />
-                                                            <span className="text-sm font-medium">
-                                                                {s.status}
-                                                            </span>
-                                                        </div>
+                                                    {/* RANGE BAR */}
+                                                    <div className="w-full h-1.5 rounded-full bg-[var(--sage-lighter)] overflow-hidden">
+                                                        <div className="h-full rounded-full transition-all bg-[var(--sancgb)] w-[65%]" />
                                                     </div>
                                                 </div>
                                             </div>
-                                            ))}
-                                        </div>
-                                                                        
 
 
+                                            {/* STATUS */}
+                                            <div className="mt-3 pt-3 border-t border-[var(--sage-light)]">
+                                                <div className="flex items-center justify-between">
+                                                    <span className="text-sm text-[var(--acc-darkc)]">Status</span>
 
-                                        {/* PH LEVEL  */}
-                                        <div className="col-start-1 col-end-1 row-start-2 row-end-2 w-full h-full center rounded-xl shadow-lg">
-                                            <div className="space-y-1 " >
-                                                <div className="flex items-center gap-2">
-                                            
-                                                    <span className="text-sm font-medium text-[var(--acc-darka)]">
-                                                    pH Level
-                                                    </span>
-                                                </div>
-                                                <div className="text-2xl font-bold text-[var(--sancgd)]">
-                                                
-                                                </div>
-                                                <div className="flex gap-0.5">
-                                            
+                                                    <div className="flex items-center gap-1">
+                                                        <div
+                                                            className={`w-2 h-2 rounded-full ${
+                                                                s.status === "active" ? "bg-[var(--color-success-a)]" : "bg-[var(--color-danger-b)]"
+                                                            }`}
+                                                        />
+                                                        <span className="text-sm font-medium">
+                                                            {s.status}
+                                                        </span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                        ))}
+                                    </div>
+
+
+                                    {/* PH LEVEL  */}
+                                    <div className="col-start-1 col-end-2 row-start-2 row-end-2 w-full h-full center rounded-xl shadow-lg">
+                                        <div className="space-y-1 " >
+                                            <div className="flex items-center gap-2">
                                         
-                                        <aside className="flex items-center justify-evenly  flex-col col-start-2 col-end-2 row-start-1 row-span-full">                           
-                                            <button onClick={() => handleOpenUpdate(b)} className="rounded-xl bg-white shadow-xl px-4 py-2 stroke-[var(--acc-darkc)]"><Pencil size={18}/></button>
-                                            <button onClick={() => handleOpenDelete(b)} className="rounded-xl bg-white shadow-xl px-4 py-2 stroke-[var(--acc-darkc)]"><Trash2 size={18}/></button>
+                                                <span className="text-sm font-medium text-[var(--acc-darka)]">
+                                                pH Level
+                                                </span>
+                                            </div>
+                                            <div className="text-2xl font-bold text-[var(--sancgd)]">
+                                            
+                                            </div>
+                                            <div className="flex gap-0.5">
+                                        
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                        <aside className="flex items-center justify-evenly shadow-lg bg-white rounded-2xl 
+                                        col-start-1 col-end-1 row-start-3 row-end-3">      
+                                            <nav className="flex items-center justify-start full">
+                                                <button onClick={() => handleAddSensor(b)} className="rounded-lg 
+                                                bg-[var(--color-success-b)] shadow-xl px-2 py-1 stroke-[var(--acc-darkc)] 
+                                                mx-4  hover:bg-blue-400 transition-colors text-[0.9rem] shadow-md">
+                                                    <Plus  stroke="var(--acc-dark-c)"  size={18}/>
+                                                </button>
+                                                <button onClick={() => handleOpenUpdate(b)} className="rounded-lg 
+                                                bg-[var(--white-blple--)] shadow-xl px-2 py-1 stroke-[var(--acc-darkc)] 
+                                                mx-4 hover:bg-[var(--purpluish--)] transition-colors text-[0.9rem] shadow-md ">
+                                                    <Pencil stroke="var(--acc-dark-c)" size={18}/>
+                                                </button>
+                                                <button onClick={() => handleOpenDelete(b)} className="rounded-lg 
+                                                bg-[var(--color-danger-b)] shadow-xl px-2 py-1 stroke-[var(--acc-darkc)] 
+                                                mx-4 hover:bg-[var(--color-danger-a)] transition-colors text-[0.9rem] shadow-md">
+                                                    <Trash2 stroke="var(--acc-dark-c)" size={18}/>
+                                                </button>                      
+                                            </nav>                                             
                                         </aside>
-                        
-                                
+                                    </div>
+                                                                        
+                                                   
                             </div>                     
                     </div>
                     )
                 })}  
 
             </div>
-
-
+            {/* END OF SENSOR CARDS */}
 
             </div>
 

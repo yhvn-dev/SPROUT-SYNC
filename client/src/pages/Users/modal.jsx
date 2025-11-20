@@ -145,7 +145,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                           name='username'
                           value={username}
                           onChange={(e) => setUsername(e.target.value)} 
-                          className={`form-inp username w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]`}
+                          className={`form-inp username w-full px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]`}
                         />
                         <label>Username</label>
 
@@ -165,8 +165,8 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                           name='fullname'
                           value={fullname}
                           onChange={(e) => setFullname(e.target.value)} 
-                          className="form-inp fullname w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"/>
-                        <label>Fullname</label>       
+                          className="form-inp fullname w-full px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"/>
+                         <label>Fullname</label>       
 
                         {errors.fullname && !fullname && (
                           <p className='error-txt'>{errors.fullname}</p>
@@ -182,7 +182,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                           name='email'
                           value={email}
                           onChange={(e) => setEmail(e.target.value)}
-                          className="form-inp email w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
+                          className="form-inp email w-full px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
                         />
                         <label>Email</label> 
 
@@ -203,7 +203,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                           name='phone_number'
                           value={phoneNumber}
                           onChange={(e) => setPhoneNumber(e.target.value)}
-                          className="form-inp phone_number w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
+                          className="form-inp phone_number w-full px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
                         />
                         <label>Phone Number</label>
                       </ul>
@@ -216,7 +216,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                           name='password'
                           value={password}
                           onChange={(e) => setPassword(e.target.value)}
-                          className="form-inp password w-full px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
+                          className="form-inp password w-full px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
                         />
                         <label>Password</label>
                         

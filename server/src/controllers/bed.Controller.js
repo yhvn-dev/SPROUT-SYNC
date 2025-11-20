@@ -28,6 +28,21 @@ export const selectBed = async (req, res) => {
   }
 };
 
+
+
+
+export const countBeds = async (req,res) => {
+  try {
+  
+      const count = await bedModel.countTotalBeds()
+      res.status(200).json({message:"Total Bed Retreived!",data:count})  
+
+  } catch (err) {
+    console.error(`CONTROLLER:`, err);
+    res.status(500).json({ message: `CONTROLLER: Error Counting Beds By Bed` });
+  }
+}
+
 export const insertBeds = async (req, res) => {
   try {
         const bedData = req.body

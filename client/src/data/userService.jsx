@@ -15,18 +15,27 @@ export const fetchAllUsers = async () => {
     }
 }
 
+
 export const fetchLoggedUser = async () => {
+  const token = localStorage.getItem("accessToken");
+  if (!token) return null; // walang token, return null
+
   try {
-    const token = localStorage.getItem("accessToken")
-    const res = await axios.get(`${API_BASE_URL}/users/me`, {
+    const res = await api.get(`${API_BASE_URL}/users/me`, {
       headers: { Authorization: `Bearer ${token}` }
     });
-    return res.data; 
+    return res.data;
   } catch (error) {
-    console.error("Error Fetching Users", error);
+    if (error.response?.status === 401) {
+    
+      localStorage.removeItem("accessToken"); // clear token
+      return null; // treat as guest
+    }
+    console.error("Error Fetching Logged Users", error);
     throw error;
   }
-}
+};
+
 
 export const getUsersCount = async () =>{
     try{

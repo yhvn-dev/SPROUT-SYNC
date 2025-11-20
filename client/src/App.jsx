@@ -20,9 +20,7 @@ function App() {
 
       <>
         <BrowserRouter>
-
-          <Routes>
-            
+          <Routes>         
               <Route path='/' element={<Home/>}/>
               <Route path='/contacts' element={<Contact/>}/>
               <Route path='/about' element={<About/>}/>
@@ -33,7 +31,6 @@ function App() {
               <Route path='/control_panel' element={<ProtectedRoute> <ControlPanel/> </ProtectedRoute>}/>
               <Route path="/device_management" element={<ProtectedRoute> <DeviceManagement/> </ProtectedRoute>}/>
           </Routes>
-
         </BrowserRouter>
 
       </>

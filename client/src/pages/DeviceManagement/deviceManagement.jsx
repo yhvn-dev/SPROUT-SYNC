@@ -3,7 +3,6 @@ import { Db_Header } from '../../components/db_header';
 import { Sidebar } from '../../components/sidebar';
 
 import BedsScreen from './bedsScreen';
-import SensorsScreen from './sensorsScreen';
 import ViewBedDetails from './viewBedDetails';
 import BedModal from './bedsModal';
 import SensorModal from "./sensorModal"
@@ -107,16 +106,6 @@ const DeviceManagement = () => {
                 }`}>
                 Beds
               </button>
-              <button
-                onClick={() => setActiveTab('sensors')}
-                className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                  activeTab === 'sensors' 
-                    ? 'bg-white text-[#027c68] shadow-md' 
-                    : 'bg-white/50 text-[#5A8F73] hover:bg-white/70'
-                }`}>
-                Sensors
-              </button>
-
             </nav>
 
             <div className='center h-full w-1/2 0'>     
@@ -124,6 +113,7 @@ const DeviceManagement = () => {
                     Manage and monitor all connected devices, including beds and sensors, within your automated watering system      
                 </p>
             </div>
+
         </div>
                 
           {/* Beds Tab */}
@@ -135,9 +125,10 @@ const DeviceManagement = () => {
           setSelectedBed={setSelectedBed} 
           bed={bed}
           setOpenSensor={setOpenSensor}  
-          setSensorMode={setSensorMode}  
+          sensorMode={setSensorMode}  
           sensors={sensorData} 
           sensorCount={sensorCount} 
+          setSelectedSensor={setSelectedSensor}
           />
           )}
           
@@ -172,6 +163,8 @@ const DeviceManagement = () => {
       onSensorClose={() => setOpenSensor(false)}
       sensorMode={sensorMode}
       selectedBed={selectedBed}
+      selectedSensor={selectedSensor}
+      
     />}
 
 

@@ -1,4 +1,4 @@
-import * as userService from "../../data/userService"
+import { UserContext } from "../../hooks/userContext"
 import { Sidebar } from "../../components/sidebar"
 import { Db_Header } from "../../components/db_header"
 import { Quick_Stats } from "./quick_stats" 
@@ -10,14 +10,13 @@ import { Droplets, Sun, Wind, Activity } from 'lucide-react';
 import "./dashboard.css"
 import "./dashboard_responsive.css"
 
-import { useState } from "react"
-import { useEffect } from "react"
+import { useState,useContext } from "react"
+
 
 const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
   const percentage = (value / max) * 100;
   const rotation = (percentage / 100) * 180 - 90;
   
-
   return (
     <div className="flex flex-col items-center justify-center h-full">
       <div className="relative w-32 h-32">
@@ -48,48 +47,27 @@ const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
 
 
 function Dashboard() {
-  const [user,setUser] = useState(null);
+  const { user } = useContext(UserContext);
   const [activeBed, setActiveBed] = useState("bed_1")
   const [isOpenTModal,setOpenTModal] = useState(false);
+
   
-  useEffect(() =>{
-    fetchUser() 
-  },[])
-
-  const fetchUser = async () =>{
-      try{
-        const loggedUser = await userService.fetchLoggedUser()
-        setUser(loggedUser)
-      }catch(err){
-        console.error(err);
-      }
-    }
-
-
   return (
     <>
         <section className="bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] page dashboard 
         grid grid-cols-[12fr_30fr_48fr_10fr] grid-rows-[8vh_30vh_57vh] gap-4 
         h-[100vh] w-[100%] gap-x-4 overflow-y-auto relative">
 
-          <Welcome_box
-            text={
-              <>
-                <p className="font-bold ">Welcome to GREENLINK</p>
-                <p className="text-sm opacity-[0.5]">Hi{" "}{user?.username || "Guest"} Start Monitoring your plant.</p>
-              </>
-            }
-          />
 
           <Db_Header
-          
               input={               
                 <>
                 <input type="text" placeholder='' className='border-[1px] border-[var(--acc-darkc)] rounded-2xl px-4'/>
                 <label>Search For Readings</label>
-              </>}/>
-         
+              </>}/>         
           <Sidebar/>  
+
+
 
           {/* NUMBER CONTAINER */}
           <Quick_Stats
@@ -122,17 +100,17 @@ function Dashboard() {
                   <div className="scale-90 origin-center">
                       <GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="#8f9bbc" />
                   </div>            
-                </div>
-               
+                </div>           
               </>
             }/>
 
-          {/* WORKSPACE */}
+
+
+            {/* WORKSPACE */}
             <Workspace      
               bed={activeBed}
               setOpenTModal={setOpenTModal}
             />
-            
             
 
 
@@ -154,10 +132,11 @@ function Dashboard() {
               </button>
               ))}
           </nav>
-
-          {isOpenTModal && <ThresholdModal isOpen={setOpenTModal} />}
-            
+          {isOpenTModal && <ThresholdModal isOpen={setOpenTModal} />}        
       </section>    
+
+
+
     </>
   )
 }

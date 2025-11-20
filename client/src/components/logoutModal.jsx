@@ -1,10 +1,13 @@
 import { useNavigate } from "react-router-dom"
-import {motion,AnimatePresence} from "framer-motion";
+import { UserContext } from "../hooks/userContext";
+import { useContext } from "react";
+import {motion} from "framer-motion";
 import axios from "axios"
 
 import { LogOut,X} from "react-feather";
 
 export function LogoutModal({isOpen,onClose}) {
+  const { setUser } = useContext(UserContext);
   const navigate = useNavigate()
   if(!isOpen) return null;
 
@@ -15,6 +18,7 @@ export function LogoutModal({isOpen,onClose}) {
 
         await axios.delete("http://localhost:5000/users/logout-all",{ withCredentials: true });
         localStorage.removeItem("accessToken")
+        setUser(null)
         navigate("/login");
   
       } catch (err) {
@@ -26,8 +30,8 @@ export function LogoutModal({isOpen,onClose}) {
       e.preventDefault()
       try{
         await axios.delete("http://localhost:5000/users/logout",{withCredentials:true})
-
         localStorage.removeItem("accessToken")
+        setUser(null)
         navigate("/login");
 
       }catch(err){

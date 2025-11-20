@@ -1,10 +1,12 @@
-import {useState,useRef} from "react"
+import {useState,useRef,useContext} from "react"
+import { UserContext } from "../../hooks/userContext.jsx"
 import api from "../../utils/api"
 import { Link } from "react-router-dom"
 import { useNavigate } from "react-router-dom"
 import { Form } from "./form.jsx"
 import { Header } from "../../components/header.jsx" 
 import * as validate from "../../utils/userValidations"
+import { fetchLoggedUser } from "../../data/userService.jsx"
 
 
 function Login() {
@@ -13,6 +15,7 @@ function Login() {
   const [errorMsg,setErrorMsg] = useState({});
   const [successMsg,setsuccessMsg] = useState("")
   const [status,setStatus] = useState("notLoggedIn");
+  const {setUser} = useContext(UserContext)
 
   const navigate = useNavigate(); 
   
@@ -36,6 +39,9 @@ function Login() {
       });
  
       localStorage.setItem("accessToken",data.accessToken)
+      const loggedUser = await fetchLoggedUser()
+      setUser(loggedUser)
+
       setsuccessMsg("Login Sucessfull!");
       setStatus("loggingIn")
 
@@ -43,8 +49,6 @@ function Login() {
         navigate("/dashboard")       
       }, 1500);
  
-
-
       setErrorMsg({}) 
     }catch(err){
 

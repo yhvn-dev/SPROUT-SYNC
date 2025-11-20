@@ -15,18 +15,6 @@ function Users() {
   const [searchValue,setSearchValue] = useState("");
   const token = localStorage.getItem("accessToken")
   const [activeTab, setActiveTab] = useState('Overview');
-
-  
-  // Fetch Login User
-  const fetchUser =  async () =>{
-    try{
-        const loggedUser = await userService.fetchLoggedUser()
-        setUser(loggedUser)
-    }catch(err){
-      console.error("Error Fetching Users")
-    }
-  } 
-
   // fetch chart data
   const fetchChartData = async () =>{
     try {
@@ -67,7 +55,6 @@ function Users() {
     }
 
   useEffect(() =>{
-    fetchUser();
     fetchChartData();
     fetchStatusData()
   },[token])
@@ -82,15 +69,6 @@ function Users() {
     <section className="page users grid grid-cols-[12fr_30fr_58fr] grid-rows-[8vh_10vh_86vh] 
         h-[100vh] w-[100%] gap-x-4 overflow-y-auto bg-amber-400
         relative bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
-
-      <Welcome_box
-          text={
-            <>
-              <p className="font-bold ">Manage your Users</p>
-              <p className="text-sm opacity-[0.5]">As an  { user?.role || "Guest"} you can modify your people.</p>
-            </>
-          }
-        />
 
       <Db_Header  
   
