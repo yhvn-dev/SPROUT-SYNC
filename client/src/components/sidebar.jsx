@@ -79,9 +79,10 @@ export function Sidebar() {
           }>
             
         <Cable className="mx-1" strokeWidth={1.5} size={22}/>
-          <p className="text-sm mr-2">Device Management</p>
+          <p className="text-sm mr-2">Manage Devices</p>
         </NavLink>    
       </div>
+
 
       {/* Logout Section */}
       <div className="flex items-center justify-start flex-col w-full h-[50%]  ">

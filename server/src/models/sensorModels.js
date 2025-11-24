@@ -46,9 +46,26 @@ export const readSensor = async (sensor_id) =>{
 }
 
 
+
+export const readSensorByCode = async (sensor_code) => {
+    try{
+        const {rows} = await query("SELECT * FROM sensors WHERE sensor_code = $1", [sensor_code]); 
+        return rows[0]
+     }catch(err){
+        console.log(`MODELS: Error Getting Sensors by code ${err}`, )
+        throw err
+    }
+}
+
+
+
+
 export const createSensor = async (sensorData) =>{
     try {
         const {bed_id,sensor_type,sensor_name,sensor_code,unit,status} = sensorData
+
+        
+
         const { rows } = await query(`INSERT INTO sensors 
             (bed_id,sensor_type,sensor_name,sensor_code,unit,status) 
             VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,

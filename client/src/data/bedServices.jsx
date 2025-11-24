@@ -11,6 +11,18 @@ export const fetchAllBeds = async () => {
 }
 
 
+export const fetchBedsCount = async () =>{
+    try {
+        const beds = await api.get(`beds/get/beds/count`);
+        const bedCount = beds.data.data
+        return bedCount
+    } catch (error) {
+        console.error("Error Fetching Beds Count")        
+        throw error
+    }
+}
+
+
 export const insertBeds = async (data) =>{
     try{
         const res = await api.post("/beds/post/beds",data);

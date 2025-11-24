@@ -47,7 +47,8 @@ export const insertSensors = async (data) =>{
 export const updateSensors = async (sensorData,sensor_id) =>{
 
     try{
-        const res = await api.put(`/sensor/put/sensor/${sensor_id}`,sensorData);
+        console.log(sensorData)
+        const res = await api.put(`/sensors/put/sensors/${sensor_id}`,sensorData);
         const sensors = res.data.data
         return sensors        
     }catch(err){
@@ -57,12 +58,10 @@ export const updateSensors = async (sensorData,sensor_id) =>{
 }
 
 
-export const deletSensors = async (sensor_id) => {
+export const deleteSensors = async (sensor_id) => {
     try{
-        console.log(sensor_id)
-        await api.delete(`sensor/delete/sensor/${sensor_id}`)
+        await api.delete(`sensors/delete/sensors/${sensor_id}`)
     } catch (err) {
         console.error("Error Deleting sensor")
     }
-};
-
+}

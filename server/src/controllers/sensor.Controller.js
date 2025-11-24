@@ -61,7 +61,16 @@ export const countSensors = async (req,res) => {
 
 export const insertSensor = async (req, res) => {
   try {
-        const sensorData = req.body
+        const sensorData = req.body  
+        if (!sensorData.sensor_code) {
+          return res.status(400).json({ error: "Sensor code is required" });
+        }
+        const existingSensor = await sensorModel.readSensorByCode(sensorData.sensor_code)
+        if (existingSensor) { 
+           return res.status(409).json({ error: "Sensor with this code already exists" });
+        }
+
+        
         const sensor = await sensorModel.createSensor(sensorData)
         console.log(sensor)   
         res.status(200).json({message:"Sensor Inserted Succesfully",data:sensor})

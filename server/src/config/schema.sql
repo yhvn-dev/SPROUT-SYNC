@@ -14,16 +14,18 @@ CREATE TABLE users (
 
 CREATE TABLE beds (
     bed_id SERIAL PRIMARY KEY,
-    bed_number VARCHAR(20) NOT NULL,
-    bed_code VARCHAR(50) NOT NULL,
-    bed_name VARCHAR(50) NOT NULL,
-    location VARCHAR(50) NOT NULL,
-    is_active BOOLEAN DEFAULT TRUE,
-    last_avg_moisture DECIMAL (5,2),
-    hysteresis DECIMAL (5,2) DEFAULT 5,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+    bed_number TEXT NOT NULL,         -- e.g., "Bed 1"
+    bed_code TEXT UNIQUE NOT NULL,    -- e.g., "BED-CODE-11"
+    bed_name TEXT NOT NULL,           -- e.g., "Lettuce Bed"
+    location TEXT,                    -- e.g., "RIGHT", "LEFT"
+    is_watering BOOLEAN DEFAULT FALSE, -- TRUE if currently watering
+    last_avg_moisture NUMERIC,        -- Latest moisture reading
+    min_moisture NUMERIC NOT NULL DEFAULT 30, -- Start watering below this %
+    max_moisture NUMERIC NOT NULL DEFAULT 70, -- Stop watering above this %
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
 
 
 CREATE TABLE sensors (

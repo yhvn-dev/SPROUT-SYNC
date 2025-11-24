@@ -3,7 +3,6 @@ import { Db_Header } from '../../components/db_header';
 import { Sidebar } from '../../components/sidebar';
 
 import BedsScreen from './bedsScreen';
-import ViewBedDetails from './viewBedDetails';
 import BedModal from './bedsModal';
 import SensorModal from "./sensorModal"
 
@@ -21,6 +20,7 @@ const DeviceManagement = () => {
   const [openBed,setOpenBed] = useState(false)
   const [bedMode,setBedMode] = useState("")
   const [selectedBed,setSelectedBed] = useState([])
+  const [bedCount,setBedCount] = useState(0)
   
   const [openSensor,setOpenSensor] = useState(false)
   const [sensorMode,setSensorMode] = useState("")
@@ -52,6 +52,8 @@ const DeviceManagement = () => {
         try {       
           const beds = await bedService.fetchAllBeds();
           const sensors = await sensorService.fetchAllSensors();
+          const bedCount = await bedService.fetchBedsCount()
+          
 
           // Calculate sensor count per bed
           const bedsWithSensorCount = beds.map(b => ({
@@ -60,10 +62,13 @@ const DeviceManagement = () => {
           }));
 
           setBedData(bedsWithSensorCount);
-          setSensorData(sensors);        
+          setSensorData(sensors);       
+          setBedCount(bedCount)
+          
           // Optional: total sensors
           const totalSensors = sensors.length;
           setSensorCount(totalSensors);
+          
 
         } catch (err) {
           console.error(err);
@@ -124,6 +129,7 @@ const DeviceManagement = () => {
           setBedMode={setBedMode} 
           setSelectedBed={setSelectedBed} 
           bed={bed}
+          bedCount={bedCount}
           setOpenSensor={setOpenSensor}  
           sensorMode={setSensorMode}  
           sensors={sensorData} 
@@ -150,7 +156,6 @@ const DeviceManagement = () => {
       bedMode={bedMode} 
       selectedBed={selectedBed}
       loadBedData={loadBedData}
-
       scsMsg={setScsMsg}
       errMsg={setErrMsg}
      />}
@@ -165,6 +170,7 @@ const DeviceManagement = () => {
       selectedBed={selectedBed}
       selectedSensor={selectedSensor}
       loadBedData={loadBedData}
+      scsMsg={setScsMsg}
       
     />}
 

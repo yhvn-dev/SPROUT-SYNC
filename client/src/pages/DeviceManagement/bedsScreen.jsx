@@ -14,7 +14,7 @@ const StatusBadge = ({ status }) => (
     </span>
 );
 
-function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
+function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,bedCount,
                     setOpenSensor,sensors,sensorCount,setSelectedSensor,sensorMode}) {
  
   const handleOpenInsert = () => {
@@ -45,20 +45,15 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
     setSelectedSensor(bedSensors)
   };
 
-
-
   return (
     <div className="space-y-6">
               {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-gradient-to-br from-[var(--ptl-greena)] to-[var(--ptl-greenb)] text-white rounded-lg p-6 shadow-lg">
             <h3 className="text-[0.9rem] opacity-90 mb-2">Total Beds</h3>
-            {/* <p className="text-4xl font-bold">{beds.length}</p> */}
+            <p className="text-4xl font-bold">{bedCount}</p>
         </div>
-        <div className="bg-gradient-to-br from-[var(--sage)] to-[var(--sage-medium)] text-white rounded-lg p-6 shadow-lg">
-            <h3 className="text-[0.9rem] opacity-90 mb-2">Active Beds</h3>
-            {/* <p className="text-4xl font-bold">{beds.filter(b => b.status === 'active').length}</p> */}
-        </div>
+   
         <div className="bg-gradient-to-br from-[var(--ptl-greenc)] to-[var(--ptl-greend)] text-white rounded-lg p-6 shadow-lg">
             <h3 className="text-[0.9rem] opacity-90 mb-2">Total Sensors</h3>
             {sensorCount && <p className="text-4xl font-bold">{sensorCount}</p>}
@@ -156,24 +151,7 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
                                             </div>
                                         </div>
 
-                                        {/* STATUS */}
-                                        <div className="mt-3 pt-3 border-t border-[var(--sage-light)]">
-                                            <div className="flex items-center justify-between">
-                                                <span className="text-sm text-[var(--acc-darkc)]">Status</span>
-
-                                                <div className="flex items-center gap-1">
-                                                    <div
-                                                        className={`w-2 h-2 rounded-full ${
-                                                            s.status === "active"
-                                                                ? "bg-[var(--color-success-a)]"
-                                                                : "bg-[var(--color-danger-b)]"
-                                                        }`}
-                                                    />
-                                                    <span className="text-sm font-medium">{s.status}</span>
-                                                </div>
-                                            </div>
-                                        </div>
-
+                            
                                         {/* SENSOR ACTION BUTTONS */}
                                         <div className="mt-4 flex items-center justify-between gap-2">
                                             {/* UPDATE */}
@@ -212,7 +190,7 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
                                     {/* PH LEVEL  */}
                                     <div className="col-start-1 col-end-2 row-start-2 row-end-2 w-full h-full center rounded-xl shadow-lg">
                                         <div className="space-y-1 " >
-                                            <div className="flex items-center gap-2">
+                                            <div className="flex items-center gap-2 p-4">
                                         
                                                 <span className="text-sm font-medium text-[var(--acc-darka)]">
                                                 pH Level
