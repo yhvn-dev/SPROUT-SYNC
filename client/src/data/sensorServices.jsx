@@ -30,3 +30,39 @@ export const fetchSensorsCount = async () =>{
         throw error
     }
 }
+
+
+
+
+export const insertSensors = async (data) =>{
+    try{
+        const res = await api.post("/sensors/post/sensors",data);
+        const sensors = res.data.data
+        return sensors        
+    }catch(err){
+        throw err
+    }
+} 
+
+export const updateSensors = async (sensorData,sensor_id) =>{
+
+    try{
+        const res = await api.put(`/sensor/put/sensor/${sensor_id}`,sensorData);
+        const sensors = res.data.data
+        return sensors        
+    }catch(err){
+        console.error("Error Updating Sensors",err)
+        throw err
+    }
+}
+
+
+export const deletSensors = async (sensor_id) => {
+    try{
+        console.log(sensor_id)
+        await api.delete(`sensor/delete/sensor/${sensor_id}`)
+    } catch (err) {
+        console.error("Error Deleting sensor")
+    }
+};
+

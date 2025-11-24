@@ -26,6 +26,7 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
     setBedMode("update");
     setOpenBed(true);
     setSelectedBed(value)
+    console.log("SELECTED BED",value)
     console.log("UPDATE CLICKED")
   };
 
@@ -40,10 +41,9 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
     const bedSensors = sensors.filter(s => s.bed_id === bedValue.bed_id)
     sensorMode("insert")
     setSelectedBed(bedValue)
+    console.log("SELECTED BED",bedSensors )
     setSelectedSensor(bedSensors)
   };
-
-  
 
 
 
@@ -121,60 +121,90 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
                                         {sensors && sensors
                                         .filter((s) => s.bed_id === b.bed_id) //
                                         .map((s) => (
-                                        <div
-                                            key={s.sensor_id}
-                                            className="relative rounded-lg p-4 shadow-lg transition-all hover:shadow-xl bg-white border border-[var(--sage-light)] w-35" >
-                                            {/* ZONE LABEL */}
-                                            <div className="absolute -top-3 left-3 px-2 py-1 rounded text-sm font-semibold bg-[var(--sancgb)] text-white">
-                                                Zone {s.zone_number}
-                                            </div>
+                                    <div key={s.sensor_id}
+                                        className="relative rounded-lg p-4 shadow-lg transition-all hover:shadow-xl bg-white border border-[var(--sage-light)] w-35"
+                                    >
+                                        {/* ZONE LABEL */}
+                                        <div className="absolute -top-3 left-3 px-2 py-1 rounded text-sm font-semibold bg-[var(--sancgb)] text-white">
+                                            Zone {s.zone_number}
+                                        </div>
 
-                                            {/* SENSOR TYPE */}
-                                            <div className="mt-4 space-y-3">
-                                                <div className="space-y-1">
-                                                    <div className="flex items-center gap-2">
-                                                        <Droplet size={14} />
-                                                        <span className="text-sm font-medium text-[var(--acc-darka)]">
-                                                            {s.sensor_type}
-                                                        </span>
-                                                    </div>
-
-                                                    {/* VALUE */}
-                                                    <div className="flex items-baseline gap-1">
-                                                        <span className="text-2xl font-bold text-[var(--sancgb)]">
-                                                            {s.value ?? "--"}
-                                                        </span>
-                                                        <span className="text-sm text-[var(--acc-darkb)]">
-                                                            {s.sensor_type === "moisture" ? "%" : ""}
-                                                        </span>
-                                                    </div>
-
-                                                    {/* RANGE BAR */}
-                                                    <div className="w-full h-1.5 rounded-full bg-[var(--sage-lighter)] overflow-hidden">
-                                                        <div className="h-full rounded-full transition-all bg-[var(--sancgb)] w-[65%]" />
-                                                    </div>
+                                        {/* SENSOR TYPE */}
+                                        <div className="mt-4 space-y-3">
+                                            <div className="space-y-1">
+                                                <div className="flex items-center gap-2">
+                                                    <Droplet size={14} />
+                                                    <span className="text-sm font-medium text-[var(--acc-darka)]">
+                                                        {s.sensor_type}
+                                                    </span>
                                                 </div>
-                                            </div>
 
+                                                {/* VALUE */}
+                                                <div className="flex items-baseline gap-1">
+                                                    <span className="text-2xl font-bold text-[var(--sancgb)]">
+                                                        {s.value ?? "--"}
+                                                    </span>
+                                                    <span className="text-sm text-[var(--acc-darkb)]">
+                                                        {s.sensor_type === "moisture" ? "%" : ""}
+                                                    </span>
+                                                </div>
 
-                                            {/* STATUS */}
-                                            <div className="mt-3 pt-3 border-t border-[var(--sage-light)]">
-                                                <div className="flex items-center justify-between">
-                                                    <span className="text-sm text-[var(--acc-darkc)]">Status</span>
-
-                                                    <div className="flex items-center gap-1">
-                                                        <div
-                                                            className={`w-2 h-2 rounded-full ${
-                                                                s.status === "active" ? "bg-[var(--color-success-a)]" : "bg-[var(--color-danger-b)]"
-                                                            }`}
-                                                        />
-                                                        <span className="text-sm font-medium">
-                                                            {s.status}
-                                                        </span>
-                                                    </div>
+                                                {/* RANGE BAR */}
+                                                <div className="w-full h-1.5 rounded-full bg-[var(--sage-lighter)] overflow-hidden">
+                                                    <div className="h-full rounded-full transition-all bg-[var(--sancgb)] w-[65%]" />
                                                 </div>
                                             </div>
                                         </div>
+
+                                        {/* STATUS */}
+                                        <div className="mt-3 pt-3 border-t border-[var(--sage-light)]">
+                                            <div className="flex items-center justify-between">
+                                                <span className="text-sm text-[var(--acc-darkc)]">Status</span>
+
+                                                <div className="flex items-center gap-1">
+                                                    <div
+                                                        className={`w-2 h-2 rounded-full ${
+                                                            s.status === "active"
+                                                                ? "bg-[var(--color-success-a)]"
+                                                                : "bg-[var(--color-danger-b)]"
+                                                        }`}
+                                                    />
+                                                    <span className="text-sm font-medium">{s.status}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* SENSOR ACTION BUTTONS */}
+                                        <div className="mt-4 flex items-center justify-between gap-2">
+                                            {/* UPDATE */}
+                                            <button
+                                                onClick={() => {
+                                                    sensorMode("update");
+                                                    setSelectedSensor(s);
+                                                    setOpenSensor(true);
+                                                }}
+                                                className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--white-blple--)] 
+                                                        hover:bg-[var(--purpluish--)] transition-colors shadow-md"
+                                            >
+                                                <Pencil size={16} className="text-white" />
+                                             
+                                            </button>
+
+                                            {/* DELETE */}
+                                            <button
+                                                onClick={() => {
+                                                    sensorMode("delete");
+                                                    setSelectedSensor(s);
+                                                    setOpenSensor(true);
+                                                }}
+                                                className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-danger-b)] 
+                                                        hover:bg-[var(--color-danger-a)] transition-colors shadow-md">
+
+                                                <Trash2 size={16} className="text-white" />
+                                             
+                                            </button>
+                                        </div>
+                                    </div>
                                         ))}
                                     </div>
 
@@ -200,20 +230,23 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,
                                         <aside className="flex items-center justify-evenly shadow-lg bg-white rounded-2xl 
                                         col-start-1 col-end-1 row-start-3 row-end-3">      
                                             <nav className="flex items-center justify-start full">
-                                                <button onClick={() => handleAddSensor(b)} className="rounded-lg 
+                                                <button onClick={() => handleAddSensor(b)} className="center rounded-lg 
                                                 bg-[var(--color-success-b)] shadow-xl px-2 py-1 stroke-[var(--acc-darkc)] 
                                                 mx-4  hover:bg-blue-400 transition-colors text-[0.9rem] shadow-md">
-                                                    <Plus  stroke="var(--acc-dark-c)"  size={18}/>
+                                                    <Plus className="text-[var(--main-white--)]"   size={18}/>
+                                                    <span className="text-white mx-2">ADD SENSOR</span>
                                                 </button>
-                                                <button onClick={() => handleOpenUpdate(b)} className="rounded-lg 
+                                                <button onClick={() => handleOpenUpdate(b)} className="center rounded-lg 
                                                 bg-[var(--white-blple--)] shadow-xl px-2 py-1 stroke-[var(--acc-darkc)] 
                                                 mx-4 hover:bg-[var(--purpluish--)] transition-colors text-[0.9rem] shadow-md ">
-                                                    <Pencil stroke="var(--acc-dark-c)" size={18}/>
+                                                    <Pencil className="text-[var(--main-white--)]" size={18}/>
+                                                    <span className="text-white mx-2">UPDATE BED</span>
                                                 </button>
-                                                <button onClick={() => handleOpenDelete(b)} className="rounded-lg 
+                                                <button onClick={() => handleOpenDelete(b)} className="center rounded-lg 
                                                 bg-[var(--color-danger-b)] shadow-xl px-2 py-1 stroke-[var(--acc-darkc)] 
                                                 mx-4 hover:bg-[var(--color-danger-a)] transition-colors text-[0.9rem] shadow-md">
-                                                    <Trash2 stroke="var(--acc-dark-c)" size={18}/>
+                                                    <Trash2 className="text-[var(--main-white--)]" size={18}/>
+                                                    <span className="text-white mx-2">DELETE BED</span>
                                                 </button>                      
                                             </nav>                                             
                                         </aside>

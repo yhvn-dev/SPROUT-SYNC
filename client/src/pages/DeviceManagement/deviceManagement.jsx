@@ -164,6 +164,7 @@ const DeviceManagement = () => {
       sensorMode={sensorMode}
       selectedBed={selectedBed}
       selectedSensor={selectedSensor}
+      loadBedData={loadBedData}
       
     />}
 

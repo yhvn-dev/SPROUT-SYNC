@@ -27,13 +27,17 @@ function BedModal({ isBedOpen,onBedClose,bedMode,selectedBed,loadBedData,scsMsg,
 
 
 
-    const handleChange = (e) =>{
-        const {name,value} = e.target
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        const updatedValue = name === "status" 
+            ? value === "Active" 
+            : value;
 
-        setFormData(prev =>({
-            ...prev,[name]:value
-        }))
-    }
+        setFormData(prev => ({
+            ...prev,
+            [name]: updatedValue
+        }));
+    };
 
     const handleSubmit = async (e) =>{
         e.preventDefault()
@@ -41,17 +45,17 @@ function BedModal({ isBedOpen,onBedClose,bedMode,selectedBed,loadBedData,scsMsg,
             if(bedMode === "insert"){
                 await bedService.insertBeds(formData)
                 loadBedData()
-                isBedOpen(false)
+                onBedClose() 
                 scsMsg(`${formData.bed_name} Added`)
             }else if(bedMode === "update"){             
                 await bedService.updateBeds(formData,selectedBed.bed_id)
                 loadBedData() 
-                isBedOpen(false)
+                onBedClose() 
                 scsMsg(`${formData.bed_name} Updated`)
             }else{
                 await bedService.deleteBed(selectedBed.bed_id)
                 loadBedData()   
-                isBedOpen(false)
+                onBedClose() 
                 scsMsg(`${formData.bed_name} Deleted`)
         }    
         } catch (error) {
@@ -141,6 +145,8 @@ function BedModal({ isBedOpen,onBedClose,bedMode,selectedBed,loadBedData,scsMsg,
 
                 
                 <div className="flex items-center justify-evenly flex-col  full p-4 col-start-2 col-end-2 row-start-1 row-end-1">
+
+
                     {/* Location */}
                     <div className="form_box input-box relative center">                   
                         <input
@@ -152,10 +158,17 @@ function BedModal({ isBedOpen,onBedClose,bedMode,selectedBed,loadBedData,scsMsg,
                         placeholder=""/>
                         <label className="absolute text-sm px-4 pointer-events-none left-0 text-[var(--acc-darkc)]">Location</label>
                     </div> 
+
+                    
                     {/* Status Toggle */}
-                    <div className="flex items-center justify-between  p-2 bg-[var(--sage-lighter)] rounded-lg">                            
-                        <p>Status</p>
+                    <div className="flex items-center justify-between  p-2 bg-[var(--sage-lighter)] rounded-lg">   
+                        <select name="status" value={formData.status ? "Active" : "Inactive"} onChange={handleChange}>
+                            <option value="Active">Active</option>
+                            <option value="Inactive">Inactive</option>
+                        </select>              
                     </div>
+
+                    
                 </div>
 
 

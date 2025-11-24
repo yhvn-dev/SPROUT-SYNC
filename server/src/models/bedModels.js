@@ -40,7 +40,7 @@ export const createBed = async (bedData) =>{
         const {bed_number,bed_code,bed_name,location,is_active} = bedData
         const { rows } = await query(`INSERT INTO beds 
             (bed_number,bed_code,bed_name,location,is_active) 
-            VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+            VALUES ($1,$2,$3,$4,$5) RETURNING *`,
             [bed_number,bed_code,bed_name,location,is_active]) 
         console.log("NEW BEDS:",rows)   
         return rows[0]
