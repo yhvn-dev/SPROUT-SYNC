@@ -106,16 +106,24 @@ export const updateBeds = async (req, res) => {
 
 
 
+
 export const deleteBeds = async (req, res) => {
   try {
-    const {bed_id} = req.params
-    await bedModel.deleteBed(bed_id)
-    res.status(200).json({message:"Bed Deleted Succesfully"})
-    console.log("CONTROLLER: Bed Deleted Successfully");
+    
+    const { bed_id } = req.params;
+
+    const deleted = await bedModel.deleteBed(bed_id);
+    if (!deleted) {
+      return res.status(404).json({ message: "Bed does not exist or already deleted" });
+    }
+
+    return res.status(200).json({
+      message: "Bed Deleted Successfully",
+      data: deleted
+    });
+
   } catch (err) {
     console.error("CONTROLLER: Error Deleting bed", err);
-    res.status(500).json({ message: "Error Deleting  bed", err });
+    return res.status(500).json({ message: "Error Deleting bed", err });
   }
 };
-
-

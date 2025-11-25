@@ -87,13 +87,19 @@ export const updateBed = async (bedData,bed_id) =>{
 }
 
 
-export const deleteBed = async (bed_id) =>{
+
+
+
+export const deleteBed = async (bed_id) => {
     try {
-        const { rows } = await query("DELETE FROM beds WHERE bed_id = $1",[bed_id]) 
-        console.log("UPDATED BEDS:",rows)
-        return rows[0]
+        const { rows } = await query(
+            "DELETE FROM beds WHERE bed_id = $1 RETURNING *",
+            [bed_id]
+        );
+        console.log("DELETED BED:", rows[0]);
+        return rows[0];
     } catch (err) {
-         console.log(`MODELS: Error Creating beds ${err}`, )
-        throw err
+        console.log(`MODELS: Error Deleting bed ${err}`);
+        throw err;
     }
 }

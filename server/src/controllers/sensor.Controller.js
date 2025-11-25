@@ -110,16 +110,31 @@ export const updateSensor = async (req, res) => {
 };
 
 
-export const deleteSensor = async (req, res) => {
-  try {
-    const {sensor_id} = req.params
-    await sensorModel.deleteSensor(sensor_id)
-    res.status(200).json({message:"Sensor Deleted Succesfully"})
-    console.log("CONTROLLER: Sensor Deleted Successfully");
-  } catch (err) {
-    console.error("CONTROLLER: Error Deleting Sensor", err);
-    res.status(500).json({ message: "Error Deleting Sensor", err });
-  }
-};
 
+
+  export const deleteSensor = async (req, res) => {
+    
+    try {
+        const { sensor_id } = req.params;
+        const sensor = await sensorModel.readSensor(sensor_id);
+        if (!sensor) {
+          return res.status(404).json({ message: "Sensor does not exist" });
+        }
+        const deleted = await sensorModel.deleteSensor(sensor_id);
+
+        return res.status(200).json({
+          message: "Sensor Deleted Successfully",
+          data: deleted
+        });
+
+      } catch (err) {
+        console.error("CONTROLLER: Error Deleting Sensor", err);
+        return res.status(500).json({
+          message: "Error Deleting Sensor",
+          err
+        });
+  }
+
+
+};
 

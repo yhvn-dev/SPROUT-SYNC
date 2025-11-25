@@ -98,13 +98,18 @@ export const updateSensor = async (sensorData,sensor_id) =>{
     }
 }
 
-export const deleteSensor = async (sensor_id) =>{
+
+
+export const deleteSensor = async (sensor_id) => {
     try {
-        const { rows } = await query("DELETE FROM sensors WHERE sensor_id = $1",[sensor_id]) 
-        console.log("UPDATED SENSORS:",rows)
-        return rows[0]
+        const { rows } = await query(
+            "DELETE FROM sensors WHERE sensor_id = $1 RETURNING *",
+            [sensor_id]
+        );
+        console.log("DELETED SENSOR:", rows[0]);
+        return rows[0];  
     } catch (err) {
-         console.log(`MODELS: Error Deleting SENSORS ${err}`, )
-        throw err
+        console.log(`MODELS: Error Deleting SENSOR ${err}`);
+        throw err;
     }
-}
+};

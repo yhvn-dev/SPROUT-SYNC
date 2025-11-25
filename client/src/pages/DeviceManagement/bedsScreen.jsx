@@ -96,7 +96,7 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,bedCount,
                         <div key={b.bed_id} className="relative rounded-xl p-6 shadow-lg bg-[var(--sage-lighter)] border-[var(--sage-light)] my-4 ">
                             
                         {/* Header */}
-                        <div className="mb-6 flex items-center justify-between">
+                        <div className="mb-6 flex items-center justify-between ">
                             <div className="flex items-center justify-start">
                             <h3 className="text-sm font-semibold tracking-wide text-[var(--sancga)]">
                                 {b.bed_number} - MONITORING 
@@ -104,7 +104,12 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,bedCount,
                             <div className="text-sm px-3 py-1 mx-4 rounded-full bg-[var(--sage-medium)] text-[var(--sage-dark)]">
                                {b.sensorCount} Zones Active
                             </div>
-                            </div>                
+                            </div>    
+
+                            <div>
+                                <p className="text-sm  bg-amber-100 text-[var(--acc-darkc)] font-medium font px-3 py-1 rounded-2xl">{b.bed_name}</p>
+                            </div>            
+
                         </div>
                         
                         
