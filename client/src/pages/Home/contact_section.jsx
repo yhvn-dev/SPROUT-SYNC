@@ -5,7 +5,7 @@ export function Contact_Section(){
     return(
         <>
         {/* Contact Section */}
-        <section id="contact" className="py-24 bg-gradient-to-b from-[#E8F3ED] to-[#C4DED0]">
+        <section id="#contact" className="py-24 bg-gradient-to-b from-[#E8F3ED] to-[#C4DED0]">
             <div className="max-w-7xl mx-auto px-6">
             <div className="grid md:grid-cols-2 gap-16 items-center">
                 <div>

@@ -2,15 +2,16 @@ import { useState, useEffect } from "react";
 import { X, Plus, Edit, Delete, Droplet, Activity } from "lucide-react";
 import * as sensorServices from "../../data/sensorServices";
 
-function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, selectedSensor, loadBedData,scsMsg }) {
+function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, selectedSensor, loadBedData,scsMsg}) {
   const [formDataSensor, setFormDataSensor] = useState({
     bed_id: 0,
     sensor_type: "",
-    sensor_name: "",
     sensor_code: "",
     unit: ""
   });
-  
+
+  const [formError,setFormError] = useState([]);
+
   
   useEffect(() => {
     try {
@@ -20,7 +21,6 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
         setFormDataSensor({
           bed_id: selectedBed?.bed_id,
           sensor_type: "",
-          sensor_name: "",
           sensor_code: "",
           unit: ""
         });
@@ -28,15 +28,13 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
         setFormDataSensor({
           bed_id: sensor?.bed_id,
           sensor_type: sensor?.sensor_type || "",
-          sensor_name: sensor?.sensor_name || "",
           sensor_code: sensor?.sensor_code || "",
           unit: sensor?.unit || ""
         });
       } else if (sensorMode === "delete") {
         setFormDataSensor({
           bed_id: sensor?.bed_id,
-          sensor_type: sensor?.sensor_type || "",
-          sensor_name: sensor?.sensor_name || ""
+          sensor_type: sensor?.sensor_type || ""
         });
       }
     } catch (error) {
@@ -58,27 +56,40 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
           loadBedData();
           onSensorClose(true);
           scsMsg(`${capitalizeFirstLetter(formDataSensor.sensor_type)} Added Successfully`);
+          setFormError([])
       } else if (sensorMode === "update") {
           await sensorServices.updateSensors(formDataSensor,selectedSensor.sensor_id);
           onSensorClose(true);
           scsMsg(`${capitalizeFirstLetter(formDataSensor.sensor_type)} Updated Successfully`);
+          setFormError([])
       } else {
           await sensorServices.deleteSensors(selectedSensor.sensor_id);
           loadBedData();
           onSensorClose(true);
           scsMsg(`${capitalizeFirstLetter(formDataSensor.sensor_type)} Deleted Successfully`);
+         setFormError([])
       }
 
     } catch (error) {
+      const sensorError = error.response.data.errors
+      setFormError(sensorError)
       console.error("Error Submitting Sensor Data", error);
     }
 
+  };
+
+    const getErrorMsg = (fieldName) => {
+    const err = formError.find(e => e.path === fieldName);
+    return err ? err.msg : "";
   };
 
   const capitalizeFirstLetter = (str) => {
   if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
+
+
+
 
   if (!isSensorOpen) return null;
 
@@ -114,27 +125,23 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
             </div>
           </div>
         ) : (
+          
           <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-6">
-            
+        
             {/* Left Column */}
             <div className="flex flex-col gap-4">
               <input
                 type="text"
                 name="bed_id"
+                disabled
                 placeholder="Bed ID"
                 value={formDataSensor.bed_id}
                 onChange={handleChange}
                 className="px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
                 required
               />
-              <input
-                type="text"
-                name="sensor_name"
-                placeholder="Sensor Name"
-                value={formDataSensor.sensor_name}
-                onChange={handleChange}
-                className="px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
-              />
+            
+        
               <input
                 type="text"
                 name="sensor_code"
@@ -143,7 +150,13 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
                 onChange={handleChange}
                 className="px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
               />
+
+                {getErrorMsg("sensor_code") && (
+                  <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("sensor_code")}</span>
+                )}
             </div>
+
+            
 
             {/* Right Column */}
             <div className="flex flex-col gap-4">
@@ -159,19 +172,26 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
                   {capitalizeFirstLetter(type)}
                 </option>
               ))}
-              
             </select>
+             {getErrorMsg("sensor_type") && (
+                  <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("sensor_type")}</span>
+              )}
+
+              {/* UNIT */}
               <select
                 name="unit"
                 value={formDataSensor.unit}
                 onChange={handleChange}
-                className="px-4 py-2 shadow-lg bg-gray-200 w-full rounded-lg"
-              >
+                className="px-4 py-2 shadow-lg bg-gray-200 w-full rounded-lg">
                 <option value="">Unit</option>
                 <option value="%">Moisture / Humidity - %</option>
                 <option value="°C">Temperature - °C</option>
                 <option value="cm">Water Level - cm</option>
               </select>
+
+                {getErrorMsg("unit") && (
+                    <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("unit")}</span>
+                )}
             </div>
 
             {/* Action Buttons */}
@@ -181,6 +201,7 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
                 {sensorMode === "insert" ? "Add Sensor" : "Update Sensor"}
               </button>
             </div>
+
           </form>
         )}
       </main>

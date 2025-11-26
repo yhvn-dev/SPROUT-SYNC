@@ -33,7 +33,6 @@ CREATE TABLE sensors (
     bed_id NOT NULL,
     sensor_type VARCHAR(100) NOT NULL,
     sensor_code VARCHAR(50) NOT NULL,
-    sensor_name VARCHAR (50),
     unit VARCHAR(50),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP

@@ -13,20 +13,17 @@ export function Workspace({ bed,setOpenTModal}) {
        overflow-hidden'> 
 
         <div className='center w-full h-full col-start-1 col-end-4 bg-transparent mb-4 '>
-            <ol className="wp_part left full flex items-center justify-start  ">
-              <h1
+            <ol className="wp_part full flex items-center justify-start">
+                <h1
                 className="flex items-center justify-start text-2xl full  font-bold mb-2 text-[var(--sancga)">
                     <Leaf className="mx-4" />
                     <span >Greenhouse Monitoring System</span>
                 </h1>
-                <p className="text-sm px-4  ">
-                    Real-time soil moisture and pH level monitoring
+                <p className="text-sm text-end px-4  ">
+                    Real-time soil moisture and pH level monitoring.
                 </p>  
             </ol>
-            <ol className="wp_part right w-1/3 h-full flex items-center justify-end">
-                <div className="">
-                </div>
-            </ol>
+        
         </div>
 
       {/* content area */}

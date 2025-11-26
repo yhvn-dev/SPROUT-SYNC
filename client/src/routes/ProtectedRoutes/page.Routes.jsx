@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import * as Loader from "../../components/loaders";
 import api from "../../utils/api";
 
-export const ProtectedRoute = ({ children }) => {
+export const ProtectedRoute = ({ children,role,allowedRoles }) => {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
+  const [userRole,setUserRole] = useState("");
+
 
   useEffect(() => {
     // KUHA NG TOKEN SA LOCAL STORAGE ->  
@@ -21,8 +23,15 @@ export const ProtectedRoute = ({ children }) => {
 
         // Try to fetch user info
         const userInfo = await api.get("/users/me");
-        console.log("USER INFO:",userInfo)
-
+        const role = userInfo.data.role
+    
+          // Role-based access check
+        if (!allowedRoles.includes(role)) {
+          // Redirect or show access denied
+          navigate("/dashboard", { replace: true }); // redirect to home or AccessDenied page
+          return;
+        }
+        
       } catch (err) {
 
         // If 401/403 → interceptor will try refresh
@@ -32,6 +41,7 @@ export const ProtectedRoute = ({ children }) => {
             // After refresh, retry the request
             await api.get("/users/me");
           } catch {
+            
             // If refresh also fails → force login
             navigate("/login", { replace: true });
           }

@@ -134,7 +134,5 @@ export const updateSensor = async (req, res) => {
           err
         });
   }
-
-
 };
 

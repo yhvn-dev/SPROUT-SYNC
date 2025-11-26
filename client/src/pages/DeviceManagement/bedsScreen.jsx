@@ -145,7 +145,7 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,bedCount,
                                                         {s.value ?? "--"}
                                                     </span>
                                                     <span className="text-sm text-[var(--acc-darkb)]">
-                                                        {s.sensor_type === "moisture" ? "%" : ""}
+                                                        {s.unit}
                                                     </span>
                                                 </div>
 

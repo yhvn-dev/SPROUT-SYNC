@@ -73,8 +73,9 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
         scsMsg(`${formData.bed_name} Deleted`);
       }
     } catch (error) {
-      console.error("Submit Error:", error);
-      setFormError(error.response.data)
+      const bedError = error.response.data.errors
+      setFormError(bedError)
+      console.error(bedError)
       errMsg?.("Error submitting bed data");
     }
   };
@@ -82,7 +83,12 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
   if (!isBedOpen) return null;
 
 
-  
+  const getErrorMsg = (fieldName) => {
+    const err = formError.find(e => e.path === fieldName);
+    return err ? err.msg : "";
+  };
+
+    
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-2xl">
       <main className={`rounded-xl overflow-hidden bg-white w-[45%]`}>
@@ -119,10 +125,10 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
 
         ) : (
           <form className="grid grid-cols-2 gap-4 p-6" onSubmit={handleSubmit}>
-            {/* Left Column */}
-            <div className="flex flex-col gap-4">
+         
 
-          
+            {/* Bed Number */}
+            <div className="flex flex-col gap-1">
               <input
                 type="text"
                 name="bed_number"
@@ -130,8 +136,14 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
                 value={formData.bed_number}
                 onChange={handleChange}
                 className="px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
-                required
               />
+              {getErrorMsg("bed_number") && (
+                <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("bed_number")}</span>
+              )}
+            </div>
+
+            {/* Bed Code */}
+            <div className="flex flex-col gap-1">
               <input
                 type="text"
                 name="bed_code"
@@ -139,11 +151,14 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
                 value={formData.bed_code}
                 onChange={handleChange}
                 className="px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
-                required
               />
-              {formError?.error && <p>{formError.error}</p>}
+              {getErrorMsg("bed_code") && (
+                <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("bed_code")}</span>
+              )}
+            </div>
 
-
+            {/* Bed Name */}
+            <div className="flex flex-col gap-1">
               <input
                 type="text"
                 name="bed_name"
@@ -152,10 +167,13 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
                 onChange={handleChange}
                 className="px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
               />
+              {getErrorMsg("bed_name") && (
+                <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("bed_name")}</span>
+              )}
             </div>
 
-            {/* Right Column */}
-            <div className="flex flex-col gap-4">
+            {/* Location */}
+            <div className="flex flex-col gap-1">
               <input
                 type="text"
                 name="location"
@@ -164,7 +182,13 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
                 onChange={handleChange}
                 className="px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
               />
-          
+              {getErrorMsg("location") && (
+                <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("location")}</span>
+              )}
+            </div>
+
+            {/* Min Moisture */}
+            <div className="flex flex-col gap-1">
               <input
                 type="number"
                 name="min_moisture"
@@ -172,8 +196,14 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
                 value={formData.min_moisture}
                 onChange={handleChange}
                 className="px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
-                required
               />
+              {getErrorMsg("min_moisture") && (
+                <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("min_moisture")}</span>
+              )}
+            </div>
+
+            {/* Max Moisture */}
+            <div className="flex flex-col gap-1">
               <input
                 type="number"
                 name="max_moisture"
@@ -181,9 +211,12 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
                 value={formData.max_moisture}
                 onChange={handleChange}
                 className="px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
-                required
               />
+              {getErrorMsg("max_moisture") && (
+                <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("max_moisture")}</span>
+              )}
             </div>
+
 
             {/* Action Buttons */}
             <div className="col-span-2 flex justify-end gap-3 mt-4">

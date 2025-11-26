@@ -1,8 +1,6 @@
 import * as Logos from "./logo"
 import { useState,useEffect} from "react";
 
-
-
 export function Header({navChildren}) {
   const [isScrolled, setIsScrolled] = useState(false);
 

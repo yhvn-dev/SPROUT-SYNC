@@ -55,10 +55,11 @@ function Home(){
                 <a href="#farm" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
                   Our Farm
                 </a>
-                <a href="#contact" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
+                {/* <a href="#contact" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
                   Contact
                 </a>
-              
+               */}
+               
               </div>
 
               <div className='flex items-center justify-end w-full  '>
@@ -71,10 +72,10 @@ function Home(){
 
               {mobileMenuOpen && (
                 <div className="md:hidden  space-y-3">
-                  <a href="#features" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Features</a>
-                  <a href="#dashboard" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Dashboard</a>
-                  <a href="#farm" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Our Farm</a>
-                  <a href="#contact" className="block text-[#5A8F73] hover:text-[#027c68] py-2">Contact</a>
+                  <Link to="/login"  href="#login" className="block bg-[var(--sancgb)] text-[var(--sage-lighter)] rounded-2xl px-4 py-1  hover:text-[#027c68]">Get Started</Link>
+                  <a href="#features" className="block text-[#5A8F73] rounded-2xl px-4 py-1   hover:text-[#027c68] ">Features</a>
+                  <a href="#dashboard" className="block text-[#5A8F73] rounded-2xl px-4 py-1  hover:text-[#027c68] ">Dashboard</a>
+                  <a href="#farm" className="block text-[#5A8F73] rounded-2xl px-4 py-1  hover:text-[#027c68] ">Our Farm</a>
                 </div>
             )}
         </>

@@ -24,12 +24,34 @@ function App() {
               <Route path='/' element={<Home/>}/>
               <Route path='/contacts' element={<Contact/>}/>
               <Route path='/about' element={<About/>}/>
-              <Route path='/login' element={<Login/>}/>
-              <Route path='/dashboard' element={<ProtectedRoute> <Dashboard/> </ProtectedRoute>}/>
-              <Route path='/users' element={<ProtectedRoute> <Users/> </ProtectedRoute>} />
-              <Route path='/analytics' element={<ProtectedRoute> <Analytics/> </ProtectedRoute>}/> 
-              <Route path='/control_panel' element={<ProtectedRoute> <ControlPanel/> </ProtectedRoute>}/>
-              <Route path="/device_management" element={<ProtectedRoute> <DeviceManagement/> </ProtectedRoute>}/>
+              <Route path='/login' element={<Login/>}/>  
+         
+              
+              <Route path='/device_management' element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                 <DeviceManagement/> 
+                </ProtectedRoute>
+              }/>
+
+              <Route path='/dashboard' element={
+                <ProtectedRoute allowedRoles={['admin','viewer']}>
+                  <Dashboard/>
+                </ProtectedRoute>
+              }/>
+
+              <Route path='/analytics' element={
+                <ProtectedRoute allowedRoles={['admin','viewer']}>
+                  <Analytics/>
+                </ProtectedRoute>
+              }/>
+
+              <Route path='/users' element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <Users/>
+                </ProtectedRoute>
+              }/>
+
+
           </Routes>
         </BrowserRouter>
 
