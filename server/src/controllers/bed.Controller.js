@@ -43,18 +43,26 @@ export const countBeds = async (req,res) => {
   }
 }
 
+
+
+
+
 export const insertBeds = async (req, res) => {
   try {
       const bedData = req.body
       console.log("Bed Data",bedData)
 
-      if (!bedData.bed_code) {
-        return res.status(400).json({ error: "Bed code is required" });
-      }
- 
-      const existingBed = await bedModel.readBedByCode(bedData.bed_code);
-     if (existingBed) { 
-        return res.status(409).json({ error: "Bed with this code already exists" });
+    if (!bedData.bed_code) {
+      return res.status(400).json({ 
+        errors: [{ path: "bed_code", msg: "Bed code is required" }] 
+      });
+    }
+
+    const existingBed = await bedModel.readBedByCode(bedData.bed_code);
+    if (existingBed) { 
+      return res.status(409).json({ 
+        errors: [{ path: "bed_code", msg: "Bed with this code already exists" }] 
+      });
     }
 
       const bed = await bedModel.createBed(bedData)
@@ -69,40 +77,37 @@ export const insertBeds = async (req, res) => {
 
 
 
-
 export const updateBeds = async (req, res) => {
   try {
     const { bed_id } = req.params;
     const bedData = req.body;
 
-    if(!bed_id) return res.status(400).json({error:"Bed Id Doesn't Exist"});
-
-    const existingBed = await bedModel.readBed(bed_id);
-    if(!existingBed) return res.status(404).json({error:"Bed Doesn't Exist"});
-
     if (!bedData.bed_code) {
-      return res.status(400).json({ error: "Bed code is required" });
+      return res.status(400).json({ 
+        errors: [{ path: "bed_code", msg: "Bed code is required" }] 
+      });
     }
 
-    const existingBedCode = await bedModel.readBedByCode(bedData.bed_code);
-    if (existingBedCode && existingBedCode.bed_id !== parseInt(bed_id)) { 
-        return res.status(409).json({ error: "Bed with this code already exists" });
+    // Check if bed code already exists for other beds
+    const existingBed = await bedModel.readBedByCode(bedData.bed_code);
+    if (existingBed && existingBed.bed_id !== parseInt(bed_id)) { 
+      return res.status(409).json({ 
+        errors: [{ path: "bed_code", msg: "Bed with this code already exists" }] 
+      });
     }
 
-    const bed = await bedModel.updateBed(bedData, bed_id);
-    return res.status(200).json({
-      message: "Bed Updated Successfully",
-      data: bed
-    });
+    const updatedBed = await bedModel.updateBed(bed_id, bedData);
+    res.status(200).json({ message: "Bed Updated Successfully", data: updatedBed });
 
   } catch (err) {
-    console.error(`CONTROLLER:`, err);
-    return res.status(500).json({
-      message: "CONTROLLER: Error Updating Beds",
-      err
+    console.error("CONTROLLER: Error Updating Bed", err);
+    res.status(500).json({ 
+      errors: [{ path: "general", msg: "Error Updating Bed" }] 
     });
   }
 };
+
+
 
 
 

@@ -1,10 +1,11 @@
 import { useState } from 'react'
-import {BedMonitor} from "./beds"
+import {BedLayout} from "./beds"
 import {Leaf} from "lucide-react"
 
 
-export function Workspace({ bed,setOpenTModal}) {
+export function Workspace({bed,setOpenTModal,beds}) {
   
+  console.log("BEDS ON WOKSPACE",beds)
 
   return (
     <section className='bg-white
@@ -25,16 +26,17 @@ export function Workspace({ bed,setOpenTModal}) {
             </ol>
         
         </div>
-
       {/* content area */}
+
+      
       <div className="content_box flex flex-col justify-start items-center w-full h-full
         row-start-2 col-span-1 overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] 
         rounded-[10px]">
 
         <div className="w-full h-full">                    
-          {bed === "bed_1" && <BedMonitor bedNum="bed_1" bedName="Bed 1 " setOpenTModal={setOpenTModal}  />}
-          {bed === "bed_2" && <BedMonitor bedNum="bed_2" bedName="Bed 2"  setOpenTModal={setOpenTModal} />}
-          {bed === "bed_3" && <BedMonitor bedNum="bed_3" bedName="Bed 3"  setOpenTModal={setOpenTModal} />}
+          {bed === "bed_1" && <BedLayout bedNum="bed_1" bedName="Bed 1 " setOpenTModal={setOpenTModal} beds={beds}  />}
+          {bed === "bed_2" && <BedLayout bedNum="bed_2" bedName="Bed 2"  setOpenTModal={setOpenTModal} beds={beds} />}
+          {bed === "bed_3" && <BedLayout bedNum="bed_3" bedName="Bed 3"  setOpenTModal={setOpenTModal} beds={beds} />}
         </div>
 
       </div>

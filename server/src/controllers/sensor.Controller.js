@@ -65,15 +65,25 @@ export const insertSensor = async (req, res) => {
         if (!sensorData.sensor_code) {
           return res.status(400).json({ error: "Sensor code is required" });
         }
+  
         const existingSensor = await sensorModel.readSensorByCode(sensorData.sensor_code)
         if (existingSensor) { 
-           return res.status(409).json({ error: "Sensor with this code already exists" });
+           return res.status(409).json({ errors: [{path: "sensor_code", msg: "Sensor code is required" }]
+          })
         }
 
-        
+        if (!bedData.bed_code) {
+            return res.status(400).json({ 
+              errors: [{ path: "sensor_code", msg: "Sensor code is required" }] 
+            }); 
+        }
+     
         const sensor = await sensorModel.createSensor(sensorData)
         console.log(sensor)   
         res.status(200).json({message:"Sensor Inserted Succesfully",data:sensor})
+
+
+
   } catch (err) {
     console.error("CONTROLLER: Error Inserting Sensor", err);
     res.status(500).json({ message: "Error Inserting Sensor", error: err.message });
@@ -91,6 +101,13 @@ export const updateSensor = async (req, res) => {
 
     const existingSensor = await sensorModel.readSensor(sensor_id)
     if(!existingSensor) { return res.status(201).json({error:"Sensor Doesn't Exist"})}
+
+
+    const existingSensorByCode = await sensorModel.readSensorByCode(sensorData.sensor_code)
+      if (existingSensorByCode) { 
+        return res.status(409).json({ errors: [{path: "sensor_code", msg: "Sensor code is required" }]
+      })
+    }
 
     const sensor = await sensorModel.updateSensor(sensorData,sensor_id);
     return res.status(200).json({

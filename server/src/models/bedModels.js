@@ -1,4 +1,5 @@
 import {query} from "../config/db.js"
+import * as sensorModels from "../models/sensorModels.js"
 
 
 export const readBeds = async () =>{
@@ -63,6 +64,7 @@ export const createBed = async (bedData) =>{
     }
 }
 
+
 export const updateBed = async (bedData,bed_id) =>{
     try {
         
@@ -96,6 +98,8 @@ export const deleteBed = async (bed_id) => {
             "DELETE FROM beds WHERE bed_id = $1 RETURNING *",
             [bed_id]
         );
+        await sensorModels.deleteSensor(bed_id)
+
         console.log("DELETED BED:", rows[0]);
         return rows[0];
     } catch (err) {

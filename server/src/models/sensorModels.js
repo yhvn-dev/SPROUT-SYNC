@@ -63,9 +63,6 @@ export const readSensorByCode = async (sensor_code) => {
 export const createSensor = async (sensorData) =>{
     try {
         const {bed_id,sensor_type,sensor_code,unit,status} = sensorData
-
-        
-
         const { rows } = await query(`INSERT INTO sensors 
             (bed_id,sensor_type,sensor_code,unit,status) 
             VALUES ($1,$2,$3,$4,$5) RETURNING *`,
@@ -112,3 +109,17 @@ export const deleteSensor = async (sensor_id) => {
         throw err;
     }
 };
+
+export const deleteSensorByBedId = async (bed_id) =>{
+      try {
+        const { rows } = await query(
+            "DELETE FROM sensors WHERE bed_id = $1 RETURNING *",
+            [bed_id]
+        );
+        console.log("DELETED SENSOR:", rows[0]);
+        return rows[0];  
+    } catch (err) {
+        console.log(`MODELS: Error Deleting SENSOR base on bed id ${err}`);
+        throw err;
+    }
+}

@@ -3,14 +3,14 @@ import { Sidebar } from "../../components/sidebar"
 import { Db_Header } from "../../components/db_header"
 import { Quick_Stats } from "./quick_stats" 
 import { Workspace } from "./workspace"
-import { Welcome_box } from "../../components/welcome_box"
+import * as bedService from "../../data/bedServices"
 import { ThresholdModal } from "./thresholdModal"
 import { Droplets, Sun, Wind, Activity } from 'lucide-react';
 
 import "./dashboard.css"
 import "./dashboard_responsive.css"
 
-import { useState,useContext } from "react"
+import { useState,useContext,useEffect } from "react"
 
 
 const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
@@ -50,8 +50,25 @@ function Dashboard() {
   const { user } = useContext(UserContext);
   const [activeBed, setActiveBed] = useState("bed_1")
   const [isOpenTModal,setOpenTModal] = useState(false);
+  const [beds,setBeds] = useState([])
+  const [pageError,setPageError] = useState([]);
 
+  useEffect(() =>{
+      loadBeds()
+  },[])
   
+  const loadBeds = async () =>{
+    try {
+        const data = await bedService.fetchAllBeds();
+        setBeds(data)
+    } catch (error) {
+      console.error("Error Loading Bed")   
+      setPageError("Error Loading Beds")   
+    }
+  }
+  
+
+
   return (
     <>
         <section className="bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] page dashboard 
@@ -110,6 +127,7 @@ function Dashboard() {
             <Workspace      
               bed={activeBed}
               setOpenTModal={setOpenTModal}
+              beds={beds}
             />
             
 

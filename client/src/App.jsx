@@ -9,15 +9,12 @@ import Analytics from './pages/Analytics/analytics.jsx';
 import ControlPanel from "./pages/ControlPanel/control_panel.jsx"
 import DeviceManagement from "./pages/DeviceManagement/deviceManagement.jsx"
 
-
 import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";
 
 import './styles.css'
-
 function App() {
 
   return(
-
       <>
         <BrowserRouter>
           <Routes>         
@@ -25,8 +22,6 @@ function App() {
               <Route path='/contacts' element={<Contact/>}/>
               <Route path='/about' element={<About/>}/>
               <Route path='/login' element={<Login/>}/>  
-         
-              
               <Route path='/device_management' element={
                 <ProtectedRoute allowedRoles={['admin']}>
                  <DeviceManagement/> 
@@ -50,8 +45,6 @@ function App() {
                   <Users/>
                 </ProtectedRoute>
               }/>
-
-
           </Routes>
         </BrowserRouter>
 
