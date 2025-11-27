@@ -68,15 +68,13 @@ export const insertSensor = async (req, res) => {
   
         const existingSensor = await sensorModel.readSensorByCode(sensorData.sensor_code)
         if (existingSensor) { 
-           return res.status(409).json({ errors: [{path: "sensor_code", msg: "Sensor code is required" }]
+           return res.status(409).json({ errors: [{path: "sensor_code", msg: "Sensor code already exist" }]
           })
         }
      
         const sensor = await sensorModel.createSensor(sensorData)
         console.log(sensor)   
         res.status(200).json({message:"Sensor Inserted Succesfully",data:sensor})
-
-
 
   } catch (err) {
     console.error("CONTROLLER: Error Inserting Sensor", err);
@@ -86,24 +84,26 @@ export const insertSensor = async (req, res) => {
 
 
 
+
 export const updateSensor = async (req, res) => {
   try {
-    const { sensor_id } = req.params
+    const { sensor_id } = req.params;
     const sensorData = req.body;
 
-    if(!sensor_id) { return res.status(201).json({error:"Sensor Id Doesn't Exist"})}
+    if (!sensor_id) return res.status(400).json({ error: "Sensor Id is required" });
 
-    const existingSensor = await sensorModel.readSensor(sensor_id)
-    if(!existingSensor) { return res.status(201).json({error:"Sensor Doesn't Exist"})}
+    const existingSensor = await sensorModel.readSensor(sensor_id);
+    if (!existingSensor) return res.status(404).json({ error: "Sensor not found" });
 
-
-    const existingSensorByCode = await sensorModel.readSensorByCode(sensorData.sensor_code)
-      if (existingSensorByCode) { 
-        return res.status(409).json({ errors: [{path: "sensor_code", msg: "Sensor code is required" }]
-      })
+    const existingSensorByCode = await sensorModel.readSensorByCode(sensorData.sensor_code);
+    if (existingSensorByCode && existingSensorByCode.sensor_id !== sensor_id) {
+      return res.status(409).json({
+        errors: [{ path: "sensor_code", msg: "Sensor code already exists" }]
+      });
     }
 
-    const sensor = await sensorModel.updateSensor(sensorData,sensor_id);
+    const sensor = await sensorModel.updateSensor(sensorData, sensor_id);
+
     return res.status(200).json({
       message: "Sensor Updated Successfully",
       data: sensor
@@ -112,10 +112,13 @@ export const updateSensor = async (req, res) => {
   } catch (err) {
     console.error(`CONTROLLER:`, err);
     return res.status(500).json({
-      message: "CONTROLLER: Error Updating Sensor",
+      message: "Error Updating Sensor",
       err
     });
   }
+
+
+
 };
 
 

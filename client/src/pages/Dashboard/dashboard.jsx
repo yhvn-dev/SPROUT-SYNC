@@ -92,6 +92,7 @@ function Dashboard() {
           <Quick_Stats
             data_box={
               <>
+              
                 {/* Gauges Row */}
                 <div className="bg-white w-full rounded-2xl  shadow-lg hover:shadow-xl transition-all">
                     <div className="scale-90 origin-center">
@@ -99,22 +100,29 @@ function Dashboard() {
                     </div>
                 </div>
                 
+                {/* sun */}
                 <div className="bg-white not-odd:w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
                   <div className="scale-90 origin-center">
                      <GaugeChart value={24} max={40} label="Temperature" unit="°C" icon={Sun} color="#b0e892" />
                   </div>   
                 </div>
+
+                {/* humidity */}
                 <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
                   <div className="scale-90 origin-center">
                        <GaugeChart value={65} max={100} label="Humidity" unit="%" icon={Wind} color="#7BA591" />
                   </div>            
                 </div>
+                
+                {/* ph level */}
                 <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
                   <div className="scale-90 origin-center">
                       <GaugeChart value={6.8} max={14} label="pH Level" unit="" icon={Activity} color="#009983" />
                   </div>
                 
                 </div>
+
+                {/* water level */}
                  <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
                   <div className="scale-90 origin-center">
                       <GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="#8f9bbc" />

@@ -1,4 +1,4 @@
-import { useState,useEffect } from 'react';
+import { useState,useEffect,useContext } from 'react';
 import { Db_Header } from '../../components/db_header';
 import { Sidebar } from '../../components/sidebar';
 
@@ -8,15 +8,16 @@ import SensorModal from "./sensorModal"
 
 import * as bedService from "../../data/bedServices"
 import * as sensorService from "../../data/sensorServices"
-import { fetchLoggedUser } from '../../data/userService';
-
+import {UserContext} from "../../hooks/userContext"
 import { FloatSuccessMsg } from '../../components/sucessMsgs';
+
 
 
 
 // Main Component
 const DeviceManagement = () => {
   const [activeTab, setActiveTab] = useState('beds');
+  const {user} = useContext(UserContext)
 
   const [bed,setBedData] = useState([])
   const [openBed,setOpenBed] = useState(false)
@@ -30,25 +31,13 @@ const DeviceManagement = () => {
   const [sensorData,setSensorData] = useState([])
   const [sensorCount,setSensorCount] = useState([]);
   
-  const [user,setUser] = useState(null);
-
   const [scsMsg,setScsMsg] = useState("")
   const [errMsg,setErrMsg] = useState("")
 
+
   useEffect(() => {
-    loadUsers()
     loadBedData();
   }, []);
-
-
-    const loadUsers = async () =>{
-      try {
-          const loggedUser = await fetchLoggedUser();
-          setUser(loggedUser);
-      } catch (err) {
-          console.error(err);
-      }
-    }
 
     const loadBedData = async () => {
         try {       
@@ -94,7 +83,7 @@ const DeviceManagement = () => {
             </>}
         />
   
-      <Sidebar />
+      <Sidebar user={user} />
       
       
       {/* Main Content */}

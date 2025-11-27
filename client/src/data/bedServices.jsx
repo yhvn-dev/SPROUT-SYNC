@@ -36,7 +36,8 @@ export const insertBeds = async (data) =>{
 export const updateBeds = async (bedData,bed_id) =>{
 
     try{
-        const res = await api.put(`/beds/put/beds/${bed_id}`,bedData);
+    
+        const res = await api.put(`/beds/put/beds/${bed_id}`, bedData);
         const beds = res.data.data
         return beds        
     }catch(err){

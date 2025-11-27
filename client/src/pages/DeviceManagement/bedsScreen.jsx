@@ -44,6 +44,8 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,bedCount,
     console.log("SELECTED BED",bedSensors )
     setSelectedSensor(bedSensors)
   };
+  
+
 
   return (
     <div className="space-y-6">
@@ -93,13 +95,13 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,bedCount,
                 <div className="min-w-max px-6 py-8 ">  
                     {bed.length > 0 && bed.map((b) =>{
                         return(                  
-                        <div key={b.bed_id} className="relative rounded-xl p-6 shadow-lg bg-[var(--sage-lighter)] border-[var(--sage-light)] my-4 ">
+                        <div key={b.bed_id} className="bg-[var(--sage-lighter)] relative rounded-xl p-6 shadow-lg  border-[var(--sage-light)] my-4 ">
                             
                         {/* Header */}
                         <div className="mb-6 flex items-center justify-between ">
                             <div className="flex items-center justify-start">
                             <h3 className="text-sm font-semibold tracking-wide text-[var(--sancga)]">
-                                {b.bed_number} - MONITORING 
+                                {b.bed_code} - MONITORING 
                             </h3>
                             <div className="text-sm px-3 py-1 mx-4 rounded-full bg-[var(--sage-medium)] text-[var(--sage-dark)]">
                                {b.sensorCount} Zones Active
@@ -114,19 +116,21 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,bedCount,
                         
                         
                             {/* BED CARD */}
-                            <div className="flex-col  ">                                                                   
+                            <div className="flex items-st art justify-start flex-col ">                                                                   
                                 {/* Sensor Cards */}                                
-                                <div className="grid grid-cols-[1fr] grid-rows-[6fr_2fr_2fr] gap-4">
-                                    <div className="flex gap-4">
-                                        {sensors && sensors
-                                        .filter((s) => s.bed_id === b.bed_id) //
+                                <div className="grid grid-cols-[1fr] grid-rows-[3fr_2fr_1fr] gap-4">
+                                    <div className="flex items-center justify-start gap-4 ">
+                                     {sensors && sensors
+                                        .filter(s => s.bed_id === b.bed_id && s.sensor_type !== "ph")
                                         .map((s) => (
-                                    <div key={s.sensor_id}
-                                        className="relative rounded-lg p-4 shadow-lg transition-all hover:shadow-xl bg-white border border-[var(--sage-light)] w-35"
-                                    >
-                                        {/* ZONE LABEL */}
+                                            <div key={s.sensor_id}
+                                            className="relative rounded-lg p-4 shadow-lg transition-all hover:shadow-xl bg-white border border-[var(--sage-light)] w-35"
+                                            >
+
+                                        
+                                        {/* SENSOR LABEL */}
                                         <div className="absolute -top-3 left-3 px-2 py-1 rounded text-sm font-semibold bg-[var(--sancgb)] text-white">
-                                            Zone {s.zone_number}
+                                            {s.sensor_code}
                                         </div>
 
                                         {/* SENSOR TYPE */}
@@ -192,23 +196,69 @@ function BedsScreen({setOpenBed,setBedMode,setSelectedBed,bed,bedCount,
                                     </div>
 
 
+
                                     {/* PH LEVEL  */}
-                                    <div className="col-start-1 col-end-2 row-start-2 row-end-2 w-full h-full center rounded-xl shadow-lg">
-                                        <div className="space-y-1 " >
-                                            <div className="flex items-center gap-2 p-4">
-                                        
-                                                <span className="text-sm font-medium text-[var(--acc-darka)]">
-                                                pH Level
-                                                </span>
-                                            </div>
-                                            <div className="text-2xl font-bold text-[var(--sancgd)]">
-                                            
-                                            </div>
-                                            <div className="flex gap-0.5">
-                                        
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <div className="flex items-center justify-center flex-col col-start-1 col-end-2 row-start-2 row-end-2 w-full p-2 center rounded-xl shadow-lg bg-white">
+                           
+                                        {sensors
+                                            .filter(s => s.bed_id === b.bed_id && s.sensor_type === "ph")
+                                            .map(ph => (
+                                                <>
+
+                                                <ol className="flex flex-col items-center justify-center shadow-2xl border-2 border-[#009983] p-4 rounded-full">                                                             
+                                                    <div key={ph.sensor_id} className="">
+                                                        <div className="text-sm">
+                                                            {ph.value ?? "--"} {ph.unit}
+                                                        </div>
+
+                                                        {/* pH RANGE BAR */}
+                                                        <div className="w-full h-1.5 rounded-full bg-[var(--sage-lighter)] overflow-hidden mt-2">
+                                                            <div className="h-full rounded-full transition-all bg-[var(--sancgd)] w-[65%]" />
+                                                        </div>
+                                                    </div>
+
+                                                    {/* SENSOR ACTION BUTTONS */}
+                                                    <div className="mt-4 flex items-center justify-between gap-2">
+                                                        {/* UPDATE */}
+                                                    <button
+                                                            onClick={() => {
+                                                                sensorMode("update");
+                                                                setSelectedSensor(ph);
+                                                                setOpenSensor(true);
+                                                            }}
+                                                            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--white-blple--)] 
+                                                                    hover:bg-[var(--purpluish--)] transition-colors shadow-md"
+                                                        >
+                                                            <Pencil size={16} className="text-white" />
+                                                        
+                                                        </button>
+
+                                                        {/* DELETE */}
+                                                        <button
+                                                            onClick={() => {
+                                                                sensorMode("delete");
+                                                                setSelectedSensor(ph);
+                                                                setOpenSensor(true);
+                                                            }}
+                                                            className="flex items-center gap-1 px-2 py-1 rounded-lg bg-[var(--color-danger-b)] 
+                                                                    hover:bg-[var(--color-danger-a)] transition-colors shadow-md">
+
+                                                            <Trash2 size={16} className="text-white" />
+                                                        
+                                                        </button>
+                                                    </div>                                       
+                                                </ol>
+               
+
+                                         </>
+
+                                        ))}
+
+                                                 
+                                    </div>    
+                                    
+
+                                    
                                     
                                         <aside className="flex items-center justify-evenly shadow-lg bg-white rounded-2xl 
                                         col-start-1 col-end-1 row-start-3 row-end-3">      

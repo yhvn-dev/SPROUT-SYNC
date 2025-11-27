@@ -1,15 +1,17 @@
-import { useEffect, useState } from 'react'
-import axios from "axios";
+import { useEffect, useState,useContext } from 'react'
 import * as userService from "../../data/userService"
+import {UserContext} from '../../hooks/userContext'
+
 import { Sidebar } from "../../components/sidebar"
 import { Db_Header } from "../../components/db_header"
 import { Workspace } from "./workspace"
 import { Welcome_box } from '../../components/welcome_box';
 import { UserInsights } from './userInsights';
 
+
 import "./users.css"
 function Users() {
-  const [user,setUser] = useState(false)
+  const {user} = useContext(UserContext)
   const [chartData,setChartData] = useState({count: {total_users:0}, roleCount: []})
   const [statusData,setStatusData] = useState([])
   const [searchValue,setSearchValue] = useState("");
@@ -81,8 +83,7 @@ function Users() {
         </>}
         />
   
-      <Sidebar
-      />
+      <Sidebar user={user}/>
 
       {/* Tab Navigation */}
       <div className='flex col-start-2 col-span-full row-start-2 row-end-2 my-4 '>

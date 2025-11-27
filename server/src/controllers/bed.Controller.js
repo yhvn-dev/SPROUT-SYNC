@@ -45,8 +45,6 @@ export const countBeds = async (req,res) => {
 
 
 
-
-
 export const insertBeds = async (req, res) => {
   try {
       const bedData = req.body
@@ -79,15 +77,17 @@ export const insertBeds = async (req, res) => {
 
 export const updateBeds = async (req, res) => {
   try {
+    
     const { bed_id } = req.params;
     const bedData = req.body;
+    console.log("BED DATA FROM BACKEND",bedData)
 
     if (!bedData.bed_code) {
       return res.status(400).json({ 
         errors: [{ path: "bed_code", msg: "Bed code is required" }] 
       });
     }
-    // Check if bed code already exists for other beds
+   
     const existingBed = await bedModel.readBedByCode(bedData.bed_code);
     if (existingBed && existingBed.bed_id !== parseInt(bed_id)) { 
       return res.status(409).json({ 
@@ -95,8 +95,10 @@ export const updateBeds = async (req, res) => {
       });
     }
 
-    const updatedBed = await bedModel.updateBed(bed_id, bedData);
+    const updatedBed = await bedModel.updateBed(bedData,bed_id);
     res.status(200).json({ message: "Bed Updated Successfully", data: updatedBed });
+
+
 
   } catch (err) {
     console.error("CONTROLLER: Error Updating Bed", err);

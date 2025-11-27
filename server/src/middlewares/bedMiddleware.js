@@ -3,7 +3,6 @@ import {body,validationResult} from "express-validator"
 
 
 export const bedValidation = [
-    body("bed_number").notEmpty().withMessage("Bed Number is Required"),
     body("bed_code").notEmpty().withMessage("Bed Code is Required"),
     body("bed_name").notEmpty().withMessage("Bed Name is Required"),
     body("location").notEmpty().withMessage("Location  is Required"),  

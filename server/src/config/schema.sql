@@ -13,8 +13,7 @@ CREATE TABLE users (
 
 
 CREATE TABLE beds (
-    bed_id SERIAL PRIMARY KEY,
-    bed_number TEXT NOT NULL,         -- e.g., "Bed 1"
+    bed_id SERIAL PRIMARY KEY,       
     bed_code TEXT UNIQUE NOT NULL,    -- e.g., "BED-CODE-11"
     bed_name TEXT NOT NULL,           -- e.g., "Lettuce Bed"
     location TEXT,                    -- e.g., "RIGHT", "LEFT"

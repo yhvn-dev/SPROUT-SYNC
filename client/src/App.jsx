@@ -6,7 +6,6 @@ import About from "./pages/About/about.jsx"
 import Dashboard from "./pages/Dashboard/dashboard.jsx";
 import Users from "./pages/Users/users.jsx"
 import Analytics from './pages/Analytics/analytics.jsx';
-import ControlPanel from "./pages/ControlPanel/control_panel.jsx"
 import DeviceManagement from "./pages/DeviceManagement/deviceManagement.jsx"
 
 import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";

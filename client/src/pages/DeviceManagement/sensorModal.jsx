@@ -319,6 +319,7 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
                 <option value="%">Moisture / Humidity - %</option>
                 <option value="°C">Temperature - °C</option>
                 <option value="cm">Water Level - cm</option>
+                <option value="decimal">pH - decimal</option>
               </select>
 
               {getErrorMsg("unit") && (
