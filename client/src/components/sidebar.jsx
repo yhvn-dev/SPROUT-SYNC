@@ -6,7 +6,7 @@ import {User,LayoutPanelTop,ChartNoAxesCombined,Cable} from "lucide-react"
 import * as Logo from "../components/logo"
 
 
-export function Sidebar() {
+export function Sidebar({user}) {
   const [isOpen, setModal] = useState(false);
  
   return (
@@ -33,22 +33,21 @@ export function Sidebar() {
           <p className="text-sm mr-2">Dashboard</p>
         </NavLink>
 
-        {/* Users */}
-        <NavLink
-          to="/users"
-          className={({ isActive }) =>
-            `flex justify-start items-center :text-[var(--acc-darkb)] gap-2 py-1 transition-colors duration-300 rounded-[10px] px-2  my-2 w-full
-              ${
-                isActive
-                  ? "text-white bg-[var(--sancgb)] shadow-lg" 
-                  : "text-[var(--acc-darkb)]  hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)]"
-              }`
-          }>
-
-          <User className="mx-1"  strokeWidth={1.5} size={18}/>
-          <p className="text-sm mr-2">Users</p>
-        </NavLink>
-
+        {user.role === "admin" &&    
+          <NavLink
+            to="/users"
+            className={({ isActive }) =>
+              `flex justify-start items-center :text-[var(--acc-darkb)] gap-2 py-1 transition-colors duration-300 rounded-[10px] px-2  my-2 w-full
+                ${
+                  isActive
+                    ? "text-white bg-[var(--sancgb)] shadow-lg" 
+                    : "text-[var(--acc-darkb)]  hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)]"
+                }  ${user.role === "viewer" ? "hidden" : "flex justify-start items-center"} `
+            }>
+            <User className="mx-1"  strokeWidth={1.5} size={18}/>
+            <p className="text-sm mr-2">Users</p>
+        </NavLink>}
+    
         
         {/* Analytics */}
         <NavLink
@@ -65,22 +64,28 @@ export function Sidebar() {
         <ChartNoAxesCombined  className="mx-1" strokeWidth={1.5} size={18}/>
           <p className="text-sm mr-2">Analytics</p>
         </NavLink>    
+        
 
 
-        <NavLink
-          to="/device_management"
-          className={({ isActive }) =>
-            `flex justify-start items-center gap-2 py-1 transition-colors duration-300 rounded-[10px]  px-2 my-2 w-full
-              ${
-                isActive
-                  ? "text-white bg-[var(--sancgb)] shadow-lg"
-                  : "text-[var(--acc-darkb)] hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)] "
-              }`
-          }>
-            
-        <Cable className="mx-1" strokeWidth={1.5} size={22}/>
-          <p className="text-sm mr-2">Manage Devices</p>
-        </NavLink>    
+        
+        {user.role === "admin" &&                
+            <NavLink
+              to="/device_management"
+              className={({ isActive }) =>
+                `gap-2 py-1 transition-colors duration-300 rounded-[10px]  px-2 my-2 w-full
+                  ${
+                    isActive
+                      ? "text-white bg-[var(--sancgb)] shadow-lg"
+                      : "text-[var(--acc-darkb)] hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)] "
+                  }  ${user.role === "viewer" ? "hidden" : "flex justify-start items-center"} `
+              }>
+                
+            <Cable className="mx-1" strokeWidth={1.5} size={22}/>
+              <p className="text-sm mr-2">Manage Devices</p>
+            </NavLink>      
+        }
+        
+        
       </div>
 
 

@@ -12,6 +12,8 @@ import { fetchLoggedUser } from '../../data/userService';
 
 import { FloatSuccessMsg } from '../../components/sucessMsgs';
 
+
+
 // Main Component
 const DeviceManagement = () => {
   const [activeTab, setActiveTab] = useState('beds');

@@ -15,7 +15,7 @@ import { useState,useContext,useEffect } from "react"
 
 const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
   const percentage = (value / max) * 100;
-  const rotation = (percentage / 100) * 180 - 90;
+
   
   return (
     <div className="flex flex-col items-center justify-center h-full">
@@ -52,9 +52,11 @@ function Dashboard() {
   const [isOpenTModal,setOpenTModal] = useState(false);
   const [beds,setBeds] = useState([])
   const [pageError,setPageError] = useState([]);
+  
 
   useEffect(() =>{
       loadBeds()
+     
   },[])
   
   const loadBeds = async () =>{
@@ -82,7 +84,7 @@ function Dashboard() {
                 <input type="text" placeholder='' className='border-[1px] border-[var(--acc-darkc)] rounded-2xl px-4'/>
                 <label>Search For Readings</label>
               </>}/>         
-          <Sidebar/>  
+          <Sidebar user={user}/>  
 
 
 

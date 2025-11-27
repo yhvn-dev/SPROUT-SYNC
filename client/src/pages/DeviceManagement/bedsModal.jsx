@@ -93,8 +93,6 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
     }));
   };
 
-
-
   // Special handler for bed code input
   const handleBedCodeChange = (e) => {
     const inputValue = e.target.value;
@@ -136,7 +134,6 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
     }));
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -168,22 +165,30 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
         scsMsg(`${formData.bed_name} Deleted`);
       }
     } catch (error) {
-      const bedError = error.response.data.errors;
-      setFormError(bedError);
+      const bedError = error.response?.data;
+      
+      // Handle different error formats from backend
+      if (bedError?.errors) {
+        // Format: { errors: [{ path: "field", msg: "message" }] }
+        setFormError(bedError.errors);
+      } else if (bedError?.error) {
+        // Format: { error: "Error message" } - map to bed_code for duplicate errors
+        setFormError([{ path: "bed_code", msg: bedError.error }]);
+      } else {
+        // Fallback for other error formats
+        setFormError([{ path: "general", msg: "Error submitting bed data" }]);
+      }
+      
       errMsg?.("Error submitting bed data");
     }
   };
 
-  
   if (!isBedOpen) return null;
+
   const getErrorMsg = (fieldName) => {
     const err = formError.find(e => e.path === fieldName);
     return err ? err.msg : "";
   };
-
-
-
-
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-transparent backdrop-blur-2xl">

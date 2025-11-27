@@ -87,7 +87,6 @@ export const updateBeds = async (req, res) => {
         errors: [{ path: "bed_code", msg: "Bed code is required" }] 
       });
     }
-
     // Check if bed code already exists for other beds
     const existingBed = await bedModel.readBedByCode(bedData.bed_code);
     if (existingBed && existingBed.bed_id !== parseInt(bed_id)) { 

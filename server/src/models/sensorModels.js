@@ -75,6 +75,9 @@ export const createSensor = async (sensorData) =>{
     }
 }
 
+
+
+
 export const updateSensor = async (sensorData,sensor_id) =>{
     try {
         const {bed_id,sensor_type,sensor_code,unit,status} = sensorData

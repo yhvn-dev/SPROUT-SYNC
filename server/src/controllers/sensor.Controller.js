@@ -49,15 +49,15 @@ export const countSensorByBed = async (req,res) => {
 
 export const countSensors = async (req,res) => {
   try {
-  
       const count = await sensorModel.countSensors()
       res.status(200).json({message:"Total Sensors Retreived!",data:count})  
-
   } catch (err) {
     console.error(`CONTROLLER:`, err);
     res.status(500).json({ message: `CONTROLLER: Error Counting Sensor By Bed` });
   }
 }
+
+
 
 export const insertSensor = async (req, res) => {
   try {
@@ -70,12 +70,6 @@ export const insertSensor = async (req, res) => {
         if (existingSensor) { 
            return res.status(409).json({ errors: [{path: "sensor_code", msg: "Sensor code is required" }]
           })
-        }
-
-        if (!bedData.bed_code) {
-            return res.status(400).json({ 
-              errors: [{ path: "sensor_code", msg: "Sensor code is required" }] 
-            }); 
         }
      
         const sensor = await sensorModel.createSensor(sensorData)
@@ -122,8 +116,6 @@ export const updateSensor = async (req, res) => {
       err
     });
   }
-
-  
 };
 
 
