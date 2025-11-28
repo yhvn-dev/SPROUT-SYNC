@@ -3,10 +3,11 @@ import {BedLayout} from "./beds"
 import {Leaf} from "lucide-react"
 
 
-export function Workspace({bed,setOpenTModal,beds}) {
-  
-  console.log("BEDS ON WOKSPACE",beds)
+export function Workspace({bed,setOpenTModal,beds,sensors,readings}) {
 
+
+
+  
   return (
     <section className='bg-white
       grid h-full col-start-2 col-end-4 row-start-3 row-end-3
@@ -28,15 +29,13 @@ export function Workspace({bed,setOpenTModal,beds}) {
         </div>
       {/* content area */}
 
-      
       <div className="content_box flex flex-col justify-start items-center w-full h-full
         row-start-2 col-span-1 overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] 
         rounded-[10px]">
 
         <div className="w-full h-full">                    
-          {bed === "bed_1" && <BedLayout bedNum="bed_1" bedName="Bed 1 " setOpenTModal={setOpenTModal} beds={beds}  />}
-          {bed === "bed_2" && <BedLayout bedNum="bed_2" bedName="Bed 2"  setOpenTModal={setOpenTModal} beds={beds} />}
-          {bed === "bed_3" && <BedLayout bedNum="bed_3" bedName="Bed 3"  setOpenTModal={setOpenTModal} beds={beds} />}
+          <BedLayout 
+          setOpenTModal={setOpenTModal} beds={beds} sensors={sensors} />
         </div>
 
       </div>

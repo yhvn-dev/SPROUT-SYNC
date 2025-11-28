@@ -26,6 +26,18 @@ export const readSensorReadingsByReadingId = async (reading_id) =>{
     }
 }
 
+
+export const readSensorReadingsBySensorId = async (sensor_id) =>{
+    try{
+        const { rows } = await query("SELECT * FROM sensor_readings WHERE sensor_id = $1",[sensor_id]) 
+        console.log("READINGS",rows)
+        return rows[0]
+    }catch(err){
+        console.log(`MODELS: Error Getting Readings by Sensor ID ${err}`, )
+        throw err
+    }
+}
+
 export const countTotalReadings = async() =>{
     try {
         const { rows } = await query("SELECT COUNT(*) FROM sensor_readings") 

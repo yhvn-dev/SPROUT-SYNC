@@ -4,13 +4,15 @@ import { Db_Header } from "../../components/db_header"
 import { Quick_Stats } from "./quick_stats" 
 import { Workspace } from "./workspace"
 import * as bedService from "../../data/bedServices"
+import * as sensorService from "../../data/sensorServices"
+
 import { ThresholdModal } from "./thresholdModal"
 import { Droplets, Sun, Wind, Activity } from 'lucide-react';
 
 import "./dashboard.css"
 import "./dashboard_responsive.css"
 
-import { useState,useContext,useEffect } from "react"
+import { useState,useContext,useEffect, use } from "react"
 
 
 const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
@@ -50,31 +52,51 @@ function Dashboard() {
   const { user } = useContext(UserContext);
   const [activeBed, setActiveBed] = useState("bed_1")
   const [isOpenTModal,setOpenTModal] = useState(false);
-  const [beds,setBeds] = useState([])
-  const [pageError,setPageError] = useState([]);
+  const [beds,setBedData] = useState([])
+  const [bedCount,setBedCount] = useState([])
+
+  const [sensors,setSensorData] = useState([])
+  const [sensorCount,setSensorCount] = useState([]);
   
 
-  useEffect(() =>{
-      loadBeds()
-     
-  },[])
-  
-  const loadBeds = async () =>{
-    try {
-        const data = await bedService.fetchAllBeds();
-        setBeds(data)
-    } catch (error) {
-      console.error("Error Loading Bed")   
-      setPageError("Error Loading Beds")   
-    }
-  }
-  
+  useEffect(() => {
+    loadBedData();
+  }, []);
 
+
+
+    const loadBedData = async () => {
+        try {       
+          const beds = await bedService.fetchAllBeds();
+          const sensors = await sensorService.fetchAllSensors();
+          const bedCount = await bedService.fetchBedsCount()
+
+          // Calculate sensor count per bed
+          const bedsWithSensorCount = beds.map(b => ({
+            ...b,
+            sensorCount: sensors.filter(s => s.bed_id === b.bed_id).length
+          }));
+
+          setBedData(bedsWithSensorCount);
+          setSensorData(sensors);       
+          setBedCount(bedCount)
+          
+          // Optional: total sensors
+          const totalSensors = sensors.length;
+          
+          setSensorCount(totalSensors);
+          
+        } catch (err) {
+          console.error(err);
+        }
+
+
+      }
 
   return (
     <>
         <section className="bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] page dashboard 
-        grid grid-cols-[12fr_30fr_48fr_10fr] grid-rows-[8vh_30vh_57vh] gap-4 
+        grid grid-cols-[12fr_30fr_58fr] grid-rows-[8vh_30vh_57vh] gap-4 
         h-[100vh] w-[100%] gap-x-4 overflow-y-auto relative">
 
 
@@ -85,8 +107,6 @@ function Dashboard() {
                 <label>Search For Readings</label>
               </>}/>         
           <Sidebar user={user}/>  
-
-
 
           {/* NUMBER CONTAINER */}
           <Quick_Stats
@@ -138,28 +158,10 @@ function Dashboard() {
               bed={activeBed}
               setOpenTModal={setOpenTModal}
               beds={beds}
+              sensors={sensors}
+              sensorCount={sensorCount}
             />
             
-
-
-          {/* NAVIGATION */}
-          <nav className="bg-white p-4 rounded-[10px] flex items-center justify-end flex-col 
-          col-start-4 col-end-4 row-start-3 row-end-4 ">
-              {['bed_1', 'bed_2', 'bed_3'].map((item) => (
-              <button
-                key={item}
-                onClick={() => setActiveBed(item)}
-                className="px-4 py-2 rounded-lg text-sm my-4 font-medium shadow-xl w-full 
-                hover:bg-[var(--sancgb)] hover:text-white transition"
-                style={{
-                  backgroundColor: activeBed === item ? 'var(--sancgb)' : 'white',
-                  color: activeBed === item ? 'white' : 'var(--acc-darka)',
-                  border: activeBed === item ? 'none' : '1px solid var(--sage-light)'
-                }}>
-                {item.replace('_', ' ').toUpperCase()}
-              </button>
-              ))}
-          </nav>
           {isOpenTModal && <ThresholdModal isOpen={setOpenTModal} />}        
       </section>    
 

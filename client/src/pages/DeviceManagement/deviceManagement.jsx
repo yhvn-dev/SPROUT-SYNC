@@ -8,6 +8,8 @@ import SensorModal from "./sensorModal"
 
 import * as bedService from "../../data/bedServices"
 import * as sensorService from "../../data/sensorServices"
+
+
 import {UserContext} from "../../hooks/userContext"
 import { FloatSuccessMsg } from '../../components/sucessMsgs';
 
@@ -30,6 +32,7 @@ const DeviceManagement = () => {
   const [selectedSensor,setSelectedSensor] = useState([])
   const [sensorData,setSensorData] = useState([])
   const [sensorCount,setSensorCount] = useState([]);
+
   
   const [scsMsg,setScsMsg] = useState("")
   const [errMsg,setErrMsg] = useState("")
@@ -44,8 +47,7 @@ const DeviceManagement = () => {
           const beds = await bedService.fetchAllBeds();
           const sensors = await sensorService.fetchAllSensors();
           const bedCount = await bedService.fetchBedsCount()
-          
-
+         
           // Calculate sensor count per bed
           const bedsWithSensorCount = beds.map(b => ({
             ...b,
@@ -59,12 +61,13 @@ const DeviceManagement = () => {
           // Optional: total sensors
           const totalSensors = sensors.length;
           setSensorCount(totalSensors);
-          
-
+        
         } catch (err) {
           console.error(err);
         }
       }
+
+   
 
       const clearMsg = () =>{
         setScsMsg("")
@@ -126,6 +129,7 @@ const DeviceManagement = () => {
           sensors={sensorData} 
           sensorCount={sensorCount} 
           setSelectedSensor={setSelectedSensor}
+      
           />
           )}
           

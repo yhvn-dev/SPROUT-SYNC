@@ -25,17 +25,18 @@ CREATE TABLE beds (
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
-
-
-CREATE TABLE sensors (
+CREATE TABLE sensors(
     sensor_id SERIAL PRIMARY KEY,
-    bed_id NOT NULL,
+    bed_id INT NOT NULL,
     sensor_type VARCHAR(100) NOT NULL,
     sensor_code VARCHAR(50) NOT NULL,
     unit VARCHAR(50),
+    min_value NUMERIC DEFAULT 0,
+    max_value NUMERIC DEFAULT 100,
+    status VARCHAR(40),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-)
+);
 
 
 CREATE TABLE sensor_readings (

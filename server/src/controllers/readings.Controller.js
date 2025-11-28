@@ -29,6 +29,30 @@ export const selectReading = async (req, res) => {
 };
 
 
+export const selectReadingsBySensorId = async (req, res) => {
+  try {
+    const {sensor_id} = req.params
+
+  
+    const reading = await readingModel.readSensorReadingsBySensorId(sensor_id)
+      
+
+    if(!reading) res.status(201).json({error:`Readings of this ${sensor_id} Doesn't Exist`})
+ 
+    res.status(200).json({message:"Sensor's Readings Fetched Succesfully",data:reading})
+
+    
+    console.log(reading.value)
+
+  } catch (err) {
+    console.error(`CONTROLLER:`, err);
+    res.status(500).json({ message: `CONTROLLER: Error Selecting Sensor's readings` });
+  }
+};
+
+
+
+
 
 
 export const countReadings = async (req,res) => {

@@ -59,14 +59,13 @@ export const readSensorByCode = async (sensor_code) => {
 
 
 
-
 export const createSensor = async (sensorData) =>{
     try {
-        const {bed_id,sensor_type,sensor_code,unit,status} = sensorData
+        const {bed_id,sensor_type,sensor_code,unit,min_value,max_value,status} = sensorData
         const { rows } = await query(`INSERT INTO sensors 
-            (bed_id,sensor_type,sensor_code,unit,status) 
-            VALUES ($1,$2,$3,$4,$5) RETURNING *`,
-            [bed_id,sensor_type,sensor_code,unit,status]) 
+            (bed_id,sensor_type,sensor_code,unit,min_value,max_value,status) 
+            VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+            [bed_id,sensor_type,sensor_code,unit,min_value,max_value,status]) 
         console.log("NEW Sensors:",rows)   
         return rows[0]
     } catch (err) {
@@ -80,15 +79,17 @@ export const createSensor = async (sensorData) =>{
 
 export const updateSensor = async (sensorData,sensor_id) =>{
     try {
-        const {bed_id,sensor_type,sensor_code,unit,status} = sensorData
+        const {bed_id,sensor_type,sensor_code,unit,min_value,max_value,status} = sensorData
         const { rows } = await query(`UPDATE sensors SET 
                                     bed_id = $1, 
                                     sensor_type = $2,                 
                                     sensor_code = $3, 
                                     unit = $4,
-                                    status = $5 WHERE sensor_id = $6
+                                    min_value = $5,
+                                    max_value = $6,
+                                    status = $7 WHERE sensor_id = $8
                                     RETURNING *`,  
-                                    [bed_id,sensor_type,sensor_code,unit,status,sensor_id]) 
+                                    [bed_id,sensor_type,sensor_code,unit,min_value,max_value,status,sensor_id]) 
         console.log("UPDATED SENSORS:",rows)
         return rows[0]
     } catch (err) {

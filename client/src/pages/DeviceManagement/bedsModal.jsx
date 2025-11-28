@@ -62,9 +62,27 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
     setFormData(prev => ({ ...prev, [name]: updatedValue }));
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
+
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+
+      // Validate bed_code and bed_name
+      const errors = [];
+
+      if (!formData.bed_name || formData.bed_name.trim() === "") {
+        errors.push({ path: "bed_name", msg: "Bed Name is required" });
+      }
+
+      if (!/^BC-\d+$/.test(formData.bed_code)) {
+        errors.push({ path: "bed_code", msg: "Bed code must start with BC- followed by numbers" });
+      }
+
+      if (errors.length > 0) {
+        setFormError(errors);
+        return;
+      }
+
+      try {
         const formattedData = {
           ...formData,
           bed_code: formData.bed_code === "BC-" ? "BC-" : formData.bed_code
@@ -74,11 +92,11 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
           await bedService.insertBeds(formattedData);
           scsMsg(`${formattedData.bed_name} Added`);
 
+
         } else if (bedMode === "update") {
-          
           await bedService.updateBeds(formattedData, selectedBed.bed_id);
-          console.log("SELECTCED BED",selectedBed)
           scsMsg(`${formattedData.bed_name} Updated`);
+
 
         } else if (bedMode === "delete") {
           await bedService.deleteBed(selectedBed.bed_id);
@@ -86,25 +104,24 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
         }
 
         loadBedData();
+   
         setFormError([]);
         onBedClose();
-        
-    } catch (error) {
-
-
-      const bedError = error.response?.data;
-      if (bedError?.errors) {
-        setFormError(bedError.errors);
-      } else if (bedError?.error) {
-        setFormError([{ path: "bed_code", msg: bedError.error }]);
-      } else {
-        setFormError([{ path: "general", msg: "Error submitting bed data" }]);
+      } catch (error) {
+        const bedError = error.response?.data;
+        if (bedError?.errors) {
+          setFormError(bedError.errors);
+        } else if (bedError?.error) {
+          setFormError([{ path: "bed_code", msg: bedError.error }]);
+        } else {
+          setFormError([{ path: "general", msg: "Error submitting bed data" }]);
+        }
+        errMsg?.("Error submitting bed data");
       }
-      errMsg?.("Error submitting bed data");
-    }
-
-
   };
+
+
+
 
   const getErrorMsg = (fieldName) => {
     const err = formError.find(e => e.path === fieldName);
@@ -172,7 +189,6 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
             </div>
 
 
-
             {/* Location */}
             <div className="flex flex-col gap-1">
               <input
@@ -187,7 +203,7 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
             </div>
 
 
-               {/* Max Moisture */}
+              {/* Max Moisture */}
             <div className="flex flex-col gap-1">
               <input
                 type="number"

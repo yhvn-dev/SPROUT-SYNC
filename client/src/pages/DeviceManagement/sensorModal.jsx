@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Plus, Edit, Delete, Droplet, Activity } from "lucide-react";
+import { X, Plus, Edit, Delete } from "lucide-react";
 import * as sensorServices from "../../data/sensorServices";
 
 function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, selectedSensor, loadBedData, scsMsg }) {
@@ -7,7 +7,9 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
     bed_id: 0,
     sensor_type: "",
     sensor_code: "",
-    unit: ""
+    unit: "",
+    min_value:40,
+    max_value:70,
   });
 
   const [formError, setFormError] = useState([]);
@@ -54,16 +56,20 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
           bed_id: selectedBed?.bed_id,
           sensor_type: "",
           sensor_code: "",
-          unit: ""
+          unit: "",
+          min_value:40,
+          max_value:70,
         });
       } else if (sensorMode === "update") {
-        const codeNumber = extractSensorCodeNumber(sensor?.sensor_code);
-        
+    
+    
         setFormDataSensor({
           bed_id: sensor?.bed_id,
           sensor_type: sensor?.sensor_type || "",
           sensor_code: sensor?.sensor_code || "",
-          unit: sensor?.unit || ""
+          unit: sensor?.unit || "",
+          min_value:sensor?.min_value || "",
+          max_value:sensor?.max_value || ""
         });
       } else if (sensorMode === "delete") {
         setFormDataSensor({
@@ -79,29 +85,32 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
   // Special handler for sensor type change
   const handleSensorTypeChange = (e) => {
     const newType = e.target.value;
-    
-    
+
+    const unitMap = {
+      'moisture': '%',
+      'humidity': '%',
+      'temperature': '°C',
+      'ph': 'ph',
+      'water level': 'cm' 
+    };
+
     setFormDataSensor(prev => {
-      // If we have an existing sensor code, extract the number and reformat with new type
+      // Update sensor_type and auto-set unit
+      let updatedSensorCode = prev.sensor_code;
       if (prev.sensor_code) {
         const numberPart = extractSensorCodeNumber(prev.sensor_code);
-        const newCode = numberPart ? formatSensorCode(newType, numberPart) : getSensorPrefix(newType);
-        
-        return {
-          ...prev,
-          sensor_type: newType,
-          sensor_code: newCode
-        };
+        const prefix = getSensorPrefix(newType);
+        updatedSensorCode = numberPart ? formatSensorCode(newType, numberPart) : prefix;
       }
-      
-      // If no existing code, just update the type
+
       return {
         ...prev,
-        sensor_type: newType
+        sensor_type: newType,
+        sensor_code: updatedSensorCode,
+        unit: unitMap[newType] || ''
       };
     });
   };
-
 
 
 
@@ -194,6 +203,7 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
         setFormError([]);
       } else if (sensorMode === "update") {
         await sensorServices.updateSensors(finalFormData, selectedSensor.sensor_id);
+        loadBedData();
         onSensorClose(true);
         scsMsg(`${capitalizeFirstLetter(finalFormData.sensor_type)} Updated Successfully`);
         setFormError([]);
@@ -258,6 +268,7 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
           <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-6">
         
             {/* Left Column */}
+            {/* bed id */}
             <div className="flex flex-col gap-4">
               <input
                 type="text"
@@ -270,7 +281,24 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
                 required
               />
             
-              {/* Sensor Code - Updated with auto-formatting */}
+              {/* sensor type */}
+                <select
+                name="sensor_type"
+                value={formDataSensor.sensor_type}
+                onChange={handleSensorTypeChange}
+                className="px-4 py-2 shadow-lg bg-gray-200 w-full rounded-lg">
+                <option value="">Sensor Type</option>
+                {["ph", "moisture", "humidity", "temperature"].map((type) => (
+                  <option key={type} value={type}>
+                    {capitalizeFirstLetter(type)}
+                  </option>
+                ))}
+              </select>
+              {getErrorMsg("sensor_type") && (
+                <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("sensor_type")}</span>
+              )}
+
+              {/* sensor code */}
               <div className="flex flex-col gap-1">
                 <input
                   type="text"
@@ -289,42 +317,39 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
                     : "Select sensor type first, then type number"}
                 </span>
               </div>
+
             </div>
 
             {/* Right Column */}
             <div className="flex flex-col gap-4">
-              <select
-                name="sensor_type"
-                value={formDataSensor.sensor_type}
-                onChange={handleSensorTypeChange}
-                className="px-4 py-2 shadow-lg bg-gray-200 w-full rounded-lg">
-                <option value="">Sensor Type</option>
-                {["ph", "moisture", "humidity", "temperature"].map((type) => (
-                  <option key={type} value={type}>
-                    {capitalizeFirstLetter(type)}
-                  </option>
-                ))}
-              </select>
-              {getErrorMsg("sensor_type") && (
-                <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("sensor_type")}</span>
-              )}
+                         
+              {/* Min Moisture */}
+              <div className="flex flex-col gap-1">
+                <input
+                  type="number"
+                  name="min_value"
+                  placeholder="Min Moisture"
+                  value={formDataSensor.min_value}
+                  onChange={handleChange}
+                  className="px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
+                />
+                  {getErrorMsg("min_value") && <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("min_value")}</span>}
+              </div>
+                
+                {/* Max Moisture */}
+              <div className="flex flex-col gap-1">
+                <input
+                  type="number"
+                  name="max_value"
+                  placeholder="Max Moisture"
+                  value={formDataSensor.max_value}
+                  onChange={handleChange}
+                  className="px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
+                />
+                  {getErrorMsg("max_value") && <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("max_value")}</span>}
+              </div>
 
-              {/* UNIT */}
-              <select
-                name="unit"
-                value={formDataSensor.unit}
-                onChange={handleChange}
-                className="px-4 py-2 shadow-lg bg-gray-200 w-full rounded-lg">
-                <option value="">Unit</option>
-                <option value="%">Moisture / Humidity - %</option>
-                <option value="°C">Temperature - °C</option>
-                <option value="cm">Water Level - cm</option>
-                <option value="decimal">pH - decimal</option>
-              </select>
 
-              {getErrorMsg("unit") && (
-                <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("unit")}</span>
-              )}
             </div>
 
             {/* Action Buttons */}
