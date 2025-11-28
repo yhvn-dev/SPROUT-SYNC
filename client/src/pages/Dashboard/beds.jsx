@@ -28,34 +28,42 @@ export function BedLayout({ beds, sensors }) {
     }, {});
 
 
-  
+
 
   return (
     <div className="w-full overflow-x-auto pb-4">
-      <div className="min-w-max px-6 py-8">
-        <div className="relative rounded-xl p-6 shadow-lg bg-[var(--sage-lighter)] border-[var(--sage-light)] my-4">
+      <div className="min-w-max px-6 py-8 ">
+        <div className="flex flex-col justify-start w-full relative rounded-xl shadow-lg bg-[var(--main-whiteb)] border-[var(--sage-light)] my-4">
 
           {/* BEDS MAIN */}
-          <main className="flex flex-col items-start justify-center">
+          <main className="flex flex-col items-start justify-center ">
 
             {beds?.length > 0 && beds.map((b) => (
-              <ol key={b.bed_id} className="flex flex-col items-start justify-start w-full">
+              <ol key={b.bed_id} className="flex flex-col items-start justify-start w-full  my-4  p-4  overflow-hidden shadow-2xl bg-[var(--sage-lighter)]">
 
-                {/* BED HEADER */}
-                <div className="my-12 flex items-center justify-between w-full">
-                  <div className="flex items-center justify-start">
-                    <h3 className="text-sm font-semibold tracking-wide text-[var(--sancga)]">
-                      {b.bed_code} - MONITORING
-                    </h3>
-                    <div className="text-sm px-3 py-1 mx-4 rounded-full bg-[var(--sage-medium)] text-[var(--sage-dark)]">
-                      {b.sensorCount} Zones Active
-                    </div>
+               <div className="my-10 flex items-center justify-between w-full">
+                <div className="flex items-center justify-start">
+                  <h3 className="text-sm font-semibold tracking-wide text-[var(--sancga)]">
+                    {b.bed_code} - MONITORING
+                  </h3>
+                  <div className="text-sm px-3 py-1 mx-4 rounded-full bg-[var(--sage-medium)] text-[var(--sage-dark)]">
+                    {b.sensorCount} Zones Active
                   </div>
-
-                  <p className="text-sm bg-amber-100 text-[var(--acc-darkc)] font-medium px-3 py-1 rounded-2xl">
-                    {b.bed_name}
-                  </p>
+                  {/* AVERAGE READING */}
+                  <div className="text-sm px-3 py-1 mx-2 rounded-full bg-[var(--acc-light)] text-[var(--acc-darkc)]">
+                    Avg: {(
+                      sensors
+                        .filter(s => s.bed_id === b.bed_id)
+                        .reduce((sum, s) => sum + (readingsMap[s.sensor_id] ?? 0), 0) /
+                      sensors.filter(s => s.bed_id === b.bed_id).length
+                    ).toFixed(2)}
+                  </div>
                 </div>
+
+                <p className="text-sm bg-amber-100 text-[var(--acc-darkc)] font-medium px-3 py-1 rounded-2xl">
+                  {b.bed_name}
+                </p>
+              </div>
 
                 {/* SENSOR GRID */}
                 <div className="grid grid-cols-1 gap-6 w-full">

@@ -8,35 +8,12 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
     sensor_type: "",
     sensor_code: "",
     unit: "",
-    min_value:40,
-    max_value:70,
+    min_value: 40,
+    max_value: 70,
   });
 
   const [formError, setFormError] = useState([]);
 
-  // Function to extract just the number from existing sensor_code
-  const extractSensorCodeNumber = (sensorCode) => {
-    if (!sensorCode) return "";
-    const match = sensorCode.match(/\d+/);
-    return match ? match[0] : "";
-  };
-
-  // Function to format sensor code based on sensor type
-  const formatSensorCode = (type, number) => {
-    if (!type || !number) return "";
-    
-    const prefixMap = {
-      'moisture': 'MOIST-',
-      'temperature': 'TEMP-',
-      'humidity': 'HUM-',
-      'ph': 'PH-'
-    };
-    
-    const prefix = prefixMap[type] || 'SENSOR-';
-    return `${prefix}${number}`;
-  };
-
-  // Function to get prefix based on sensor type
   const getSensorPrefix = (type) => {
     const prefixMap = {
       'moisture': 'MOIST-',
@@ -45,6 +22,13 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
       'ph': 'PH-'
     };
     return prefixMap[type] || 'SENSOR-';
+  };
+
+  const capitalizeFirstLetter = (str) => str ? str.charAt(0).toUpperCase() + str.slice(1) : "";
+
+  const getErrorMsg = (fieldName) => {
+    const err = formError.find(e => e.path === fieldName);
+    return err ? err.msg : "";
   };
 
   useEffect(() => {
@@ -57,19 +41,17 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
           sensor_type: "",
           sensor_code: "",
           unit: "",
-          min_value:40,
-          max_value:70,
+          min_value: 40,
+          max_value: 70,
         });
       } else if (sensorMode === "update") {
-    
-    
         setFormDataSensor({
           bed_id: sensor?.bed_id,
           sensor_type: sensor?.sensor_type || "",
           sensor_code: sensor?.sensor_code || "",
           unit: sensor?.unit || "",
-          min_value:sensor?.min_value || "",
-          max_value:sensor?.max_value || ""
+          min_value: sensor?.min_value || "",
+          max_value: sensor?.max_value || ""
         });
       } else if (sensorMode === "delete") {
         setFormDataSensor({
@@ -78,11 +60,10 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
         });
       }
     } catch (error) {
-      console.error("Error Displaying Sensor Data to the Input", error);
+      console.error("Error displaying sensor data:", error);
     }
   }, [sensorMode, isSensorOpen, selectedBed, selectedSensor]);
 
-  // Special handler for sensor type change
   const handleSensorTypeChange = (e) => {
     const newType = e.target.value;
 
@@ -95,18 +76,14 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
     };
 
     setFormDataSensor(prev => {
-      // Update sensor_type and auto-set unit
-      let updatedSensorCode = prev.sensor_code;
-      if (prev.sensor_code) {
-        const numberPart = extractSensorCodeNumber(prev.sensor_code);
-        const prefix = getSensorPrefix(newType);
-        updatedSensorCode = numberPart ? formatSensorCode(newType, numberPart) : prefix;
-      }
+      const numberPart = prev.sensor_code.replace(getSensorPrefix(prev.sensor_type), '');
+      const prefix = getSensorPrefix(newType);
+      const updatedCode = numberPart ? `${prefix}${numberPart}` : "";
 
       return {
         ...prev,
         sensor_type: newType,
-        sensor_code: updatedSensorCode,
+        sensor_code: updatedCode,
         unit: unitMap[newType] || ''
       };
     });
@@ -114,75 +91,39 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
 
 
 
-  // Special handler for sensor code input
   const handleSensorCodeChange = (e) => {
-    const inputValue = e.target.value;
-    const currentType = formDataSensor.sensor_type;
-    
-    if (!currentType) {
-      // If no sensor type selected yet, use generic prefix
-      const prefix = "SENSOR-";
-      
-      // If user tries to delete prefix, prevent it
-      if (inputValue === "" || inputValue === "S" || inputValue === "SE" || inputValue === "SEN" || inputValue === "SENS" || inputValue === "SENSO") {
-        setFormDataSensor(prev => ({ ...prev, sensor_code: prefix }));
-        return;
-      }
-      
-      // Remove prefix to get just the number part
-      const numberPart = inputValue.replace(/^SENSOR-*/i, '');
-      
-      // Only allow numbers
-      const numbersOnly = numberPart.replace(/\D/g, '');
-      
-      // Combine prefix with the number
-      const formattedValue = numbersOnly ? `${prefix}${numbersOnly}` : prefix;
-      
-      setFormDataSensor(prev => ({
-        ...prev,
-        sensor_code: formattedValue
-      }));
-    } else {
-      // If sensor type is selected, use the appropriate prefix
-      const prefix = getSensorPrefix(currentType);
-      
-      // If user tries to delete prefix, prevent it
-      if (inputValue === "" || inputValue === prefix.slice(0, 1) || inputValue === prefix.slice(0, 2) || inputValue === prefix.slice(0, 3) || inputValue === prefix.slice(0, 4)) {
-        setFormDataSensor(prev => ({ ...prev, sensor_code: prefix }));
-        return;
-      }
-      
-      // Remove prefix to get just the number part
-      const numberPart = inputValue.replace(new RegExp(`^${prefix}*`, 'i'), '');
-      
-      // Only allow numbers
-      const numbersOnly = numberPart.replace(/\D/g, '');
-      
-      // Combine prefix with the number
-      const formattedValue = numbersOnly ? `${prefix}${numbersOnly}` : prefix;
-      
-      setFormDataSensor(prev => ({
-        ...prev,
-        sensor_code: formattedValue
-      }));
-    }
-  };
+  const inputValue = e.target.value;
+  const currentType = formDataSensor.sensor_type;
+  if (!currentType) return;
+
+  const prefix = getSensorPrefix(currentType);
+
+  // Remove prefix to get number part, keep only digits
+  let numberPart = inputValue.replace(new RegExp(`^${prefix}`, 'i'), '').replace(/\D/g, '');
+
+  // Allow user to clear input completely
+  if (inputValue === '' || inputValue === prefix) {
+    setFormDataSensor(prev => ({ ...prev, sensor_code: '' }));
+    return;
+  }
+
+  // Only pad numbers that are typed, don't force pad on delete
+  const formattedValue = numberPart ? `${prefix}${numberPart.padStart(2, '0')}` : prefix;
+
+  setFormDataSensor(prev => ({ ...prev, sensor_code: formattedValue }));
+};
+
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    
-    // Skip custom handling for sensor_code since we have special handler
-    if (name === "sensor_code") {
-      return;
-    }
-    
+    if (name === "sensor_code") return;
     setFormDataSensor(prev => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Auto-set unit based on sensor type if not already set
       const unitMap = {
         'moisture': '%',
         'humidity': '%',
@@ -215,20 +156,10 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
         setFormError([]);
       }
     } catch (error) {
-      const sensorError = error.response.data.errors;
+      const sensorError = error.response?.data?.errors || [];
       setFormError(sensorError);
-      console.error("Error Submitting Sensor Data", error);
+      console.error("Error submitting sensor data", error);
     }
-  };
-
-  const getErrorMsg = (fieldName) => {
-    const err = formError.find(e => e.path === fieldName);
-    return err ? err.msg : "";
-  };
-
-  const capitalizeFirstLetter = (str) => {
-    if (!str) return "";
-    return str.charAt(0).toUpperCase() + str.slice(1);
   };
 
   if (!isSensorOpen) return null;
@@ -238,11 +169,9 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
       <main className="rounded-xl overflow-hidden w-[45%] bg-white">
         {/* Header */}
         <header className={`flex items-center justify-between p-6 rounded-t-xl ${
-          sensorMode === "insert"
-            ? "bg-[var(--sage-light)]"
-            : sensorMode === "update"
-            ? "bg-[var(--white-blple--)]"
-            : "bg-red-100"
+          sensorMode === "insert" ? "bg-[var(--sage-light)]" : 
+          sensorMode === "update" ? "bg-[var(--white-blple--)]" : 
+          "bg-red-100"
         }`}>
           <div className="flex items-center gap-3">
             {sensorMode === "insert" ? <Plus stroke="white" /> : sensorMode === "update" ? <Edit stroke="white" /> : <Delete fill="rgb(53,53,53,0.2)" stroke="white" />}
@@ -266,9 +195,7 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4 p-6">
-        
             {/* Left Column */}
-            {/* bed id */}
             <div className="flex flex-col gap-4">
               <input
                 type="text"
@@ -280,25 +207,21 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
                 className="px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
                 required
               />
-            
-              {/* sensor type */}
-                <select
+              <select
                 name="sensor_type"
                 value={formDataSensor.sensor_type}
                 onChange={handleSensorTypeChange}
                 className="px-4 py-2 shadow-lg bg-gray-200 w-full rounded-lg">
                 <option value="">Sensor Type</option>
-                {["ph", "moisture", "humidity", "temperature"].map((type) => (
-                  <option key={type} value={type}>
-                    {capitalizeFirstLetter(type)}
-                  </option>
+                {["ph", "moisture", "humidity", "temperature"].map(type => (
+                  <option key={type} value={type}>{capitalizeFirstLetter(type)}</option>
                 ))}
               </select>
               {getErrorMsg("sensor_type") && (
                 <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("sensor_type")}</span>
               )}
 
-              {/* sensor code */}
+              {/* Sensor Code */}
               <div className="flex flex-col gap-1">
                 <input
                   type="text"
@@ -312,44 +235,35 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
                   <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("sensor_code")}</span>
                 )}
                 <span className="text-xs text-gray-500 mt-1">
-                  {formDataSensor.sensor_type 
-                    ? `Just type the number (001, 002...) - Prefix: ${getSensorPrefix(formDataSensor.sensor_type)}`
-                    : "Select sensor type first, then type number"}
+                  {formDataSensor.sensor_type ? `Just type the number (001, 002...) - Prefix: ${getSensorPrefix(formDataSensor.sensor_type)}` : "Select sensor type first, then type number"}
                 </span>
               </div>
-
             </div>
 
             {/* Right Column */}
             <div className="flex flex-col gap-4">
-                         
-              {/* Min Moisture */}
               <div className="flex flex-col gap-1">
                 <input
                   type="number"
                   name="min_value"
-                  placeholder="Min Moisture"
+                  placeholder="Min Value"
                   value={formDataSensor.min_value}
                   onChange={handleChange}
                   className="px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
                 />
-                  {getErrorMsg("min_value") && <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("min_value")}</span>}
+                {getErrorMsg("min_value") && <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("min_value")}</span>}
               </div>
-                
-                {/* Max Moisture */}
               <div className="flex flex-col gap-1">
                 <input
                   type="number"
                   name="max_value"
-                  placeholder="Max Moisture"
+                  placeholder="Max Value"
                   value={formDataSensor.max_value}
                   onChange={handleChange}
                   className="px-4 py-2 border-2 border-[var(--sage-lighter)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)]"
                 />
-                  {getErrorMsg("max_value") && <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("max_value")}</span>}
+                {getErrorMsg("max_value") && <span className="text-[var(--color-danger-a)] bg-[var(--color-dangerb-b)] text-xs">{getErrorMsg("max_value")}</span>}
               </div>
-
-
             </div>
 
             {/* Action Buttons */}
@@ -365,7 +279,5 @@ function SensorModal({ isSensorOpen, onSensorClose, sensorMode, selectedBed, sel
     </div>
   );
 }
-
-
 
 export default SensorModal;
