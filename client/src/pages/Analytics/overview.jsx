@@ -87,7 +87,7 @@ export function Overview(){
     return(
         <>
 
-        <div className="grid grid-cols-12 gap-4 h-[calc(100vh-140px)]  ">
+        <div className="grid grid-cols-12 gap-4 row-span-full ">
 
             {/* Plant Health Score - Large Card */}
             <div className="col-span-4 row-span-2 bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all">

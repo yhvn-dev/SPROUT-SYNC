@@ -5,8 +5,6 @@ import * as readingService from "../../data/readingsServices"
 
 
 export function BedLayout({ beds, sensors }) {
-
-
    const [readings,setReadings] = useState([]);
 
     useEffect(() =>{
@@ -28,8 +26,7 @@ export function BedLayout({ beds, sensors }) {
     }, {});
 
 
-
-
+  
   return (
     <div className="w-full overflow-x-auto pb-4">
       <div className="min-w-max px-6 py-8 ">
