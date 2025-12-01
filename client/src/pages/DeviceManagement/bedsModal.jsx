@@ -13,6 +13,7 @@ function BedModal({ isBedOpen, onBedClose, bedMode, selectedBed, loadBedData, sc
   });
   const [formError, setFormError] = useState([]);
 
+  
   // Extract number from string
   const extractNumber = (str) => {
     if (!str) return "";

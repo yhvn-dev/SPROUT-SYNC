@@ -14,13 +14,12 @@ CREATE TABLE users (
 
 CREATE TABLE beds (
     bed_id SERIAL PRIMARY KEY,       
-    bed_code TEXT UNIQUE NOT NULL,    -- e.g., "BED-CODE-11"
-    bed_name TEXT NOT NULL,           -- e.g., "Lettuce Bed"
-    location TEXT,                    -- e.g., "RIGHT", "LEFT"
-    is_watering BOOLEAN DEFAULT FALSE, -- TRUE if currently watering
-    last_avg_moisture NUMERIC,        -- Latest moisture reading
-    min_moisture NUMERIC NOT NULL DEFAULT 30, -- Start watering below this %
-    max_moisture NUMERIC NOT NULL DEFAULT 70, -- Stop watering above this %
+    bed_code TEXT UNIQUE NOT NULL,    
+    bed_name TEXT NOT NULL,     
+    is_watering BOOLEAN DEFAULT FALSE,
+    last_avg_moisture NUMERIC,     
+    min_moisture NUMERIC NOT NULL DEFAULT 30, -
+    max_moisture NUMERIC NOT NULL DEFAULT 70, 
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
@@ -47,3 +46,13 @@ CREATE TABLE sensor_readings (
 )
 
 
+
+CREATE TABLE notifications (
+    notification_id SERIAL PRIMARY KEY,         
+    type VARCHAR(50) NOT NULL,                
+    message TEXT NOT NULL,                  
+    related_bed INT REFERENCES beds(bed_id),      
+    related_sensor INT REFERENCES sensors(sensor_id), 
+    status VARCHAR(10) DEFAULT 'Unread',        
+    created_at TIMESTAMP DEFAULT NOW()        
+);

@@ -86,7 +86,6 @@ export function Overview(){
 
     return(
         <>
-
         <div className="grid grid-cols-12 gap-4 row-span-full ">
 
             {/* Plant Health Score - Large Card */}

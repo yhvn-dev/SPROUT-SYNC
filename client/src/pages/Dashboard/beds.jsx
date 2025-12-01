@@ -36,7 +36,7 @@ export function BedLayout({ beds, sensors }) {
           <main className="flex flex-col items-start justify-center ">
 
             {beds?.length > 0 && beds.map((b) => (
-              <ol key={b.bed_id} className="flex flex-col items-start justify-start w-full  my-4  p-4  overflow-hidden shadow-2xl bg-[var(--sage-lighter)]">
+              <ol key={b.bed_id} className="flex flex-col items-start justify-start w-full  my-4  p-4   rounded-xl overflow-hidden shadow-2xl bg-[var(--sage-lighter)]">
 
                <div className="my-10 flex items-center justify-between w-full">
                 <div className="flex items-center justify-start">
@@ -57,9 +57,18 @@ export function BedLayout({ beds, sensors }) {
                   </div>
                 </div>
 
-                <p className="text-sm bg-amber-100 text-[var(--acc-darkc)] font-medium px-3 py-1 rounded-2xl">
-                  {b.bed_name}
-                </p>
+                <div className="flex items-center justify-end flex-row-reverse">
+                  <button className="mx-8 text-sm px-3 py-1 rounded-full cursor-pointer border-1  text-[var(--sage-dark)]">
+                    Modify
+                  </button>
+
+                  <p className="text-sm bg-amber-100 text-[var(--acc-darkc)] font-medium px-3 py-1 rounded-2xl">
+                    {b.bed_name}
+                  </p>
+                </div>
+
+
+
               </div>
 
                 {/* SENSOR GRID */}

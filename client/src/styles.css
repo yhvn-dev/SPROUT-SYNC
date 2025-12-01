@@ -2,8 +2,6 @@
 @import "tailwindcss";
 
 :root{
-    
-
     /* [PL1] FOUNDATIONS */
     --main-white--: hsl(258, 44%, 93%);
     --main-whiteb:#f6f6f6;
@@ -330,7 +328,7 @@ button{
 
 /* FORM CONTAINERS */
 .form_box label{
-   @apply absolute left-[4%] bg-white py-0 px-2 text-sm pointer-events-none text-[var(--acc-darkc)];
+   @apply absolute left-[4%] bg-[var(--main-whiteb)] py-0 px-2 text-sm pointer-events-none text-[var(--acc-darkc)];
     top: 50%;
     transition: 0.5s ease;
     transform: translateY(-50%); 

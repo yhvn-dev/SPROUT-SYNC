@@ -4,7 +4,7 @@ import * as sensorModels from "../models/sensorModels.js"
 
 export const readBeds = async () =>{
     try{
-        const { rows } = await query("SELECT * FROM beds") 
+        const { rows } = await query("SELECT * FROM beds ORDER BY created_at ASC") 
         console.log("BEDS:",rows)
         return rows
     }catch(err){
@@ -12,6 +12,8 @@ export const readBeds = async () =>{
         throw err
     }
 }
+
+
 
 export const readBed = async (bed_id) =>{
     try{

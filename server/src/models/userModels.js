@@ -46,7 +46,7 @@ export const countUserByStatus = async () =>{
 
 export const getUsers = async () =>{
     try{
-        const { rows } = await query("SELECT * FROM users");
+        const { rows } = await query("SELECT * FROM users ORDER BY created_at DESC");
         return rows
     }catch(err){
         console.log(`MODELS: Error Getting Users ${err}`)
@@ -157,8 +157,8 @@ export const updateUser = async(user_id,userData) => {
 
         return rows[0]
 
-      }else{
-        
+        }else{
+          
         // IF THERES NO PASSWORD
         const { rows } = await query(
         `UPDATE users  SET username = $1,

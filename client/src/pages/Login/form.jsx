@@ -1,15 +1,12 @@
-import React, { useState,useRef } from 'react'
 import {User,Lock} from "lucide-react"
 import { colors } from "./../../utils/colors"
 import * as Logo from "../../components/logo"
 
 export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef,status}) {
-    
 
-  return (
+  return (  
 
-    <form onSubmit={handleSubmit} className="h-[80%] w-[90%] md:w-[35%]  bg-white rounded-[10px] shadow-xl">
-
+    <form onSubmit={handleSubmit} className="h-[80%] w-[90%] md:w-[35%]  bg-[var(--main-whiteb)] rounded-[10px] shadow-xl">
 
         {/* right */}                            
         <div className="flex items-center flex-col h-[20%] w-full ">

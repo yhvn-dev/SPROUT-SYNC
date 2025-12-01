@@ -17,7 +17,6 @@ import { useState,useContext,useEffect, use } from "react"
 
 const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
   const percentage = (value / max) * 100;
-
   
   return (
     <div className="flex flex-col items-center justify-center h-full">
@@ -58,12 +57,9 @@ function Dashboard() {
   const [sensors,setSensorData] = useState([])
   const [sensorCount,setSensorCount] = useState([]);
   
-
   useEffect(() => {
     loadBedData();
   }, []);
-
-
 
     const loadBedData = async () => {
         try {       
