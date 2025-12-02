@@ -6,7 +6,7 @@ import About from "./pages/About/about.jsx"
 import Dashboard from "./pages/Dashboard/dashboard.jsx";
 import Users from "./pages/Users/users.jsx"
 import Analytics from './pages/Analytics/analytics.jsx';
-import DeviceManagement from "./pages/DeviceManagement/deviceManagement.jsx"
+
 
 import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";
 
@@ -21,11 +21,7 @@ function App() {
               <Route path='/contacts' element={<Contact/>}/>
               <Route path='/about' element={<About/>}/>
               <Route path='/login' element={<Login/>}/>  
-              <Route path='/device_management' element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                 <DeviceManagement/> 
-                </ProtectedRoute>
-              }/>
+        
 
               <Route path='/dashboard' element={
                 <ProtectedRoute allowedRoles={['admin','viewer']}>

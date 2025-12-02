@@ -2,12 +2,8 @@ import { UserContext } from "../../hooks/userContext"
 import { Sidebar } from "../../components/sidebar"
 import { Db_Header } from "../../components/db_header"
 import { Quick_Stats } from "./quick_stats" 
-import { Workspace } from "./workspace"
-import * as bedService from "../../data/bedServices"
-import * as sensorService from "../../data/sensorServices"
-
-import { ThresholdModal } from "./thresholdModal"
-import { Droplets, Sun, Wind, Activity } from 'lucide-react';
+import Trays from "./tray_group"
+import { Droplets,Leaf ,Wind,Sun} from 'lucide-react';
 
 import "./dashboard.css"
 import "./dashboard_responsive.css"
@@ -80,30 +76,67 @@ function Dashboard() {
                     </div>
                 </div>
                 
-            
 
                 {/* water level */}
                  <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
                   <div className="scale-90 origin-center">
                       <GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="#8f9bbc" />
                   </div>            
-                </div>           
+                </div>      
+                
+                {/* water level */}
+                 <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                  <div className="scale-90 origin-center">
+                      <GaugeChart value={6.8} max={14} label="Temperature" unit="" icon={Droplets} color="#f0bd75" />
+                  </div>            
+                </div>      
+
+                
+                {/* water level */}
+                 <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                  <div className="scale-90 origin-center">
+                      <GaugeChart value={6.8} max={14} label="Humidity" unit="" icon={Droplets} color="#b7efc5" />
+                  </div>            
+                </div>      
+
+
+                 
+            
               </>
             }/>
 
 
 
-            {/* WORKSPACE */}
-            <Workspace      
-              bed={activeBed}
-              setOpenTModal={setOpenTModal}
-            />
+          <main className='bg-white
+          grid h-full col-start-2 col-end-4 row-start-3 row-end-3
+          grid-rows-[1fr_9fr] grid-cols-[1fr] rounded-[10px] overflow-y-auto
+          overflow-hidden'> 
+
+            <div className='center w-full h-full col-start-1 col-end-4 bg-transparent mb-4 '>
+                <ol className="wp_part full flex items-center justify-start">
+                    <h1
+                    className="flex items-center justify-start text-2xl full  font-bold mb-2 text-[var(--sancga)">
+                        <Leaf className="mx-4" />
+                        <span >Nursery</span>
+                    </h1>
+                    <p className="text-sm text-end px-4  ">
+                        Real-time soil moisture monitoring.
+                    </p>  
+                </ol>
             
-          {isOpenTModal && <ThresholdModal isOpen={setOpenTModal} />}        
+            </div>
+          {/* content area */}
+
+          <div className="content_box flex flex-col justify-start items-center w-full h-full
+            row-start-2 col-span-1 overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] 
+            rounded-[10px]">
+            <Trays/>
+          </div>
+
+
+        </main>
+                
       </section>    
-
-
-
     </>
   )
 }

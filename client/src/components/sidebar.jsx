@@ -65,26 +65,6 @@ export function Sidebar({user}) {
           <p className="text-sm mr-2">Analytics</p>
         </NavLink>    
         
-
-
-        
-        {user.role === "admin" &&                
-            <NavLink
-              to="/device_management"
-              className={({ isActive }) =>
-                `gap-2 py-1 transition-colors duration-300 rounded-[10px]  px-2 my-2 w-full
-                  ${
-                    isActive
-                      ? "text-white bg-[var(--sancgb)] shadow-lg"
-                      : "text-[var(--acc-darkb)] hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)] "
-                  }  ${user.role === "viewer" ? "hidden" : "flex justify-start items-center"} `
-              }>
-                
-            <Cable className="mx-1" strokeWidth={1.5} size={22}/>
-              <p className="text-sm mr-2">Manage Devices</p>
-            </NavLink>      
-        }
-        
         
       </div>
 
@@ -96,7 +76,5 @@ export function Sidebar({user}) {
       </div>
     </section>
   );
-
-
 
 }

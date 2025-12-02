@@ -1,7 +1,4 @@
 import userRoutes from "./routes/ProtectedRoutes/user.Routes.js";
-import bedRoutes from "./routes/ProtectedRoutes/bed.Routes.js"
-import sensorRoutes from "./routes/ProtectedRoutes/sensor.Routes.js"
-import readingRoutes from "./routes/ProtectedRoutes/readings.Routes.js"
 import pageRoutes from "./routes/ProtectedRoutes/page.Routes.js"
 import publicRoutes from "./routes/UnprotectedRoutes/public.Routes.js"
 import express from "express";
@@ -29,9 +26,7 @@ app.use(cookieParser());
 app.use("/uploads",express.static(path.join(__dirname, "./../uploads")));;
 
 
-app.use('/readings',readingRoutes)
-app.use('/sensors',sensorRoutes)
-app.use('/beds',bedRoutes)
+
 app.use('',userRoutes)
 app.use('/auth',publicRoutes)
 app.use('/page',pageRoutes)

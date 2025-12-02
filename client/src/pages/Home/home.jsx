@@ -155,11 +155,11 @@ function Home(){
                     <div className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-xl p-4 border border-[#E8F3ED]">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-[#E8F3ED] rounded-xl flex items-center justify-center">
-                          <Sun className="w-6 h-6 text-[#027c68]" />
+                          <Droplets className="w-6 h-6 text-[#027c68]" />
                         </div>
                         <div>
-                          <div className="text-sm text-[#5A8F73]">Temperature</div>
-                          <div className="text-xl font-bold text-[#003333]">24°C</div>
+                          <div className="text-sm text-[#5A8F73]">Moisture</div>
+                          <div className="text-xl font-bold text-[#003333]">40 %</div>
                         </div>
                       </div>
                     </div>
@@ -167,10 +167,10 @@ function Home(){
                     <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl p-4 border border-[#E8F3ED]">
                       <div className="flex items-center gap-3">
                         <div className="w-12 h-12 bg-[#E8F3ED] rounded-xl flex items-center justify-center">
-                          <Wind className="w-6 h-6 text-[#027c68]" />
+                          <Droplets className="w-6 h-6 text-[#027c68]" />
                         </div>
                         <div>
-                          <div className="text-sm text-[#5A8F73]">Humidity</div>
+                          <div className="text-sm text-[#5A8F73]">Water Level</div>
                           <div className="text-xl font-bold text-[#003333]">65%</div>
                         </div>
                       </div>

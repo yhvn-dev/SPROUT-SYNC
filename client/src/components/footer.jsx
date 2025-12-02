@@ -15,7 +15,7 @@ export function Footer() {
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#027c68] to-[#009983] flex items-center justify-center">
                 <Leaf className="w-6 h-6 text-white" />
               </div>
-              <span className="text-xl font-bold">GREENLINK</span>
+              <span className="text-xl font-bold">SPROUTSYNC</span>
             </div>
 
 
@@ -118,7 +118,7 @@ export function Footer() {
         {/* Bottom Bar */}
         <div className="border-t border-[#027c68] pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-[#A8C7B8] text-sm">
-            © 2025 GREENLINK. All rights reserved.
+            © 2025 SPROUTSYNC. All rights reserved.
           </p>
           <div className="flex gap-6 text-sm">
             <a href="#" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors">

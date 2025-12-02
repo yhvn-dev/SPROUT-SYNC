@@ -1,10 +1,10 @@
-import { Droplets, Sun, Wind,Activity,TrendingUp } from 'lucide-react';
+import { Droplets, Sun, Wind,Activity,TrendingUp, Bell } from 'lucide-react';
 
 export function FeatureSection(){
 
     return(
 
-    <>
+     <>
         {/* Features Section */}
       <section id="features" className="py-24 bg-gradient-to-b from-white to-[#E8F3ED]">
         <div className="max-w-7xl mx-auto px-6">
@@ -40,13 +40,7 @@ export function FeatureSection(){
                 color: '#7BA591',
                 bg: '#E8F3ED'
               },
-              {
-                icon: Activity,
-                title: 'pH Balance',
-                description: 'Continuous pH level tracking ensures nutrient absorption efficiency',
-                color: '#009983',
-                bg: '#E8F3ED'
-              },
+        
               {
                 icon: Droplets,
                 title: 'Water Level',
@@ -54,12 +48,19 @@ export function FeatureSection(){
                 color: '#5A8F73',
                 bg: '#E8F3ED'
               },
-              {
-                icon: TrendingUp,
-                title: 'Growth Analytics',
-                description: 'Historical data analysis to optimize watering schedules and patterns',
-                color: '#027c68',
-                bg: '#E8F3ED'
+                {
+                  icon: TrendingUp,
+                  title: 'Growth Analytics',
+                  description: 'Historical data analysis to optimize watering schedules and patterns',
+                  color: '#027c68',
+                  bg: '#E8F3ED'
+              },
+                {
+                  icon: Bell,
+                  title: 'Real Time Notifications',
+                  description: 'Real time notifications from different inputs and sensors',
+                  color: '#027c68',
+                  bg: '#E8F3ED'
               }
             ].map((feature, index) => (
               <div key={index} className="group bg-white rounded-3xl p-8 shadow-lg hover:shadow-2xl transition-all transform hover:-translate-y-2 border border-[#E8F3ED]">

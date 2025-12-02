@@ -29,7 +29,7 @@ export function Dashboard_Mockup() {
                   <div className="w-3 h-3 rounded-full bg-[#28ca42]"></div>
                 </div>
                 <div className="flex-1 mx-4 bg-white rounded-lg px-4 py-1.5 text-sm text-[#5A8F73] flex items-center">
-                  <span className="text-[#003333] font-medium">greenlink.farm/dashboard</span>
+                  <span className="text-[#003333] font-medium">sproutsync.farm/dashboard</span>
                 </div>
               </div>
 
@@ -54,7 +54,7 @@ export function Dashboard_Mockup() {
                     { color: '#027c68',chart:<GaugeChart value={6.8} max={14} label="Moisture" unit="" icon={Droplets} color="var(--sancgb)" /> },
                     { color: '#b0e892',chart:<GaugeChart value={6.8} max={14} label="Temperature" unit="" icon={Sun} color="var(--sancgc)" /> },
                     { color: '#7BA591',chart:<GaugeChart value={6.8} max={14} label="Humidity" unit="" icon={Wind} color="var(--sage)" /> },
-                    { color: '#009983',chart:<GaugeChart value={6.8} max={14} label="pH Level" unit="" icon={Activity} color="#009983" /> },
+             
                     { color: '#5A8F73',chart:<GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="var(--purpluish--" /> }
                   ].map((stat, index) => (
                     <div key={index} className="bg-white rounded-2xl p-4 shadow-lg">
@@ -65,39 +65,84 @@ export function Dashboard_Mockup() {
                   ))}
                 </div>
                 
+                  <div className="col-start-2 col-end-3 row-start-3 row-end-3 bg-white rounded-2xl p-6 shadow-lg space-y-6">
+  
+                    {/* Cucumber Tray */}
+                    <div>
+                      <div className="text-sm font-semibold text-[#003333] mb-4">Cucumber Tray</div>
+                      <div className="grid grid-cols-3 gap-6">
+                        {[
+                          { id: "A1", value: 65, status: "Optimal" },
+                          { id: "A2", value: 72, status: "Optimal" },
+                          { id: "A3", value: 58, status: "Dry" },
+                      
+                        ].map((tray) => (
+                          <div
+                            key={tray.id}
+                            className="relative bg-gradient-to-br from-green-50 to-white rounded-xl border-2 border-dashed border-green-200 h-32 flex items-center justify-center shadow-sm"
+                          >
+                            <p className="absolute top-2 left-2 text-xs font-bold text-[#027c68]">{tray.id}</p>
 
-                <div className="col-start-2 col-end-3 row-start-3 row-end-3 bg-white rounded-2xl p-6 shadow-lg">
-                  <div className="text-sm font-semibold text-[#003333] mb-4">BED 1 - MONITORING</div>
-                  <div className="grid grid-cols-3 md:grid-cols-6 gap-3 my-2">
-                    {['A1', 'A2', 'A3', 'A4', 'A5', 'A6'].map((zone) => (
-                       
-                        <div key={zone} className="flex items-center justify-center flex-col bg-[#E8F3ED] rounded-xl p-3 text-center">
-                            <p className="text-xs font-bold text-[#027c68] mb-1">{zone}</p>
-                            <p className="text-lg font-bold text-[#003333]">65%</p> 
-                            <p className="text-lg font-bold text-[#003333]"><Droplets size={16}/></p> 
-                            
-                            <p className="text-xs text-[#5A8F73]">Optimal</p>
-                        </div>
-                     
-                    ))}
+                            <div
+                              className={`absolute bottom-3 right-3 rounded-lg px-3 py-2 text-white shadow-md text-center ${
+                                tray.value < 30
+                                  ? "bg-red-500"
+                                  : tray.value < 60
+                                  ? "bg-[var(--color-warning-a)] text-black"
+                                  : "bg-[#027c68]"
+                              }`}
+                            >
+                              <div className="flex items-center gap-1 justify-center">
+                                <Droplets size={14} />
+                                <span className="text-xs uppercase">Moisture</span>
+                              </div>
+                              <div className="text-base font-bold">{tray.value}%</div>
+                              <div className="text-[10px] opacity-90">{tray.status}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* Lettuce Tray */}
+                    <div>
+                      <div className="text-sm font-semibold text-[#003333] mb-4">Lettuce Tray</div>
+                      <div className="grid grid-cols-3 gap-6">
+                        {[
+                          { id: "B1", value: 55, status: "Optimal" },
+                          { id: "B2", value: 60, status: "Optimal" },
+                          { id: "B3", value: 50, status: "Dry" },
+                         
+                        ].map((tray) => (
+                          <div
+                            key={tray.id}
+                            className="relative bg-gradient-to-br from-green-50 to-white rounded-xl border-2 border-dashed border-green-200 h-32 flex items-center justify-center shadow-sm"
+                          >
+                            <p className="absolute top-2 left-2 text-xs font-bold text-[#027c68]">{tray.id}</p>
+
+                            <div
+                              className={`absolute bottom-3 right-3 rounded-lg px-3 py-2 text-white shadow-md text-center ${
+                                tray.value < 30
+                                  ? "bg-red-500"
+                                  : tray.value < 60
+                                  ? "bg-[var(--color-warning-a)] text-black"
+                                  : "bg-[#027c68]"
+                              }`}
+                            >
+                              <div className="flex items-center gap-1 justify-center">
+                                <Droplets size={14} />
+                                <span className="text-xs uppercase">Moisture</span>
+                              </div>
+                              <div className="text-base font-bold">{tray.value}%</div>
+                              <div className="text-[10px] opacity-90">{tray.status}</div>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
                   </div>
 
-                  <div className='grid grid-cols-3 md:grid-cols-6 gap-3 my-2'>
-                    {['A1', 'A2', 'A3', 'A4', 'A5', 'A6'].map((zone) => (
-                             
-                        <div key={zone} className="flex items-center justify-center flex-col bg-[#E8F3ED] rounded-xl p-3 text-center">
-                            <p className="text-xs font-bold text-[#027c68] mb-1">{zone}</p>
-                            <p className="text-lg font-bold text-[#003333]">65%</p>
-                            <p className="text-lg font-bold text-[#003333] "><Activity size={16}/></p>
-                            <p className="text-xs text-[#5A8F73]">Optimal</p>
-                        </div>
-                        
-                    ))}
-                    
-                  </div>
-                    
-                  
-                </div>
               </div>
             </div>
           </div>

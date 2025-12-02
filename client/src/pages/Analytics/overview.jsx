@@ -1,5 +1,5 @@
-import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
-import { Droplets, Sun, Wind, Activity, AlertTriangle,  Leaf } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer} from 'recharts';
+import { Droplets, Activity, AlertTriangle,  Leaf,Sun,Wind} from 'lucide-react';
 
 
   // Sample data
@@ -138,15 +138,33 @@ export function Overview(){
                 <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
                 <GaugeChart value={48} max={100} label="Moisture" unit="%" icon={Droplets} color="#027c68" />
                 </div>
+               
                 <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                <GaugeChart value={24} max={40} label="Temperature" unit="°C" icon={Sun} color="#b0e892" />
+                <GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="#009983" />
                 </div>
-                <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                <GaugeChart value={65} max={100} label="Humidity" unit="%" icon={Wind} color="#7BA591" />
-                </div>
-                <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                <GaugeChart value={6.8} max={14} label="pH Level" unit="" icon={Activity} color="#009983" />
-                </div>
+               {/* Temperature Gauge */}
+                  <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
+                    <GaugeChart 
+                      value={32} 
+                      max={50} 
+                      label="Temperature" 
+                      unit="°C" 
+                      icon={Sun} 
+                      color="#FF9F1C" 
+                    />
+                  </div>
+
+                  {/* Humidity Gauge */}
+                  <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
+                    <GaugeChart 
+                      value={68} 
+                      max={100} 
+                      label="Humidity" 
+                      unit="%" 
+                      icon={Wind} 
+                      color="#5A8F73" 
+                    />
+                  </div>
             </div>
             
 
