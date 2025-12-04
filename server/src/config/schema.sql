@@ -14,9 +14,7 @@ CREATE TABLE users (
 
 CREATE TABLE tray_groups (
     tray_group_id SERIAL PRIMARY KEY,
-    plant_name VARCHAR(100) NOT NULL,
-    min_moisture NUMERIC NOT NULL DEFAULT 30,
-    max_moisture NUMERIC NOT NULL DEFAULT 70,
+    tray_group_name VARCHAR(100) NOT NULL,
     is_watering BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
@@ -26,19 +24,17 @@ CREATE TABLE tray_groups (
 CREATE TABLE trays (
     tray_id SERIAL PRIMARY KEY,  
     tray_group_id INT REFERENCES tray_groups(tray_group_id), 
-    tray_code TEXT UNIQUE NOT NULL,    
-    tray_name TEXT NOT NULL,    
+    plant_type VARCHAR(50),
+    soil_type VARCHAR(50),
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
 
-CREATE TABLE sensors(
+CREATE TABLE sensors(   
     sensor_id SERIAL PRIMARY KEY,
     tray_id INT REFERENCES trays(tray_id), 
     sensor_type VARCHAR(100) NOT NULL,
-    sensor_code VARCHAR(50) NOT NULL,
-    unit VARCHAR(50),
     min_value NUMERIC DEFAULT 0,
     max_value NUMERIC DEFAULT 100,
     status VARCHAR(40),
@@ -59,7 +55,6 @@ CREATE TABLE notifications (
     notification_id SERIAL PRIMARY KEY,         
     type VARCHAR(50) NOT NULL,                
     message TEXT NOT NULL,                  
-    related_tray_group INT REFERENCES tray_groups(tray_group_id),      
     related_sensor INT REFERENCES sensors(sensor_id), 
     status VARCHAR(10) DEFAULT 'Unread',        
     created_at TIMESTAMP DEFAULT NOW()        

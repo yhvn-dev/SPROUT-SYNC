@@ -140,31 +140,10 @@ export function Overview(){
                 </div>
                
                 <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                <GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="#009983" />
+                <GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="#8f9bbc" />
                 </div>
                {/* Temperature Gauge */}
-                  <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                    <GaugeChart 
-                      value={32} 
-                      max={50} 
-                      label="Temperature" 
-                      unit="°C" 
-                      icon={Sun} 
-                      color="#FF9F1C" 
-                    />
-                  </div>
-
-                  {/* Humidity Gauge */}
-                  <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
-                    <GaugeChart 
-                      value={68} 
-                      max={100} 
-                      label="Humidity" 
-                      unit="%" 
-                      icon={Wind} 
-                      color="#5A8F73" 
-                    />
-                  </div>
+             
             </div>
             
 

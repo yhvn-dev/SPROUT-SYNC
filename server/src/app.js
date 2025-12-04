@@ -1,6 +1,10 @@
 import userRoutes from "./routes/ProtectedRoutes/user.Routes.js";
 import pageRoutes from "./routes/ProtectedRoutes/page.Routes.js"
 import publicRoutes from "./routes/UnprotectedRoutes/public.Routes.js"
+import trayGroupRoutes from "./routes/ProtectedRoutes/trayGroup.Routes.js"
+import trayRoutes from "./routes/ProtectedRoutes/trays.Routes.js"
+
+
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv"
@@ -28,6 +32,8 @@ app.use("/uploads",express.static(path.join(__dirname, "./../uploads")));;
 
 
 app.use('',userRoutes)
+app.use('/trays',trayRoutes)
+app.use('/tg',trayGroupRoutes)
 app.use('/auth',publicRoutes)
 app.use('/page',pageRoutes)
  
@@ -37,10 +43,6 @@ app.get("/data",(req,res) =>{
     console.log('ESP32 requested data!');
     res.send('Hello from Node.js server WADAWDADADADA!');
 })
-
-
-
-
 
 app.get("/hello",(req,res)=>{
     res.send("<p>Hello World</p>")

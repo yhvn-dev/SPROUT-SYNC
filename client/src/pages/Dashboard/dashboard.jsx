@@ -83,21 +83,7 @@ function Dashboard() {
                       <GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="#8f9bbc" />
                   </div>            
                 </div>      
-                
-                {/* water level */}
-                 <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
-                  <div className="scale-90 origin-center">
-                      <GaugeChart value={6.8} max={14} label="Temperature" unit="" icon={Droplets} color="#f0bd75" />
-                  </div>            
-                </div>      
-
-                
-                {/* water level */}
-                 <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
-                  <div className="scale-90 origin-center">
-                      <GaugeChart value={6.8} max={14} label="Humidity" unit="" icon={Droplets} color="#b7efc5" />
-                  </div>            
-                </div>      
+            
 
 
                  

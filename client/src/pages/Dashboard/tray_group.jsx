@@ -5,7 +5,7 @@ const Trays = () => {
   const [trayGroups, setTrayGroups] = useState([
     {
       id: 'group-a',
-      name: 'North Wing - Zone A',
+      name: 'Cabbage - Zone A',
       trays: [
         {
           id: 'tray-a1',
@@ -35,7 +35,7 @@ const Trays = () => {
     },
     {
       id: 'group-b',
-      name: 'South Wing - Zone B',
+      name: 'Cocoumber - Zone B',
       trays: [
         {
           id: 'tray-b1',
@@ -57,7 +57,7 @@ const Trays = () => {
     },
     {
       id: 'group-c',
-      name: 'East Wing - Zone C',
+      name: 'Mustasa - Zone C',
       trays: [
         {
           id: 'tray-c1',
@@ -151,15 +151,22 @@ const Trays = () => {
   return (
 
       <div className="max-w-[1400px] mx-auto w-full">
-        <div className="bg-white bg-opacity-95 rounded-xl p-8 shadow-lg">
+        <div className="bg-white bg-opacity-95 rounded-xl p-4 shadow-lg">
           <div className="flex flex-col gap-8">
             {trayGroups.map(group => (
-              <div key={group.id} className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 rounded-lg p-6">
-                <h2 className="text-lg font-semibold text-green-900 mb-4">{group.name}</h2>
+              <div key={group.id} className=" bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 rounded-lg p-6">
+
+                <ul className='flex justify-between items-center mb-4'>
+                    <h2 className="text-lg font-semibold text-green-900 ">{group.name}</h2>
+                    <button className='rounded-2xl border-1 px-4 border-[var(--sancgb)]'>Modify</button>
+                </ul>
+             
+                            
                 <div className="flex gap-6 overflow-x-auto pb-4">
                   {group.trays.map(tray => (
-                    <div key={tray.id} className="min-w-[280px] bg-white rounded-lg p-5 shadow-md border-2 border-green-100 relative">
+                    <div key={tray.id} className=" min-w-[280px] bg-white rounded-lg p-5 shadow-md border-2 border-green-100 relative">
                       <h3 className="text-center font-semibold text-green-700 mb-4">{tray.name}</h3>
+
                       <div className="relative h-60 bg-gradient-to-br from-green-50 to-white rounded-lg border-2 border-dashed border-green-200">
                         {tray.sensors.map(sensor => (
                           <div
@@ -178,6 +185,8 @@ const Trays = () => {
                           </div>
                         ))}
                       </div>
+
+
                       <div className="mt-4 p-2 bg-green-50 rounded text-xs text-green-700 text-center">
                         {tray.sensors.length} sensor{tray.sensors.length !== 1 ? 's' : ''} active
                       </div>

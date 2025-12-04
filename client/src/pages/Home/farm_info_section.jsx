@@ -58,25 +58,8 @@ export function Farm_Info_Section(){
                     <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] rounded-full flex items-center justify-center">
                     <Leaf className="w-12 h-12 text-[#027c68]" />
                     </div>
-                    <h3 className="text-3xl font-bold text-[#003333]">Farm Statistics</h3>
-                    <div className="grid grid-cols-2 gap-6 pt-4">
-                    <div className="bg-[#E8F3ED] rounded-xl p-4">
-                        <div className="text-3xl font-bold text-[#027c68]">3</div>
-                        <div className="text-sm text-[#5A8F73] mt-1">Cultivation Beds</div>
-                    </div>
-                    <div className="bg-[#E8F3ED] rounded-xl p-4">
-                        <div className="text-3xl font-bold text-[#027c68]">18</div>
-                        <div className="text-sm text-[#5A8F73] mt-1">Sensor Zones</div>
-                    </div>
-                    <div className="bg-[#E8F3ED] rounded-xl p-4">
-                        <div className="text-3xl font-bold text-[#027c68]">500+</div>
-                        <div className="text-sm text-[#5A8F73] mt-1">Plants Monitored</div>
-                    </div>
-                    <div className="bg-[#E8F3ED] rounded-xl p-4">
-                        <div className="text-3xl font-bold text-[#027c68]">24/7</div>
-                        <div className="text-sm text-[#5A8F73] mt-1">Monitoring</div>
-                    </div>
-                    </div>
+                  
+                  
                 </div>
                 </div>
             </div>

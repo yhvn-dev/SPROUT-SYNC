@@ -3,9 +3,9 @@
 
 :root{
     /* [PL1] FOUNDATIONS */
-    --main-white--: hsl(258, 44%, 93%);
+    --main-white--: #eae5f5;
     --main-whiteb:#f6f6f6;
-    --white-blple--: hsl(221, 32%, 77%);
+    --white-blple--: lab(76.54% 1.57 -14.3);
     --purpluish--: #8f9bbc;
     --bluis--: hsl(220, 74%, 62%);
     --mainblue--: hsl(225, 46%, 44%);
