@@ -3,7 +3,8 @@ import api from "../utils/api";
 export const fetchAllReadings = async () => {
     try{
         const res = await api.get("/readings/get/readings");
-        return res.data.data
+        const readingsData = res.data
+        return  readingsData
     }catch(err){
         console.err("Error Fetching Readings",err);
         throw err

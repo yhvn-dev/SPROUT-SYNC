@@ -1,14 +1,20 @@
+import { useState,useContext,useEffect, use } from "react"
 import { UserContext } from "../../hooks/userContext"
 import { Sidebar } from "../../components/sidebar"
 import { Db_Header } from "../../components/db_header"
 import { Quick_Stats } from "./quick_stats" 
-import Trays from "./tray_group"
+import Tray_Group from "./tray_group"
 import { Droplets,Leaf ,Wind,Sun} from 'lucide-react';
+import * as trayGroupService from "../../data/trayGroupServices"
+import * as sensorService from "../../data/sensorServices"
+import * as traysService from "../../data/traysServices"
+import * as readingsService from "../../data/readingsServices"
 
 import "./dashboard.css"
 import "./dashboard_responsive.css"
+import TrayGroupModal from "./modal"
 
-import { useState,useContext,useEffect, use } from "react"
+
 
 
 const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
@@ -45,9 +51,33 @@ const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
 
 function Dashboard() {
   const { user } = useContext(UserContext);
-  const [activeBed, setActiveBed] = useState("bed_1")
-  const [isOpenTModal,setOpenTModal] = useState(false);
+  const [isModalOpen,setOpenModal] = useState(false)
+  const [trayGroups,setTrayGroups] = useState([]);
+  const [trays,setTrays] = useState([]);
+  const [sensors,setSensors] = useState([]);
+  const [readings,setReadings] = useState([])
+  const [notif,setNotif] = useState([]);
 
+  useEffect(() =>{
+      loadNurseryData()
+  },[])
+
+    const loadNurseryData = async () => {
+    try {
+        const trayGroups = await trayGroupService.fetchAllTrayGroups()  
+        const sensors = await sensorService.fetchAllSensors()
+        const trays = await traysService.fetchAllTrays()
+        const readings = await readingsService.fetchAllReadings()
+        console.log("READINGS",readings)
+    
+        setTrayGroups(trayGroups)
+        setSensors(sensors)
+        setTrays(trays)
+        setReadings(readings)
+      } catch (error) {
+        console.error(error)
+    }
+  }
 
   return (
     <>
@@ -86,7 +116,6 @@ function Dashboard() {
             
 
 
-                 
             
               </>
             }/>
@@ -111,16 +140,29 @@ function Dashboard() {
                 </ol>
             
             </div>
+            
+            
           {/* content area */}
-
           <div className="content_box flex flex-col justify-start items-center w-full h-full
             row-start-2 col-span-1 overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] 
             rounded-[10px]">
-            <Trays/>
+            <Tray_Group
+            trayGroups={trayGroups} 
+            sensors={sensors} 
+            trays={trays}
+            readings={readings}
+            setOpenModal={setOpenModal}/>
           </div>
 
 
         </main>
+
+          {isModalOpen && (
+              <TrayGroupModal 
+                isOpen={isModalOpen} 
+                onClose={() => setOpenModal(false)} 
+              />
+          )}
                 
       </section>    
     </>

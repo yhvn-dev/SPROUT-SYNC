@@ -86,55 +86,11 @@ export function Overview(){
 
     return(
         <>
-        <div className="grid grid-cols-12 gap-4 row-span-full ">
+        <div className="grid grid-cols-8 grid-rows-[1fr_2fr] gap-4 row-span-full  ">
 
-            {/* Plant Health Score - Large Card */}
-            <div className="col-span-4 row-span-2 bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all">
-                <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-[#003333]">Plant Health Index</h3>
-                <Leaf className="w-5 h-5 text-[#7BA591]" />
-                </div>
-                <div className="flex flex-col items-center justify-center h-[calc(100%-2rem)]">
-                <div className="relative w-40 h-40 mb-4">
-                    <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="45" fill="none" stroke="#E8F3ED" strokeWidth="10"/>
-                    <circle 
-                        cx="50" 
-                        cy="50" 
-                        r="45" 
-                        fill="none" 
-                        stroke="#b0e892"
-                        strokeWidth="10"
-                        strokeDasharray="254 282.7"
-                        className="transition-all duration-1000 ease-out"
-                        strokeLinecap="round"
-                    />
-                    </svg>
-                    <div className="absolute inset-0 flex flex-col items-center justify-center">
-                    <span className="text-4xl font-bold text-[#003333]">90</span>
-                    <span className="text-sm text-[#5A8F73]">Optimal</span>
-                    </div>
-                </div>
-                <div className="w-full space-y-2">
-                    <div className="flex justify-between text-xs">
-                    <span className="text-[#5A8F73]">Moisture</span>
-                    <span className="font-medium text-[#003333]">Excellent</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                    <span className="text-[#5A8F73]">Temperature</span>
-                    <span className="font-medium text-[#003333]">Good</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                    <span className="text-[#5A8F73]">Light</span>
-                    <span className="font-medium text-[#003333]">N/A</span>
-                    </div>
-                </div>
-                </div>
-            </div>
-            
 
             {/* Gauges Row */}
-            <div className="col-span-8 grid grid-cols-4 gap-4">
+            <div className="col-span-full grid grid-cols-4 gap-4 ">
                 <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
                 <GaugeChart value={48} max={100} label="Moisture" unit="%" icon={Droplets} color="#027c68" />
                 </div>
@@ -142,14 +98,13 @@ export function Overview(){
                 <div className="bg-white rounded-2xl p-4 shadow-lg hover:shadow-xl transition-all">
                 <GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="#8f9bbc" />
                 </div>
-               {/* Temperature Gauge */}
-             
+               {/* Temperature Gauge */}      
             </div>
             
 
 
             {/* Moisture Trend Chart */}
-            <div className="col-span-8 row-span-2 bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all">
+            <div className="col-start-1 col-end-6 row-start-2 row-span-full   bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all">
                 <h3 className="text-sm font-semibold text-[#003333] mb-4">Soil Moisture Trend</h3>
                 <ResponsiveContainer width="100%" height="85%">
                 <LineChart data={moistureData}>
@@ -179,12 +134,13 @@ export function Overview(){
          
            
             {/* Alerts */}
-            <div className="col-span-4 bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all overflow-y-auto">
+            <div className="col-start-6 col-span-full  bg-white rounded-2xl p-5 shadow-lg hover:shadow-xl transition-all overflow-y-auto">
                 <h3 className="text-sm font-semibold text-[#003333] mb-4">Recent Alerts</h3>
                 <AlertItem type="success" message="Watering cycle completed successfully" time="2 hours ago" />
                 <AlertItem type="warning" message="Moisture level approaching threshold" time="5 hours ago" />
                 <AlertItem type="success" message="System diagnostics passed" time="1 day ago" />
             </div>
+            
         </div>
 
 

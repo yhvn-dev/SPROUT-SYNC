@@ -3,16 +3,17 @@ import api from "../utils/api";
 export const fetchAllSensors = async () =>{
     try {
         const sensors = await api.get("/sensors/get/sensors");
-        return sensors.data.data
+        const sensorData = sensors.data
+        return sensorData 
     } catch (error) {
         console.error("Error Fetching All Sensors")        
         throw error
     }
 }
 
-export const fetchSensorsCountByBed = async (bed_id) =>{
+export const fetchSensorsCountByBed = async (tray_group_id) =>{
     try {
-        const sensors = await api.get(`sensors/get/count/sensors/${bed_id}`);
+        const sensors = await api.get(`sensors/get/count/sensors/${tray_group_id}`);
         return sensors.data.data
     } catch (error) {
         console.error("Error Fetching Sensors Count By Bed")        

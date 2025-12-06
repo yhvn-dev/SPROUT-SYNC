@@ -14,41 +14,47 @@ CREATE TABLE users (
 
 CREATE TABLE tray_groups (
     tray_group_id SERIAL PRIMARY KEY,
-    tray_group_name VARCHAR(100) NOT NULL,
+    tray_group_name VARCHAR(100),
+    min_moisture NUMERIC NOT NULL,
+    max_moisture NUMERIC NOT NULL,
     is_watering BOOLEAN DEFAULT FALSE,
+    plant_type VARCHAR(50),  
+    soil_type VARCHAR(50),   
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
 
 CREATE TABLE trays (
-    tray_id SERIAL PRIMARY KEY,  
-    tray_group_id INT REFERENCES tray_groups(tray_group_id), 
-    plant_type VARCHAR(50),
-    soil_type VARCHAR(50),
+    tray_id SERIAL PRIMARY KEY,
+    tray_group_id INT REFERENCES tray_groups(tray_group_id),
+    plant VARCHAR(100),  
+    status VARCHAR(50) DEFAULT 'Active',
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
 );
 
 
+
 CREATE TABLE sensors(   
     sensor_id SERIAL PRIMARY KEY,
-    tray_id INT REFERENCES trays(tray_id), 
-    sensor_type VARCHAR(100) NOT NULL,
-    min_value NUMERIC DEFAULT 0,
-    max_value NUMERIC DEFAULT 100,
+    tray_id INT REFERENCES trays(tray_id)
+    sensor_type VARCHAR(100),
     status VARCHAR(40),
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
 );
+
 
 
 CREATE TABLE sensor_readings (
    reading_id SERIAL PRIMARY KEY,
    sensor_id INT NOT NULL REFERENCES sensors(sensor_id),
+   tray_group_id INT NOT NULL REFERENCES tray_groups(tray_group_id),
    value DECIMAL(6,2) NOT NULL,
    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
 
 
 CREATE TABLE notifications (

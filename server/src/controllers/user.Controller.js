@@ -6,8 +6,6 @@ import bcrypt from "bcrypt";
 
 
 
-
-
 export const getUsers = async (req, res) => {
   try {
     const users = await userModels.getUsers();

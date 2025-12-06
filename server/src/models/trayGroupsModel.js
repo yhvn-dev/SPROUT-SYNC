@@ -1,20 +1,6 @@
 // trayGroups.model.js
 import { query } from "../config/db.js";
 
-// ===== CREATE a new tray group =====
-export const createTrayGroups = async (trayGroupData) => {
-    const {tray_group_name,is_watering} = trayGroupData
-
-    try {        
-        const sql = `INSERT INTO tray_groups (tray_group_name,is_watering) VALUES ($1, $2) RETURNING *`;
-        const values = [tray_group_name,is_watering];
-        const result = await query(sql, values);
-        return result.rows[0];
-    } catch (error) {
-        throw error
-    }
-};
-
 
 
 // ===== READ all tray groups =====
@@ -45,18 +31,40 @@ export const readTrayGroupById = async (tray_group_id) => {
 };
 
 
+// ===== CREATE a new tray group =====
+export const createTrayGroups = async (trayGroupData) => {
+    const {tray_group_name,min_moisture,max_moisture,is_watering,plant_type,soil_type} = trayGroupData
+
+    try {        
+        const sql = `INSERT INTO tray_groups (tray_group_name,min_moisture,max_moisture,is_watering,plant_type,soil_type) VALUES 
+        ($1, $2, $3, $4, $5, $6) RETURNING *`;
+
+
+        const values = [tray_group_name,min_moisture,max_moisture,is_watering,plant_type,soil_type];
+        const result = await query(sql, values);
+        return result.rows[0];
+    } catch (error) {
+        throw error
+    }
+};
+
 
 
 export const updateTrayGroups = async (trayGroupData, tray_group_id) => {
-    const {tray_group_name,is_watering} = trayGroupData
+     const {tray_group_name,min_moisture,max_moisture,is_watering,plant_type,soil_type} = trayGroupData
     try {   
         const sql = `
             UPDATE tray_groups
-            SET tray_group_name = $1, is_watering = $2
-            WHERE tray_group_id = $3
+            SET tray_group_name = $1, 
+            min_moisture = $2, 
+            max_moisture = $3,
+            is_watering = $4,
+            plant_type = $5,
+            soil_type = $6
+            WHERE tray_group_id = $7
             RETURNING *
         `;
-        const values = [tray_group_name,is_watering,tray_group_id]; 
+        const values = [tray_group_name,min_moisture,max_moisture,is_watering,plant_type,soil_type,tray_group_id]; 
         const result = await query(sql, values);
         return result.rows[0];
     } catch (error) {

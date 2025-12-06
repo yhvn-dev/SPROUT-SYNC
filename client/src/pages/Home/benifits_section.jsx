@@ -8,7 +8,7 @@ export function BenefitSection(){
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
             <h2 className="text-5xl md:text-6xl font-bold text-[#003333] mb-6">
-              Why Choose SPROUT-SYNC
+              Why Choose SPROUTSYNC
             </h2>
             <p className="text-xl text-[#5A8F73] max-w-2xl mx-auto">
               Transform your agricultural practices with data-driven automation

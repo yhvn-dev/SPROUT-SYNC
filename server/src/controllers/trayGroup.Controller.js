@@ -30,11 +30,13 @@ export const getTrayGroupById = async (req, res) => {
   }
 };
 
+
+
 // ===== CREATE a new tray group =====
 export const createTrayGroup = async (req, res) => {
   try {
     const trayGroupData = req.body;
-    const group = await trayGroupModels.createTrayGroup(trayGroupData)
+    const group = await trayGroupModels.createTrayGroups(trayGroupData)
     res.status(201).json(group);
     console.log("TRAY GROUP CREATED:", group);
   } catch (err) {
@@ -42,6 +44,7 @@ export const createTrayGroup = async (req, res) => {
     res.status(500).json({ message: "Error creating tray group", err });
   }
 };
+
 
 
 // ===== UPDATE a tray group =====

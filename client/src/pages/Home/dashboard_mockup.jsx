@@ -51,10 +51,7 @@ export function Dashboard_Mockup() {
                 
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
                   {[
-                    { color: '#027c68',chart:<GaugeChart value={6.8} max={14} label="Moisture" unit="" icon={Droplets} color="var(--sancgb)" /> },
-                    { color: '#b0e892',chart:<GaugeChart value={6.8} max={14} label="Temperature" unit="" icon={Sun} color="var(--sancgc)" /> },
-                    { color: '#7BA591',chart:<GaugeChart value={6.8} max={14} label="Humidity" unit="" icon={Wind} color="var(--sage)" /> },
-             
+                    { color: '#027c68',chart:<GaugeChart value={6.8} max={14} label="Moisture" unit="" icon={Droplets} color="var(--sancgb)" /> },                       
                     { color: '#5A8F73',chart:<GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="var(--purpluish--" /> }
                   ].map((stat, index) => (
                     <div key={index} className="bg-white rounded-2xl p-4 shadow-lg">

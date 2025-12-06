@@ -26,21 +26,7 @@ export function FeatureSection(){
                 color: '#027c68',
                 bg: '#E8F3ED'
               },
-              {
-                icon: Sun,
-                title: 'Temperature',
-                description: 'Track ambient and soil temperature to maintain ideal growing conditions',
-                color: '#b0e892',
-                bg: '#f0f9e8'
-              },
-              {
-                icon: Wind,
-                title: 'Humidity Levels',
-                description: 'Monitor air humidity to prevent disease and optimize plant health',
-                color: '#7BA591',
-                bg: '#E8F3ED'
-              },
-        
+         
               {
                 icon: Droplets,
                 title: 'Water Level',

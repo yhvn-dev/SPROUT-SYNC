@@ -2,8 +2,10 @@ import userRoutes from "./routes/ProtectedRoutes/user.Routes.js";
 import pageRoutes from "./routes/ProtectedRoutes/page.Routes.js"
 import publicRoutes from "./routes/UnprotectedRoutes/public.Routes.js"
 import trayGroupRoutes from "./routes/ProtectedRoutes/trayGroup.Routes.js"
-import trayRoutes from "./routes/ProtectedRoutes/trays.Routes.js"
-
+import traysRoutes from "./routes/ProtectedRoutes/tray.Routes.js"
+import sensorRoutes from "./routes/ProtectedRoutes/sensor.Routes.js"
+import readingRoutes from "./routes/ProtectedRoutes/readings.Routes.js"
+import notifificationRoutes from "./routes/ProtectedRoutes/notification.Routes.js"
 
 import express from "express";
 import cors from "cors";
@@ -32,7 +34,10 @@ app.use("/uploads",express.static(path.join(__dirname, "./../uploads")));;
 
 
 app.use('',userRoutes)
-app.use('/trays',trayRoutes)
+app.use('/notif',notifificationRoutes)
+app.use('/readings',readingRoutes)
+app.use('/sensors',sensorRoutes)
+app.use('/trays',traysRoutes)
 app.use('/tg',trayGroupRoutes)
 app.use('/auth',publicRoutes)
 app.use('/page',pageRoutes)
