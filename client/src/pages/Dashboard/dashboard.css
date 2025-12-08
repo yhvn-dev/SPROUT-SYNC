@@ -123,27 +123,3 @@ button{
     cursor: pointer;
 }
 
-
-
-/* SIDEBAR ======= ======= ======= ======= ======= ======= ======= ======= ======= =======  */
-.sb-btn{
-@apply flex items-center justify-start w-full rounded-[10px];
-margin:1rem 0rem; font-size: var(--fns-down-1);
-} 
-.sb-btn:hover{
-    @apply bg-[var(--pal2-whiteb)] ;
-}
-    .logout-choices{
-        padding:0.3rem var(--dis-0-6);
-    }
-
-        
-  
-  
-  /* NUMBERS ======= ======= ======= ======= ======= ======= ======= ======= ======= ======= */  
-  .data_boxes{
-    @apply h-full w-full flex items-center justify-center rounded-[20px];
-  }
-    .db.workspace{
-        column-gap: 1rem;
-    }

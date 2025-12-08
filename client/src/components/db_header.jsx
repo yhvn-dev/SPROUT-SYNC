@@ -2,8 +2,10 @@ import { useContext } from "react";
 import { UserContext } from "../hooks/userContext";
 import Pfp from "../assets/Images/Default Profile Picture 2.jpg";
 import { Search } from "./search";
+import {Bell} from "lucide-react"
+import { useState } from "react";
 
-export function Db_Header({input}) {
+export function Db_Header({input,setNotifOpen}) {
   const { user } = useContext(UserContext);
 
   return (
@@ -16,10 +18,13 @@ export function Db_Header({input}) {
           src={user?.profile_picture ? `http://localhost:5000/uploads/${user.profile_picture}` : Pfp} 
           className='profile-img max-w-[2rem] max-h-[2rem] h-[3rem] w-[3rem]'
         />
-        <ul className="col_text">  
+        <ul className=" col_text">  
           <p className='name-txt'>{user?.username || "Guest"}</p>
           <p className='role-txt text-[0.8rem] text-[var(--acc-darkc)]'>{user?.role || "Viewer"}</p>
+        
         </ul>
+
+          <button onClick={() =>setNotifOpen(true)} className="mx-4"><Bell size={18}/></button>
       </div>
     </section>
   );

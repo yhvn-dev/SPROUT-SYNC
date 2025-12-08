@@ -121,13 +121,18 @@
     src: url("./assets/Fonts/MonaSans-VariableFont_wdth,wght.ttf");
 }
 
+@font-face {
+    font-family: "Inter";
+    src: url("./assets/Fonts/Inter_18pt-Medium.ttf");
+}
+
 @font-face{
     font-family: "Moonet";
-    src: url("./assets//Fonts/MoonetdemoRegular-6RnxY.otf");
+    src: url("./assets/Fonts/MoonetdemoRegular-6RnxY.otf");
 }
 
 *{
-    font-family: 'Mona Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
 }
 
 ::-webkit-scrollbar-track{
