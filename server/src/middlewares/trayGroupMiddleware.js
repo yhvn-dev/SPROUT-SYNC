@@ -1,19 +1,42 @@
-import {body,validationResult} from "express-validator";
+import { body, validationResult } from "express-validator";
 
+export const validateTrayGroups = [
+    body("tray_group_name")
+        .notEmpty()
+        .withMessage("Please enter a name for the Tray Group."),
 
+    body("min_moisture")
+        .notEmpty()
+        .withMessage("Please provide the minimum moisture level.")
+        .isNumeric()
+        .withMessage("Minimum moisture must be a number."),
 
-export const validateTrayGroup = [
-    body("tray_group_name").notEmpty().withMessage("Tray Group Name Is Required"),        
-    body("is_watering").notEmpty().withMessage("Is Watering Required"),
+    body("max_moisture")
+        .notEmpty()
+        .withMessage("Please provide the maximum moisture level.")
+        .isNumeric()
+        .withMessage("Maximum moisture must be a number."),
 
-    (req,res,next) =>{
+    body("is_watering")
+        .optional()
+        .isBoolean()
+        .withMessage("Is Watering must be true or false."),
+
+    body("plant_type")
+        .optional()
+        .isString()
+        .withMessage("Plant type must be a valid text."),
+
+    body("soil_type")
+        .optional()
+        .isString()
+        .withMessage("Soil type must be a valid text."),
+
+    (req, res, next) => {
         const errors = validationResult(req);
-        if(!errors.isEmpty()){
-            return res.status(400).json({errors: errors.array()});
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ errors: errors.array() });
         }
-
         next();
     }
-]
-
-
+];

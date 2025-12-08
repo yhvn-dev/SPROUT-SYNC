@@ -2,6 +2,7 @@ import userRoutes from "./routes/ProtectedRoutes/user.Routes.js";
 import pageRoutes from "./routes/ProtectedRoutes/page.Routes.js"
 import publicRoutes from "./routes/UnprotectedRoutes/public.Routes.js"
 import trayGroupRoutes from "./routes/ProtectedRoutes/trayGroup.Routes.js"
+import plantBatchRoutes from "./routes/ProtectedRoutes/plantBatch.Routes.js"
 import traysRoutes from "./routes/ProtectedRoutes/tray.Routes.js"
 import sensorRoutes from "./routes/ProtectedRoutes/sensor.Routes.js"
 import readingRoutes from "./routes/ProtectedRoutes/readings.Routes.js"
@@ -34,11 +35,12 @@ app.use("/uploads",express.static(path.join(__dirname, "./../uploads")));;
 
 
 app.use('',userRoutes)
-app.use('/notif',notifificationRoutes)
-app.use('/readings',readingRoutes)
-app.use('/sensors',sensorRoutes)
 app.use('/trays',traysRoutes)
 app.use('/tg',trayGroupRoutes)
+app.use('/pb',plantBatchRoutes)
+app.use('/sensors',sensorRoutes)
+app.use('/readings',readingRoutes)
+app.use('/notif',notifificationRoutes)
 app.use('/auth',publicRoutes)
 app.use('/page',pageRoutes)
  

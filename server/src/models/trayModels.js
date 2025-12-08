@@ -25,14 +25,15 @@ export const readTrayById = async (tray_id) => {
 
 // ===== CREATE a new tray =====
 export const createTray = async (trayData) => {
-    const { tray_group_id, plant, status } = trayData;
+
+    const {tray_group_id, batch_id, plant, is_alive, is_harvested, status} = trayData;
     try {
         const sql = `
-            INSERT INTO trays (tray_group_id, plant, status)
-            VALUES ($1, $2, $3)
+            INSERT INTO trays (tray_group_id, batch_id, plant, is_alive, is_harvested, status)
+            VALUES ($1, $2, $3, $4, $5, $6)
             RETURNING *
         `;
-        const values = [tray_group_id, plant, status || 'Active'];
+        const values = [tray_group_id, batch_id, plant, is_alive, is_harvested, status || 'Active'];
         const result = await query(sql, values);
         return result.rows[0];
     } catch (error) {
@@ -42,24 +43,30 @@ export const createTray = async (trayData) => {
 
 // ===== UPDATE a tray =====
 export const updateTray = async (trayData, tray_id) => {
-    const { tray_group_id, plant, status } = trayData;
+    
+    const {tray_group_id, batch_id, plant, is_alive, is_harvested, status} = trayData;
+    
     try {
         const sql = `
             UPDATE trays
             SET tray_group_id = $1,
-                plant = $2,
-                status = $3,
-                updated_at = NOW()
-            WHERE tray_id = $4
+                batch_id  = $2
+                plant = $3,
+                is_alive = $4,
+                is_harvested = $5,
+                status = $6
+            WHERE tray_id = $7
             RETURNING *
         `;
-        const values = [tray_group_id, plant, status || 'Active', tray_id];
+        const values = [tray_group_id, batch_id, plant, is_alive, is_harvested, status || 'Active', tray_id];
         const result = await query(sql, values);
         return result.rows[0];
     } catch (error) {
         throw error;
     }
-};
+}
+
+;
 
 // ===== DELETE a tray =====
 export const deleteTray = async (tray_id) => {

@@ -19,7 +19,6 @@ export const readTrayGroups = async () => {
 export const readTrayGroupById = async (tray_group_id) => {
     try {
 
-    
         const sql = `SELECT * FROM tray_groups WHERE tray_group_id = $1`;
         const result = await query(sql, [tray_group_id]);
         return result.rows[0];       

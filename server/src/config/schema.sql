@@ -11,6 +11,17 @@ CREATE TABLE users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE tokens (
+    token_id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(user_id),
+    refresh_token TEXT NOT NULL,
+    device JSONB,
+    device_id VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
 
 CREATE TABLE tray_groups (
     tray_group_id SERIAL PRIMARY KEY,
@@ -25,10 +36,27 @@ CREATE TABLE tray_groups (
 );
 
 
+CREATE TABLE plant_batches (
+    batch_id SERIAL PRIMARY KEY,
+    tray_group_id INT REFERENCES tray_groups(tray_group_id),
+    plant_name VARCHAR(100) NOT NULL,
+    total_seedlings INT NOT NULL,
+    date_planted DATE NOT NULL,
+    expected_harvest_days INT NOT NULL,
+    status VARCHAR(20) DEFAULT 'Growing',  
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+
 CREATE TABLE trays (
     tray_id SERIAL PRIMARY KEY,
     tray_group_id INT REFERENCES tray_groups(tray_group_id),
-    plant VARCHAR(100),  
+    batch_id INT REFERENCES plant_batches(batch_id),
+    plant VARCHAR(100) NOT NULL,
+    date_planted DATE,
+    is_alive BOOLEAN DEFAULT TRUE,
+    is_harvested BOOLEAN DEFAULT FALSE,
     status VARCHAR(50) DEFAULT 'Active',
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW()
