@@ -48,7 +48,7 @@ function Dashboard() {
 
   return (
     <>
-        <section className="bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] page dashboard 
+        <section className="bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]
         grid grid-cols-[12fr_30fr_58fr] grid-rows-[8vh_30vh_57vh] gap-4 
         h-[100vh] w-[100%] gap-x-4 overflow-y-auto relative">
 

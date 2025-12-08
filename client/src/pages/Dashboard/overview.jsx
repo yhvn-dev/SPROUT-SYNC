@@ -1,6 +1,6 @@
 import { Quick_Stats } from "./quick_stats" 
 import Nursery from "./nursery.jsx"
-import { Droplets,Leaf ,Wind,Sun} from 'lucide-react';
+import { Droplets,Leaf,Sprout, Plus,X,Wind,Sun} from 'lucide-react';
 
 
 const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
@@ -37,25 +37,56 @@ const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
 
 function Overview() {
   return (
-    <div className='flex items-center flex-col justify-start  gap-4 w-full h-full '>
+    <div className='flex items-center flex-col justify-start gap-4 w-full h-full '>
       
           {/* NUMBER CONTAINER */}
           <Quick_Stats
             data_box={
               <>              
-                {/* Gauges Row */}
+             
                 <div className="bg-white w-full rounded-2xl  shadow-lg hover:shadow-xl transition-all">
                     <div className="scale-90 origin-center">
                         <GaugeChart value={48} max={100} label="Moisture" unit="%" icon={Droplets} color="#027c68" />
                     </div>
+                    
                 </div>
               
-                {/* water level */}
-                 <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
+              
+                <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
                   <div className="scale-90 origin-center">
                       <GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="#8f9bbc" />
                   </div>            
                 </div>        
+
+                {/* plants */}
+                <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                  <div className="scale-90 origin-center">
+                      <GaugeChart value={6.8} max={14} label="Plants" unit="" icon={Sprout} color="#8f9bbc" />
+                  </div>            
+                </div> 
+
+                
+                {/* Growth */}
+                  <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                  <div className="scale-90 origin-center">
+                      <GaugeChart value={6.8} max={14} label="Growth" unit="" icon={Leaf} color="#8f9bbc" />
+                  </div>            
+                </div>    
+
+                {/* Died */}
+                  <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                  <div className="scale-90 origin-center">
+                      <GaugeChart value={6.8} max={14} label="Died" unit="" icon={X} color="#8f9bbc" />
+                  </div>            
+                </div>    
+
+                {/* replants */}
+                  <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
+                  <div className="scale-90 origin-center">
+                      <GaugeChart value={6.8} max={14} label="Replants" unit="" icon={Plus} color="#8f9bbc" />
+                  </div>            
+                </div>           
+
               </>
             }/>
 

@@ -150,20 +150,7 @@ const NurseryDashboard = () => {
           </div>
         </div>
 
-        {/* Alerts */}
-        {alerts.length > 0 && (
-          <div className="bg-white rounded-3xl p-4 shadow-sm border border-gray-100">
-            <div className="space-y-2">
-              {alerts.map(alert => (
-                <div key={alert.id} className="flex items-center gap-3 p-3 rounded-2xl bg-gradient-to-r from-red-50 to-orange-50">
-                  <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0" />
-                  <p className="text-sm text-gray-700">{alert.message}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
+  
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
           {/* Main Content - Zones */}
           <div className="lg:col-span-2 space-y-4 overflow-y-auto max-h-[calc(100vh-200px)]">
