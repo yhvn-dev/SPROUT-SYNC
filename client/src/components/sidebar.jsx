@@ -9,6 +9,7 @@ import * as Logo from "../components/logo"
 export function Sidebar({user}) {
   const [isOpen, setModal] = useState(false);
  
+  
   return (
     <section className="con bg-[var(--main-whiteb)]  flex flex-col col-start-1 col-end-2 row-start-1 row-span-full p-4 rounded-[10px] shadow-lg">
       

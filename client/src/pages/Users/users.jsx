@@ -8,8 +8,8 @@ import { Workspace } from "./workspace"
 import { Welcome_box } from '../../components/welcome_box';
 import { UserInsights } from './userInsights';
 
-
 import "./users.css"
+
 function Users() {
   const {user} = useContext(UserContext)
   const [chartData,setChartData] = useState({count: {total_users:0}, roleCount: []})

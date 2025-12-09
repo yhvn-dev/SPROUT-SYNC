@@ -32,14 +32,13 @@ export const readTrayGroupById = async (tray_group_id) => {
 
 // ===== CREATE a new tray group =====
 export const createTrayGroups = async (trayGroupData) => {
-    const {tray_group_name,min_moisture,max_moisture,is_watering,plant_type,soil_type} = trayGroupData
+    const {tray_group_name,min_moisture,max_moisture,is_watering} = trayGroupData
 
     try {        
-        const sql = `INSERT INTO tray_groups (tray_group_name,min_moisture,max_moisture,is_watering,plant_type,soil_type) VALUES 
-        ($1, $2, $3, $4, $5, $6) RETURNING *`;
+        const sql = `INSERT INTO tray_groups (tray_group_name,min_moisture,max_moisture,is_watering) VALUES 
+        ($1, $2, $3, $4) RETURNING *`;
 
-
-        const values = [tray_group_name,min_moisture,max_moisture,is_watering,plant_type,soil_type];
+        const values = [tray_group_name,min_moisture,max_moisture,is_watering];
         const result = await query(sql, values);
         return result.rows[0];
     } catch (error) {

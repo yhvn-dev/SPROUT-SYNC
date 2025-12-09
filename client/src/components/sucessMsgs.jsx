@@ -1,5 +1,5 @@
 
-import { useEffect } from "react";
+import { useEffect  } from "react";
 
 export function SucessMsgs({txt,clearMsg}) {
 
@@ -20,24 +20,21 @@ export function SucessMsgs({txt,clearMsg}) {
   
 }
 
-
-
-
 export function FloatSuccessMsg({txt,clearMsg}){
-  
-    useEffect(() =>{
-      if(txt){
-          const timeout = setTimeout(() => clearMsg(""),5000)
-          return () => clearTimeout(timeout)
-      }
-    },[txt,clearMsg])
 
-    if(!txt) return null;
+  useEffect(() =>{
+    if(txt){
+        const timeout = setTimeout(() => clearMsg(""),5000)
+        return () => clearTimeout(timeout)
+    }
+  },[txt,clearMsg])
 
-    return (
-        <div className={`absolute w-full top-2 left-0 p-4`}>
-          <p className="full w-[90%] succes_msg_pro">{txt}</p>
-        </div>
-    )
+  if(!txt) return null;
+
+  return (
+    <div className={`absolute w-full top-[0px] left-0 p-4`}>
+      <p className="full w-[90%] succes_msg_pro">{txt}</p>
+    </div>
+  )
 
 }

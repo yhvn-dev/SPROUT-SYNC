@@ -1,6 +1,5 @@
 // trays.controller.js
 import * as trayGroupModels from "../models/trayGroupsModel.js"
-import * as plantBatchModels from "../models/plantBatchesModels.js"
 import * as trayModels from "../models/trayModels.js";
 
 // ===== GET all trays =====
@@ -35,14 +34,10 @@ export const getTrayById = async (req, res) => {
 export const createTray = async (req, res) => {
   try {
     const trayData = req.body;
-    const {tray_group_id,batch_id} = trayData
+    const {tray_group_id} = trayData
   
-
     const existingTrayGroup = await trayGroupModels.readTrayGroupById(tray_group_id)
-    if(!existingTrayGroup ) return res.status(404).json({ message: "Tray group not found" });
-
-    const existingBatchGroup = await plantBatchModels.readPlantBatchById(batch_id)
-    if(!existingBatchGroup) return res.status(404).json({ message: "Plant Batch not found" });
+    if(!existingTrayGroup ) return res.status(404).json({ message: "Tray group not found" });;
 
     const tray = await trayModels.createTray(trayData);
     res.status(201).json(tray);
@@ -63,9 +58,6 @@ export const updateTray = async (req, res) => {
     
     const existingTrayGroup = await trayGroupModels.readTrayGroupById(tray_group_id)
     if(!existingTrayGroup ) return res.status(404).json({ message: "Tray group not found" });
-
-    const existingBatchGroup = await plantBatchModels.readPlantBatchById(batch_id)
-    if(!existingBatchGroup) return res.status(404).json({ message: "Plant Batch not found" });
 
     const existingTray = await trayModels.readTrayById(tray_id);
     if (!existingTray) return res.status(404).json({ message: "Tray not found" });

@@ -23,50 +23,66 @@ export const readPlantBatchById = async (batch_id) => {
     }
 };
 
+
 // ===== CREATE a new plant batch =====
 export const createPlantBatch = async (batchData) => {
-    
-    const { tray_group_id, plant_name, total_seedlings, date_planted, expected_harvest_days, status } = batchData;
+  const {tray_id,plant_name,total_seedlings,alive_seedlings,dead_seedlings,replanted_seedlings,growth_stage,date_planted,expected_harvest_days,status} = batchData;
 
-    try {        
-        const sql = `
-            INSERT INTO plant_batches 
-            (tray_group_id, plant_name, total_seedlings, date_planted, expected_harvest_days, status) 
-            VALUES ($1, $2, $3, $4, $5, $6) 
-            RETURNING *
-        `;
+  try {        
+    const sql = `
+      INSERT INTO plant_batches 
+      (tray_id, plant_name, total_seedlings, alive_seedlings, dead_seedlings, replanted_seedlings, growth_stage, date_planted, expected_harvest_days, status) 
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+      RETURNING *
+    `;
 
-        const values = [tray_group_id, plant_name, total_seedlings, date_planted, expected_harvest_days, status || 'Growing'];
-        const result = await query(sql, values);
-        return result.rows[0];
-    } catch (error) {
-        throw error;
-    }
+    const values = [tray_id,plant_name,total_seedlings,alive_seedlings, dead_seedlings || 0,replanted_seedlings || 0,growth_stage || 'Seedling', date_planted, expected_harvest_days,status || 'Growing'
+    ];
+
+    const result = await query(sql, values);
+    return result.rows[0];
+
+  } catch (error) {
+    throw error;
+  }
 };
+
 
 // ===== UPDATE a plant batch =====
 export const updatePlantBatch = async (batchData, batch_id) => {
-    const { tray_group_id, plant_name, total_seedlings, date_planted, expected_harvest_days, status } = batchData;
+  const {tray_id,plant_name,total_seedlings,alive_seedlings,dead_seedlings,replanted_seedlings,growth_stage,date_planted,expected_harvest_days,status} = batchData;
 
-    try {   
-        const sql = `
-            UPDATE plant_batches
-            SET tray_group_id = $1, 
-                plant_name = $2, 
-                total_seedlings = $3, 
-                date_planted = $4, 
-                expected_harvest_days = $5,
-                status = $6
-            WHERE batch_id = $7
-            RETURNING *
-        `;
-        const values = [tray_group_id, plant_name, total_seedlings, date_planted, expected_harvest_days, status, batch_id]; 
-        const result = await query(sql, values);
-        return result.rows[0];
-    } catch (error) {
-        throw error;
-    }
+  try {
+    const sql = `
+      UPDATE plant_batches
+      SET tray_id = $1,
+          plant_name = $2,
+          total_seedlings = $3,
+          alive_seedlings = $4,
+          dead_seedlings = $5,
+          replanted_seedlings = $6,
+          growth_stage = $7,
+          date_planted = $8,
+          expected_harvest_days = $9,
+          status = $10
+      WHERE batch_id = $11
+      RETURNING *
+    `;
+
+    const values = [tray_id,plant_name,total_seedlings,alive_seedlings,dead_seedlings,replanted_seedlings,growth_stage,date_planted,expected_harvest_days,status,batch_id
+    ];
+
+    const result = await query(sql, values);
+    return result.rows[0];
+
+  } catch (error) {
+    throw error;
+  }
 };
+
+
+
+
 
 // ===== DELETE a plant batch =====
 export const deletePlantBatch = async (batch_id) => {

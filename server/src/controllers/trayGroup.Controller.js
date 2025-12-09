@@ -31,7 +31,6 @@ export const getTrayGroupById = async (req, res) => {
 };
 
 
-
 // ===== CREATE a new tray group =====
 export const createTrayGroup = async (req, res) => {
   try {

@@ -13,7 +13,7 @@ router.get("/get/pb/:batch_id", plantBatchController.getPlantBatchById);
 
 router.post("/post/pb", validatePlantBatch, plantBatchController.createPlantBatch);
 router.put("/put/pb/:batch_id", validatePlantBatch, plantBatchController.updatePlantBatch);
-router.delete("/delete/pb/:batch_id", validatePlantBatch, plantBatchController.deletePlantBatch);
+router.delete("/delete/pb/:batch_id",plantBatchController.deletePlantBatch);
 
 
 export default router;

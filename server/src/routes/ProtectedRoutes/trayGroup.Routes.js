@@ -8,7 +8,7 @@ router.get("/get/tg" ,trayGroupController.getTrayGroups);
 router.get("/get/tg/:tray_group_id" , trayGroupController.getTrayGroupById)
 router.post("/post/tg",validateTrayGroups,trayGroupController.createTrayGroup);
 router.put("/put/tg/:tray_group_id",validateTrayGroups,trayGroupController.updateTrayGroup);
-router.delete("/delete/tg/:tray_group_id",validateTrayGroups,trayGroupController.deleteTrayGroup);
+router.delete("/delete/tg/:tray_group_id",trayGroupController.deleteTrayGroup);
 
 
 export default router

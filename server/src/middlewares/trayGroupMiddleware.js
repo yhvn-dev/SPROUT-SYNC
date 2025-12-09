@@ -21,17 +21,6 @@ export const validateTrayGroups = [
         .optional()
         .isBoolean()
         .withMessage("Is Watering must be true or false."),
-
-    body("plant_type")
-        .optional()
-        .isString()
-        .withMessage("Plant type must be a valid text."),
-
-    body("soil_type")
-        .optional()
-        .isString()
-        .withMessage("Soil type must be a valid text."),
-
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {

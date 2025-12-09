@@ -1,6 +1,6 @@
 // plantBatches.controller.js
 import * as plantBatchModels from "../models/plantBatchesModels.js"
-import * as trayGroupmodels from "../models/trayGroupsModel.js"
+import * as trayModels from "../models/trayModels.js"
 
 // ===== GET all plant batches =====
 export const getPlantBatches = async (req, res) => {
@@ -13,9 +13,6 @@ export const getPlantBatches = async (req, res) => {
     res.status(500).json({ message: "Error getting plant batches", err });
   }
 };
-
-
-
 
 
 // ===== GET single plant batch by ID =====
@@ -39,12 +36,11 @@ export const createPlantBatch = async (req, res) => {
   try {
     
     const batchData = req.body;
-    const {tray_group_id} = batchData
+    const {tray_id} = batchData
 
-    const existingTrayGroup = await trayGroupmodels.readTrayGroupById(tray_group_id)
-    if (!existingTrayGroup) return res.status(404).json({ message: "Selected Tray group not found" });
-
-    
+    const existingTray = await trayModels.readTrayById(tray_id)
+    if (!existingTray) return res.status(404).json({ message: "Selected Tray not found" });
+  
     const batch = await plantBatchModels.createPlantBatch(batchData)
     res.status(201).json(batch);
     console.log("PLANT BATCH CREATED:", batch);
@@ -64,6 +60,11 @@ export const updatePlantBatch = async (req, res) => {
   try {
     const { batch_id } = req.params;
     const batchData = req.body;
+    const {tray_id} = batchData
+
+    
+    const existingTray = await trayModels.readTrayById(tray_id)
+    if (!existingTray) return res.status(404).json({ message: "Selected Tray not found" });
 
     const existingBatch = await plantBatchModels.readPlantBatchById(batch_id);
     if (!existingBatch) return res.status(404).json({ message: "Plant batch not found" });
@@ -71,6 +72,7 @@ export const updatePlantBatch = async (req, res) => {
     const updatedBatch = await plantBatchModels.updatePlantBatch(batchData, batch_id);
     res.status(200).json(updatedBatch);
     console.log("PLANT BATCH UPDATED:", updatedBatch);
+    
   } catch (err) {
     console.error("CONTROLLER: Error updating plant batch", err);
     res.status(500).json({ message: "Error updating plant batch", err });

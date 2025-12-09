@@ -10,9 +10,7 @@ function Trays({traysData}) {
           <p className="text-2xl">Trays</p>
         </div>
         <div className="h-full w-1/2 flex items-center justify-start flex-row-reverse">
-          <button className="rounded-xl shadow-lg px-4 py-[2px] bg-[var(--sage)] text-[var(--main-white--)] cursor-pointer">
-            Add  Trays
-          </button>
+          
         </div>
       </header>
 
