@@ -23,8 +23,6 @@ export const insertTrayGroup = async (trayGroupData) =>{
 }
 
 
-
-
 export const updateTrayGroup = async (trayGroupData,trayId) =>{
     console.log("PASSED TRAY GROUP DATA:",trayGroupData)
     try {

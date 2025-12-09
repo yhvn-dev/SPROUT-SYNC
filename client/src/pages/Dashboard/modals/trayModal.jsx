@@ -1,150 +1,221 @@
+import { useState,useEffect } from 'react';
 import { motion } from "framer-motion";
-import { useEffect, useState } from "react";
-import { X, Trash2, Sprout } from "lucide-react";
+import { X, Sprout, TrendingUp, Package } from 'lucide-react';
 
-export function TrayModal({isOpen,onClose,trayModalMode,trayData}) {
+
+import * as trayModels from "../../../data/traysServices"
+
+export function TrayModal({ isOpen, onClose, trayModalMode, selectedTrayGroup,selectedTray,setSuccessMsg }) {
+    const [formData, setFormData] = useState({
+        plant:"",
+        status:"",
+    });
+
+    // Initialize modal values when opened
+    useEffect(() => {
+        if (trayModalMode === "update" && selectedTray) {
+        setFormData({
+            plant: selectedTray.plant || "",
+            status:selectedTray.status || ""         
+        });
+        
+        console.log("SELECTED TRAY",selectedTray)
+        } else if (trayModalMode === "insert") {
+        setFormData({
+            plant:"",
+            status:"",
+        });
+        console.log("SELECTED TRAY GROUP ",selectedTrayGroup)
+
+    
+        }else{
+        setFormData({
+            plant: selectedTray.plant,
+            status:selectedTray.status || ""           
+        });
+        console.log("SELECTED TRAY",selectedTray)
+    }
+
+    }, [trayModalMode,isOpen,selectedTray]);
+
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            if (trayModalMode === "insert") {
+            const payload = {
+                ...formData,
+                tray_group_id: selectedTrayGroup.tray_group_id, // ✅ REQUIRED LINK
+            };
+
+            await trayModels.insertTray(payload);
+            setSuccessMsg(`${formData.plant}'s Tray is Added`);
+            } 
+            
+            else if (trayModalMode === "update") {
+            await trayModels.updateTray(formData, selectedTray.tray_id);
+            setSuccessMsg(`${selectedTray.plant}'s Tray is Updated`);
+            } 
+            
+            else if (trayModalMode === "delete") {
+            await trayModels.deleteTray(selectedTray.tray_id);
+            setSuccessMsg(`${selectedTray.plant}'s Tray is Deleted`);
+            }
+
+            onClose();
+
+        } catch (error) {
+            console.error("Error Submitting Tray:", error);
+        }
+        };
+
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+
+
   if (!isOpen) return null;
 
-  const [tray_group_id, setTrayGroupId] = useState("");
-  const [plant, setPlant] = useState("");
-  const [status, setStatus] = useState("Active");
 
-  useEffect(() => {
-    if (trayData &&  trayModalMode === "update") {
-      setTrayGroupId(trayData.tray_group_id || "");
-      setPlant(trayData.plant || "");
-      setStatus(trayData.status || "Active");
-    }
-    if (trayModalMode === "insert") {
-      setTrayGroupId("");
-      setPlant("");
-      setStatus("Active");
-    }
-  }, [trayData, trayModalMode]);
 
-  const onFormSubmit = async (e) => {
-    e.preventDefault();
-    const payload = {
-      tray_group_id: parseInt(tray_group_id),
-      plant,
-      status,
-    };
-  };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
-      onClick={onClose}
-    >
+    <motion.div className="fixed inset-0 bg-transparent backdrop-blur-2xl flex items-center justify-center p-4 z-50">
       <motion.div
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden flex flex-col"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-6 relative"
-      >
-        {/* CLOSE */}
-        <button
-          onClick={onClose}
-          className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
-        >
-          <X className="w-5 h-5" />
-        </button>
-
-        {/* DELETE MODE */}
-        {trayModalMode === "delete" ? (
-          <>
-            <div className="flex items-center justify-center w-16 h-16 bg-red-100 rounded-full mx-auto mb-4">
-              <Trash2 className="w-8 h-8 text-red-600" />
+        transition={{ duration: 0.4 }}>
+            
+        {/* ✅ HEADER */}
+        <div className="px-6 py-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="bg-[var(--ptl-greenh)] p-2.5 rounded-lg">
+              <Package className="w-5 h-5 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-center mb-2">
-              Delete Tray
-            </h2>
-            <p className="text-gray-600 text-center mb-6">
-              Are you sure you want to delete{" "}
-              <span className="font-semibold">
-                {trayData?.plant || "this tray"}
-              </span>
-              ?
-            </p>
-            <div className="flex gap-3">
-              <button
-                onClick={onClose}
-                className="flex-1 px-4 py-2 rounded-lg border border-gray-300 hover:bg-gray-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={() => handleSubmit(trayData)}
-                className="flex-1 px-4 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
-              >
-                Delete
-              </button>
-            </div>
-          </>
-        ) : (
-          <>
-            {/* HEADER */}
-            <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 bg-green-100 rounded-xl">
-                <Sprout className="w-6 h-6 text-green-600" />
-              </div>
-              <h2 className="text-2xl font-bold">
-                {trayModalMode === "insert" ? "Add Tray" : "Update Tray"}
+            <div>
+              <h2 className="text-[var(--metal-dark5)] text-xl font-bold ">
+                {trayModalMode === "insert" ? "Add New Tray" : "Update Tray"}
               </h2>
+              <p className="text-[var(--acc-darkc)]  text-sm">
+                Insert a tray inside the {selectedTrayGroup?.tray_group_name}
+              </p>
             </div>
+          </div>
 
-            {/* FORM */}
-            <div className="space-y-4">
-        
+          <button
+            onClick={onClose}
+            className="cursor-pointer text-[var(--metal-dark5)] hover:text-[var(--metal-dark5)]  hover:bg-gray-100 p-2 rounded-lg transition">
+            <X size={24} />
+          </button>
+        </div>
 
-              {/* Plant */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Plant Name
+
+        {/* ✅ CONTENT */}
+        <div className="flex-1 overflow-y-auto p-6 bg-[var(--sage-lighter)]">
+
+          {/* ✅ SELECTED TRAY GROUP INFO */}
+          <div className="mb-6 bg-white border border-[var(--sage-medium)] rounded-xl p-4 shadow-sm">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="bg-[var(--sage-dark)] p-2 rounded-lg">
+                  <Sprout className="w-6 h-6 text-white" />
+                </div>
+                <div>
+                  <p className="text-sm text-[var(--sancgb)] font-medium">Selected Tray Group</p>
+                  <p className="text-lg font-bold text-[var(--sancga)]">
+                    {selectedTrayGroup?.tray_group_name}
+                  </p>
+                </div>
+              </div>
+
+              <div className="text-right">
+                <p className="text-sm text-[var(--sancgb)]">Created at</p>
+                <p className="text-xs text-[var(--sancga)]">
+                  {selectedTrayGroup?.created_at}
+                </p>
+              </div>
+            </div>
+          </div>
+
+          {/* ✅ FORM */}
+          <form onSubmit={handleSubmit} className="space-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+              {/* ✅ PLANT NAME */}
+              <div className="md:col-span-2 bg-white border border-[var(--sage-medium)] rounded-xl p-4 shadow-sm">
+                <label className="flex items-center gap-2 text-sm font-semibold text-[var(--sancga)] mb-2">
+                  <Sprout className="w-4 h-4 text-[var(--ptl-greenf)]" />
+                  Plant Name *
                 </label>
                 <input
                   type="text"
-                  value={plant}
-                  onChange={(e) => setPlant(e.target.value)}
-                  className="w-full p-2 border rounded-lg"
-                  placeholder="e.g., Lettuce, Tomato, Basil"
+                  name="plant"
+                  value={formData.plant}
+                  onChange={handleChange}
                   required
+                  placeholder="e.g., Bok Choy"
+                  className="w-full px-3 py-2 border border-[var(--sage-medium)] rounded-lg focus:ring-2 focus:ring-[var(--ptl-greend)] outline-none"
                 />
               </div>
 
-              {/* Status */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">
-                  Status
+              {/* ✅ TRAY STATUS */}
+              <div className="bg-white border border-[var(--sage-medium)] rounded-xl p-4 shadow-sm">
+                <label className="flex items-center gap-2 text-sm font-semibold text-[var(--sancga)] mb-2">
+                  <TrendingUp className="w-4 h-4 text-[var(--ptl-greenf)]" />
+                  Tray Status *
                 </label>
+
                 <select
-                  value={status}
-                  onChange={(e) => setStatus(e.target.value)}
-                  className="w-full p-2 border rounded-lg"
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
                   required
+                  className="w-full px-3 py-2 border border-[var(--sage-medium)] rounded-lg focus:ring-2 focus:ring-[var(--ptl-greend)] outline-none bg-white"
                 >
-                  <option value="Active">Active</option>
-                  <option value="Inactive">Inactive</option>
+                  <option value="">Select Tray Status</option>
+                  <option value="Available">Available</option>
+                  <option value="Occupied">Occupied</option>
                   <option value="Maintenance">Maintenance</option>
-                  <option value="Harvested">Harvested</option>
+                  <option value="Disabled">Disabled</option>
                 </select>
               </div>
 
-              {/* BUTTON */}
-              <button
-                onClick={onFormSubmit}
-                className="w-full bg-green-600 text-white py-3 rounded-lg hover:bg-green-700 transition-colors font-medium">
-                {trayModalMode === "insert" ? "Insert Tray" : "Save Changes"}
-              </button>
             </div>
-          </>
-        )}
+          </form>
+        </div>
 
-        
+        {/* ✅ FOOTER */}
+        <div className="border-t border-[var(--sage-medium)] px-6 py-4 bg-white flex items-center justify-between">
+          <p className="text-sm text-[var(--sancga)]">* Required fields</p>
+
+          <div className="flex gap-3">
+            <button
+              type="submit"
+              onClick={onClose}
+              className="px-5 py-2.5 border border-[var(--sage-medium)] text-[var(--sancga)] rounded-lg hover:bg-[var(--sage-lighter)] font-medium transition">
+              Cancel
+            </button>
+
+            {/* ✅ FIXED INSERT MODE (NO SPACE BUG) */}
+            <button
+              type="submit"
+              onClick={handleSubmit}
+              className={`px-5 py-2.5 text-white rounded-lg font-medium shadow-lg transition-all
+                ${trayModalMode === "insert"
+                  ? "bg-[var(--ptl-greend)] hover:bg-[var(--ptl-greenf)]"
+                  : "bg-[var(--sancgb)] hover:bg-[var(--sancgd)]"
+                }`}>
+              {trayModalMode === "insert" ? "Create Tray" : "Update Tray"}
+            </button>
+          </div>
+        </div>
+
       </motion.div>
     </motion.div>
   );

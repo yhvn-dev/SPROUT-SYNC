@@ -29,6 +29,7 @@ const NurseryDashboard = () => {
     }
   ];
 
+
   const trays = [
     { tray_id: 1, tray_group_id: 1, plant: 'Lettuce', status: 'Active', batch_id: 1 },
     { tray_id: 2, tray_group_id: 1, plant: 'Spinach', status: 'Active', batch_id: 2 },
@@ -40,6 +41,8 @@ const NurseryDashboard = () => {
     { tray_id: 8, tray_group_id: 3, plant: 'Aloe', status: 'Active', batch_id: 8 },
     { tray_id: 9, tray_group_id: 3, plant: 'Jade', status: 'Active', batch_id: 9 }
   ];
+
+  
 
   const sensors = [
     { sensor_id: 1, tray_id: 1, sensor_type: 'Moisture' },
@@ -233,13 +236,6 @@ const NurseryDashboard = () => {
                           );
                         })}
 
-                        {/* Add Tray Button */}
-                        <button className="bg-white border-2 border-dashed border-gray-300 rounded-2xl p-4 hover:border-[#7BA591] hover:bg-gray-50 transition-all flex flex-col items-center justify-center min-h-[140px] group">
-                          <div className="w-12 h-12 rounded-xl bg-gray-100 group-hover:bg-[#E8F3ED] flex items-center justify-center mb-2 transition-colors">
-                            <Plus className="w-6 h-6 text-gray-400 group-hover:text-[#7BA591]" />
-                          </div>
-                          <p className="text-sm font-medium text-gray-600 group-hover:text-[#7BA591]">Add Tray</p>
-                        </button>
                       </div>
                     </div>
                   )}
@@ -263,7 +259,7 @@ const NurseryDashboard = () => {
                   <div key={batch.batch_id} className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-4 border border-gray-100">
                     <div className="flex items-start justify-between mb-3">
                       <h3 className="text-base font-semibold text-gray-900">{batch.plant_name}</h3>
-                      <button className="text-xs text-[#7BA591] hover:text-[#5A8F73] font-medium">Edit</button>
+                  
                     </div>
 
                     <div className="space-y-2">

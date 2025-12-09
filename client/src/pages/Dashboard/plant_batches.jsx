@@ -11,15 +11,10 @@ function Plant_batches() {
 
     <header className="flex py-4">
         <div className="h-full w-1/2 flex items-center justify-start">
+          <TrendingUp className='mr-4' size={24}/>
           <p className="text-2xl">Batches</p>
         </div>
-        <div className="h-full w-1/2 flex items-center justify-start flex-row-reverse">
-          <button className="rounded-xl shadow-lg px-4 py-[2px] bg-[var(--sage)] text-[var(--main-white--)] cursor-pointer">
-            Add  Batches
-          </button>
-        </div>
       </header>
-
 
       <div className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-5 border border-gray-100 hover:shadow-md transition-shadow">
         <div className="flex items-start justify-between mb-4">

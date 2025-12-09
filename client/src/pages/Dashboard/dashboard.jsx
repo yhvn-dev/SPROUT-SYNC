@@ -64,21 +64,22 @@ function Dashboard() {
 
           <div className="center-l col-start-2 col-end-2 row-start-1 row-end-1">
               <button onClick={() => setActiveTab("Overview")} 
-                className={`${activeTab === "Overview" ? "bg-white text-[#027c68] shadow-md" : "bg-white/50 text-[#5A8F73] hover:bg-white/70'"} 
+                className={`cursor-pointer not-last:${activeTab === "Overview" ? " bg-white text-[#027c68] shadow-md" : "bg-white/50 text-[#5A8F73] hover:bg-white/70'"} 
                 text-[#027c68] mr-2 px-6 py-2 text-sm rounded-lg hover:bg-white transition-all duration-200`}>
                   Overview
               </button>   
+
               <button onClick={() => setActiveTab("Manage Plants")} 
-                className={`${activeTab === "Manage Plants" ?  "bg-white text-[#027c68] shadow-md" : "bg-white/50 text-[#5A8F73] hover:bg-white/70'"}
+                className={`cursor-pointer ${activeTab === "Manage Plants" ?  " bg-white text-[#027c68] shadow-md" : "bg-white/50 text-[#5A8F73] hover:bg-white/70'"}
                 text-[#027c68] ml-2 px-6 py-2 text-sm rounded-lg hover:bg-white  transition-all duration-200` }>
                   Manage Plants
               </button>   
           </div>
 
+
           <main className="col-start-2 col-span-full row-start-2 row-end-4 w-full h-full ">
-              {activeTab === "Overview" ? <Overview/> : <ManagePlants/>}
-           
-        </main>
+              {activeTab === "Overview" ? <Overview/> : <ManagePlants/>}       
+         </main>
 
 
 

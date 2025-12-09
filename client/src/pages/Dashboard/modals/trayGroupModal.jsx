@@ -103,7 +103,7 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,
         transition={{ duration: 0.4 }}>
 
         {/* CLOSE */}
-        <button onClick={onClose} className="absolute top-4 right-4 hover:bg-gray-100 p-2 rounded-lg">
+        <button onClick={onClose} className="cursor-pointer absolute top-4 right-4 hover:bg-gray-100 p-2 rounded-lg">
           <X />
         </button>
 
@@ -118,11 +118,12 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,
               Are you sure you want to delete <b>{selectedTrayGroup.tray_group_name}</b>?
             </p>
             
-            <form onSubmit={onFormSubmit} className="flex justify-end mt-8 gap-3">
-              <button onClick={onClose} className="px-4 py-2 rounded-lg border">
+            <form onSubmit={onFormSubmit} className="flex justify-end mt-8 gap-3 p-4">
+              <button onClick={onClose} className="cursor-pointer px-4 py-2 rounded-lg border">
                 Cancel
               </button>
-              <button type="submit" className="cursor-pointer px-4 py-2 rounded-lg bg-red-600 text-white">
+              <button type="submit" className="cursor-pointer px-4 py-2 rounded-lg 
+              bg-[var(--color-danger-a)] text-white">
                 Delete
               </button>
             </form>

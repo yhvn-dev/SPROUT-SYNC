@@ -12,8 +12,7 @@ import * as batches from "../../data/batchesData"
 import * as readings from "../../data/readingsServices"
 
 import { TrayGroupModal } from './modals/trayGroupModal';
-import { TrayModal } from "./modals/trayModal"
-
+import { TrayModal  } from "./modals/trayModal"
 
 const ManagePlants = () => {
   const [activeTab, setActiveTab] = useState('trayGroups');
@@ -32,13 +31,14 @@ const ManagePlants = () => {
   const [isTrayGroupModalOpen,setTrayGroupModalOpen] = useState(false)
   const [selectedTrayGroup, setSelectedTrayGroup] = useState([]);
   
-  const [trayModalMode,setTrayModalMode] = useState(""); 
-  const [isTrayModalOpen,setTrayModalOpen] = useState(false)
+  const [isTrayModalOpen, setTrayModalOpen] = useState(false);
+  const [trayModalMode, setTrayModalMode] = useState("")
 
   const clearMsg =  useCallback(() => {
     setSuccessMsg("")
   },[]);
 
+  
   useEffect(() =>{
     if(activeTab === "trayGroups"){
       loadTrayGroups()
@@ -47,27 +47,31 @@ const ManagePlants = () => {
     }else if(activeTab === "batches"){
       loadBatches()
     }
-  },[trayGroupsData,traysData,batchesData,activeTab])
+  },[activeTab])
 
 
 
 
   const loadTrayGroups = async () =>{
       try {
-      const tg = await trayGroups.fetchAllTrayGroups()
-      setTrayGroupsData(tg)
+      const tgData = await trayGroups.fetchAllTrayGroups()
+      setTrayGroupsData(tgData)
     } catch (error) {
       console.error("Error Loading Tray Groups")
     }
   }
+  
+  
   const loadTrays = async () =>{
       try {
-      const trays = await trays.fetchAllTrays()
-      setTraysData(trays)
+      const traysData = await trays.fetchAllTrays()
+      setTraysData(traysData)
     } catch (error) {
       console.error("Error Loading Trays")
     }
   }
+
+  
   const loadBatches = async () => {
       try {
       const pb = await batches.fetchAllBatches()
@@ -78,9 +82,9 @@ const ManagePlants = () => {
   }
 
 
+
   return (
   <>
-
       <style>{`
         :root {
           --sage: #7BA591;
@@ -157,7 +161,7 @@ const ManagePlants = () => {
 
           {activeTab === 'trays' && (
             <>
-              <Trays traysData={traysData}/>
+              <Trays traysData={traysData} />
             </>
           )}
 
@@ -184,11 +188,14 @@ const ManagePlants = () => {
     )}
 
     {isTrayModalOpen && (
-        <TrayModal  
+      <TrayModal 
         isOpen={isTrayModalOpen}
         onClose={() => setTrayModalOpen(false)}
-        trayModalMode={trayModalMode}                
-        trayGroupsData={trayGroupsData}/>
+        isTrayModalOpen={isTrayModalOpen}
+        trayModalMode={trayModalMode}       
+        selectedTrayGroup={selectedTrayGroup}
+        setSuccessMsg={setSuccessMsg}
+      />
     )}
 
     <FloatSuccessMsg  txt={successMsg} clearMsg={clearMsg}/>    

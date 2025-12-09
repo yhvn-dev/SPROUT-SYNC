@@ -1,38 +1,46 @@
-import React from 'react';
 import { Sprout } from 'lucide-react';
 
 function Tray_groups({trayGroupsData,
-  setTrayGroupModalOpen,setTrayModalOpen,
-  setTgModalMode,setTrayModalMode,
+  setTrayGroupModalOpen,
+  setTgModalMode,
+  
+  setTrayModalOpen,
+  setTrayModalMode,
+  
   setSelectedTrayGroup}) {
+
 
   // TrayGroup handlers
   const handleAdd = () => {
     setTgModalMode("insert");
     setTrayGroupModalOpen(true);
   };
+
   const handleUpdate = (group) => {
     setSelectedTrayGroup(group);
     setTgModalMode("update");
     setTrayGroupModalOpen(true);
   };
+
   const handleDelete = (group) => {
     setSelectedTrayGroup(group);
     setTgModalMode("delete");
     setTrayGroupModalOpen(true);
   };
-  // Tray handlers
+
   const handleAddTray = (group) => {
     setSelectedTrayGroup(group);
     setTrayModalMode("insert");
     setTrayModalOpen(true);
+    console.log("HANDLE ADD TRAY")
   };
-
+  
   
   return (
     <>
       <header className="flex py-4">
         <div className="w-1/2 flex items-center justify-start">
+        <Sprout className='mr-4' size={24}/>
           <p className="text-2xl">Tray Groups</p>
         </div>
         <div className="w-1/2 flex items-center justify-start flex-row-reverse">
