@@ -4,10 +4,9 @@ import { X, Trash2, Sprout, Save } from "lucide-react";
 
 import * as trayGroupModels from "../../../data/trayGroupServices";
 
-export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,setSuccessMsg,setErrorMsg}) {
+export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,setSuccessMsg,loadTrayGroups}) {
   if (!isOpen) return null;
 
-  
 
   const plantTypeOptions = [
     { type: "Leafy Greens", min: 55, max: 80 },
@@ -16,11 +15,8 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,
     { type: "Root Crops", min: 60, max: 80 },
   ];
 
-  const [formData, setFormData] = useState({
-    tray_group_name: "",
-    min_moisture: "",
-    max_moisture: ""
-  });
+  const [formData, setFormData] = useState({tray_group_name: "",min_moisture: "",max_moisture: ""});
+  const [formErrors,setFormErrors] = useState({})
 
   // Initialize modal values when opened
   useEffect(() => {
@@ -66,32 +62,57 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,
         max_moisture: "",
       }));
     }
-  }, [formData.tray_group_name]);
+  }, [formData.tray_group_name]);   
   
   const handleChange = e => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
+    setFormErrors({})
   };
 
+  
   const onFormSubmit = async (e) => {
     e.preventDefault()
     try {
+
       if (tgModalMode === "insert") {
           await trayGroupModels.insertTrayGroup(formData);
           setSuccessMsg(`${formData.tray_group_name} Group is Added`)
+          onClose();
+          setFormErrors({})
+          loadTrayGroups()
         } else if (tgModalMode === "update") {
           await trayGroupModels.updateTrayGroup(formData,selectedTrayGroup.tray_group_id); 
           setSuccessMsg(`${selectedTrayGroup.tray_group_name} Group is Updated to ${formData.tray_group_name} `)
+          onClose();
+          setFormErrors({})
+          loadTrayGroups()
         }else if (tgModalMode === "delete"){
           await trayGroupModels.deleteTrayGroup(selectedTrayGroup.tray_group_id)
           setSuccessMsg(`${selectedTrayGroup.tray_group_name} Group is Deleted `)
+          onClose();
+          setFormErrors({})
+          loadTrayGroups()
       }
     } catch (error) {
-      console.error("Error Submitting Tray Groups")
-    }
-    onClose();
+        const rawErrors = error?.response?.data?.errors; 
+        if (Array.isArray(rawErrors)) {
+          const formattedErrors = rawErrors.reduce((acc, err) => {
+            acc[err.path] = err.msg; 
+            return acc;
+          }, {});
+
+          setFormErrors(formattedErrors);
+        } else {
+          setFormErrors({
+            general: "Something went wrong."
+          });
+        }
+    }   
+    
   };
 
+  
 
   return (
     <motion.div className="modal_backdrop fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50">
@@ -149,7 +170,7 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,
                   value={formData.tray_group_name}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg"
-                  required>
+                  >
                     
                   <option value="">Select a Plant Type</option>
                   {plantTypeOptions.map(plant => (
@@ -158,6 +179,12 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,
                     </option>
                   ))}
                 </select>
+
+                {formErrors.tray_group_name && (
+                  <p className="text-sm text-[var(--color-danger-a)] mt-1">
+                    {formErrors.tray_group_name}
+                  </p>
+                )}
               </div>
               
               {/* Min/Max Moisture */}
@@ -184,13 +211,30 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,
                 </div>
               </div>
 
-              <button
-                type="submit"
-                className="w-full mt-4 py-2 flex justify-center items-center gap-2 rounded-lg bg-[#7BA591] text-white hover:opacity-90"
-              >
-                <Save size={18} />
-                {tgModalMode === "insert" ? "Insert Tray Group" : "Save Changes"}
-              </button>
+             {tgModalMode !== "delete" && <p className="text-sm text-[var(--sancga)]">* Required fields</p>}
+              <div className="flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={onClose}
+                  className="px-5 py-2.5 border border-[var(--sage-medium)] text-[var(--sancga)] rounded-lg hover:bg-[var(--sage-lighter)] font-medium transition"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  onClick={onFormSubmit}
+                  className={`px-5 py-2.5 text-white rounded-lg font-medium shadow-lg transition-all
+                  ${tgModalMode === "insert" ? "bg-[var(--sancgb)] hover:bg-[var(--ptl-greenf)]" :
+                    "bg-[var(--white-blple)] hover:bg-[var(--sancgd)]"
+                  }`}
+                >
+                  {tgModalMode === "insert" ? "Create Tray Group" : "Update Group"}
+                </button>
+              </div>
+
+
+
+
             </form>
           </>
         )}

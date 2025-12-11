@@ -51,10 +51,11 @@ CREATE TABLE plant_batches (
     batch_id SERIAL PRIMARY KEY,
     tray_id INT NOT NULL,
     plant_name VARCHAR(100) NOT NULL,
-    total_seedlings INT NOT NULL,     -- originally planted
-    alive_seedlings INT NOT NULL,     -- currently alive
+    total_seedlings INT DEFAULT 0,     -- originally planted
+    alive_seedlings INT DEFAULT 0,     -- currently alive
     dead_seedlings INT DEFAULT 0,     -- died
     replanted_seedlings INT DEFAULT 0, -- replanted
+    fully_grown_seedlings INT DEFAULT 0,
     growth_stage VARCHAR(50) DEFAULT 'Seedling',
     date_planted DATE NOT NULL,
     expected_harvest_days INT NOT NULL,
@@ -65,6 +66,7 @@ CREATE TABLE plant_batches (
         REFERENCES trays(tray_id)
         ON DELETE CASCADE
 );
+
 
 
 

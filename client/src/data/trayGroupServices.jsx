@@ -6,7 +6,7 @@ export const fetchAllTrayGroups = async () =>{
         const trayGroups = data.data
         return trayGroups        
     } catch (error) {
-        console.error(error)       
+       throw error     
     }
 }
 
@@ -18,7 +18,7 @@ export const insertTrayGroup = async (trayGroupData) =>{
         const trayGroups = data.data
         return trayGroups        
     } catch (error) {
-        console.error(error)       
+       throw error
     }
 }
 
@@ -30,7 +30,7 @@ export const updateTrayGroup = async (trayGroupData,trayId) =>{
         const trayGroups = data.data
         return trayGroups        
     } catch (error) {
-        console.error(error)       
+       throw error
     }
 }
 
@@ -41,7 +41,7 @@ export const deleteTrayGroup = async (trayId) =>{
         const trayGroups = data.data
         return trayGroups        
     } catch (error) {
-        console.error(error)       
+        throw error
     }
 }
 

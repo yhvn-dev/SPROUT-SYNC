@@ -32,8 +32,6 @@ router.get("/users/filter",userController.getFilteredUser)
 router.get("/users/search",userController.searchUser);         
 router.get("/users/:user_id", verifyAccessToken, userController.selectUser);
 
-
-
 router.post("/users", verifyAccessToken,upload.single("profile_picture"),userValidation.insertUserValidation,userController.insertUsers);
 router.put("/users/:user_id", verifyAccessToken,upload.single("profile_picture"),userValidation.updateUserValidation, userController.updateUser);
 router.delete("/users/logout-all",verifyRefreshToken, authController.logoutAllDevices)

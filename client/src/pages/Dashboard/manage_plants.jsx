@@ -13,6 +13,8 @@ import * as readings from "../../data/readingsServices"
 
 import { TrayGroupModal } from './modals/trayGroupModal';
 import { TrayModal  } from "./modals/trayModal"
+import { BatchModal } from './modals/batchModal';
+
 
 const ManagePlants = () => {
   const [activeTab, setActiveTab] = useState('trayGroups');
@@ -33,11 +35,17 @@ const ManagePlants = () => {
   
   const [isTrayModalOpen, setTrayModalOpen] = useState(false);
   const [trayModalMode, setTrayModalMode] = useState("")
+  const [selectedTray,setSelectedTray] = useState([]);
+
+
+  const [isBatchModalOpen,setBatchModalOpen] = useState(false)
+  const [batchModalMode, setBatchModalMode] = useState("")
+  const [selectedBatch,setSelectedBatches] = useState([])
+
 
   const clearMsg =  useCallback(() => {
     setSuccessMsg("")
   },[]);
-
   
   useEffect(() =>{
     if(activeTab === "trayGroups"){
@@ -48,8 +56,6 @@ const ManagePlants = () => {
       loadBatches()
     }
   },[activeTab])
-
-
 
 
   const loadTrayGroups = async () =>{
@@ -75,6 +81,7 @@ const ManagePlants = () => {
   const loadBatches = async () => {
       try {
       const pb = await batches.fetchAllBatches()
+      console.log("PLANT BATCHES",pb)
       setBatchesData(pb)
     } catch (error) {
       console.error("Error Loading Batches")
@@ -161,14 +168,25 @@ const ManagePlants = () => {
 
           {activeTab === 'trays' && (
             <>
-              <Trays traysData={traysData} />
+              <Trays 
+              traysData={traysData} 
+              trayGroupsData={trayGroupsData}
+              setTrayModalOpen={setTrayModalOpen} 
+              setTrayModalMode={setTrayModalMode}  
+              setSelectedTray={setSelectedTray} 
+               setBatchModalMode={setBatchModalMode}
+              setBatchModalOpen={setBatchModalOpen}      
+              />
             </>
           )}
 
           {activeTab === 'batches' && (
-           <>
-               <Plant_batches />
-           </>
+               <Plant_batches 
+               traysData={traysData} 
+               batchesData={batchesData}  
+               setBatchModalOpen={setBatchModalOpen}
+               setBatchModalMode={setBatchModalMode}
+               setSelectedBatches={setSelectedBatches}/>
           )}
         </div>
 
@@ -184,6 +202,7 @@ const ManagePlants = () => {
         trayGroupData={trayGroupsData} 
         selectedTrayGroup={selectedTrayGroup}
         setSuccessMsg={setSuccessMsg}
+        loadTrayGroups={loadTrayGroups}
       />
     )}
 
@@ -194,10 +213,26 @@ const ManagePlants = () => {
         isTrayModalOpen={isTrayModalOpen}
         trayModalMode={trayModalMode}       
         selectedTrayGroup={selectedTrayGroup}
+        selectedTray={selectedTray}
         setSuccessMsg={setSuccessMsg}
+        reloadTray={loadTrays}
       />
     )}
 
+
+    {isBatchModalOpen && (
+      <BatchModal
+        isOpen={isBatchModalOpen}
+        onClose={() => setBatchModalOpen(false)}
+        isBatchModalOpen={isBatchModalOpen}
+        batchModalMode={batchModalMode}
+        selectedTray={selectedTray}
+        selectedBatch={selectedBatch}
+        setSuccessMsg={setSuccessMsg}
+        reloadBatches={loadBatches}
+      />
+    )}
+    
     <FloatSuccessMsg  txt={successMsg} clearMsg={clearMsg}/>    
 
   </>

@@ -88,12 +88,12 @@ function Users() {
       {/* Tab Navigation */}
       <div className='flex col-start-2 col-span-full row-start-2 row-end-2 my-4 '>
           <button onClick={() => setActiveTab("Overview")} 
-            className={`${activeTab === "Overview" ? "bg-white text-[#027c68] shadow-md" : "bg-white/50 text-[#5A8F73] hover:bg-white/70'"} 
+            className={`cursor-pointer ${activeTab === "Overview" ? "bg-white text-[#027c68] shadow-md" : "bg-white/50 text-[#5A8F73] hover:bg-white/70'"} 
             text-[#027c68] mr-2 px-6 py-2 text-sm rounded-lg hover:bg-white transition-all duration-200`}>
               Overview
           </button>   
           <button onClick={() => setActiveTab("User Insights")} 
-            className={`${activeTab === "User Insights" ?  "bg-white text-[#027c68] shadow-md" : "bg-white/50 text-[#5A8F73] hover:bg-white/70'"}
+            className={`cursor-pointer ${activeTab === "User Insights" ?  "bg-white text-[#027c68] shadow-md" : "bg-white/50 text-[#5A8F73] hover:bg-white/70'"}
             text-[#027c68] ml-2 px-6 py-2 text-sm rounded-lg hover:bg-white  transition-all duration-200` }>
             User Insights
           </button>   

@@ -110,13 +110,13 @@ function Home(){
               </h1>
                 
               <p className="text-lg text-[#5A8F73] leading-relaxed max-w-lg">
-                Revolutionize your farming with our intelligent automatic plant watering system. Monitor soil moisture, temperature, humidity, pH levels, and water levels in real-time.
+                Revolutionize your farming with our intelligent automatic plant watering system. Monitor soil moisture, water levels and seedlings cycle in real-time.
               </p>
 
               <div className="flex flex-wrap gap-4">
                 <button className="px-4 py-2 bg-gradient-to-r from-[#027c68] to-[#009983] text-white rounded-2xl font-semibold text-lg hover:shadow-2xl transition-all transform hover:-translate-y-1">
                   Explore Dashboard
-                </button>
+                </button> 
                 <button className="px-4 py-2  border-2 border-[#7BA591] text-[#003333] rounded-2xl font-semibold text-lg hover:bg-[#E8F3ED] transition-all">
                   Learn More
                 </button>

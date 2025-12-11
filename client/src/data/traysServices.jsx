@@ -6,7 +6,7 @@ export const fetchAllTrays = async () =>{
         const trays = data.data
         return trays 
     } catch (error) {
-        console.error("Error Fetching All Trays")        
+        console.error(error)        
         throw error
     }
 }
@@ -19,7 +19,8 @@ export const insertTray = async (trayData) =>{
         const trays = data.data
         return trays        
     } catch (error) {
-        console.error(error)       
+        console.error(error)    
+        throw error 
     }
 }
 
@@ -31,7 +32,8 @@ export const updateTray = async (trayData,trayId) =>{
         const trays = data.data
         return trays       
     } catch (error) {
-        console.error(error)       
+        console.error(error)    
+        throw error
     }
 }
 

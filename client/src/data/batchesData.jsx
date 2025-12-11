@@ -13,3 +13,42 @@ export const fetchAllBatches = async () => {
 
 
 
+
+export const insertBatches = async (batchesData) =>{
+    try {
+        const data = await api.post("/pb/post/pb",batchesData)
+        const pb = data.data
+        return pb       
+    } catch (error) {
+        console.error(error)    
+        throw error 
+    }
+}
+
+
+export const updateBatches = async (batchData,batch_id) =>{
+    console.log("PASSED BATCHES DATA:",batchData)
+    try {
+        const data = await api.put(`/pb/put/pb/${batch_id}`,batchData)
+        const pb = data.data
+        return pb      
+    } catch (error) {
+        console.error(error)    
+        throw error
+    }
+}
+
+
+export const deleteBatches = async (batch_id) =>{
+    try {
+        const data = await api.delete(`/pb/delete/pb/${batch_id}`)
+        const pb = data.data
+        return pb         
+    } catch (error) {
+        console.error(error)       
+    }
+}
+
+
+
+

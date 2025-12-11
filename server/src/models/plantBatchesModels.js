@@ -26,17 +26,28 @@ export const readPlantBatchById = async (batch_id) => {
 
 // ===== CREATE a new plant batch =====
 export const createPlantBatch = async (batchData) => {
-  const {tray_id,plant_name,total_seedlings,alive_seedlings,dead_seedlings,replanted_seedlings,growth_stage,date_planted,expected_harvest_days,status} = batchData;
+  const {tray_id,plant_name,total_seedlings,alive_seedlings,dead_seedlings,replanted_seedlings, fully_grown_seedlings,growth_stage,date_planted,expected_harvest_days,status} = batchData;
 
   try {        
     const sql = `
       INSERT INTO plant_batches 
-      (tray_id, plant_name, total_seedlings, alive_seedlings, dead_seedlings, replanted_seedlings, growth_stage, date_planted, expected_harvest_days, status) 
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+      (tray_id, plant_name, total_seedlings, alive_seedlings, dead_seedlings, replanted_seedlings, fully_grown_seedlings,growth_stage, date_planted, expected_harvest_days, status) 
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
       RETURNING *
     `;
 
-    const values = [tray_id,plant_name,total_seedlings,alive_seedlings, dead_seedlings || 0,replanted_seedlings || 0,growth_stage || 'Seedling', date_planted, expected_harvest_days,status || 'Growing'
+    const values = 
+      [tray_id,
+      plant_name,
+      total_seedlings,
+      alive_seedlings,
+      dead_seedlings || 0,
+      replanted_seedlings || 0,
+      fully_grown_seedlings || 0,
+      growth_stage || 'Seedling', 
+      date_planted,
+      expected_harvest_days,
+      status || 'Growing'
     ];
 
     const result = await query(sql, values);
@@ -50,7 +61,7 @@ export const createPlantBatch = async (batchData) => {
 
 // ===== UPDATE a plant batch =====
 export const updatePlantBatch = async (batchData, batch_id) => {
-  const {tray_id,plant_name,total_seedlings,alive_seedlings,dead_seedlings,replanted_seedlings,growth_stage,date_planted,expected_harvest_days,status} = batchData;
+  const {tray_id,plant_name,total_seedlings,alive_seedlings,dead_seedlings,replanted_seedlings,fully_grown_seedlings,growth_stage,date_planted,expected_harvest_days,status} = batchData;
 
   try {
     const sql = `
@@ -61,15 +72,16 @@ export const updatePlantBatch = async (batchData, batch_id) => {
           alive_seedlings = $4,
           dead_seedlings = $5,
           replanted_seedlings = $6,
-          growth_stage = $7,
-          date_planted = $8,
-          expected_harvest_days = $9,
-          status = $10
-      WHERE batch_id = $11
+          fully_grown_seedlings = $7,
+          growth_stage = $8,
+          date_planted = $9,
+          expected_harvest_days = $10,
+          status = $11
+      WHERE batch_id = $12
       RETURNING *
     `;
 
-    const values = [tray_id,plant_name,total_seedlings,alive_seedlings,dead_seedlings,replanted_seedlings,growth_stage,date_planted,expected_harvest_days,status,batch_id
+    const values = [tray_id,plant_name,total_seedlings,alive_seedlings,dead_seedlings,replanted_seedlings,fully_grown_seedlings,growth_stage,date_planted,expected_harvest_days,status,batch_id
     ];
 
     const result = await query(sql, values);

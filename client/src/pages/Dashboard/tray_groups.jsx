@@ -1,5 +1,7 @@
 import { Sprout } from 'lucide-react';
 
+
+
 function Tray_groups({trayGroupsData,
   setTrayGroupModalOpen,
   setTgModalMode,
@@ -46,7 +48,7 @@ function Tray_groups({trayGroupsData,
         <div className="w-1/2 flex items-center justify-start flex-row-reverse">
           <button
             onClick={handleAdd}
-            className="rounded-xl shadow-lg px-4 py-2 bg-[var(--sage)] text-[var(--main-white--)] cursor-pointer"
+            className="rounded-xl shadow-lg px-4 py-2 bg-[var(--sancgb)] text-[var(--main-white--)] cursor-pointer"
           >
             Add Tray Group
           </button>
