@@ -4,8 +4,10 @@ import { Sidebar } from "../../components/sidebar"
 import { Db_Header } from "../../components/db_header"
 
 import * as trayGroupService from "../../data/trayGroupServices"
-import * as sensorService from "../../data/sensorServices"
 import * as traysService from "../../data/traysServices"
+import * as plantBatches from "../../data/batchesData.jsx"
+import * as sensorService from "../../data/sensorServices"
+
 import * as readingsService from "../../data/readingsServices"
 
 import Overview from "./overview.jsx"
@@ -16,11 +18,10 @@ function Dashboard() {
   const { user } = useContext(UserContext);
   const [activeTab,setActiveTab] = useState("Overview")
   const [isNotifOpen,setNotifOpen] = useState(false)
-
-
-  const [isModalOpen,setOpenModal] = useState(false)
+  
   const [trayGroups,setTrayGroups] = useState([]);
   const [trays,setTrays] = useState([]);
+  const [batches,setBatches] = useState([])
   const [sensors,setSensors] = useState([]);
   const [readings,setReadings] = useState([])
   const [notif,setNotif] = useState([]);
@@ -32,15 +33,17 @@ function Dashboard() {
     const loadNurseryData = async () => {
     try {
         const trayGroups = await trayGroupService.fetchAllTrayGroups()  
-        const sensors = await sensorService.fetchAllSensors()
         const trays = await traysService.fetchAllTrays()
+        const batches = await plantBatches.fetchAllBatches()
+        const sensors = await sensorService.fetchAllSensors()
         const readings = await readingsService.fetchAllReadings()
-        console.log("READINGS",readings)
-    
+
         setTrayGroups(trayGroups)
-        setSensors(sensors)
         setTrays(trays)
+        setBatches(batches)
+        setSensors(sensors)
         setReadings(readings)
+        
       } catch (error) {
         console.error(error)
     }
@@ -78,7 +81,9 @@ function Dashboard() {
 
 
           <main className="col-start-2 col-span-full row-start-2 row-end-4 w-full h-full ">
-              {activeTab === "Overview" ? <Overview/> : <ManagePlants/>}       
+              {activeTab === "Overview" ? 
+              <Overview trayGroups={trayGroups} trays={trays} batches={batches} sensors={sensors} readings={readings}/> :
+              <ManagePlants/>}       
          </main>
 
 

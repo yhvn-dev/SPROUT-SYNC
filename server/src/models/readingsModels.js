@@ -53,7 +53,7 @@ export const updateReadings = async (readingData, reading_id) => {
   try {   
     const sql = `
       UPDATE sensor_readings
-      SET sensor_id = $1, value = $2,
+      SET sensor_id = $1, value = $2
       WHERE reading_id = $3
       RETURNING *
     `;

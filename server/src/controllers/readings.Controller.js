@@ -1,7 +1,9 @@
 import * as readingModel from "../models/readingsModels.js";
 import * as sensorModels from "../models/sensorModels.js";
 import * as notificationModels from "../models/notificationModels.js"
+import * as trayModels from "../models/trayModels.js"
 import * as trayGroupModels from "../models/trayGroupsModel.js"
+
 
 // ===== GET all readings =====
 export const getReadings = async (req, res) => {
@@ -44,39 +46,78 @@ export const createReadings = async (req, res) => {
     // ✅ check if sensor exists
     const existingSensor = await sensorModels.readSensorById(sensor_id);
     console.log("SELECTED SENSOR",existingSensor)
+    
     if (!existingSensor) {
       return res.status(404).json({ message: "Sensor with this id doesn't exist" });
     }
+
+    const {tray_id} = existingSensor
+    const selectedTray = await trayModels.readTrayById(tray_id)
+    const {tray_group_id} = selectedTray
+    const selectedTrayGroup =  await trayGroupModels.readTrayGroupById(tray_group_id)
     
-    const {tray_group_id} = existingSensor
-    const selectedTrayGroup = await trayGroupModels.readTrayGroupById(tray_group_id)
     console.log("SELECTED TRAY GROUP",selectedTrayGroup)
-
-
     const {min_moisture,max_moisture} = selectedTrayGroup
-
+    
     const moisture = Number(value);
     const min = Number(min_moisture);
     const max = Number(max_moisture);
 
     if (moisture < min) {
+    const percentageBelow = ((min - moisture) / min) * 100;
+
+    if (percentageBelow > 15) { 
       await notificationModels.createNotif({
-        type: "warning",
-        message: "Moisture is LOW",
+        type: "Alert",
+        message: "Soil is CRITICALLY DRY",
         related_sensor: sensor_id,
         status: "LOW"
       });
-    } 
-    else if (moisture > max) {
+    } else { // Approaching low
       await notificationModels.createNotif({
-        type: "warning",
-        message: "Moisture is HIGH",
+        type: "Warning",
+        message: "Soil is approaching dryness",
+        related_sensor: sensor_id,
+        status: "LOW"
+      });
+    }
+  }
+
+
+  // HIGH thresholds
+  else if (moisture > max) {
+    const percentageAbove = ((moisture - max) / max) * 100;
+
+    if (percentageAbove > 15) { // Too wet
+      await notificationModels.createNotif({
+        type: "Alert",
+        message: "Soil is TOO WET",
         related_sensor: sensor_id,
         status: "HIGH"
       });
-    } 
+
+    } else { 
+      await notificationModels.createNotif({
+        type: "Warning",
+        message: "Soil is getting wet",
+        related_sensor: sensor_id,
+        status: "HIGH"
+      });
+    }
+  } 
+  
+  else {
+    await notificationModels.createNotif({
+      type: "Info",
+      message: "Soil moisture is normal",
+      related_sensor: sensor_id,
+      status: "NORMAL"
+    });
+  }
 
 
+
+    
     // ✅ create reading
     const reading = await readingModel.createReadings(readingData);
     res.status(201).json(reading);
@@ -95,17 +136,10 @@ export const updateReadings = async (req, res) => {
   try {
     const { reading_id } = req.params;
     const readingData = req.body;
-    const { tray_id, sensor_id } = readingData;
+    const {sensor_id} = readingData;
 
     const existingReading = await readingModel.readReadingById(reading_id);
     if (!existingReading) return res.status(404).json({ message: "Reading not found" });
-
-
-    // ✅ check tray
-    const existingTray = await trayModels.readTrayById(tray_id);
-    if (!existingTray) {
-      return res.status(404).json({ message: "Tray with this id doesn't exist" });
-    }
 
     // ✅ check sensor
     const existingSensor = await sensorModels.readSensorById(sensor_id);
@@ -113,8 +147,8 @@ export const updateReadings = async (req, res) => {
       return res.status(404).json({ message: "Sensor with this id doesn't exist" });
     }
 
-
     const updated = await readingModel.updateReadings(readingData, reading_id);
+    console.log(updated)
     res.status(200).json(updated);
     console.log("READING UPDATED:", updated);
 
@@ -145,3 +179,12 @@ export const deleteReadings = async (req, res) => {
     res.status(500).json({ message: "Error deleting reading", err });
   }
 };
+
+
+// type	Categorizes the general kind of notification
+// 'info', 'warning', 'alert', 'success'	This is usually used for UI purposes: icons, colors, grouping. It answers “what kind of notification is this?”
+
+//  status	Represents the specific condition or severity that triggered the notification	
+// 'LOW', 'HIGH', 'NORMAL', 'CRITICAL'	
+// This is usually used for logic or filtering, 
+//  i.e., to know what the notification is telling you about the system state.

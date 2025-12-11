@@ -35,12 +35,14 @@ const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
 };
 
 
-function Overview() {
+function Overview({trayGroups,trays,batches,sensors,readings}) {
+
+  console.log("TRAY GROUPS FROM OVERVIEW",trayGroups)
   return (
     <div className='flex items-center flex-col justify-start gap-4 w-full h-full '>
       
-          {/* NUMBER CONTAINER */}
-          <Quick_Stats
+      
+          {/* <Quick_Stats
             data_box={
               <>              
              
@@ -58,7 +60,7 @@ function Overview() {
                   </div>            
                 </div>        
 
-                {/* plants */}
+             
                 <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
                   <div className="scale-90 origin-center">
                       <GaugeChart value={6.8} max={14} label="Plants" unit="" icon={Sprout} color="#8f9bbc" />
@@ -66,21 +68,21 @@ function Overview() {
                 </div> 
 
                 
-                {/* Growth */}
+             
                   <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
                   <div className="scale-90 origin-center">
                       <GaugeChart value={6.8} max={14} label="Growth" unit="" icon={Leaf} color="#8f9bbc" />
                   </div>            
                 </div>    
 
-                {/* Died */}
+              
                   <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
                   <div className="scale-90 origin-center">
                       <GaugeChart value={6.8} max={14} label="Died" unit="" icon={X} color="#8f9bbc" />
                   </div>            
                 </div>    
 
-                {/* replants */}
+               
                   <div className="bg-white w-full rounded-2xl shadow-lg hover:shadow-xl transition-all">
                   <div className="scale-90 origin-center">
                       <GaugeChart value={6.8} max={14} label="Replants" unit="" icon={Plus} color="#8f9bbc" />
@@ -88,14 +90,16 @@ function Overview() {
                 </div>           
 
               </>
-            }/>
+            }/> */}
+
+            
 
           {/* MAIN */}
           <main className='bg-white
           flex flex-col items-center justify-start h-full  w-full col-start-2 col-end-4 row-start-3 row-end-3
-          rounded-[10px] overflow-y-auto
-            '> 
-            <Nursery/>
+          rounded-[10px] overflow-hidden
+                     '> 
+            <Nursery trayGroups={trayGroups} trays={trays} batches={batches} sensors={sensors} readings={readings}/>
           </main>
 
         
