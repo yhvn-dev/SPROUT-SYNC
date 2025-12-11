@@ -1,12 +1,13 @@
 import api from "../utils/api";
 
-export const fetchAllReadings = async () => {
+export const fetchAllNotifs = async () => {
     try{
-        const res = await api.get("/notifs/get/notifs");
-        const readingsData = res.data
-        return  readingsData
+        const res = await api.get("/notif/get/notif");
+        const notifData = res.data
+        console.log(notifData)
+        return notifData
     }catch(err){
-        console.err("Error Fetching Readings",err);
+        console.error("Error Fetching Readings",err);
         throw err
     }
 }

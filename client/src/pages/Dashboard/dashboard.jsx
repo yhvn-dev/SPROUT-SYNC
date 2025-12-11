@@ -2,13 +2,15 @@ import { useState,useContext,useEffect, use } from "react"
 import { UserContext } from "../../hooks/userContext"
 import { Sidebar } from "../../components/sidebar"
 import { Db_Header } from "../../components/db_header"
+import { Notif_Modal } from "../../components/notifModal.jsx"
 
 import * as trayGroupService from "../../data/trayGroupServices"
 import * as traysService from "../../data/traysServices"
 import * as plantBatches from "../../data/batchesData.jsx"
 import * as sensorService from "../../data/sensorServices"
-
 import * as readingsService from "../../data/readingsServices"
+import * as notifService from "../../data/notifsServices.jsx"
+
 
 import Overview from "./overview.jsx"
 import ManagePlants from "./manage_plants.jsx"
@@ -24,7 +26,7 @@ function Dashboard() {
   const [batches,setBatches] = useState([])
   const [sensors,setSensors] = useState([]);
   const [readings,setReadings] = useState([])
-  const [notif,setNotif] = useState([]);
+  const [notifs,setNotifs] = useState([])
 
   useEffect(() =>{
       loadNurseryData()
@@ -37,17 +39,21 @@ function Dashboard() {
         const batches = await plantBatches.fetchAllBatches()
         const sensors = await sensorService.fetchAllSensors()
         const readings = await readingsService.fetchAllReadings()
+        const notif = await notifService.fetchAllNotifs()
 
         setTrayGroups(trayGroups)
         setTrays(trays)
         setBatches(batches)
         setSensors(sensors)
         setReadings(readings)
-        
+        setNotifs(notif)     
+
+
       } catch (error) {
         console.error(error)
     }
-  }
+  }    
+  
 
   return (
     <>
@@ -85,13 +91,11 @@ function Dashboard() {
               <Overview trayGroups={trayGroups} trays={trays} batches={batches} sensors={sensors} readings={readings}/> :
               <ManagePlants/>}       
          </main>
-
-
-
+                
+              
           {isNotifOpen && 
-          <div className="bg-red-500 w-1/3 right-20 h-1/2 z-50 absolute">
-            
-          </div>}
+              <Notif_Modal isOpen={setNotifOpen} onClose={() => setNotifOpen(false)} notifs={notifs}/>   
+          }
 
       </section>    
     </>

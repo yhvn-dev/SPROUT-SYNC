@@ -91,8 +91,6 @@ const NurseryDashboard = ({trayGroups,trays,batches,sensors,readings}) => {
                           // Find sensor for the tray
                           const sensor = sensors.find(s => s.tray_id === tray.tray_id);
                           const reading = sensor ? readings.find(r => r.sensor_id === sensor.sensor_id) : null;
-                          console.log("READINGS FROM EACH SENSOR",reading)
-
                           const moistureValue = reading ? reading.value : 0;
                           const moistureStatus = getMoistureStatus(moistureValue, group.min_moisture, group.max_moisture);
 

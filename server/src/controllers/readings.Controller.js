@@ -41,11 +41,9 @@ export const createReadings = async (req, res) => {
   try {
 
     const readingData = req.body;
-    const {sensor_id,value} = readingData;
-  
-    // ✅ check if sensor exists
+    const {sensor_id,value} = readingData;  
+
     const existingSensor = await sensorModels.readSensorById(sensor_id);
-    console.log("SELECTED SENSOR",existingSensor)
     
     if (!existingSensor) {
       return res.status(404).json({ message: "Sensor with this id doesn't exist" });
@@ -55,8 +53,9 @@ export const createReadings = async (req, res) => {
     const selectedTray = await trayModels.readTrayById(tray_id)
     const {tray_group_id} = selectedTray
     const selectedTrayGroup =  await trayGroupModels.readTrayGroupById(tray_group_id)
-    
-    console.log("SELECTED TRAY GROUP",selectedTrayGroup)
+
+
+
     const {min_moisture,max_moisture} = selectedTrayGroup
     
     const moisture = Number(value);
@@ -82,7 +81,6 @@ export const createReadings = async (req, res) => {
       });
     }
   }
-
 
   // HIGH thresholds
   else if (moisture > max) {

@@ -2,7 +2,6 @@ import { Quick_Stats } from "./quick_stats"
 import Nursery from "./nursery.jsx"
 import { Droplets,Leaf,Sprout, Plus,X,Wind,Sun} from 'lucide-react';
 
-
 const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
   const percentage = (value / max) * 100;
   
@@ -37,7 +36,6 @@ const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
 
 function Overview({trayGroups,trays,batches,sensors,readings}) {
 
-  console.log("TRAY GROUPS FROM OVERVIEW",trayGroups)
   return (
     <div className='flex items-center flex-col justify-start gap-4 w-full h-full '>
       

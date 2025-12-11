@@ -1,12 +1,14 @@
-import { useContext } from "react";
+import { useContext,useState,useEffect} from "react";
 import { UserContext } from "../hooks/userContext";
+
 import Pfp from "../assets/Images/Default Profile Picture 2.jpg";
 import { Search } from "./search";
 import {Bell} from "lucide-react"
-import { useState } from "react";
+
 
 export function Db_Header({input,setNotifOpen}) {
   const { user } = useContext(UserContext);
+
 
   return (
     <section className="bg-[var(--main-whiteb)] rounded-[10px] col-start-3 col-end-5 header flex items-center justify-center shadow-lg">
