@@ -79,22 +79,26 @@ export function TrayGroupModal({
     e.preventDefault();
     try {
       if (tgModalMode === "insert") {
+      
         const newGroup = await trayGroupModels.insertTrayGroup(formData)
+        onClose();
         setSuccessMsg(`${newGroup.tray_group_name} Group is Added`);
       } else if (tgModalMode === "update") {
         const updatedGroup = await trayGroupModels.updateTrayGroup(
           formData,
           selectedTrayGroup.tray_group_id
         );
+        onClose();
         setSuccessMsg(
           `${selectedTrayGroup.tray_group_name} Group is Updated to ${updatedGroup.tray_group_name}`
         );
       } else if (tgModalMode === "delete") {
         await trayGroupModels.deleteTrayGroup(selectedTrayGroup.tray_group_id);
+        onClose();
         setSuccessMsg(`${selectedTrayGroup.tray_group_name} Group is Deleted`);
       }
 
-      onClose();
+     
       setFormErrors({});
       loadTrayGroups();
       reloadTrayGroups();
@@ -112,23 +116,26 @@ export function TrayGroupModal({
     }
   };
 
+
+  
+
+  
   return (
     <motion.div className="modal_backdrop fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50">
       <motion.div
         className={`bg-white rounded-xl shadow-xl p-6 relative ${
-          tgModalMode === "delete" ? "w-[420px] h-[220px]" : "w-[600px]"
+          tgModalMode === "delete" ? "w-[420px] h-auto" : "w-[600px]"
         }`}
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ duration: 0.4 }}
-      >
+        transition={{ duration: 0.4 }}>
+
         {/* CLOSE BUTTON */}
         <button
           onClick={onClose}
-          className="cursor-pointer absolute top-4 right-4 hover:bg-gray-100 p-2 rounded-lg"
-        >
-          <X />
+          className="cursor-pointer absolute top-4 right-4 hover:bg-gray-100 p-2 rounded-lg">
+          <X/>
         </button>
 
         {tgModalMode === "delete" ? (
@@ -145,19 +152,19 @@ export function TrayGroupModal({
             <form onSubmit={onFormSubmit} className="flex justify-end mt-8 gap-3 p-4">
               <button
                 onClick={onClose}
-                className="cursor-pointer px-4 py-2 rounded-lg border"
-              >
+                className="cursor-pointer px-4 py-2 rounded-lg border">
                 Cancel
               </button>
               <button
                 type="submit"
-                className="cursor-pointer px-4 py-2 rounded-lg bg-[var(--color-danger-a)] text-white"
-              >
+                className="cursor-pointer px-4 py-2 rounded-lg bg-[var(--color-danger-a)] text-white">
                 Delete
               </button>
             </form>
           </>
+          
         ) : (
+
           <>
             {/* HEADER */}
             <div className="flex items-center gap-3 mb-6">
@@ -166,7 +173,6 @@ export function TrayGroupModal({
                 {tgModalMode === "insert" ? "Add Tray Group" : "Update Tray Group"}
               </h2>
             </div>
-
             {/* FORM */}
             <form onSubmit={onFormSubmit} className="space-y-4">
               {/* Plant Type */}

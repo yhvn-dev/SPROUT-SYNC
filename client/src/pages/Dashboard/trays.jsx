@@ -1,18 +1,21 @@
 import { LayoutGrid} from 'lucide-react';
 import * as trayServices from "../../data/traysServices"
 
-function Trays({ traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setBatchModalOpen,setBatchModalMode,setSelectedTray}) {
+function Trays({traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setBatchModalOpen,setBatchModalMode,setSelectedTray,setSelectedTrayGroup}) {
 
   const handleUpdateTray = (tray) => {
+      const trayGroup = trayGroupsData.find(g => g.tray_group_id === tray.tray_group_id);
+      setSelectedTrayGroup(trayGroup);
       setSelectedTray(tray);
       setTrayModalMode("update");
       setTrayModalOpen(true);
   };
   
   const handleDeleteTray = (tray) => {
+      const trayGroup = trayGroupsData.find(g => g.tray_group_id === tray.tray_group_id);
+      setSelectedTrayGroup(trayGroup);
       setTrayModalOpen(true)
       setTrayModalMode("delete")
-
       setSelectedTray(tray)
   };
   const handleAddBatches = (tray) =>{
@@ -21,9 +24,9 @@ function Trays({ traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setB
       setSelectedTray(tray)
   }
 
-
   return (
     <div className="space-y-4">
+      
       {/* HEADER */}
       <header className="flex py-4">
         <div className="h-full w-1/2 flex items-center justify-start">
@@ -78,7 +81,7 @@ function Trays({ traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setB
                         ${tray.status === "Maintenance" && "bg-[var(--color-warning-b)] text-orange-500"}
                         ${tray.status === "Disabled" && "bg-red-100 text-[var(--acc-darkc)]"}
                       `}>
-                        
+
                       {tray.status || "Unknown"}
                     </span>
                   </div>
@@ -90,22 +93,19 @@ function Trays({ traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setB
               <div className="flex items-center justify-center gap-2 mt-8 h-full">
                 <button
                   onClick={() => handleAddBatches(tray)}
-                  className="cursor-pointer u_btn shadow-lg bg-[var(--sancgc)] text-white"
-                >
+                  className="cursor-pointer u_btn shadow-lg bg-[var(--sancgc)] text-white">
                   ADD BATCH
                 </button>
 
                 <button
                   onClick={() => handleUpdateTray(tray)}
-                  className="cursor-pointer u_btn shadow-lg bg-[var(--white-blple--)] text-white"
-                >
+                  className="cursor-pointer u_btn shadow-lg bg-[var(--white-blple--)] text-white">
                   UPDATE
                 </button>
 
                 <button
                   onClick={() => handleDeleteTray(tray)}
-                  className="cursor-pointer u_btn shadow-lg bg-[var(--color-danger-b)] text-white"
-                >
+                  className="cursor-pointer u_btn shadow-lg bg-[var(--color-danger-b)] text-white">
                   DELETE
                 </button>
               </div>
@@ -114,10 +114,8 @@ function Trays({ traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setB
         ))}
       </div>
     </div>
-
   );
-
-  
 }
+
 
 export default Trays;

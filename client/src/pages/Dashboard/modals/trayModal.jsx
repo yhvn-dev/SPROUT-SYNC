@@ -24,16 +24,21 @@ export function TrayModal({
   setSuccessMsg,
   reloadTray
 }) {
+  
   const [formData, setFormData] = useState({ tray_group_id: 0, plant: "", status: "Available" });
   const [plantOptions, setPlantOptions] = useState([]);
   const [formErrors, setFormErrors] = useState({});
+  
 
   if (!isOpen) return null;
+
+
 
   // Initialize form
   useEffect(() => {
     if (trayModalMode === "update" && selectedTray) {
-      // Split prefix and plant
+
+      console.log("SELECTED TRAY GROUP UPDATE",selectedTrayGroup)
       const parts = selectedTray.plant.split(" - ");
       const prefix = parts.length > 1 ? parts.slice(1).join(" - ") : parts[0];
 
@@ -43,20 +48,28 @@ export function TrayModal({
         status: selectedTray.status || "Available",
       });
     } else if (trayModalMode === "insert") {
+
+      console.log("SELECTED TRAY GROUP INSERT",selectedTrayGroup)
       setFormData({
         tray_group_id: selectedTrayGroup?.tray_group_id || 0,
         plant: "",
         status: "Available",
       });
+
     } else if (trayModalMode === "delete" && selectedTray) {
+
+       console.log("SELECTED TRAY GROUP DELETE",selectedTrayGroup)
       setFormData({
         tray_group_id: selectedTray.tray_group_id,
         plant: selectedTray.plant,
         status: selectedTray.status,
       });
+      
     }
   }, [trayModalMode, selectedTray, selectedTrayGroup]);
 
+  
+  
   // Update plant options based on tray group
   useEffect(() => {
     const groupName = selectedTrayGroup?.tray_group_name || selectedTray?.tray_group_name || "";
@@ -64,7 +77,6 @@ export function TrayModal({
     const options = plantOptionsByGroup[normalizedGroupName] || [];
     setPlantOptions(options);
 
-    // Reset plant if current not in options
     if (!options.includes(formData.plant)) {
       setFormData(prev => ({ ...prev, plant: "" }));
     }
@@ -74,6 +86,8 @@ export function TrayModal({
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormErrors({});
@@ -82,8 +96,8 @@ export function TrayModal({
         if (!selectedTrayGroup?.tray_group_id || !formData.plant) {
           setFormErrors({ general: "Tray group and plant are required." });
           return;
-        }
-        const newTray = await trayModels.insertTray({
+          }
+          const newTray = await trayModels.insertTray({
           tray_group_id: selectedTrayGroup.tray_group_id,
           plant: formData.plant,
           status: formData.status,
@@ -95,7 +109,7 @@ export function TrayModal({
       if (trayModalMode === "update") {
         const updatedTray = await trayModels.updateTray(
           {
-            tray_group_id: formData.tray_group_id,
+            tray_group_id:  selectedTrayGroup.tray_group_id,
             plant: formData.plant,
             status: formData.status
           },
@@ -215,7 +229,7 @@ export function TrayModal({
 
 
             {/* FOOTER */}
-            <div className="border-t px-6 py-4 flex justify-between">
+            <div className="border-t py-4 flex justify-between">
               <span className="text-sm text-gray-500">* Required fields</span>
               <div className="flex gap-3">
                 <button type="button" onClick={onClose} className="px-5 py-2 border rounded-lg">Cancel</button>

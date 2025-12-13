@@ -178,8 +178,9 @@ const ManagePlants = ({reloadTrayGroups,reloadTrays,reloadBatches}) => {
               setTrayModalOpen={setTrayModalOpen} 
               setTrayModalMode={setTrayModalMode}  
               setSelectedTray={setSelectedTray} 
-               setBatchModalMode={setBatchModalMode}
+              setBatchModalMode={setBatchModalMode}
               setBatchModalOpen={setBatchModalOpen}      
+              setSelectedTrayGroup={setSelectedTrayGroup}
               />
             </>
           )}

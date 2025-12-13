@@ -187,9 +187,7 @@ function NurseryDashboard(){
                   <h2 className="text-xl font-semibold text-gray-900">Plant Batches</h2>
                 </div>
 
-                <div className="space-y-3 max-h-[calc(100vh-350px)] overflow-y-auto">
-
-                  
+                <div className="space-y-3 max-h-[calc(100vh-350px)] overflow-y-auto">  
                   {batches.length > 0 && batches.map(batch => (
                     <div key={batch.batch_id} className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-4 border border-gray-100">
                       <div className="flex items-start justify-between mb-3">
@@ -216,14 +214,25 @@ function NurseryDashboard(){
                           <p className="text-xs text-gray-500">Grown</p>
                           <p className="text-lg font-bold text-[#208b3a]">{batch.fully_grown_seedlings}</p>
                         </div>
+                         <div className="text-center">
+                          <p className="text-xs text-gray-500">Alive</p>
+                          <p className="text-lg font-bold text-[var(--color-success-a)]">{batch.alive_seedlings}</p>
+                        </div>
+                         <div className="text-center">
+                          <p className="text-xs text-gray-500">Dead</p>
+                          <p className="text-lg font-bold text-[var(--color-danger-b)]">{batch.dead_seedlings}</p>
+                        </div>
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Replants</p>
-                          <p className="text-lg font-bold text-gray-600">{batch.replanted_seedlings}</p>
+                          <p className="text-lg font-bold text-[var(--color-warning)]">{batch.replanted_seedlings}</p>
                         </div>
                       </div>
                     </div>
                   ))}
                 </div>
+
+
+                
               </div>
             </div>
           </div>
