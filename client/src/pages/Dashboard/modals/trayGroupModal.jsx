@@ -176,9 +176,8 @@ export function TrayGroupModal({
                   name="tray_group_name"
                   value={formData.tray_group_name}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
-                  required
-                >
+                  className="w-full p-2 border rounded-lg">
+
                   <option value="">Select a Plant Type</option>
                   {plantTypeOptions.map((plant) => (
                     <option key={plant.type} value={plant.type}>

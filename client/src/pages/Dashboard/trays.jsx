@@ -35,21 +35,21 @@ function Trays({ traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setB
       {/* TRAYS LIST WRAPPER */}
       <div className="h-[235px] overflow-y-auto space-y-3">
 
-
-        {/* EMPTY STATE */}
-        {traysData?.length === 0 && (
-          <p className="text-center text-gray-400 py-10">
-            No trays found.
-          </p>
+        {traysData.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+            <LayoutGrid size={48} className="mb-3 opacity-50" />
+            <p className="text-lg font-medium">No Trays found</p>
+            <p className="text-sm">Create a trays to start tracking plants</p>
+          </div>
         )}
 
         {/* MAPPED TRAYS */}
         {traysData?.map((tray) => (
           <div
             key={tray.tray_id}
-            className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl shadow-md p-5 border border-gray-100 hover:shadow-xl transition-shadow"
-          >
+            className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl shadow-md p-5 border border-gray-100 hover:shadow-xl transition-shadow">
             <div className="flex items-start justify-between">
+              
               {/* LEFT CONTENT */}
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">

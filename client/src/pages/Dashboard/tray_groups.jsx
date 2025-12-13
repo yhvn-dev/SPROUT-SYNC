@@ -45,8 +45,7 @@ function Tray_groups({
         <div className="w-1/2 flex items-center justify-start flex-row-reverse">
           <button
             onClick={handleAdd}
-            className="rounded-xl shadow-lg px-4 py-2 bg-[var(--sancgb)] text-[var(--main-white--)] cursor-pointer"
-          >
+            className="rounded-xl shadow-lg px-4 py-2 bg-[var(--sancgb)] text-[var(--main-white--)] cursor-pointer">
             Add Tray Group
           </button>
         </div>
@@ -55,6 +54,15 @@ function Tray_groups({
       {/* TRAY GROUPS LIST */}
       <div className="h-[245px] overflow-hidden">
         <div className="space-y-3 h-full overflow-y-auto pr-2">
+
+          {trayGroupsData.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+              <Sprout size={48} className="mb-3 opacity-50" />
+              <p className="text-lg font-medium">No Tray Groups found</p>
+              <p className="text-sm">Create a tray group to start tracking plants</p>
+            </div>
+          )}
+
           {trayGroupsData?.map((group) => (
             <div
               key={group.tray_group_id}

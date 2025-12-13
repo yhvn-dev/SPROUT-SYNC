@@ -33,7 +33,6 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
 
   return (
     <div className="space-y-3 ">
-
       {/* Header */}
       <header className="flex py-4">
         <div className="h-full w-1/2 flex items-center justify-start">
@@ -42,11 +41,16 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
         </div>
       </header>
 
+      <div className="max-h-[350px] overflow-y-auto pr-2 space-y-3">
 
-      <div className="max-h-[240px] overflow-y-auto pr-2 space-y-3">
-
+        {batchesData.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+            <TrendingUp size={48} className="mb-3 opacity-50" />
+            <p className="text-lg font-medium">No batches found</p>
+            <p className="text-sm">Create a batch to start tracking plants</p>
+          </div>
+        )}
         {batchesData.length > 0 && batchesData.map((pb) => {
-
           function formatBatchDisplay(batch) {
               const date = new Date(batch.date_planted);
               const yyyy = date.getFullYear();
@@ -55,10 +59,7 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
 
               return `${yyyy}${mm}${dd}-${String(batch.batch_id).padStart(3, "0")}`;
             }
-
-          return (
-
-            
+          return (            
             <div
               key={pb.batch_id}
               className="rounded-2xl p-5 border shadow-lg border-gray-100 hover:shadow-xl transition-shadow bg-white">
