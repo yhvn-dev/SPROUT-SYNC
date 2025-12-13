@@ -24,27 +24,40 @@ export const readPlantBatchById = async (batch_id) => {
 };
 
 
+
 // ===== CREATE a new plant batch =====
 export const createPlantBatch = async (batchData) => {
-  const {tray_id,plant_name,total_seedlings,alive_seedlings,dead_seedlings,replanted_seedlings, fully_grown_seedlings,growth_stage,date_planted,expected_harvest_days,status} = batchData;
+  const {
+    tray_id,
+    plant_name,
+    total_seedlings,
+    alive_seedlings,
+    dead_seedlings,
+    replanted_seedlings,
+    fully_grown_seedlings,
+    growth_stage,
+    date_planted,
+    expected_harvest_days,
+    status
+  } = batchData;
 
-  try {        
+  try {
     const sql = `
       INSERT INTO plant_batches 
-      (tray_id, plant_name, total_seedlings, alive_seedlings, dead_seedlings, replanted_seedlings, fully_grown_seedlings,growth_stage, date_planted, expected_harvest_days, status) 
+      (tray_id, plant_name, total_seedlings, alive_seedlings, dead_seedlings, replanted_seedlings, fully_grown_seedlings, growth_stage, date_planted, expected_harvest_days, status) 
       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
       RETURNING *
     `;
 
-    const values = 
-      [tray_id,
+    const values = [
+      tray_id,
       plant_name,
-      total_seedlings,
-      alive_seedlings,
-      dead_seedlings || 0,
-      replanted_seedlings || 0,
-      fully_grown_seedlings || 0,
-      growth_stage || 'Seedling', 
+      total_seedlings !== undefined ? total_seedlings : null,
+      alive_seedlings !== undefined ? alive_seedlings : null,
+      dead_seedlings !== undefined ? dead_seedlings : null,
+      replanted_seedlings !== undefined ? replanted_seedlings : null,
+      fully_grown_seedlings !== undefined ? fully_grown_seedlings : null,
+      growth_stage || 'Seedling',
       date_planted,
       expected_harvest_days,
       status || 'Growing'
@@ -52,16 +65,29 @@ export const createPlantBatch = async (batchData) => {
 
     const result = await query(sql, values);
     return result.rows[0];
-
   } catch (error) {
     throw error;
   }
 };
 
 
+
+
 // ===== UPDATE a plant batch =====
 export const updatePlantBatch = async (batchData, batch_id) => {
-  const {tray_id,plant_name,total_seedlings,alive_seedlings,dead_seedlings,replanted_seedlings,fully_grown_seedlings,growth_stage,date_planted,expected_harvest_days,status} = batchData;
+  const {
+    tray_id,
+    plant_name,
+    total_seedlings,
+    alive_seedlings,
+    dead_seedlings,
+    replanted_seedlings,
+    fully_grown_seedlings,
+    growth_stage,
+    date_planted,
+    expected_harvest_days,
+    status
+  } = batchData;
 
   try {
     const sql = `
@@ -81,18 +107,27 @@ export const updatePlantBatch = async (batchData, batch_id) => {
       RETURNING *
     `;
 
-    const values = [tray_id,plant_name,total_seedlings,alive_seedlings,dead_seedlings,replanted_seedlings,fully_grown_seedlings,growth_stage,date_planted,expected_harvest_days,status,batch_id
+    const values = [
+      tray_id,
+      plant_name,
+      total_seedlings !== undefined ? total_seedlings : null,
+      alive_seedlings !== undefined ? alive_seedlings : null,
+      dead_seedlings !== undefined ? dead_seedlings : null,
+      replanted_seedlings !== undefined ? replanted_seedlings : null,
+      fully_grown_seedlings !== undefined ? fully_grown_seedlings : null,
+      growth_stage || 'Seedling',
+      date_planted,
+      expected_harvest_days,
+      status || 'Growing',
+      batch_id
     ];
 
     const result = await query(sql, values);
     return result.rows[0];
-
   } catch (error) {
     throw error;
   }
 };
-
-
 
 
 

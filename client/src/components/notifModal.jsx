@@ -1,5 +1,7 @@
-import React from "react";
 import { Clock, AlertCircle, CheckCircle, AlertTriangle } from "lucide-react";
+import { usePlantData } from "../hooks/plantContext";
+import { useState } from "react";
+
 
 const getColorScheme = (type) => {
   switch (type.toLowerCase()) {
@@ -17,53 +19,24 @@ const getColorScheme = (type) => {
   }
 };
 
-// Example notifications array
-const NOTIFICATIONS = [
-  {
-    notification_id: 7,
-    type: "warning",
-    message: "Moisture is Normal",
-    related_sensor: 1,
-    status: "Normal",
-    created_at: "2025-12-05T15:32:59.230Z",
-  },
-  {
-    notification_id: 8,
-    type: "warning",
-    message: "Moisture is HIGH",
-    related_sensor: 1,
-    status: "HIGH",
-    created_at: "2025-12-06T08:25:00.894Z",
-  },
-  {
-    notification_id: 9,
-    type: "warning",
-    message: "Soil is getting wet",
-    related_sensor: 7,
-    status: "HIGH",
-    created_at: "2025-12-06T10:12:00.000Z",
-  },
-];
 
+export function Notif_Modal({ isOpen, onClose}) {
+  const {notifs} = usePlantData()
 
-
-    
-export function Notif_Modal({ isOpen, onClose, notifs = NOTIFICATIONS }) {
   if (!isOpen) return null;
 
   return (
-
     <aside className="absolute top-4 right-4">
-
       <div className="bg-white rounded-2xl w-96 max-h-[80vh] shadow-lg overflow-y-auto flex flex-col">
 
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-lg font-semibold text-gray-900">Notifications</h2>
-          <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+          <button onClick={onClose} className="text-gray-500 cursor-pointer hover:bg-[var(--main-white--)] rounded-lg p-2">
             ✕
           </button>
         </div>
+      
 
         {/* Notification List */}
         <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
@@ -98,7 +71,7 @@ export function Notif_Modal({ isOpen, onClose, notifs = NOTIFICATIONS }) {
         <div className="px-4 py-3 border-t border-gray-200">
           <button
             onClick={onClose}
-            className="w-full py-2 rounded-lg bg-green-600 text-white font-medium hover:bg-green-700 transition">
+            className="w-full py-2 rounded-lg bg-[var(--sancgb)] text-white font-medium hover:bg-[var(--sancgd)] transition">
             Close
           </button>
         </div>

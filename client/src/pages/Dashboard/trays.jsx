@@ -33,7 +33,9 @@ function Trays({ traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setB
       </header>
 
       {/* TRAYS LIST WRAPPER */}
-      <div className="h-[255px] overflow-y-auto space-y-3">
+      <div className="h-[235px] overflow-y-auto space-y-3">
+
+
         {/* EMPTY STATE */}
         {traysData?.length === 0 && (
           <p className="text-center text-gray-400 py-10">
@@ -45,7 +47,7 @@ function Trays({ traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setB
         {traysData?.map((tray) => (
           <div
             key={tray.tray_id}
-            className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-5 border border-gray-100 hover:shadow-md transition-shadow"
+            className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl shadow-md p-5 border border-gray-100 hover:shadow-xl transition-shadow"
           >
             <div className="flex items-start justify-between">
               {/* LEFT CONTENT */}

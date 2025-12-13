@@ -89,58 +89,57 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selec
   }, [isOpen, selectedTray, selectedBatch, batchModalMode]);
 
 
+
+  
   const handleSubmit = async (e) => {
-  e.preventDefault();
-  setFormErrors({});
+    e.preventDefault();
+    setFormErrors({});
 
     try {
       const payload = { 
         ...formData,
         tray_id: batchModalMode === "insert" ? selectedTray.tray_id : formData.tray_id,
         plant_name: batchModalMode === "insert" ? selectedTray.plant : formData.plant_name,
-        total_seedlings: parseInt(formData.total_seedlings) || 0,
-        alive_seedlings: parseInt(formData.alive_seedlings) || 0,
-        dead_seedlings: parseInt(formData.dead_seedlings) || 0,
-        replanted_seedlings: parseInt(formData.replanted_seedlings) || 0,
-        fully_grown_seedlings: parseInt(formData.fully_grown_seedlings) || 0,
-        expected_harvest_days: parseInt(formData.expected_harvest_days) || 0,
-    };
+        total_seedlings: formData.total_seedlings !== "" ? parseInt(formData.total_seedlings) : null,
+        alive_seedlings: formData.alive_seedlings !== "" ? parseInt(formData.alive_seedlings) : null,
+        dead_seedlings: formData.dead_seedlings !== "" ? parseInt(formData.dead_seedlings) : null,
+        replanted_seedlings: formData.replanted_seedlings !== "" ? parseInt(formData.replanted_seedlings) : null,
+        fully_grown_seedlings: formData.fully_grown_seedlings !== "" ? parseInt(formData.fully_grown_seedlings) : null,
+        expected_harvest_days: formData.expected_harvest_days !== "" ? parseInt(formData.expected_harvest_days) : null,
+      };
 
-    if (batchModalMode === "insert") {
+      if (batchModalMode === "insert") {
         await batchModels.insertBatches(payload);
-        setSuccessMsg(`Batch for ${selectedBatch.plant_name} is Added`);
-    } else if (batchModalMode === "update") {
+        setSuccessMsg(`Batch for ${payload.plant_name} is Added`);
+      } else if (batchModalMode === "update") {
         await batchModels.updateBatches(payload, selectedBatch.batch_id);
-        setSuccessMsg(`Batch for ${selectedBatch.plant_name} is Updated`);
-    } else if (batchModalMode === "delete") {
+        setSuccessMsg(`Batch for ${payload.plant_name} is Updated`);
+      } else if (batchModalMode === "delete") {
         await batchModels.deleteBatches(selectedBatch.batch_id);
         setSuccessMsg(`Batch for ${selectedTray.plant} is Deleted`);
-    }
+      }
 
-    onClose();
-    reloadBatches();
+      onClose();
+      reloadBatches();
 
     } catch (error) {
-
       const rawErrors = error?.response?.data?.errors;
-        if (Array.isArray(rawErrors)) {
-            const formattedErrors = rawErrors.reduce((acc, err) => {
-            acc[err.path] = err.msg;
-            return acc;
-            }, {});
-            setFormErrors(formattedErrors);
-        } else {
-            setFormErrors({ general: "Something went wrong." });
-        }
+      if (Array.isArray(rawErrors)) {
+        const formattedErrors = rawErrors.reduce((acc, err) => {
+          acc[err.path] = err.msg;
+          return acc;
+        }, {});
+        setFormErrors(formattedErrors);
+      } else {
+        setFormErrors({ general: "Something went wrong." });
       }
-      
-    };
+    }
+  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, 
       [e.target.name]: e.target.value });
   };
-
 
   return (
     <div

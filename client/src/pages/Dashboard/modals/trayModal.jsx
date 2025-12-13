@@ -14,7 +14,7 @@ export function TrayModal({ isOpen, onClose, trayModalMode, selectedTrayGroup, s
   useEffect(() => {
     if (trayModalMode === "update" && selectedTray) {
       setFormData({
-        tray_group_id: selectedTrayGroup.tray_group_id || "",
+        tray_group_id: selectedTray.tray_group_id,
         plant: selectedTray.plant || "",
         status: selectedTray.status || ""
       });

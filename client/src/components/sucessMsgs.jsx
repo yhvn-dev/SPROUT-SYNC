@@ -32,8 +32,8 @@ export function FloatSuccessMsg({txt,clearMsg}){
   if(!txt) return null;
 
   return (
-    <div className={`absolute w-full top-[0px] left-0 p-4`}>
-      <p className="full w-[90%] succes_msg_pro">{txt}</p>
+    <div className={`absolute pointer-events-none w-full top-[0px] left-0 p-4`}>
+      <p className="full w-[90%] succes_msg_pro_b">{txt}</p>
     </div>
   )
 

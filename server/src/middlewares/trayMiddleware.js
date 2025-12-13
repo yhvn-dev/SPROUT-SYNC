@@ -3,7 +3,7 @@ import { body, validationResult } from "express-validator";
 export const validateTrays = [
     body("tray_group_id")
         .notEmpty()
-        .withMessage("Please select a Tray."),
+        .withMessage("Please select a Tray Group."),
     body("plant")
         .notEmpty()
         .withMessage("Please enter the name of the plant."),

@@ -1,16 +1,13 @@
 import { Sprout } from 'lucide-react';
 
-
-
-function Tray_groups({trayGroupsData,
+function Tray_groups({
+  trayGroupsData,
   setTrayGroupModalOpen,
   setTgModalMode,
-  
   setTrayModalOpen,
   setTrayModalMode,
-  
-  setSelectedTrayGroup}) {
-
+  setSelectedTrayGroup,
+}) {
 
   // TrayGroup handlers
   const handleAdd = () => {
@@ -34,15 +31,15 @@ function Tray_groups({trayGroupsData,
     setSelectedTrayGroup(group);
     setTrayModalMode("insert");
     setTrayModalOpen(true);
-    console.log("HANDLE ADD TRAY")
+    console.log("HANDLE ADD TRAY");
   };
-  
-  
+
   return (
     <>
+      {/* HEADER */}
       <header className="flex py-4">
         <div className="w-1/2 flex items-center justify-start">
-        <Sprout className='mr-4' size={24}/>
+          <Sprout className='mr-4' size={24} />
           <p className="text-2xl">Tray Groups</p>
         </div>
         <div className="w-1/2 flex items-center justify-start flex-row-reverse">
@@ -55,16 +52,17 @@ function Tray_groups({trayGroupsData,
         </div>
       </header>
 
-
-
-      <div className="h-[270px] overflow-hidden">
+      {/* TRAY GROUPS LIST */}
+      <div className="h-[245px] overflow-hidden">
         <div className="space-y-3 h-full overflow-y-auto pr-2">
           {trayGroupsData?.map((group) => (
             <div
               key={group.tray_group_id}
-              className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-5 border border-gray-100 hover:shadow-md transition-shadow"
-            >
+              className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl shadow-md p-5 border border-gray-100 hover:shadow-lg transition-shadow">
               <div className="flex items-start justify-between">
+
+
+                {/* LEFT CONTENT */}
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-2">
                     <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#A8C7B8] to-[#7BA591] flex items-center justify-center">
@@ -75,9 +73,15 @@ function Tray_groups({trayGroupsData,
                         {group.tray_group_name}
                       </h3>
                       <p className="text-sm text-gray-500">{group.description}</p>
+                      {group.location && (
+                        <p className="text-sm text-gray-500 mt-1">
+                          <span className="font-semibold">Location:</span> {group.location}
+                        </p>
+                      )}
                     </div>
                   </div>
 
+                  {/* MOISTURE INFO */}
                   <div className="ml-13 flex items-center gap-6 mt-3">
                     <div className="flex items-center gap-2">
                       <span className="text-xs text-gray-500 uppercase tracking-wide">
@@ -99,20 +103,24 @@ function Tray_groups({trayGroupsData,
                   </div>
                 </div>
 
+                {/* ACTION BUTTONS */}
                 <div className="flex items-center justify-center h-full gap-2 my-4">
                   <button
                     onClick={() => handleAddTray(group)}
-                    className="cursor-pointer u_btn shadow-lg bg-[var(--sancgc)] text-white">
+                    className="cursor-pointer u_btn shadow-lg bg-[var(--sancgc)] text-white"
+                  >
                     ADD TRAY
                   </button>
                   <button
                     onClick={() => handleUpdate(group)}
-                    className="cursor-pointer u_btn shadow-lg bg-[var(--white-blple--)] text-white">
+                    className="cursor-pointer u_btn shadow-lg bg-[var(--white-blple--)] text-white"
+                  >
                     UPDATE
                   </button>
                   <button
                     onClick={() => handleDelete(group)}
-                    className="cursor-pointer u_btn shadow-lg bg-[var(--color-danger-b)] text-white">
+                    className="cursor-pointer u_btn shadow-lg bg-[var(--color-danger-b)] text-white"
+                  >
                     DELETE
                   </button>
                 </div>
@@ -120,11 +128,9 @@ function Tray_groups({trayGroupsData,
             </div>
           ))}
         </div>
-      </div>      
+      </div>
     </>
   );
-
-  
 }
 
 export default Tray_groups;

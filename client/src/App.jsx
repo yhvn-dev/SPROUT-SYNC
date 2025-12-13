@@ -9,12 +9,14 @@ import Analytics from './pages/Analytics/analytics.jsx';
 
 
 import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";
+import { PlantDataProvider } from "./hooks/plantContext.jsx";
 
 import './styles.css'
 function App() {
 
   return(
       <>
+      <PlantDataProvider>
         <BrowserRouter>
           <Routes>         
               <Route path='/' element={<Home/>}/>
@@ -42,6 +44,7 @@ function App() {
               }/>
           </Routes>
         </BrowserRouter>
+    </PlantDataProvider>
 
       </>
 

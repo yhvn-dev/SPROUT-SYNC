@@ -26,7 +26,7 @@ export function Db_Header({input,setNotifOpen}) {
         
         </ul>
 
-          <button onClick={() =>setNotifOpen(true)} className="mx-4"><Bell size={18}/></button>
+          <button onClick={() =>setNotifOpen(true)} className="cursor-pointer  px-4 rounded-lg mx-2 hover:bg-[var(--main-white--)] "><Bell size={18}/></button>
       </div>
     </section>
   );

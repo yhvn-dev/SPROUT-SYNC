@@ -1,12 +1,19 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { X, Trash2, Sprout, Save } from "lucide-react";
+import { X, Trash2, Sprout } from "lucide-react";
 
 import * as trayGroupModels from "../../../data/trayGroupServices";
 
-export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,setSuccessMsg,loadTrayGroups}) {
+export function TrayGroupModal({
+  isOpen,
+  onClose,
+  tgModalMode,
+  selectedTrayGroup,
+  setSuccessMsg,
+  loadTrayGroups,
+  reloadTrayGroups,
+}) {
   if (!isOpen) return null;
-
 
   const plantTypeOptions = [
     { type: "Leafy Greens", min: 55, max: 80 },
@@ -15,116 +22,112 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,
     { type: "Root Crops", min: 60, max: 80 },
   ];
 
-  const [formData, setFormData] = useState({tray_group_name: "",min_moisture: "",max_moisture: ""});
-  const [formErrors,setFormErrors] = useState({})
+  const [formData, setFormData] = useState({
+    tray_group_name: "",
+    min_moisture: "",
+    max_moisture: "",
+    location: "",
+  });
+  const [formErrors, setFormErrors] = useState({});
 
-  // Initialize modal values when opened
+  // Initialize modal values
   useEffect(() => {
-    if (tgModalMode === "update" && selectedTrayGroup) {
+    if ((tgModalMode === "update" || tgModalMode === "delete") && selectedTrayGroup) {
       setFormData({
         tray_group_name: selectedTrayGroup.tray_group_name || "",
         min_moisture: selectedTrayGroup.min_moisture || "",
-        max_moisture: selectedTrayGroup.max_moisture || ""
+        max_moisture: selectedTrayGroup.max_moisture || "",
+        location: selectedTrayGroup.location || "",
       });
-      console.log("SELECTED TRAY GROUP",selectedTrayGroup)
     } else if (tgModalMode === "insert") {
       setFormData({
         tray_group_name: "",
         min_moisture: "",
-        max_moisture: ""
+        max_moisture: "",
+        location: "",
       });
-      console.log("SELECTED TRAY GROUP",selectedTrayGroup)
-    }else{
-      setFormData({
-        tray_group_name: selectedTrayGroup.tray_group_name || "",
-        min_moisture: selectedTrayGroup.min_moisture || "",
-        max_moisture: selectedTrayGroup.max_moisture || ""
-      });
-      console.log("SELECTED TRAY GROUP",selectedTrayGroup)
     }
-  }, [tgModalMode,isOpen,selectedTrayGroup]);
+  }, [tgModalMode, isOpen, selectedTrayGroup]);
 
-
-  
-  // Update min/max moisture when tray_group_name changes
+  // Auto-update min/max moisture based on plant type
   useEffect(() => {
-    const selectedPlant = plantTypeOptions.find(p => p.type === formData.tray_group_name);
+    const selectedPlant = plantTypeOptions.find(
+      (p) => p.type === formData.tray_group_name
+    );
     if (selectedPlant) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         min_moisture: selectedPlant.min,
         max_moisture: selectedPlant.max,
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
         min_moisture: "",
         max_moisture: "",
       }));
     }
-  }, [formData.tray_group_name]);   
-  
-  const handleChange = e => {
+  }, [formData.tray_group_name]);
+
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
-    setFormErrors({})
+    setFormData((prev) => ({ ...prev, [name]: value }));
+    setFormErrors({});
   };
 
-  
   const onFormSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-
       if (tgModalMode === "insert") {
-          await trayGroupModels.insertTrayGroup(formData);
-          setSuccessMsg(`${formData.tray_group_name} Group is Added`)
-          onClose();
-          setFormErrors({})
-          loadTrayGroups()
-        } else if (tgModalMode === "update") {
-          await trayGroupModels.updateTrayGroup(formData,selectedTrayGroup.tray_group_id); 
-          setSuccessMsg(`${selectedTrayGroup.tray_group_name} Group is Updated to ${formData.tray_group_name} `)
-          onClose();
-          setFormErrors({})
-          loadTrayGroups()
-        }else if (tgModalMode === "delete"){
-          await trayGroupModels.deleteTrayGroup(selectedTrayGroup.tray_group_id)
-          setSuccessMsg(`${selectedTrayGroup.tray_group_name} Group is Deleted `)
-          onClose();
-          setFormErrors({})
-          loadTrayGroups()
+        const newGroup = await trayGroupModels.insertTrayGroup(formData)
+        setSuccessMsg(`${newGroup.tray_group_name} Group is Added`);
+      } else if (tgModalMode === "update") {
+        const updatedGroup = await trayGroupModels.updateTrayGroup(
+          formData,
+          selectedTrayGroup.tray_group_id
+        );
+        setSuccessMsg(
+          `${selectedTrayGroup.tray_group_name} Group is Updated to ${updatedGroup.tray_group_name}`
+        );
+      } else if (tgModalMode === "delete") {
+        await trayGroupModels.deleteTrayGroup(selectedTrayGroup.tray_group_id);
+        setSuccessMsg(`${selectedTrayGroup.tray_group_name} Group is Deleted`);
       }
+
+      onClose();
+      setFormErrors({});
+      loadTrayGroups();
+      reloadTrayGroups();
     } catch (error) {
-        const rawErrors = error?.response?.data?.errors; 
-        if (Array.isArray(rawErrors)) {
-          const formattedErrors = rawErrors.reduce((acc, err) => {
-            acc[err.path] = err.msg; 
-            return acc;
-          }, {});
-
-          setFormErrors(formattedErrors);
-        } else {
-          setFormErrors({
-            general: "Something went wrong."
-          });
-        }
-    }   
-    
+      const rawErrors = error?.response?.data?.errors;
+      if (Array.isArray(rawErrors)) {
+        const formattedErrors = rawErrors.reduce((acc, err) => {
+          acc[err.path] = err.msg;
+          return acc;
+        }, {});
+        setFormErrors(formattedErrors);
+      } else {
+        setFormErrors({ general: "Something went wrong." });
+      }
+    }
   };
-
-  
 
   return (
     <motion.div className="modal_backdrop fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50">
       <motion.div
-        className={`bg-white rounded-xl shadow-xl p-6 relative ${tgModalMode === "delete" ? "w-[420px] h-[220px]" : "w-[600px]"}`}
+        className={`bg-white rounded-xl shadow-xl p-6 relative ${
+          tgModalMode === "delete" ? "w-[420px] h-[220px]" : "w-[600px]"
+        }`}
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ duration: 0.4 }}>
-
-        {/* CLOSE */}
-        <button onClick={onClose} className="cursor-pointer absolute top-4 right-4 hover:bg-gray-100 p-2 rounded-lg">
+        transition={{ duration: 0.4 }}
+      >
+        {/* CLOSE BUTTON */}
+        <button
+          onClick={onClose}
+          className="cursor-pointer absolute top-4 right-4 hover:bg-gray-100 p-2 rounded-lg"
+        >
           <X />
         </button>
 
@@ -138,17 +141,21 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,
             <p className="mt-6 text-gray-600">
               Are you sure you want to delete <b>{selectedTrayGroup.tray_group_name}</b>?
             </p>
-            
+
             <form onSubmit={onFormSubmit} className="flex justify-end mt-8 gap-3 p-4">
-              <button onClick={onClose} className="cursor-pointer px-4 py-2 rounded-lg border">
+              <button
+                onClick={onClose}
+                className="cursor-pointer px-4 py-2 rounded-lg border"
+              >
                 Cancel
               </button>
-              <button type="submit" className="cursor-pointer px-4 py-2 rounded-lg 
-              bg-[var(--color-danger-a)] text-white">
+              <button
+                type="submit"
+                className="cursor-pointer px-4 py-2 rounded-lg bg-[var(--color-danger-a)] text-white"
+              >
                 Delete
               </button>
             </form>
-            
           </>
         ) : (
           <>
@@ -170,23 +177,22 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,
                   value={formData.tray_group_name}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg"
-                  >
-                    
+                  required
+                >
                   <option value="">Select a Plant Type</option>
-                  {plantTypeOptions.map(plant => (
+                  {plantTypeOptions.map((plant) => (
                     <option key={plant.type} value={plant.type}>
                       {plant.type}
                     </option>
                   ))}
                 </select>
-
                 {formErrors.tray_group_name && (
                   <p className="text-sm text-[var(--color-danger-a)] mt-1">
                     {formErrors.tray_group_name}
                   </p>
                 )}
               </div>
-              
+
               {/* Min/Max Moisture */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
@@ -211,30 +217,54 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode,selectedTrayGroup,
                 </div>
               </div>
 
-             {tgModalMode !== "delete" && <p className="text-sm text-[var(--sancga)]">* Required fields</p>}
+              {/* Location */}
+              <div className="mt-4">
+                <label className="text-sm">Location</label>
+                <select
+                  name="location"
+                  value={formData.location}
+                  onChange={handleChange}
+                  className="w-full p-2 border rounded-lg"
+                  required
+                >
+                  <option value="">Select a Location</option>
+                  <option value="Left 1">Left 1</option>
+                  <option value="Left 2">Left 2</option>
+                  <option value="Left 3">Left 3</option>
+                  <option value="Right 1">Right 1</option>
+                  <option value="Right 2">Right 2</option>
+                  <option value="Right 3">Right 3</option>
+                </select>
+                
+                {formErrors.location && (
+                  <p className="text-sm text-[var(--color-danger-a)] mt-1">
+                    {formErrors.location}
+                  </p>
+                )}
+              </div>
+
+              {tgModalMode !== "delete" && (
+                <p className="text-sm text-[var(--sancga)]">* Required fields</p>
+              )}
+
               <div className="flex items-center justify-end gap-3">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2.5 border border-[var(--sage-medium)] text-[var(--sancga)] rounded-lg hover:bg-[var(--sage-lighter)] font-medium transition"
-                >
+                  className="px-5 py-2.5 border border-[var(--sage-medium)] text-[var(--sancga)] rounded-lg hover:bg-[var(--sage-lighter)] font-medium transition">
                   Cancel
                 </button>
                 <button
-                  type="button"
-                  onClick={onFormSubmit}
-                  className={`px-5 py-2.5 text-white rounded-lg font-medium shadow-lg transition-all
-                  ${tgModalMode === "insert" ? "bg-[var(--sancgb)] hover:bg-[var(--ptl-greenf)]" :
-                    "bg-[var(--white-blple)] hover:bg-[var(--sancgd)]"
-                  }`}
-                >
+                  type="submit"
+                  className={`px-5 py-2.5 text-white rounded-lg font-medium shadow-lg transition-all ${
+                    tgModalMode === "insert"
+                      ? "bg-[var(--sancgb)] hover:bg-[var(--ptl-greenf)]"
+                      : "bg-[var(--purpluish--)] hover:bg-[var(--bluis--)]"
+                  }`}>
+                    
                   {tgModalMode === "insert" ? "Create Tray Group" : "Update Group"}
                 </button>
               </div>
-
-
-
-
             </form>
           </>
         )}

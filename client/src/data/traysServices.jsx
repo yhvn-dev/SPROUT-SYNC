@@ -11,8 +11,6 @@ export const fetchAllTrays = async () =>{
     }
 }
 
-
-
 export const insertTray = async (trayData) =>{
     try {
         const data = await api.post("/trays/post/trays",trayData)
@@ -26,7 +24,6 @@ export const insertTray = async (trayData) =>{
 
 
 export const updateTray = async (trayData,trayId) =>{
-    console.log("PASSED TRAY DATA:",trayData)
     try {
         const data = await api.put(`/trays/put/trays/${trayId}`,trayData)
         const trays = data.data

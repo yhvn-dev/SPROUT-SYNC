@@ -30,44 +30,78 @@ export const readTrayGroupById = async (tray_group_id) => {
 };
 
 
-// ===== CREATE a new tray group =====
+
+
 export const createTrayGroups = async (trayGroupData) => {
-    const {tray_group_name,min_moisture,max_moisture,is_watering} = trayGroupData
+  let { tray_group_name, min_moisture, max_moisture, is_watering, location } = trayGroupData;
 
-    try {        
-        const sql = `INSERT INTO tray_groups (tray_group_name,min_moisture,max_moisture,is_watering) VALUES 
-        ($1, $2, $3, $4) RETURNING *`;
+  try {
+    const baseName = tray_group_name.trim();
 
-        const values = [tray_group_name,min_moisture,max_moisture,is_watering];
-        const result = await query(sql, values);
-        return result.rows[0];
-    } catch (error) {
-        throw error
+    const checkSql = `SELECT tray_group_name FROM tray_groups WHERE tray_group_name ILIKE $1`;
+    const existing = await query(checkSql, [`${baseName}%`]);
+
+    let nextNumber = 1;
+    if (existing.rows.length > 0) {
+      const suffixNumbers = existing.rows.map(r => {
+        const match = r.tray_group_name.match(/- (\d+)$/); 
+        return match ? parseInt(match[1], 10) : 0;
+      });
+      nextNumber = Math.max(...suffixNumbers) + 1;
     }
+
+    tray_group_name = `${baseName} - ${nextNumber}`;
+    const sql = `
+      INSERT INTO tray_groups (tray_group_name, min_moisture, max_moisture, is_watering, location)
+      VALUES ($1, $2, $3, $4, $5)
+      RETURNING *`;
+      
+    const values = [tray_group_name, min_moisture, max_moisture, is_watering, location];
+    const result = await query(sql, values);
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+  
 };
 
 
-
 export const updateTrayGroups = async (trayGroupData, tray_group_id) => {
-     const {tray_group_name,min_moisture,max_moisture,is_watering,plant_type,soil_type} = trayGroupData
-    try {   
-        const sql = `
-            UPDATE tray_groups
-            SET tray_group_name = $1, 
-            min_moisture = $2, 
-            max_moisture = $3,
-            is_watering = $4,
-            plant_type = $5,
-            soil_type = $6
-            WHERE tray_group_id = $7
-            RETURNING *
-        `;
-        const values = [tray_group_name,min_moisture,max_moisture,is_watering,plant_type,soil_type,tray_group_id]; 
-        const result = await query(sql, values);
-        return result.rows[0];
-    } catch (error) {
-        throw error
+  let { tray_group_name, min_moisture, max_moisture, is_watering, location } = trayGroupData;
+  try {
+    const baseName = tray_group_name.trim();
+
+    const checkSql = ` SELECT tray_group_name  FROM tray_groups  WHERE tray_group_name ILIKE $1 AND tray_group_id != $2`;
+    const existing = await query(checkSql, [`${baseName}%`, tray_group_id]);
+
+    let nextNumber = 1;
+    if (existing.rows.length > 0) {
+      const suffixNumbers = existing.rows.map(r => {
+        const match = r.tray_group_name.match(/- (\d+)$/);
+        return match ? parseInt(match[1], 10) : 0;
+      });
+      nextNumber = Math.max(...suffixNumbers) + 1;
     }
+
+    tray_group_name = `${baseName} - ${nextNumber}`;
+
+    const sql = `
+      UPDATE tray_groups
+      SET tray_group_name = $1,
+          min_moisture = $2,
+          max_moisture = $3,
+          is_watering = $4,
+          location = $5
+      WHERE tray_group_id = $6
+      RETURNING *
+    `;
+    const values = [tray_group_name, min_moisture, max_moisture, is_watering, location, tray_group_id];
+    const result = await query(sql, values);
+    return result.rows[0];
+
+  } catch (error) {
+    throw error;
+  }
 };
 
 

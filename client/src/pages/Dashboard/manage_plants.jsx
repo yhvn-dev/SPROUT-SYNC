@@ -3,7 +3,7 @@ import {Sprout, LayoutGrid, TrendingUp} from 'lucide-react';
 import Tray_groups from './tray_groups';
 import Trays from "./trays"
 import Plant_batches from './plant_batches';
-import { FloatSuccessMsg  } from "../../components/sucessMsgs"
+import { FloatSuccessMsg, SucessMsgs  } from "../../components/sucessMsgs"
 
 import * as trayGroups from "../../data/trayGroupServices"
 import * as trays from "../../data/traysServices"
@@ -16,7 +16,7 @@ import { TrayModal  } from "./modals/trayModal"
 import { BatchModal } from './modals/batchModal';
 
 
-const ManagePlants = () => {
+const ManagePlants = ({reloadTrayGroups,reloadTrays,reloadBatches}) => {
   const [activeTab, setActiveTab] = useState('trayGroups');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -42,6 +42,8 @@ const ManagePlants = () => {
   const [batchModalMode, setBatchModalMode] = useState("")
   const [selectedBatch,setSelectedBatches] = useState([])
 
+  
+
 
   const clearMsg =  useCallback(() => {
     setSuccessMsg("")
@@ -57,7 +59,7 @@ const ManagePlants = () => {
     }
   },[activeTab])
 
-
+  
   const loadTrayGroups = async () =>{
       try {
       const tgData = await trayGroups.fetchAllTrayGroups()
@@ -66,8 +68,6 @@ const ManagePlants = () => {
       console.error("Error Loading Tray Groups")
     }
   }
-  
-  
   const loadTrays = async () =>{
       try {
       const traysData = await trays.fetchAllTrays()
@@ -75,9 +75,7 @@ const ManagePlants = () => {
     } catch (error) {
       console.error("Error Loading Trays")
     }
-  }
-
-  
+  } 
   const loadBatches = async () => {
       try {
       const pb = await batches.fetchAllBatches()
@@ -104,6 +102,10 @@ const ManagePlants = () => {
 
       <div className="max-w-7xl mx-auto relative">
         {/* Header */}
+        <div className='mb-4'>
+          <SucessMsgs txt={successMsg} clearMsg={clearMsg}/>    
+        </div>
+    
         <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 mb-6">
           <div className="flex items-center justify-between">
             <div>
@@ -114,6 +116,8 @@ const ManagePlants = () => {
           </div>
         </div>
 
+
+       
         {/* Navigation Tabs */}
         <div className="bg-white rounded-3xl shadow-sm border border-gray-100 mb-6">
           <div className="flex p-2 gap-2">
@@ -203,6 +207,7 @@ const ManagePlants = () => {
         selectedTrayGroup={selectedTrayGroup}
         setSuccessMsg={setSuccessMsg}
         loadTrayGroups={loadTrayGroups}
+        reloadTrayGroups={reloadTrayGroups}      
       />
     )}
 
@@ -233,7 +238,7 @@ const ManagePlants = () => {
       />
     )}
     
-    <FloatSuccessMsg  txt={successMsg} clearMsg={clearMsg}/>    
+   
 
   </>
 

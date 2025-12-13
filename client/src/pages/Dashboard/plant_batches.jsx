@@ -43,7 +43,7 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
       </header>
 
 
-      <div className="overflow-y-auto max-h-[255px] pr-2 space-y-3">
+      <div className="max-h-[240px] overflow-y-auto pr-2 space-y-3">
 
         {batchesData.length > 0 && batchesData.map((pb) => {
 
