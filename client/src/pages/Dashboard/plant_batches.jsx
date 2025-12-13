@@ -17,9 +17,7 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
       setBatchModalOpen(true) 
       setBatchModalMode("delete")
       setSelectedBatches(batch);
-  
       console.log("SELECTED BATCH",batch)
-
   };
 
   const formatDateOnly = (dateString) => {
@@ -32,7 +30,8 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
 };
 
   return (
-    <div className="space-y-3 ">
+    <div className="space-y-3">
+
       {/* Header */}
       <header className="flex py-4">
         <div className="h-full w-1/2 flex items-center justify-start">
@@ -41,7 +40,7 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
         </div>
       </header>
 
-      <div className="max-h-[350px] overflow-y-auto pr-2 space-y-3">
+      <div className="max-h-[240px] overflow-y-auto pr-2 space-y-3">
 
         {batchesData.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 text-gray-400">
@@ -56,14 +55,14 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
               const yyyy = date.getFullYear();
               const mm = String(date.getMonth() + 1).padStart(2, "0");
               const dd = String(date.getDate()).padStart(2, "0");
-
               return `${yyyy}${mm}${dd}-${String(batch.batch_id).padStart(3, "0")}`;
             }
-          return (            
+
+          return (        
+
             <div
               key={pb.batch_id}
               className="rounded-2xl p-5 border shadow-lg border-gray-100 hover:shadow-xl transition-shadow bg-white">
-
               <div className="flex items-start justify-between mb-4 bg-[var(--sage-lighter)] rounded-2xl p-4 ">
                 <div className="flex items-center gap-3 ">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#92e6a7] to-[#25a244] flex items-center justify-center">

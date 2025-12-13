@@ -45,12 +45,15 @@ export const createSensors = async (sensorData) => {
   } catch (error) {
     throw error;
   }
-
 };
+
+
+
+
 
 // ===== UPDATE sensor =====
 export const updateSensors = async (sensorData, sensor_id) => {
-  const {tray_group_id, sensor_type,status} = sensorData;
+  const {tray_id, sensor_type,status} = sensorData;
 
   try {   
     const sql = `
@@ -59,7 +62,6 @@ export const updateSensors = async (sensorData, sensor_id) => {
       WHERE sensor_id = $4
       RETURNING *
     `;
-
     const values = [tray_id, sensor_type,status,sensor_id]; 
     const result = await query(sql, values);
     return result.rows[0];
@@ -67,6 +69,8 @@ export const updateSensors = async (sensorData, sensor_id) => {
     throw error;
   }
 };
+
+
 
 
 

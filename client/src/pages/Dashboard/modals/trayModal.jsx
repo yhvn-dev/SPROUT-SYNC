@@ -5,32 +5,14 @@ import * as trayModels from "../../../data/traysServices";
 
 /* 🌱 PLANT OPTIONS BY TRAY GROUP */
 const plantOptionsByGroup = {
-  "Leafy Greens": [
-    "Pechay",
-    "Lettuce",
-    "Spinach",
-    "Kale",
-    "Mustard Greens",
-    "Swiss Chard",
-    "Arugula",
-    "Romaine Lettuce",
-  ],
-  "Fruiting Plants": [
-    "Cucumber",
-    "Tomato",
-    "Bell Pepper",
-    "Eggplant",
-    "Chili Pepper",
-    "Okra",
-    "Zucchini",
-    "Pumpkin",
-  ],
+  "Leafy Greens": ["Pechay", "Lettuce", "Spinach", "Kale", "Mustard Greens", "Swiss Chard", "Arugula", "Romaine Lettuce"],
+  "Fruiting Plants": ["Cucumber", "Tomato", "Bell Pepper", "Eggplant", "Chili Pepper", "Okra", "Zucchini", "Pumpkin"],
   "Herbs": ["Basil", "Mint", "Cilantro", "Parsley", "Thyme", "Oregano", "Rosemary", "Dill"],
   "Root Crops": ["Carrot", "Radish", "Beetroot", "Turnip", "Sweet Potato", "Ginger", "Garlic", "Onion"],
   "Legumes": ["Green Peas", "Soybean", "Lentils", "Chickpeas", "Kidney Beans", "Black Beans", "Mung Beans"],
   "Flowers": ["Marigold", "Sunflower", "Petunia", "Lavender", "Rose", "Daisy", "Tulip"],
   "Fungi": ["Button Mushroom", "Oyster Mushroom", "Shiitake", "Enoki", "Portobello"],
-  "Exotic/Other": ["Avocado", "Dragon Fruit", "Papaya", "Strawberry", "Blueberry", "Passion Fruit"],
+  "Exotic/Other": ["Avocado", "Dragon Fruit", "Papaya", "Strawberry", "Blueberry", "Passion Fruit"]
 };
 
 export function TrayModal({
@@ -40,31 +22,31 @@ export function TrayModal({
   selectedTrayGroup,
   selectedTray,
   setSuccessMsg,
-  reloadTray,
+  reloadTray
 }) {
-  const [formData, setFormData] = useState({
-    tray_group_id: 0,
-    plant: "",
-    status: "",
-  });
-
+  const [formData, setFormData] = useState({ tray_group_id: 0, plant: "", status: "Available" });
+  const [plantOptions, setPlantOptions] = useState([]);
   const [formErrors, setFormErrors] = useState({});
 
   if (!isOpen) return null;
 
-  /* 🔄 INITIALIZE FORM */
+  // Initialize form
   useEffect(() => {
     if (trayModalMode === "update" && selectedTray) {
+      // Split prefix and plant
+      const parts = selectedTray.plant.split(" - ");
+      const prefix = parts.length > 1 ? parts.slice(1).join(" - ") : parts[0];
+
       setFormData({
         tray_group_id: selectedTray.tray_group_id,
-        plant: selectedTray.plant || "",
-        status: selectedTray.status || "",
+        plant: prefix,
+        status: selectedTray.status || "Available",
       });
     } else if (trayModalMode === "insert") {
       setFormData({
-        tray_group_id: selectedTrayGroup?.tray_group_id,
+        tray_group_id: selectedTrayGroup?.tray_group_id || 0,
         plant: "",
-        status: "",
+        status: "Available",
       });
     } else if (trayModalMode === "delete" && selectedTray) {
       setFormData({
@@ -75,34 +57,52 @@ export function TrayModal({
     }
   }, [trayModalMode, selectedTray, selectedTrayGroup]);
 
-  /* 🌿 RESET PLANT WHEN GROUP CHANGES */
+  // Update plant options based on tray group
   useEffect(() => {
-    if (trayModalMode === "insert") {
-      setFormData((prev) => ({ ...prev, plant: "" }));
+    const groupName = selectedTrayGroup?.tray_group_name || selectedTray?.tray_group_name || "";
+    const normalizedGroupName = groupName.split(" - ")[0];
+    const options = plantOptionsByGroup[normalizedGroupName] || [];
+    setPlantOptions(options);
+
+    // Reset plant if current not in options
+    if (!options.includes(formData.plant)) {
+      setFormData(prev => ({ ...prev, plant: "" }));
     }
-  }, [selectedTrayGroup?.tray_group_name]);
+  }, [selectedTrayGroup, selectedTray]);
 
-  /* 🔍 NORMALIZE TRAY GROUP NAME */
-  const trayGroupName = selectedTrayGroup?.tray_group_name || "";
-  const normalizedGroupName = trayGroupName.split(" - ")[0]; // remove " - 1" etc.
-  const plantOptions = plantOptionsByGroup[normalizedGroupName] || [];
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-  /* 📤 SUBMIT HANDLER */
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    setFormErrors({});
     try {
       if (trayModalMode === "insert") {
-        await trayModels.insertTray({
-          ...formData,
+        if (!selectedTrayGroup?.tray_group_id || !formData.plant) {
+          setFormErrors({ general: "Tray group and plant are required." });
+          return;
+        }
+        const newTray = await trayModels.insertTray({
           tray_group_id: selectedTrayGroup.tray_group_id,
+          plant: formData.plant,
+          status: formData.status,
         });
-        setSuccessMsg(`${formData.plant} Tray Added`);
+
+        setSuccessMsg(`${newTray.plant} Tray Added`);
       }
 
       if (trayModalMode === "update") {
-        await trayModels.updateTray(formData, selectedTray.tray_id);
-        setSuccessMsg(`${selectedTray.plant} Tray Updated`);
+        const updatedTray = await trayModels.updateTray(
+          {
+            tray_group_id: formData.tray_group_id,
+            plant: formData.plant,
+            status: formData.status
+          },
+          selectedTray.tray_id
+        );
+
+        setSuccessMsg(`${updatedTray.plant} Tray Updated`);
       }
 
       if (trayModalMode === "delete") {
@@ -113,29 +113,15 @@ export function TrayModal({
       reloadTray();
       onClose();
     } catch (error) {
-      const rawErrors = error?.response?.data?.errors;
-      if (Array.isArray(rawErrors)) {
-        const formatted = rawErrors.reduce((acc, err) => {
-          acc[err.path] = err.msg;
-          return acc;
-        }, {});
-        setFormErrors(formatted);
-      } else {
-        setFormErrors({ general: "Something went wrong." });
-      }
+      console.error(error);
+      setFormErrors({ general: "Something went wrong." });
     }
-  };
-
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
     <motion.div className="fixed inset-0 bg-transparent backdrop-blur-2xl flex items-center justify-center p-4 z-50">
       <motion.div
-        className={`bg-white rounded-2xl shadow-2xl ${
-          trayModalMode === "delete" ? "w-[450px] h-[250px]" : "w-[750px]"
-        } overflow-hidden flex flex-col`}
+        className={`bg-white rounded-2xl shadow-2xl ${trayModalMode === "delete" ? "w-[450px] h-[250px]" : "w-[750px]"} overflow-hidden flex flex-col`}
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
@@ -144,154 +130,102 @@ export function TrayModal({
         {/* HEADER */}
         <div className="px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div
-              className={`p-2.5 rounded-lg ${
-                trayModalMode === "delete"
-                  ? "bg-red-600"
-                  : "bg-[var(--ptl-greenh)]"
-              }`}
-            >
-              {trayModalMode === "delete" ? (
-                <Trash2 className="w-5 h-5 text-white" />
-              ) : (
-                <Package className="w-5 h-5 text-white" />
-              )}
+            <div className={`p-2.5 rounded-lg ${trayModalMode === "delete" ? "bg-red-600" : "bg-[var(--ptl-greenh)]"}`}>
+              {trayModalMode === "delete" ? <Trash2 className="w-5 h-5 text-white" /> : <Package className="w-5 h-5 text-white" />}
             </div>
-
             <div>
               <h2 className="text-xl font-bold text-[var(--metal-dark5)]">
-                {trayModalMode === "delete"
-                  ? "Delete Tray"
-                  : trayModalMode === "insert"
-                  ? "Add New Tray"
-                  : "Update Tray"}
+                {trayModalMode === "delete" ? "Delete Tray" : trayModalMode === "insert" ? "Add New Tray" : "Update Tray"}
               </h2>
               <p className="text-sm text-[var(--acc-darkc)]">
                 {trayModalMode === "delete"
                   ? `Are you sure you want to delete ${selectedTray?.plant}?`
-                  : `Insert tray into ${trayGroupName}`}
+                  : `Tray group: ${selectedTrayGroup?.tray_group_name || selectedTray?.tray_group_name}`}
               </p>
             </div>
           </div>
 
-          <button
-            onClick={onClose}
-            className="p-2 rounded-lg hover:bg-gray-100"
-          >
+          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100">
             <X size={24} />
           </button>
         </div>
+
+        
 
         {/* DELETE MODE */}
         {trayModalMode === "delete" ? (
           <>
             <div className="flex-1 flex items-center justify-center">
-              <p className="text-gray-600">
-                Delete <b>{selectedTray?.plant}</b> tray?
-              </p>
+              <p className="text-gray-600">Delete <b>{selectedTray?.plant}</b> tray?</p>
             </div>
-
-            <form
-              onSubmit={handleSubmit}
-              className="flex justify-end gap-3 p-6">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 border rounded-lg">
-                Cancel
-              </button>
-              <button
-                type="submit"
-                className="px-4 py-2 rounded-lg bg-red-600 text-white">
-                Delete
-              </button>
+            <form onSubmit={handleSubmit} className="flex justify-end gap-3 p-6">
+              <button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg">Cancel</button>
+              <button type="submit" className="px-4 py-2 rounded-lg bg-red-600 text-white">Delete</button>
             </form>
           </>
+          
         ) : (
-          <>
-            {/* FORM */}
-            <form onSubmit={handleSubmit} className="p-6 space-y-5">
-              <input type="hidden" name="tray_group_id" value={formData.tray_group_id} />
+          
+          <form onSubmit={handleSubmit} className="p-6 space-y-5">
+            <input type="hidden" name="tray_group_id" value={formData.tray_group_id} />
 
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {/* PLANT SELECT */}
-                <div className="md:col-span-2 border rounded-xl p-4">
-                  <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                      <Sprout className="w-4 h-4" />
-                      Plant *
-                  </label>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {/* PLANT SELECT */}
+              <div className="md:col-span-2 border rounded-xl p-4">
+                <label className="flex items-center gap-2 text-sm font-semibold mb-2">
+                  <Sprout className="w-4 h-4" /> Plant *
+                </label>
+                <select
+                  name="plant"
+                  value={formData.plant}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border rounded-lg bg-white">
 
-                  <select
-                    name="plant"
-                    value={formData.plant}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded-lg bg-white">
-                    <option value="">Select Plant</option>
-                    {plantOptions.map((plant) => (
-                      <option key={plant} value={plant}>
-                        {plant}
-                      </option>
-                    ))}
-                  </select>
-
-                  <p className="text-sm text-red-600 mt-1">
-                    {formErrors.plant}
-                  </p>
-                </div>
-
-                {/* STATUS */}
-                <div className="border rounded-xl p-4">
-                  <label className="flex items-center gap-2 text-sm font-semibold mb-2">
-                    <TrendingUp className="w-4 h-4" />
-                    Status *
-                  </label>
-
-                  <select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                    required
-                    className="w-full px-3 py-2 border rounded-lg bg-white">
-                    <option value="">Select Status</option>
-                    <option value="Available">Available</option>
-                    <option value="Occupied">Occupied</option>
-                    <option value="Maintenance">Maintenance</option>
-                    <option value="Disabled">Disabled</option>
-                  </select>
-
-                  <p className="text-sm text-red-600 mt-1">
-                    {formErrors.status}
-                  </p>
-                </div>
+                  <option value="">Select Plant</option>
+                  {plantOptions.map((plant) => (
+                    <option key={plant} value={plant}>{plant}</option>
+                  ))}
+                </select>
+                <p className="text-sm text-red-600 mt-1">{formErrors.plant}</p>
               </div>
-            </form>
+
+              {/* STATUS */}
+              <div className="border rounded-xl p-4">
+                <label className="flex items-center gap-2 text-sm font-semibold mb-2">
+                  <TrendingUp className="w-4 h-4" /> Status *
+                </label>
+                
+                <select
+                  name="status"
+                  value={formData.status}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-3 py-2 border rounded-lg bg-white">
+                  <option value="">Select Status</option>
+                  <option value="Available">Available</option>
+                  <option value="Occupied">Occupied</option>
+                  <option value="Maintenance">Maintenance</option>
+                  <option value="Disabled">Disabled</option>
+                </select>
+                <p className="text-sm text-red-600 mt-1">{formErrors.status}</p>
+              </div>
+            </div>
+
+
 
             {/* FOOTER */}
             <div className="border-t px-6 py-4 flex justify-between">
               <span className="text-sm text-gray-500">* Required fields</span>
               <div className="flex gap-3">
-                <button
-                  onClick={onClose}
-                  className="px-5 py-2 border rounded-lg"
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={handleSubmit}
-                  className={`px-5 py-2.5 text-white rounded-lg font-medium shadow-lg transition-all ${
-                    trayModalMode === "insert"
-                      ? "bg-[var(--sancgb)] hover:bg-[var(--ptl-greenf)]"
-                      : "bg-[var(--purpluish--)] hover:bg-[var(--bluis--)]"
-                  }`}
-                >
+                <button type="button" onClick={onClose} className="px-5 py-2 border rounded-lg">Cancel</button>
+                <button type="submit" className={`px-5 py-2.5 text-white rounded-lg font-medium shadow-lg transition-all ${trayModalMode === "insert" ? "bg-[var(--sancgb)] hover:bg-[var(--ptl-greenf)]" : "bg-[var(--purpluish--)] hover:bg-[var(--bluis--)]"}`}>
                   {trayModalMode === "insert" ? "Create Tray" : "Update Tray"}
                 </button>
               </div>
             </div>
-          </>
+          </form>
         )}
-        
       </motion.div>
     </motion.div>
   );

@@ -51,7 +51,7 @@ export const createTrayGroups = async (trayGroupData) => {
     }
 
     tray_group_name = `${baseName} - ${nextNumber}`;
-    const sql = `
+    const sql = `   
       INSERT INTO tray_groups (tray_group_name, min_moisture, max_moisture, is_watering, location)
       VALUES ($1, $2, $3, $4, $5)
       RETURNING *`;
@@ -62,7 +62,6 @@ export const createTrayGroups = async (trayGroupData) => {
   } catch (error) {
     throw error;
   }
-  
 };
 
 

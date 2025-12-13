@@ -5,13 +5,14 @@ import { usePlantData } from '../../hooks/plantContext';
 
 function NurseryDashboard(){
   const [expandedZones, setExpandedZones] = useState({});
-  const { trayGroups, trays, batches, sensors, readings,loadTrayGroups,loadTrays,loadBatches, loadReadings } = usePlantData();
+  const { trayGroups, trays, batches, sensors, readings,loadTrayGroups,loadTrays,loadBatches,loadSensors, loadReadings } = usePlantData();
 
    useEffect(() => {
     loadTrayGroups()
     loadTrays()
     loadBatches();
-  }, [loadTrayGroups,loadTrays,loadBatches]);
+    loadSensors()
+  }, [loadTrayGroups,loadTrays,loadBatches,loadSensors]);
 
    useEffect(() => {  
       const interval = setInterval(() => {
@@ -39,8 +40,6 @@ function NurseryDashboard(){
     { id: 1, type: 'warning', message: 'Spinach moisture below threshold (45%)' },
     { id: 2, type: 'alert', message: 'Cilantro moisture above threshold (85%)' }
   ];
-
-
   
   return (
 

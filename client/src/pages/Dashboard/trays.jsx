@@ -59,7 +59,7 @@ function Trays({ traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setB
 
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">
-                      {tray.plant || "No Plant"} Tray
+                      {tray.plant || "No Plant"}, Tray
                     </h3>
                     <p className="text-sm text-gray-500">
                           Tray Group: {trayGroupsData?.find(g => g.tray_group_id === tray.tray_group_id)?.tray_group_name || "Unknown"}
@@ -77,19 +77,12 @@ function Trays({ traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setB
                         ${tray.status === "Occupied" && "bg-[var(--color-warning-c)] text-orange-500"}
                         ${tray.status === "Maintenance" && "bg-[var(--color-warning-b)] text-orange-500"}
                         ${tray.status === "Disabled" && "bg-red-100 text-[var(--acc-darkc)]"}
-                      `}
-                    >
+                      `}>
+                        
                       {tray.status || "Unknown"}
                     </span>
                   </div>
 
-                  {/* BATCH ID */}
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500 uppercase tracking-wide">Batch ID:</span>
-                    <span className="text-sm font-semibold text-gray-700">
-                      {tray.batch_id || "None"}
-                    </span>
-                  </div>
                 </div>
               </div>
 

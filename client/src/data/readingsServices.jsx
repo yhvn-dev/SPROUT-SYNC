@@ -5,9 +5,9 @@ export const fetchAllReadings = async () => {
         const res = await api.get("/readings/get/readings");
         const readingsData = res.data
         return  readingsData
-    }catch(err){
-        console.error("Error Fetching Readings",err);
-        throw err
+    }catch(error){
+        console.error("Error Fetching Readings",error);
+        throw error
     }
 }
 
@@ -16,8 +16,8 @@ export const fetchReadingsBySensor = async (sensor_id) =>{
         const res = await api.get(`/readings/get/readings/sensors/${sensor_id}`);
         return res.data.data
     } catch (error) {
-        console.error("Error Fetching Readings By Sensor",err);
-        throw err
+        console.error("Error Fetching Readings By Sensor",error);
+        throw error
     }
 }
 

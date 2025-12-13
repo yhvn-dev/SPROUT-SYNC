@@ -23,46 +23,90 @@ export const readTrayById = async (tray_id) => {
     }
 };
 
+
+
+
+
 // ===== CREATE a new tray =====
 export const createTray = async (trayData) => {
+  let { tray_group_id, plant, status } = trayData;
 
-    const {tray_group_id, plant, status} = trayData;
-    try {
-        const sql = `
-            INSERT INTO trays (tray_group_id, plant, status)
-            VALUES ($1, $2, $3)
-            RETURNING *
-        `;
-        const values = [tray_group_id,plant, status || 'Active'];
-        const result = await query(sql, values);
-        return result.rows[0];
-    } catch (error) {
-        throw error;
+  try {
+    const baseName = plant.trim();
+    const checkSql = `SELECT plant FROM trays WHERE plant ~ $1`;
+    const existing = await query(checkSql, [`^${baseName}( - \\d+)?$`]);
+
+    let nextNumber = 1;
+    if (existing.rows.length > 0) {
+      const suffixNumbers = existing.rows.map(r => {
+        const match = r.plant.match(/- (\d+)$/);
+        return match ? parseInt(match[1], 10) : 0;
+      });
+      nextNumber = Math.max(...suffixNumbers) + 1;
     }
+
+    plant = `${baseName} - ${nextNumber}`;
+
+    const sql = `
+      INSERT INTO trays (tray_group_id, plant, status)
+      VALUES ($1, $2, $3)
+      RETURNING *
+    `;
+    const values = [tray_group_id, plant, status || 'Available'];
+    const result = await query(sql, values);
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
 };
+
+
+
 
 // ===== UPDATE a tray =====
 export const updateTray = async (trayData, tray_id) => {
-    
-    const {tray_group_id, plant, status} = trayData;
-    
-    try {
-        const sql = `
-            UPDATE trays
-            SET tray_group_id = $1,
-                plant = $2,         
-                status = $3
-            WHERE tray_id = $4
-            RETURNING *
-        `;
-        
-        const values = [tray_group_id, plant, status || 'Active', tray_id];
-        const result = await query(sql, values);
-        return result.rows[0];
-    } catch (error) {
-        throw error;
+  let { tray_group_id, plant, status } = trayData;
+
+  try {
+    const existingTray = await query(`SELECT plant FROM trays WHERE tray_id = $1`, [tray_id]);
+    if (!existingTray.rows[0]) throw new Error("Tray not found");
+
+    const existingPlantFull = existingTray.rows[0].plant;
+    const baseName = plant.trim();
+
+    let finalPlant = existingPlantFull; // default: keep current full name
+
+    // If base name changed, calculate next number
+    const currentBase = existingPlantFull.split(" - ")[0];
+    if (currentBase !== baseName) {
+      const existing = await query(`SELECT plant FROM trays WHERE plant ~ $1`, [`^${baseName}( - \\d+)?$`]);
+      let nextNumber = 1;
+      if (existing.rows.length > 0) {
+        const suffixNumbers = existing.rows.map(r => {
+          const match = r.plant.match(/- (\d+)$/);
+          return match ? parseInt(match[1], 10) : 0;
+        });
+        nextNumber = Math.max(...suffixNumbers) + 1;
+      }
+      finalPlant = `${baseName} - ${nextNumber}`;
     }
+
+    const sql = `
+      UPDATE trays
+      SET tray_group_id = $1,
+          plant = $2,
+          status = $3
+      WHERE tray_id = $4
+      RETURNING *
+    `;
+    const values = [tray_group_id, finalPlant, status || "Available", tray_id];
+    const result = await query(sql, values);
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
 };
+
 
 
 // ===== DELETE a tray =====
