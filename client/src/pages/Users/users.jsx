@@ -8,6 +8,9 @@ import { Workspace } from "./workspace"
 import { Welcome_box } from '../../components/welcome_box';
 import { UserInsights } from './userInsights';
 
+
+import { Notif_Modal } from '../../components/notifModal'
+
 import "./users.css"
 
 function Users() {
@@ -17,6 +20,9 @@ function Users() {
   const [searchValue,setSearchValue] = useState("");
   const token = localStorage.getItem("accessToken")
   const [activeTab, setActiveTab] = useState('Overview');
+  const [isNotifOpen,setNotifOpen] = useState(false)
+
+  
   // fetch chart data
   const fetchChartData = async () =>{
     try {
@@ -81,6 +87,8 @@ function Users() {
             <label htmlFor="">Search  For Users</label>
           </div>    
         </>}
+
+        setNotifOpen={setNotifOpen}
         />
   
       <Sidebar user={user}/>
@@ -105,17 +113,19 @@ function Users() {
         refreshStatus={fetchStatusData}
         searchValue={searchValue} 
         userCount={chartData.count.total_users}
-        statusData={statusData}/> 
-    
+        statusData={statusData}/>   
         : <UserInsights chartData={chartData}/>} 
       </main>
-      {/* Users Table with navigations and filters */}
-    
+  
+      {/* NOTIFICATION MODAL */}
+      {isNotifOpen && (
+        <Notif_Modal
+          isOpen={isNotifOpen}
+          onClose={() => setNotifOpen(false)}
+        />
+      )}
 
-    </section>
-
-
-      
+    </section>      
 
   )
 

@@ -1,43 +1,13 @@
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from "recharts";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
+import { Droplets, AlertTriangle, Menu, Bell, User, Search, TrendingUp, Sprout, Activity } from "lucide-react";
 
-import {
-  Droplets,
-  AlertTriangle
-} from "lucide-react";
 
-import { usePlantData } from "../../hooks/plantContext";
-import { useEffect } from "react";
 
-/* =======================
-   SAMPLE CHART DATA
-======================= */
-const moistureData = [
-  { time: "00:00", value: 45 },
-  { time: "04:00", value: 42 },
-  { time: "08:00", value: 65 },
-  { time: "12:00", value: 58 },
-  { time: "16:00", value: 52 },
-  { time: "20:00", value: 48 },
-  { time: "24:00", value: 44 }
-];
-
-/* =======================
-   GAUGE COMPONENT
-======================= */
 const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
   const percentage = (value / max) * 100;
-
   return (
     <div className="flex flex-col items-center justify-center h-full">
-      <div className="relative w-32 h-32">
+      <div className="relative w-20 h-20">
         <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
           <circle cx="50" cy="50" r="45" fill="none" stroke="#E8F3ED" strokeWidth="8" />
           <circle
@@ -51,137 +21,102 @@ const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
             strokeLinecap="round"
           />
         </svg>
-
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <Icon className="w-6 h-6 mb-1" style={{ color }} />
-          <span className="text-xl font-bold text-[#003333]">{value}</span>
-          <span className="text-xs text-[#5A8F73]">{unit}</span>
+          <Icon className="w-4 h-4 mb-1" style={{ color }} />
+          <span className="text-xl font-bold text-gray-800">{value}</span>
+          <span className="text-xs text-gray-600">{unit}</span>
         </div>
       </div>
-
-      <p className="text-sm text-[#003333] mt-3 font-medium">{label}</p>
+      <p className="text-xs text-gray-700 mt-2 font-medium text-center">{label}</p>
     </div>
   );
 };
 
-/* =======================
-   ALERT ITEM COMPONENT
-======================= */
-const AlertItem = ({ type, message, time }) => {
-  const colors = {
-    warning: { bg: "#fff3cd", border: "#ffc107", text: "#856404" },
-    error: { bg: "#f8d7da", border: "#dc3545", text: "#721c24" },
-    success: { bg: "#d4edda", border: "#28a745", text: "#155724" }
-  };
 
-  const color = colors[type] || colors.warning;
+const moistureData = [
+  { time: "00:00", value: 45 },
+  { time: "04:00", value: 42 },
+  { time: "08:00", value: 65 },
+  { time: "12:00", value: 58 },
+  { time: "16:00", value: 52 },
+  { time: "20:00", value: 48 },
+  { time: "24:00", value: 44 }
+];
 
+
+export const Overview = () => {
   return (
-    <div
-      className="flex items-start gap-3 p-3 rounded-lg mb-2"
-      style={{ backgroundColor: color.bg, borderLeft: `3px solid ${color.border}` }}
-    >
-      <AlertTriangle className="w-4 h-4 mt-0.5" style={{ color: color.border }} />
-      <div className="flex-1">
-        <p className="text-xs font-medium" style={{ color: color.text }}>
-          {message}
-        </p>
-        <p className="text-xs mt-1 opacity-70" style={{ color: color.text }}>
-          {time}
-        </p>
+
+    
+    <div className="h-full grid grid-cols-12 grid-rows-12 gap-4 ">
+      {/* Top Row - Small Gauge Cards */}
+      <div className="col-span-2 row-span-3  bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center ">
+        <GaugeChart value={48} max={100} label="Total" unit="%" icon={Sprout} color="#027c68"/>
       </div>
-    </div>
-  );
-};
 
-/* =======================
-   TIME FORMATTER
-======================= */
-const formatTimeAgo = (dateString) => {
-  const diff = Math.floor((Date.now() - new Date(dateString)) / 60000);
+      <div className="col-span-2 row-span-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-3">
+        <GaugeChart value={42} max={100} label="Alive" unit="%" icon={Droplets} color="#10b981"/>
+      </div>
 
-  if (diff < 1) return "Just now";
-  if (diff < 60) return `${diff} min ago`;
-  if (diff < 1440) return `${Math.floor(diff / 60)} hrs ago`;
-  return `${Math.floor(diff / 1440)} days ago`;
-};
+      <div className="col-span-2 row-span-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-3">
+        <GaugeChart value={6} max={100} label="Dead" unit="%" icon={AlertTriangle} color="#ef4444"/>
+      </div>
 
-/* =======================
-   MAIN COMPONENT
-======================= */
-export function Overview() {
-  const { notifs, loadNotifs } = usePlantData();
+      <div className="col-span-2 row-span-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-3">
+        <GaugeChart value={15} max={100} label="Replanted" unit="%" icon={Activity} color="#f59e0b"/>
+      </div>
 
-  useEffect(() => {
-    loadNotifs();
-  }, [loadNotifs]);
+      <div className="col-span-2 row-span-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-3">
+        <GaugeChart value={35} max={100} label="Grown" unit="%" icon={TrendingUp} color="#8b5cf6"/>
+      </div>
 
-  return (
-    <div className="grid grid-cols-8 grid-rows-[1fr_2fr] gap-4 row-span-full">
+      <div className="col-span-2 row-span-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-3">
+        <GaugeChart value={6.8} max={14} label="Water" unit="L" icon={Droplets} color="#3b82f6"/>
+      </div>
 
-      {/* ===== GAUGES ===== */}
-      <div className="col-span-full grid grid-cols-4 gap-4">
-        <div className="bg-white rounded-2xl p-4 shadow-lg">
-          <GaugeChart value={48} max={100} label="Moisture" unit="%" icon={Droplets} color="#027c68"/>
-        </div>
-
-        <div className="bg-white rounded-2xl p-4 shadow-lg">
-          <GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="#8f9bbc"/>
+      {/* Moisture Chart */}
+      <div className="col-span-7 row-span-9 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col">
+        <h3 className="text-sm font-semibold text-gray-800 mb-2">Soil Moisture Trend (24h)</h3>
+        <div className="flex-1 min-h-0">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={moistureData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <XAxis dataKey="time" tick={{ fontSize: 11 }} />
+              <YAxis tick={{ fontSize: 11 }} />
+              <Tooltip />
+              <Line type="monotone" dataKey="value" stroke="#027c68" strokeWidth={3} dot={{ r: 4 }} />
+            </LineChart>
+          </ResponsiveContainer>
         </div>
       </div>
 
-
-
-      {/* ===== MOISTURE CHART ===== */}
-      <div className="col-start-1 col-end-6 row-start-2 bg-white rounded-2xl p-5 shadow-lg">
-        <h3 className="text-sm font-semibold text-[#003333] mb-4">
-          Soil Moisture Trend
-        </h3>
-
-        <ResponsiveContainer width="100%" height="85%">
-          <LineChart data={moistureData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#E8F3ED" />
-            <XAxis dataKey="time" />
-            <YAxis />
-            <Tooltip />
-            <Line
-              type="monotone"
-              dataKey="value"
-              stroke="#027c68"
-              strokeWidth={3}
-              dot={{ r: 4 }}
-            />
-          </LineChart>
-        </ResponsiveContainer>
+      {/* Featured Large Gauge */}
+      <div className="col-span-5 row-span-9 bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-6">
+        <div className="flex flex-col items-center justify-center">
+          <div className="relative w-40 h-40">
+            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+              <circle cx="50" cy="50" r="45" fill="none" stroke="#E8F3ED" strokeWidth="8" />
+              <circle
+                cx="50"
+                cy="50"
+                r="45"
+                fill="none"
+                stroke="#027c68"
+                strokeWidth="8"
+                strokeDasharray={`${(48 / 100) * 282.7} 282.7`}
+                strokeLinecap="round"
+              />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+              <Droplets className="w-10 h-10 mb-2" style={{ color: "#027c68" }} />
+              <span className="text-4xl font-bold text-gray-800">48</span>
+              <span className="text-lg text-gray-600">%</span>
+            </div>
+          </div>
+          <p className="text-base font-semibold text-gray-800 mt-4">Overall Health</p>
+        </div>
       </div>
-
-
-
-
-      {/* ===== ALERTS ===== */}
-      <div className="col-start-6 col-span-full bg-white rounded-2xl p-5 shadow-lg overflow-y-auto">
-        <h3 className="text-sm font-semibold text-[#003333] mb-4">
-          Recent Alerts
-        </h3>
-
-        {notifs?.length > 0 ? (
-          notifs.map((notif) => (
-            
-            <AlertItem
-              key={notif.notification_id}
-              type={notif.type}      
-              message={notif.message}
-              time={formatTimeAgo(notif.created_at)}
-            />
-          ))
-
-        ) : (
-          <p className="text-xs text-gray-400">No alerts available</p>
-        )}
-      </div>
-
-
-
     </div>
+    
   );
-}
+};

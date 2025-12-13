@@ -9,7 +9,6 @@ import {Bell} from "lucide-react"
 export function Db_Header({input,setNotifOpen}) {
   const { user } = useContext(UserContext);
 
-
   return (
     <section className="bg-[var(--main-whiteb)] rounded-[10px] col-start-3 col-end-5 header flex items-center justify-center shadow-lg">
       <div className="flex items-center justify-start w-full relative mx-4">

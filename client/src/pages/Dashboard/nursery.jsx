@@ -50,6 +50,8 @@ function NurseryDashboard(){
       <div className="bg-gradient-to-br from-[#E8F3ED] to-white p-4 overflow-hidden w-full">
     
         <div className="max-w-7xl mx-auto space-y-4">
+
+          
           {/* Header */}
           <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
@@ -63,8 +65,6 @@ function NurseryDashboard(){
               </div>
             </div>
           </div>
-
-    
 
     
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">

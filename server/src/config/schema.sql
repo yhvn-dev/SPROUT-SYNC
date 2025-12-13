@@ -47,7 +47,6 @@ CREATE TABLE trays (
 
 
 
-
 CREATE TABLE plant_batches (
     batch_id SERIAL PRIMARY KEY,
     tray_id INT NOT NULL,
@@ -67,7 +66,6 @@ CREATE TABLE plant_batches (
         REFERENCES trays(tray_id)
         ON DELETE CASCADE
 );
-
 
 
 CREATE TABLE sensors(   
