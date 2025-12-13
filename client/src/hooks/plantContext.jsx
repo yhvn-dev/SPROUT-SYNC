@@ -63,7 +63,7 @@ export const PlantDataProvider = ({ children }) => {
     }
   }, []);
 
-  const loadNotif = useCallback(async () => {
+  const loadNotifs = useCallback(async () => {
     try {
       const data = await notifService.fetchAllNotifs();
       setNotifs(data);
@@ -79,8 +79,8 @@ export const PlantDataProvider = ({ children }) => {
     loadBatches();
     loadSensors();
     loadReadings();
-    loadNotif();
-  }, [loadTrayGroups,loadTrays,loadBatches,loadSensors,loadReadings,loadNotif]);
+    loadNotifs();
+  }, [loadTrayGroups,loadTrays,loadBatches,loadSensors,loadReadings,loadNotifs]);
 
  useEffect(() => {
     const interval = setInterval(() => {
@@ -104,7 +104,7 @@ return (
         loadBatches,
         loadSensors,
         loadReadings,
-        loadNotif,
+        loadNotifs,
       }}
     >
       {children}

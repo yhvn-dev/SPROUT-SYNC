@@ -1,7 +1,5 @@
 import { Clock, AlertCircle, CheckCircle, AlertTriangle } from "lucide-react";
 import { usePlantData } from "../hooks/plantContext";
-import { useState } from "react";
-
 
 const getColorScheme = (type) => {
   switch (type.toLowerCase()) {
