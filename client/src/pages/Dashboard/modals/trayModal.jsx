@@ -29,47 +29,31 @@ export function TrayModal({
   const [plantOptions, setPlantOptions] = useState([]);
   const [formErrors, setFormErrors] = useState({});
   
-
   if (!isOpen) return null;
-
-
 
   // Initialize form
   useEffect(() => {
     if (trayModalMode === "update" && selectedTray) {
-
-      console.log("SELECTED TRAY GROUP UPDATE",selectedTrayGroup)
-      const parts = selectedTray.plant.split(" - ");
-      const prefix = parts.length > 1 ? parts.slice(1).join(" - ") : parts[0];
-
       setFormData({
         tray_group_id: selectedTray.tray_group_id,
-        plant: prefix,
+        plant: selectedTray.plant,
         status: selectedTray.status || "Available",
       });
     } else if (trayModalMode === "insert") {
-
-      console.log("SELECTED TRAY GROUP INSERT",selectedTrayGroup)
       setFormData({
         tray_group_id: selectedTrayGroup?.tray_group_id || 0,
         plant: "",
         status: "Available",
       });
-
     } else if (trayModalMode === "delete" && selectedTray) {
-
-       console.log("SELECTED TRAY GROUP DELETE",selectedTrayGroup)
       setFormData({
         tray_group_id: selectedTray.tray_group_id,
         plant: selectedTray.plant,
         status: selectedTray.status,
       });
-      
     }
   }, [trayModalMode, selectedTray, selectedTrayGroup]);
 
-  
-  
   // Update plant options based on tray group
   useEffect(() => {
     const groupName = selectedTrayGroup?.tray_group_name || selectedTray?.tray_group_name || "";
@@ -87,6 +71,7 @@ export function TrayModal({
   };
 
 
+
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -96,8 +81,9 @@ export function TrayModal({
         if (!selectedTrayGroup?.tray_group_id || !formData.plant) {
           setFormErrors({ general: "Tray group and plant are required." });
           return;
-          }
-          const newTray = await trayModels.insertTray({
+        }
+
+        const newTray = await trayModels.insertTray({
           tray_group_id: selectedTrayGroup.tray_group_id,
           plant: formData.plant,
           status: formData.status,
@@ -164,8 +150,6 @@ export function TrayModal({
           </button>
         </div>
 
-        
-
         {/* DELETE MODE */}
         {trayModalMode === "delete" ? (
           <>
@@ -177,9 +161,7 @@ export function TrayModal({
               <button type="submit" className="px-4 py-2 rounded-lg bg-red-600 text-white">Delete</button>
             </form>
           </>
-          
         ) : (
-          
           <form onSubmit={handleSubmit} className="p-6 space-y-5">
             <input type="hidden" name="tray_group_id" value={formData.tray_group_id} />
 
@@ -194,8 +176,8 @@ export function TrayModal({
                   value={formData.plant}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border rounded-lg bg-white">
-
+                  className="w-full px-3 py-2 border rounded-lg bg-white"
+                >
                   <option value="">Select Plant</option>
                   {plantOptions.map((plant) => (
                     <option key={plant} value={plant}>{plant}</option>
@@ -215,7 +197,8 @@ export function TrayModal({
                   value={formData.status}
                   onChange={handleChange}
                   required
-                  className="w-full px-3 py-2 border rounded-lg bg-white">
+                  className="w-full px-3 py-2 border rounded-lg bg-white"
+                >
                   <option value="">Select Status</option>
                   <option value="Available">Available</option>
                   <option value="Occupied">Occupied</option>
@@ -225,8 +208,6 @@ export function TrayModal({
                 <p className="text-sm text-red-600 mt-1">{formErrors.status}</p>
               </div>
             </div>
-
-
 
             {/* FOOTER */}
             <div className="border-t py-4 flex justify-between">
@@ -243,4 +224,6 @@ export function TrayModal({
       </motion.div>
     </motion.div>
   );
+
+  
 }

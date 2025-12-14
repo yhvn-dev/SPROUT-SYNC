@@ -26,35 +26,32 @@ export const readTrayById = async (tray_id) => {
 
 
 
-
 // ===== CREATE a new tray =====
 export const createTray = async (trayData) => {
   let { tray_group_id, plant, status } = trayData;
 
   try {
     const baseName = plant.trim();
-    const checkSql = `SELECT plant FROM trays WHERE plant ~ $1`;
-    const existing = await query(checkSql, [`^${baseName}( - \\d+)?$`]);
 
-    let nextNumber = 1;
-    if (existing.rows.length > 0) {
-      const suffixNumbers = existing.rows.map(r => {
-        const match = r.plant.match(/- (\d+)$/);
-        return match ? parseInt(match[1], 10) : 0;
-      });
-      nextNumber = Math.max(...suffixNumbers) + 1;
-    }
+    // Get next tray_number for this tray group
+    const result = await query(
+      `SELECT COALESCE(MAX(tray_number), 0) + 1 AS next_number
+       FROM trays
+       WHERE tray_group_id = $1`,
+      [tray_group_id]
+    );
 
-    plant = `${baseName} - ${nextNumber}`;
+    const tray_number = result.rows[0].next_number;
 
     const sql = `
-      INSERT INTO trays (tray_group_id, plant, status)
-      VALUES ($1, $2, $3)
+      INSERT INTO trays (tray_group_id, tray_number, plant, status)
+      VALUES ($1, $2, $3, $4)
       RETURNING *
     `;
-    const values = [tray_group_id, plant, status || 'Available'];
-    const result = await query(sql, values);
-    return result.rows[0];
+    const values = [tray_group_id, tray_number, baseName, status || 'Available'];
+    const insert = await query(sql, values);
+    return insert.rows[0];
+
   } catch (error) {
     throw error;
   }
@@ -68,44 +65,52 @@ export const updateTray = async (trayData, tray_id) => {
   let { tray_group_id, plant, status } = trayData;
 
   try {
-    const existingTray = await query(`SELECT plant FROM trays WHERE tray_id = $1`, [tray_id]);
-    if (!existingTray.rows[0]) throw new Error("Tray not found");
+    // 1️⃣ Get existing tray
+    const existingTrayQuery = await query(
+      `SELECT tray_group_id, tray_number, plant FROM trays WHERE tray_id = $1`,
+      [tray_id]
+    );
+    const existingTray = existingTrayQuery.rows[0];
+    if (!existingTray) throw new Error("Tray not found");
 
-    const existingPlantFull = existingTray.rows[0].plant;
-    const baseName = plant.trim();
+    const newPlant = plant.trim();
+    let tray_number = existingTray.tray_number; // keep existing tray_number by default
 
-    let finalPlant = existingPlantFull; // default: keep current full name
-
-    // If base name changed, calculate next number
-    const currentBase = existingPlantFull.split(" - ")[0];
-    if (currentBase !== baseName) {
-      const existing = await query(`SELECT plant FROM trays WHERE plant ~ $1`, [`^${baseName}( - \\d+)?$`]);
-      let nextNumber = 1;
-      if (existing.rows.length > 0) {
-        const suffixNumbers = existing.rows.map(r => {
-          const match = r.plant.match(/- (\d+)$/);
-          return match ? parseInt(match[1], 10) : 0;
-        });
-        nextNumber = Math.max(...suffixNumbers) + 1;
-      }
-      finalPlant = `${baseName} - ${nextNumber}`;
+    // 2️⃣ If plant OR tray_group_id changed, recalc tray_number
+    if (newPlant !== existingTray.plant || tray_group_id !== existingTray.tray_group_id) {
+      const result = await query(
+        `
+        SELECT COALESCE(MAX(tray_number), 0) + 1 AS next_number
+        FROM trays
+        WHERE tray_group_id = $1 AND plant ILIKE $2
+        `,
+        [tray_group_id, newPlant]
+      );
+      tray_number = result.rows[0].next_number;
     }
 
+    // 3️⃣ Update tray
     const sql = `
       UPDATE trays
       SET tray_group_id = $1,
-          plant = $2,
-          status = $3
-      WHERE tray_id = $4
+          tray_number = $2,
+          plant = $3,
+          status = $4,
+          updated_at = NOW()
+      WHERE tray_id = $5
       RETURNING *
     `;
-    const values = [tray_group_id, finalPlant, status || "Available", tray_id];
-    const result = await query(sql, values);
-    return result.rows[0];
+    const values = [tray_group_id, tray_number, newPlant, status || "Available", tray_id];
+    const updated = await query(sql, values);
+    return updated.rows[0];
+
   } catch (error) {
     throw error;
   }
 };
+
+
+
 
 
 

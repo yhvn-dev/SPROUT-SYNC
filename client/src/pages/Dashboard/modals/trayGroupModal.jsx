@@ -28,6 +28,7 @@ export function TrayGroupModal({
     max_moisture: "",
     location: "",
   });
+
   const [formErrors, setFormErrors] = useState({});
 
   // Initialize modal values
@@ -79,8 +80,7 @@ export function TrayGroupModal({
     e.preventDefault();
     try {
       if (tgModalMode === "insert") {
-      
-        const newGroup = await trayGroupModels.insertTrayGroup(formData)
+        const newGroup = await trayGroupModels.insertTrayGroup(formData);
         onClose();
         setSuccessMsg(`${newGroup.tray_group_name} Group is Added`);
       } else if (tgModalMode === "update") {
@@ -98,7 +98,6 @@ export function TrayGroupModal({
         setSuccessMsg(`${selectedTrayGroup.tray_group_name} Group is Deleted`);
       }
 
-     
       setFormErrors({});
       loadTrayGroups();
       reloadTrayGroups();
@@ -116,10 +115,6 @@ export function TrayGroupModal({
     }
   };
 
-
-  
-
-  
   return (
     <motion.div className="modal_backdrop fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50">
       <motion.div
@@ -129,13 +124,14 @@ export function TrayGroupModal({
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ duration: 0.4 }}>
-
+        transition={{ duration: 0.4 }}
+      >
         {/* CLOSE BUTTON */}
         <button
           onClick={onClose}
-          className="cursor-pointer absolute top-4 right-4 hover:bg-gray-100 p-2 rounded-lg">
-          <X/>
+          className="cursor-pointer absolute top-4 right-4 hover:bg-gray-100 p-2 rounded-lg"
+        >
+          <X />
         </button>
 
         {tgModalMode === "delete" ? (
@@ -152,19 +148,19 @@ export function TrayGroupModal({
             <form onSubmit={onFormSubmit} className="flex justify-end mt-8 gap-3 p-4">
               <button
                 onClick={onClose}
-                className="cursor-pointer px-4 py-2 rounded-lg border">
+                className="cursor-pointer px-4 py-2 rounded-lg border"
+              >
                 Cancel
               </button>
               <button
                 type="submit"
-                className="cursor-pointer px-4 py-2 rounded-lg bg-[var(--color-danger-a)] text-white">
+                className="cursor-pointer px-4 py-2 rounded-lg bg-[var(--color-danger-a)] text-white"
+              >
                 Delete
               </button>
             </form>
           </>
-          
         ) : (
-
           <>
             {/* HEADER */}
             <div className="flex items-center gap-3 mb-6">
@@ -173,6 +169,7 @@ export function TrayGroupModal({
                 {tgModalMode === "insert" ? "Add Tray Group" : "Update Tray Group"}
               </h2>
             </div>
+
             {/* FORM */}
             <form onSubmit={onFormSubmit} className="space-y-4">
               {/* Plant Type */}
@@ -182,8 +179,9 @@ export function TrayGroupModal({
                   name="tray_group_name"
                   value={formData.tray_group_name}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded-lg">
-
+                  className="w-full p-2 border rounded-lg"
+                  required
+                >
                   <option value="">Select a Plant Type</option>
                   {plantTypeOptions.map((plant) => (
                     <option key={plant.type} value={plant.type}>
@@ -240,7 +238,6 @@ export function TrayGroupModal({
                   <option value="Right 2">Right 2</option>
                   <option value="Right 3">Right 3</option>
                 </select>
-                
                 {formErrors.location && (
                   <p className="text-sm text-[var(--color-danger-a)] mt-1">
                     {formErrors.location}
@@ -256,7 +253,8 @@ export function TrayGroupModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-5 py-2.5 border border-[var(--sage-medium)] text-[var(--sancga)] rounded-lg hover:bg-[var(--sage-lighter)] font-medium transition">
+                  className="px-5 py-2.5 border border-[var(--sage-medium)] text-[var(--sancga)] rounded-lg hover:bg-[var(--sage-lighter)] font-medium transition"
+                >
                   Cancel
                 </button>
                 <button
@@ -265,8 +263,8 @@ export function TrayGroupModal({
                     tgModalMode === "insert"
                       ? "bg-[var(--sancgb)] hover:bg-[var(--ptl-greenf)]"
                       : "bg-[var(--purpluish--)] hover:bg-[var(--bluis--)]"
-                  }`}>
-                    
+                  }`}
+                >
                   {tgModalMode === "insert" ? "Create Tray Group" : "Update Group"}
                 </button>
               </div>

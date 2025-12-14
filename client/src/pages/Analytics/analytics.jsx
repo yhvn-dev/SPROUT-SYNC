@@ -25,7 +25,7 @@ export default function Analytics() {
   }, [loadBatchTotal]);
 
   return (
-    <section className="h-screen w-screen overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
+    <section className="h-screen w-screen overflow-hidden bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
 
       {/* Main Grid Layout */}
       <div className="h-full grid grid-cols-[12fr_30fr_58fr] gap-4 grid-rows-[auto_auto_1fr] ">
@@ -37,13 +37,13 @@ export default function Analytics() {
 
 
         {/* Navigation Tabs */}
-        <nav className="col-start-2   border-b border-gray-200 py-3 flex items-center gap-2">
+        <nav className="col-start-2  border-b border-gray-200 py-3 flex items-center gap-2">
           <button 
             onClick={() => setActiveTab("Overview")}
             className={`px-6 py-2 text-sm font-medium rounded-lg transition-all ${
               activeTab === "Overview"
-                ? "bg-teal-600 text-white shadow-md"
-                : "text-gray-600 hover:bg-gray-100"
+              ? "bg-white text-[#027c68] shadow-md"
+              : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
             }`}>
             Overview
           </button>
@@ -53,8 +53,8 @@ export default function Analytics() {
             onClick={() => setActiveTab("Seedling Stats")}
             className={`px-6 py-2 text-sm font-medium rounded-lg transition-all ${
               activeTab === "Seedling Stats"
-                ? "bg-teal-600 text-white shadow-md"
-                : "text-gray-600 hover:bg-gray-100"
+                ? "bg-white text-[#027c68] shadow-md"
+                : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
             }`}>
               
             Seedling Stats

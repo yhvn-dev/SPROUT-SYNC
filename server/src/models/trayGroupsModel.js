@@ -30,35 +30,41 @@ export const readTrayGroupById = async (tray_group_id) => {
 };
 
 
-
-
 export const createTrayGroups = async (trayGroupData) => {
-  let { tray_group_name, min_moisture, max_moisture, is_watering, location } = trayGroupData;
+  // deconstruct
+  const { tray_group_name, min_moisture, max_moisture, is_watering, location } = trayGroupData;
 
   try {
     const baseName = tray_group_name.trim();
+    const result = await query(
+      `
+      SELECT COALESCE(MAX(group_number), 0) + 1 AS next_number
+      FROM tray_groups
+      WHERE tray_group_name ILIKE $1
+      `,
+      [baseName]
+    );
 
-    const checkSql = `SELECT tray_group_name FROM tray_groups WHERE tray_group_name ILIKE $1`;
-    const existing = await query(checkSql, [`${baseName}%`]);
+    const group_number = result.rows[0].next_number;
 
-    let nextNumber = 1;
-    if (existing.rows.length > 0) {
-      const suffixNumbers = existing.rows.map(r => {
-        const match = r.tray_group_name.match(/- (\d+)$/); 
-        return match ? parseInt(match[1], 10) : 0;
-      });
-      nextNumber = Math.max(...suffixNumbers) + 1;
-    }
+    const sql = `
+      INSERT INTO tray_groups
+      (
+        tray_group_name,
+        group_number,
+        min_moisture,
+        max_moisture,
+        is_watering,
+        location
+      )
+      VALUES ($1, $2, $3, $4, $5, $6)
+      RETURNING *
+    `;
 
-    tray_group_name = `${baseName} - ${nextNumber}`;
-    const sql = `   
-      INSERT INTO tray_groups (tray_group_name, min_moisture, max_moisture, is_watering, location)
-      VALUES ($1, $2, $3, $4, $5)
-      RETURNING *`;
-      
-    const values = [tray_group_name, min_moisture, max_moisture, is_watering, location];
-    const result = await query(sql, values);
-    return result.rows[0];
+    const values = [ baseName, group_number, min_moisture, max_moisture, is_watering ?? false, location];
+    const insert = await query(sql, values);
+    return insert.rows[0];
+
   } catch (error) {
     throw error;
   }
@@ -67,71 +73,62 @@ export const createTrayGroups = async (trayGroupData) => {
 
 
 export const updateTrayGroups = async (trayGroupData, tray_group_id) => {
-  let { tray_group_name, min_moisture, max_moisture, is_watering, location } = trayGroupData;
+  const { tray_group_name, min_moisture, max_moisture, is_watering, location } = trayGroupData;
 
   try {
-    // 1️⃣ Get existing tray group
-    const existingGroup = await query(
-      `SELECT tray_group_name FROM tray_groups WHERE tray_group_id = $1`,
+    // 1️⃣ Get the existing tray group
+    const existingQuery = await query(
+      `SELECT tray_group_name, group_number FROM tray_groups WHERE tray_group_id = $1`,
       [tray_group_id]
     );
-    if (!existingGroup.rows[0]) throw new Error("Tray group not found");
 
-    const existingFullName = existingGroup.rows[0].tray_group_name;
+    const existingGroup = existingQuery.rows[0];
+    if (!existingGroup) throw new Error("Tray group not found");
 
-    // 2️⃣ Extract base names
+    const currentBaseName = existingGroup.tray_group_name.trim();
     const baseName = tray_group_name.trim();
-    const currentBase = existingFullName.split(" - ")[0];
 
-    let finalName = existingFullName; // default: keep current name
+    let newGroupNumber = existingGroup.group_number;
 
-    // 3️⃣ Only generate new number if base name CHANGED
-    if (currentBase !== baseName) {
-      const checkSql = `
-        SELECT tray_group_name 
-        FROM tray_groups 
-        WHERE tray_group_name ~ $1
-      `;
-      const existing = await query(checkSql, [`^${baseName}( - \\d+)?$`]);
-
-      let nextNumber = 1;
-      if (existing.rows.length > 0) {
-        const suffixNumbers = existing.rows.map(r => {
-          const match = r.tray_group_name.match(/- (\d+)$/);
-          return match ? parseInt(match[1], 10) : 0;
-        });
-        nextNumber = Math.max(...suffixNumbers) + 1;
-      }
-
-      finalName = `${baseName} - ${nextNumber}`;
+    // 2️⃣ If tray group name changed, recalc group_number
+    if (baseName !== currentBaseName) {
+      const result = await query(
+        `
+        SELECT COALESCE(MAX(group_number), 0) + 1 AS next_number
+        FROM tray_groups
+        WHERE tray_group_name ILIKE $1
+        `,
+        [baseName]
+      );
+      newGroupNumber = result.rows[0].next_number;
     }
 
+    // 3️⃣ Update the tray group
     const sql = `
       UPDATE tray_groups
       SET tray_group_name = $1,
-          min_moisture = $2,
-          max_moisture = $3,
-          is_watering = $4,
-          location = $5
-      WHERE tray_group_id = $6
+          group_number = $2,
+          min_moisture = $3,
+          max_moisture = $4,
+          is_watering = $5,
+          location = $6,
+          updated_at = NOW()
+      WHERE tray_group_id = $7
       RETURNING *
     `;
 
-    const values = [
-      finalName,
-      min_moisture,
-      max_moisture,
-      is_watering,
-      location,
-      tray_group_id
-    ];
+    const values = [ baseName, newGroupNumber, min_moisture, max_moisture, is_watering ?? false, location, tray_group_id];
 
-    const result = await query(sql, values);
-    return result.rows[0];
+    const updated = await query(sql, values);
+    return updated.rows[0];
+
   } catch (error) {
     throw error;
   }
 };
+
+
+
 
 
 

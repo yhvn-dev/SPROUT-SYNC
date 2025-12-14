@@ -62,7 +62,7 @@ function Trays({traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setBa
 
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900">
-                      {tray.plant || "No Plant"}, Tray
+                      [{tray.tray_number}]{tray.plant || "No Plant"} Tray
                     </h3>
                     <p className="text-sm text-gray-500">
                           Tray Group: {trayGroupsData?.find(g => g.tray_group_id === tray.tray_group_id)?.tray_group_name || "Unknown"}

@@ -60,33 +60,28 @@ export const Overview = ({batchTotal}) => {
       <div className="gap-4 flex items-start justify-evenly col-start-1 col-span-full row-start-1 row-end-4">
         
         {/* Alive % - Gauge */}
-        <div className="flex-grow bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow flex items-center justify-center p-3">
+        <div className="flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
           <GaugeChart value={batchTotal.total_alive} max={100} label="Alive %" unit="%" icon={Droplets} color="#10b981" />
         </div>
 
           {/* TOTAL */}
-          <div className="flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow flex items-center justify-center p-3">
+          <div className="flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
               <StatCard label="Total Seedlings" value={batchTotal.total_seedlings} color="#25a244" />    
           </div>
           {/* GROWN */}
-          <div className="flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow flex items-center justify-center p-3">
+          <div className="flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
               <StatCard label="Grown" value={batchTotal.total_grown} color="var(--color-success-a)" />
          </div>
          
           {/* DEAD */}
-          <div className="flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow flex items-center justify-center p-3">
+          <div className="flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
             <StatCard label="Dead" value={batchTotal.total_dead} color="var(--color-danger-a)" />    
           </div>
 
-          <div className="flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow flex items-center justify-center p-3">
+          <div className="flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
               <StatCard label="Replanted" value={batchTotal.total_replanted}color="var(--color-warning)" />
           </div>
      
-      
-       
-     
-      
-
       </div>
 
       {/* Moisture Chart */}
@@ -105,8 +100,11 @@ export const Overview = ({batchTotal}) => {
         </div>
       </div>
 
+
+
+
       {/* Featured Large Gauge - Water Level */}
-      <div className="col-span-5 row-span-9 bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-6">
+      <div className="col-span-5 row-span-9 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-6">
         <div className="flex flex-col items-center justify-center">
           <div className="relative w-40 h-40">
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
@@ -116,14 +114,14 @@ export const Overview = ({batchTotal}) => {
                 cy="50"
                 r="45"
                 fill="none"
-                stroke="#10b981"
+                stroke="var(--white-blple--)"
                 strokeWidth="8"
                 strokeDasharray={`${(48 / 100) * 282.7} 282.7`}
                 strokeLinecap="round"
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <Droplets className="w-10 h-10 mb-2" style={{ color: "#10b981" }} />
+              <Droplets className="w-10 h-10 mb-2" style={{ color: "var(--white-blple--)" }} />
               <span className="text-4xl font-bold text-gray-800">48</span>
               <span className="text-lg text-gray-600">%</span>
             </div>
