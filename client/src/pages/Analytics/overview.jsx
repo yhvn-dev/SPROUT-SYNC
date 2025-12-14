@@ -1,8 +1,8 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
-import { Droplets, AlertTriangle, Menu, Bell, User, Search, TrendingUp, Sprout, Activity } from "lucide-react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { Droplets, AlertTriangle, Activity, TrendingUp, Sprout } from "lucide-react";
 
 
-
+// Gauge Component
 const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
   const percentage = (value / max) * 100;
   return (
@@ -22,9 +22,9 @@ const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
           />
         </svg>
         <div className="absolute inset-0 flex flex-col items-center justify-center">
-          <Icon className="w-4 h-4 mb-1" style={{ color }} />
+          {Icon && <Icon className="w-4 h-4 mb-1" style={{ color }} />}
           <span className="text-xl font-bold text-gray-800">{value}</span>
-          <span className="text-xs text-gray-600">{unit}</span>
+          {unit && <span className="text-xs text-gray-600">{unit}</span>}
         </div>
       </div>
       <p className="text-xs text-gray-700 mt-2 font-medium text-center">{label}</p>
@@ -32,7 +32,15 @@ const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
   );
 };
 
+// Number/Stat Card Component
+const StatCard = ({ label, value, color }) => (
+  <div className={`bg-white rounded-xl  flex flex-col items-center justify-center p-4 `}>
+    <p className="text-xs text-gray-500">{label}</p>
+    <h2 className={`text-3xl font-bold`} style={{ color }}>{value}</h2>
+  </div>
+);
 
+// Sample Moisture Data
 const moistureData = [
   { time: "00:00", value: 45 },
   { time: "04:00", value: 42 },
@@ -43,39 +51,46 @@ const moistureData = [
   { time: "24:00", value: 44 }
 ];
 
+export const Overview = ({batchTotal}) => {
 
-export const Overview = () => {
+  
   return (
+    <div className="h-full grid grid-cols-12 grid-rows-12 gap-4">
+      {/* Top Row - Small Gauge / Stat Cards */}
+      <div className="gap-4 flex items-start justify-evenly col-start-1 col-span-full row-start-1 row-end-4">
+        
+        {/* Alive % - Gauge */}
+        <div className="flex-grow bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow flex items-center justify-center p-3">
+          <GaugeChart value={batchTotal.total_alive} max={100} label="Alive %" unit="%" icon={Droplets} color="#10b981" />
+        </div>
 
-    
-    <div className="h-full grid grid-cols-12 grid-rows-12 gap-4 ">
-      {/* Top Row - Small Gauge Cards */}
-      <div className="col-span-2 row-span-3  bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center ">
-        <GaugeChart value={48} max={100} label="Total" unit="%" icon={Sprout} color="#027c68"/>
-      </div>
+          {/* TOTAL */}
+          <div className="flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow flex items-center justify-center p-3">
+              <StatCard label="Total Seedlings" value={batchTotal.total_seedlings} color="#25a244" />    
+          </div>
+          {/* GROWN */}
+          <div className="flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow flex items-center justify-center p-3">
+              <StatCard label="Grown" value={batchTotal.total_grown} color="var(--color-success-a)" />
+         </div>
+         
+          {/* DEAD */}
+          <div className="flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow flex items-center justify-center p-3">
+            <StatCard label="Dead" value={batchTotal.total_dead} color="var(--color-danger-a)" />    
+          </div>
 
-      <div className="col-span-2 row-span-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-3">
-        <GaugeChart value={42} max={100} label="Alive" unit="%" icon={Droplets} color="#10b981"/>
-      </div>
+          <div className="flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow flex items-center justify-center p-3">
+              <StatCard label="Replanted" value={batchTotal.total_replanted}color="var(--color-warning)" />
+          </div>
+     
+      
+       
+     
+      
 
-      <div className="col-span-2 row-span-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-3">
-        <GaugeChart value={6} max={100} label="Dead" unit="%" icon={AlertTriangle} color="#ef4444"/>
-      </div>
-
-      <div className="col-span-2 row-span-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-3">
-        <GaugeChart value={15} max={100} label="Replanted" unit="%" icon={Activity} color="#f59e0b"/>
-      </div>
-
-      <div className="col-span-2 row-span-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-3">
-        <GaugeChart value={35} max={100} label="Grown" unit="%" icon={TrendingUp} color="#8b5cf6"/>
-      </div>
-
-      <div className="col-span-2 row-span-3 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-3">
-        <GaugeChart value={6.8} max={14} label="Water" unit="L" icon={Droplets} color="#3b82f6"/>
       </div>
 
       {/* Moisture Chart */}
-      <div className="col-span-7 row-span-9 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col">
+      <div className="col-span-7 row-span-9 bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow p-4 flex flex-col">
         <h3 className="text-sm font-semibold text-gray-800 mb-2">Soil Moisture Trend (24h)</h3>
         <div className="flex-1 min-h-0">
           <ResponsiveContainer width="100%" height="100%">
@@ -90,7 +105,7 @@ export const Overview = () => {
         </div>
       </div>
 
-      {/* Featured Large Gauge */}
+      {/* Featured Large Gauge - Water Level */}
       <div className="col-span-5 row-span-9 bg-gradient-to-br from-teal-50 to-emerald-50 rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-6">
         <div className="flex flex-col items-center justify-center">
           <div className="relative w-40 h-40">
@@ -101,22 +116,21 @@ export const Overview = () => {
                 cy="50"
                 r="45"
                 fill="none"
-                stroke="#027c68"
+                stroke="#10b981"
                 strokeWidth="8"
                 strokeDasharray={`${(48 / 100) * 282.7} 282.7`}
                 strokeLinecap="round"
               />
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <Droplets className="w-10 h-10 mb-2" style={{ color: "#027c68" }} />
+              <Droplets className="w-10 h-10 mb-2" style={{ color: "#10b981" }} />
               <span className="text-4xl font-bold text-gray-800">48</span>
               <span className="text-lg text-gray-600">%</span>
             </div>
           </div>
-          <p className="text-base font-semibold text-gray-800 mt-4">Overall Health</p>
+          <p className="text-base font-semibold text-gray-800 mt-4">Water Level</p>
         </div>
       </div>
     </div>
-    
   );
 };

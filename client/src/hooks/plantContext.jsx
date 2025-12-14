@@ -1,6 +1,5 @@
 // context/PlantDataContext.jsx
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
-
 import * as trayGroupService from "../data/trayGroupServices";
 import * as traysService from "../data/traysServices";
 import * as plantBatches from "../data/batchesData";
@@ -14,10 +13,12 @@ export const PlantDataProvider = ({ children }) => {
   const [trayGroups, setTrayGroups] = useState([]);
   const [trays, setTrays] = useState([]);
   const [batches, setBatches] = useState([]);
+  const [batchTotal, setBatchTotal] = useState({});
   const [sensors, setSensors] = useState([]);
   const [readings, setReadings] = useState([]);
   const [notifs, setNotifs] = useState([]);
 
+  // ------------------- LOAD FUNCTIONS -------------------
   const loadTrayGroups = useCallback(async () => {
     try {
       const data = await trayGroupService.fetchAllTrayGroups();
@@ -42,6 +43,15 @@ export const PlantDataProvider = ({ children }) => {
       setBatches(data);
     } catch (error) {
       console.error("Error loading batches", error);
+    }
+  }, []);
+
+  const loadBatchTotal = useCallback(async () => {
+    try {
+      const data = await plantBatches.fetchTotalBatchesData();
+      setBatchTotal(data);
+    } catch (error) {
+      console.error("Error loading batch totals", error);
     }
   }, []);
 
@@ -72,36 +82,40 @@ export const PlantDataProvider = ({ children }) => {
     }
   }, []);
 
-
+  // ------------------- INITIAL LOAD -------------------
   useEffect(() => {
     loadTrayGroups();
     loadTrays();
     loadBatches();
+    loadBatchTotal(); 
     loadSensors();
     loadReadings();
     loadNotifs();
-  }, [loadTrayGroups,loadTrays,loadBatches,loadSensors,loadReadings,loadNotifs]);
+  }, [loadTrayGroups, loadTrays, loadBatches, loadBatchTotal, loadSensors, loadReadings, loadNotifs]);
 
- useEffect(() => {
+  // ------------------- INTERVAL UPDATES -------------------
+  useEffect(() => {
     const interval = setInterval(() => {
-        loadReadings();
-        loadBatches();
-    }, 5000);
-    return () => clearInterval(interval);
- }, [loadReadings,loadBatches]);
+      loadReadings(); // frequent updates for sensors
+    }, 5000); // every 5 seconds
 
-return (
+    return () => clearInterval(interval);
+  }, [loadReadings]);
+
+  return (
     <PlantDataContext.Provider
       value={{
         trayGroups,
         trays,
         batches,
+        batchTotal,
         sensors,
         readings,
         notifs,
         loadTrayGroups,
         loadTrays,
         loadBatches,
+        loadBatchTotal,
         loadSensors,
         loadReadings,
         loadNotifs,

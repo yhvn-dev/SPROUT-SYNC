@@ -15,20 +15,8 @@ function Dashboard() {
   const [activeTab, setActiveTab] = useState("Overview");
   const [isNotifOpen, setNotifOpen] = useState(false);
 
-  const {
-    trayGroups,
-    trays,
-    batches,
-    sensors,
-    readings,
-    notifs,
-    loadTrayGroups,
-    loadTrays,
-    loadBatches,
-    loadReadings
-  } = usePlantData();
+  const { loadTrayGroups, loadTrays, loadBatches, loadReadings } = usePlantData();
 
-  
   return (
     <>
       <section

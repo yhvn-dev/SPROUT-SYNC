@@ -46,7 +46,6 @@ CREATE TABLE trays (
 );
 
 
-
 CREATE TABLE plant_batches (
     batch_id SERIAL PRIMARY KEY,
     tray_id INT NOT NULL,
@@ -82,7 +81,6 @@ CREATE TABLE sensors(
 CREATE TABLE sensor_readings (
    reading_id SERIAL PRIMARY KEY,
    sensor_id INT NOT NULL REFERENCES sensors(sensor_id),
-   tray_group_id INT NOT NULL REFERENCES tray_groups(tray_group_id),
    value DECIMAL(6,2) NOT NULL,
    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );

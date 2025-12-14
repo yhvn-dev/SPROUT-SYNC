@@ -31,6 +31,22 @@ export const getPlantBatchById = async (req, res) => {
   }
 };
 
+
+// ===== GET totals of all plant batches =====
+export const getPlantBatchTotals = async (req, res) => {
+
+  try {
+    const totals = await plantBatchModels.getPlantBatchTotals()
+    res.status(200).json(totals);
+    console.log("PLANT BATCH TOTALS:", totals);
+  } catch (err) {
+    console.error("CONTROLLER: Error getting plant batch totals", err);
+    res.status(500).json({ message: "Error getting plant batch totals", err });
+  }
+  
+};
+
+
 // ===== CREATE a new plant batch =====
 export const createPlantBatch = async (req, res) => {
   try {
@@ -43,9 +59,7 @@ export const createPlantBatch = async (req, res) => {
   
     const batch = await plantBatchModels.createPlantBatch(batchData)
     res.status(201).json(batch);
-    console.log("PLANT BATCH CREATED:", batch);
-
-
+    console.log("PLANT BATCH CREATED:", batch);  
   } catch (err) {
     console.error("CONTROLLER: Error creating plant batch", err);
     res.status(500).json({ message: "Error creating plant batch", err });

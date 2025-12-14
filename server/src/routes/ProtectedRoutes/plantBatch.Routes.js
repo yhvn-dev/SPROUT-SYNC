@@ -8,8 +8,8 @@ const router = express.Router();
 
 
 router.get("/get/pb", plantBatchController.getPlantBatches);
+router.get("/get/pb/total",plantBatchController.getPlantBatchTotals)
 router.get("/get/pb/:batch_id", plantBatchController.getPlantBatchById);
-
 
 router.post("/post/pb", validatePlantBatch, plantBatchController.createPlantBatch);
 router.put("/put/pb/:batch_id", validatePlantBatch, plantBatchController.updatePlantBatch);

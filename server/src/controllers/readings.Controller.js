@@ -42,19 +42,21 @@ export const createReadings = async (req, res) => {
 
     const readingData = req.body;
     const {sensor_id,value} = readingData;  
+    console.log("READINGS DATA",readingData)
 
     const existingSensor = await sensorModels.readSensorById(sensor_id);
-    
     if (!existingSensor) {
       return res.status(404).json({ message: "Sensor with this id doesn't exist" });
     }
+    console.log("SENSOR DATA", existingSensor)
 
     const {tray_id} = existingSensor
     const selectedTray = await trayModels.readTrayById(tray_id)
+    console.log("TRAY DATA", selectedTray)
+
     const {tray_group_id} = selectedTray
     const selectedTrayGroup =  await trayGroupModels.readTrayGroupById(tray_group_id)
-
-
+    console.log("TRAY GROUP qDATA", selectedTrayGroup)
 
     const {min_moisture,max_moisture} = selectedTrayGroup
     
@@ -112,10 +114,6 @@ export const createReadings = async (req, res) => {
       status: "NORMAL"
     });
   }
-
-
-
-    
     // ✅ create reading
     const reading = await readingModel.createReadings(readingData);
     res.status(201).json(reading);

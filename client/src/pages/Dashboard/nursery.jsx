@@ -21,7 +21,7 @@ function NurseryDashboard(){
       return () => clearInterval(interval);
   }, [loadBatches, loadReadings]);
 
-  
+
   const getMoistureStatus = (value, min, max) => {
     if (value === 0) return { status: 'inactive', color: '#94a3b8', label: 'Inactive' };
     if (value < min) return { status: 'low', color: '#dc2626', label: 'Low' };

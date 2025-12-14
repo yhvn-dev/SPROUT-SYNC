@@ -24,6 +24,26 @@ export const readPlantBatchById = async (batch_id) => {
 };
 
 
+// ===== GET TOTALS OF SEEDLINGS =====
+// ===== GET TOTALS OF SEEDLINGS =====
+export const getPlantBatchTotals = async () => {
+  try {
+    const sql = `
+      SELECT 
+        SUM(total_seedlings) AS total_seedlings,
+        SUM(alive_seedlings) AS total_alive,
+        SUM(dead_seedlings) AS total_dead,
+        SUM(replanted_seedlings) AS total_replanted,
+        SUM(fully_grown_seedlings) AS total_grown
+      FROM plant_batches
+    `;
+    const result = await query(sql);
+    return result.rows[0]; 
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 // ===== CREATE a new plant batch =====
 export const createPlantBatch = async (batchData) => {
