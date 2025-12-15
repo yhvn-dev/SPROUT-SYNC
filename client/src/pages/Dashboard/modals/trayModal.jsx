@@ -3,18 +3,6 @@ import { motion } from "framer-motion";
 import { X, Sprout, TrendingUp, Package, Trash2 } from "lucide-react";
 import * as trayModels from "../../../data/traysServices";
 
-/* 🌱 PLANT OPTIONS BY TRAY GROUP */
-const plantOptionsByGroup = {
-  "Leafy Greens": ["Pechay", "Lettuce", "Spinach", "Kale", "Mustard Greens", "Swiss Chard", "Arugula", "Romaine Lettuce"],
-  "Fruiting Plants": ["Cucumber", "Tomato", "Bell Pepper", "Eggplant", "Chili Pepper", "Okra", "Zucchini", "Pumpkin"],
-  "Herbs": ["Basil", "Mint", "Cilantro", "Parsley", "Thyme", "Oregano", "Rosemary", "Dill"],
-  "Root Crops": ["Carrot", "Radish", "Beetroot", "Turnip", "Sweet Potato", "Ginger", "Garlic", "Onion"],
-  "Legumes": ["Green Peas", "Soybean", "Lentils", "Chickpeas", "Kidney Beans", "Black Beans", "Mung Beans"],
-  "Flowers": ["Marigold", "Sunflower", "Petunia", "Lavender", "Rose", "Daisy", "Tulip"],
-  "Fungi": ["Button Mushroom", "Oyster Mushroom", "Shiitake", "Enoki", "Portobello"],
-  "Exotic/Other": ["Avocado", "Dragon Fruit", "Papaya", "Strawberry", "Blueberry", "Passion Fruit"]
-};
-
 export function TrayModal({
   isOpen,
   onClose,
@@ -24,11 +12,9 @@ export function TrayModal({
   setSuccessMsg,
   reloadTray
 }) {
-  
   const [formData, setFormData] = useState({ tray_group_id: 0, plant: "", status: "Available" });
-  const [plantOptions, setPlantOptions] = useState([]);
   const [formErrors, setFormErrors] = useState({});
-  
+
   if (!isOpen) return null;
 
   // Initialize form
@@ -42,7 +28,7 @@ export function TrayModal({
     } else if (trayModalMode === "insert") {
       setFormData({
         tray_group_id: selectedTrayGroup?.tray_group_id || 0,
-        plant: "",
+        plant: selectedTrayGroup?.tray_group_name || "", // automatically set plant to tray group name
         status: "Available",
       });
     } else if (trayModalMode === "delete" && selectedTray) {
@@ -54,32 +40,15 @@ export function TrayModal({
     }
   }, [trayModalMode, selectedTray, selectedTrayGroup]);
 
-  // Update plant options based on tray group
-  useEffect(() => {
-    const groupName = selectedTrayGroup?.tray_group_name || selectedTray?.tray_group_name || "";
-    const normalizedGroupName = groupName.split(" - ")[0];
-    const options = plantOptionsByGroup[normalizedGroupName] || [];
-    setPlantOptions(options);
-
-    if (!options.includes(formData.plant)) {
-      setFormData(prev => ({ ...prev, plant: "" }));
-    }
-  }, [selectedTrayGroup, selectedTray]);
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-
-
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
-    try {
 
+    try {
       if (trayModalMode === "insert") {
-       
         const newTray = await trayModels.insertTray({
           tray_group_id: selectedTrayGroup.tray_group_id,
           plant: formData.plant,
@@ -91,13 +60,12 @@ export function TrayModal({
       if (trayModalMode === "update") {
         const updatedTray = await trayModels.updateTray(
           {
-            tray_group_id:  selectedTrayGroup.tray_group_id,
+            tray_group_id: selectedTrayGroup.tray_group_id,
             plant: formData.plant,
             status: formData.status
           },
           selectedTray.tray_id
         );
-
         setFormErrors({});
         setSuccessMsg(`${updatedTray.plant} Tray Updated`);
       }
@@ -106,28 +74,22 @@ export function TrayModal({
         setFormErrors({});
         setSuccessMsg(`${selectedTray.plant} Tray Deleted`);
       }
-      
+
       reloadTray();
       onClose();
     } catch (error) {
       const rawErrors = error?.response?.data?.errors;
       if (Array.isArray(rawErrors)) {
-          const formattedErrors = rawErrors.reduce((acc, err) => {
-              acc[err.path] = err.msg;
-              return acc;
-          }, {});
-          setFormErrors(formattedErrors);
+        const formattedErrors = rawErrors.reduce((acc, err) => {
+          acc[err.path] = err.msg;
+          return acc;
+        }, {});
+        setFormErrors(formattedErrors);
       } else {
-          setFormErrors({ general: "Something went wrong."});
+        setFormErrors({ general: "Something went wrong." });
       }
-   };
-    
-
-  
-  }
-
-
-
+    }
+  };
 
   return (
     <motion.div className="fixed inset-0 bg-transparent backdrop-blur-2xl flex items-center justify-center p-4 z-50">
@@ -177,28 +139,18 @@ export function TrayModal({
             <input type="hidden" name="tray_group_id" value={formData.tray_group_id} />
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
-              
-              {/* PLANT SELECT */}
+              {/* PLANT (auto-filled) */}
               <div className="md:col-span-2 border rounded-xl p-4">
                 <label className="flex items-center gap-2 text-sm font-semibold mb-2">
                   <Sprout className="w-4 h-4" /> Plant *
                 </label>
-                <select
+                <input
+                  type="text"
                   name="plant"
                   value={formData.plant}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-lg bg-white">
-
-                  <option value="">Select Plant</option>
-                  {plantOptions.map((plant) => (
-                    <option key={plant} value={plant}>{plant}</option>
-                  ))}
-                </select>
-                 {formErrors.plant && (
-                  <p className="text-sm text-[var(--color-danger-a)] mt-1">
-                    {formErrors.plant}
-                  </p>
-                )}
+                  disabled
+                  className="w-full px-3 py-2 border rounded-lg bg-gray-100 cursor-not-allowed"
+                />
               </div>
 
               {/* STATUS */}
@@ -206,12 +158,10 @@ export function TrayModal({
                 <label className="flex items-center gap-2 text-sm font-semibold mb-2">
                   <TrendingUp className="w-4 h-4" /> Status *
                 </label>
-                
                 <select
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                 
                   className="w-full px-3 py-2 border rounded-lg bg-white"
                 >
                   <option value="">Select Status</option>
@@ -220,7 +170,7 @@ export function TrayModal({
                   <option value="Maintenance">Maintenance</option>
                   <option value="Disabled">Disabled</option>
                 </select>
-                 {formErrors.status && (
+                {formErrors.status && (
                   <p className="text-sm text-[var(--color-danger-a)] mt-1">
                     {formErrors.status}
                   </p>
@@ -243,6 +193,4 @@ export function TrayModal({
       </motion.div>
     </motion.div>
   );
-
-  
 }

@@ -19,10 +19,6 @@ export const validateTrayGroups = [
         .optional()
         .isBoolean()
         .withMessage("Is Watering must be true or false."),
-    body("location")
-    .optional()
-    .isBoolean()
-    .withMessage("Location is Required"),
         
     (req, res, next) => {
         const errors = validationResult(req);

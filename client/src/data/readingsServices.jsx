@@ -44,7 +44,6 @@ export const fetchAverageReadings = async () =>{
 
 
 export const fetchAverageReadingsBySensor = async (sensor_type) =>{
-    console.log("SENSOR TYPE", sensor_type);
     try {
         const res = await api.get(`/readings/get/readings/average/${sensor_type}`);
         return res.data; 

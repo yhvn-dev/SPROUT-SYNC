@@ -25,22 +25,8 @@ function Dashboard() {
         h-[100vh] w-[100%] overflow-y-auto relative">
           
         {/* HEADER */}
-        <Db_Header
-          input={
-            <>
-              <input
-                type="text"
-                placeholder=""
-                className="border border-[var(--acc-darkc)] rounded-2xl px-4"
-              />
-              <label>Search For Readings</label>
-            </>
-          }
-          setNotifOpen={setNotifOpen}
-        />
-        {/* SIDEBAR */}
+        <Db_Header setNotifOpen={setNotifOpen}/>
         <Sidebar user={user} />
-
 
         {/* TAB BUTTONS */}
         <div className="center-l col-start-2 row-start-1">

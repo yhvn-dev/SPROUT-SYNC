@@ -78,7 +78,7 @@ function Tray_groups({
                     </div>
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900">
-                        [{group.group_number}]{group.tray_group_name}
+                        [{group.group_number}]{group.tray_group_name} Group
                       </h3>
                       <p className="text-sm text-gray-500">{group.description}</p>
                       {group.location && (

@@ -82,7 +82,7 @@ function NurseryDashboard(){
                             <Sprout className="w-6 h-6 text-white" />
                           </div>
                           <div>
-                            <h2 className="text-xl font-semibold text-gray-900">[{group.group_number}]{group.tray_group_name}</h2>
+                            <h2 className="text-xl font-semibold text-gray-900">[{group.group_number}]{group.tray_group_name} Group</h2>
                             <p className="text-sm text-gray-500">{group.location}</p>
                           </div>
                         </div>
@@ -118,7 +118,7 @@ function NurseryDashboard(){
                                 {/* Header */}
                                 <div className="flex items-start justify-between mb-3">
                                   <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">[{tray.tray_number}]{tray.plant}</h3>
+                                    <h3 className="text-lg font-semibold text-gray-900">[{tray.tray_number}]{tray.plant} Tray</h3>
                                     <p className="text-xs text-gray-600">{tray.status}</p>
                                   </div>
                                
