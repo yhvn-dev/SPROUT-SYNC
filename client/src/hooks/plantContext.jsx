@@ -17,10 +17,9 @@ export const PlantDataProvider = ({ children }) => {
   const [sensors, setSensors] = useState([]);
   const [readings, setReadings] = useState([]);
   const [moistureReadingsLast24h, setMoistureReadingsLast24h] = useState([]);
+const [averageReadingsBySensor, setAverageReadingsBySensor] = useState({});
   const [notifs, setNotifs] = useState([]);
 
-
-  
   // ------------------- LOAD FUNCTIONS -------------------
   const loadTrayGroups = useCallback(async () => {
     try {
@@ -76,6 +75,7 @@ export const PlantDataProvider = ({ children }) => {
     }
   }, []);
 
+  
   const loadMoistureReadingsLast24h = useCallback(async () => {
     try {
       const data = await readingsService.fetchMoistureReadingsLast24hr();
@@ -84,6 +84,22 @@ export const PlantDataProvider = ({ children }) => {
       console.error("Error loading moisture readings (last 24h)", error);
     }
   }, []);
+
+        
+    const loadAverageReadingsBySensor = useCallback(async (sensorType) => {
+    try {
+      const data = await readingsService.fetchAverageReadingsBySensor(sensorType);
+      const key = sensorType.replace(/\s+/g, "_").toLowerCase();
+      setAverageReadingsBySensor(prev => ({
+        ...prev,
+        [key]: data
+      }));
+    } catch (error) {
+      console.error("Error loading average readings by sensor", error);
+    }
+  }, []);
+
+
 
   const loadNotifs = useCallback(async () => {
     try {
@@ -103,6 +119,8 @@ export const PlantDataProvider = ({ children }) => {
     loadSensors();
     loadReadings();
     loadMoistureReadingsLast24h();
+    loadAverageReadingsBySensor("moisture");
+    loadAverageReadingsBySensor("ultra_sonic");
     loadNotifs();
   }, [
     loadTrayGroups,
@@ -112,20 +130,20 @@ export const PlantDataProvider = ({ children }) => {
     loadSensors,
     loadReadings,
     loadMoistureReadingsLast24h,
+    loadAverageReadingsBySensor,
     loadNotifs,
   ]);
 
-  
   // ------------------- INTERVAL UPDATES -------------------
   useEffect(() => {
     const interval = setInterval(() => {
       loadReadings(); 
       loadMoistureReadingsLast24h(); 
+      loadAverageReadingsBySensor("moisture");
+      loadAverageReadingsBySensor("ultra_sonic");
     }, 5000); 
-
     return () => clearInterval(interval);
-  }, [loadReadings, loadMoistureReadingsLast24h]);
-
+  }, [loadReadings,loadMoistureReadingsLast24h,loadAverageReadingsBySensor]);
   
   return (
     <PlantDataContext.Provider
@@ -137,6 +155,7 @@ export const PlantDataProvider = ({ children }) => {
         sensors,
         readings,
         moistureReadingsLast24h,
+        averageReadingsBySensor,
         notifs,
         loadTrayGroups,
         loadTrays,
@@ -145,11 +164,13 @@ export const PlantDataProvider = ({ children }) => {
         loadSensors,
         loadReadings,
         loadMoistureReadingsLast24h,
+        loadAverageReadingsBySensor,
         loadNotifs,
       }}>
       {children}
     </PlantDataContext.Provider>
   );
+  
 };
 
 export const usePlantData = () => {

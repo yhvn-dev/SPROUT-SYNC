@@ -42,8 +42,7 @@ const StatCard = ({ label, value, color }) => (
 );
 
 
-export const Overview = ({batchTotal,readings,moistureReadingsLast24h}) => {
-
+export const Overview = ({batchTotal,readings,moistureReadingsLast24h,averageReadingsBySensor}) => {
 
     const moistureData = useMemo(() => {
     if (!moistureReadingsLast24h) return [];
@@ -60,11 +59,9 @@ export const Overview = ({batchTotal,readings,moistureReadingsLast24h}) => {
         };
       });
   }, [moistureReadingsLast24h]);
-
       
     return (
     <div className="h-full grid grid-cols-12 grid-rows-12 gap-4">
-      {/* Top Row - Small Gauge / Stat Cards */}
       <div className="gap-4 flex items-start justify-evenly col-start-1 col-span-full row-start-1 row-end-4">
         
         {/* Alive % - Gauge */}
@@ -88,9 +85,9 @@ export const Overview = ({batchTotal,readings,moistureReadingsLast24h}) => {
 
           <div className="flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
               <StatCard label="Replanted" value={batchTotal.total_replanted}color="var(--color-warning)" />
-          </div>
-     
+          </div>    
       </div>
+
 
       {/* Moisture Chart */}
       <div className="col-span-7 row-span-9 bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow p-4 flex flex-col">
@@ -108,9 +105,6 @@ export const Overview = ({batchTotal,readings,moistureReadingsLast24h}) => {
 
         </div>
       </div>
-
-
-
 
       {/* Featured Large Gauge - Water Level */}
       <div className="col-span-5 row-span-9 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-6">
@@ -131,13 +125,17 @@ export const Overview = ({batchTotal,readings,moistureReadingsLast24h}) => {
             </svg>
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <Droplets className="w-10 h-10 mb-2" style={{ color: "var(--white-blple--)" }} />
-              <span className="text-4xl font-bold text-gray-800">48</span>
+              <span className="text-4xl font-bold text-gray-800">
+                {averageReadingsBySensor?.ultra_sonic.average ?? "--"}       
+              </span>
               <span className="text-lg text-gray-600">%</span>
             </div>
           </div>
           <p className="text-base font-semibold text-gray-800 mt-4">Water Level</p>
         </div>
       </div>
+
+
     </div>
   );
 };

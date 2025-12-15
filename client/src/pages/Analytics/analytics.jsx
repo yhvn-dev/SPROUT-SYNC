@@ -15,7 +15,12 @@ import { SeedlingStats } from './seedlingStats';
 
 export default function Analytics() {
   const { user } = useContext(UserContext);
-  const { batchTotal,loadBatchTotal,readings,loadReadings, moistureReadingsLast24h,loadMoistureReadingsLast24h} = usePlantData();
+  const { batchTotal,loadBatchTotal,
+          readings,loadReadings, 
+          moistureReadingsLast24h,loadMoistureReadingsLast24h,        
+          averageReadingsBySensor,loadAverageReadingsBySensor,
+        } = usePlantData();
+          
   const [isNotifOpen,setNotifOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('Overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,21 +29,21 @@ export default function Analytics() {
     loadBatchTotal(); 
     loadReadings()
     loadMoistureReadingsLast24h()
-  }, [loadBatchTotal,loadReadings, loadMoistureReadingsLast24h]);
+    loadAverageReadingsBySensor("moisture");
+    loadAverageReadingsBySensor("ultra_sonic");
+    console.log("AVERAGE READINGS BY SENSOR",averageReadingsBySensor) 
+  }, [loadBatchTotal,loadReadings, loadMoistureReadingsLast24h, loadAverageReadingsBySensor]);
 
- 
+
+
   return (
     <section className="h-screen w-screen overflow-hidden bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
-
+      
       {/* Main Grid Layout */}
       <div className="h-full grid grid-cols-[12fr_30fr_58fr] gap-4 grid-rows-[auto_auto_1fr] ">
-
-        
         {/* Sidebar */}
         <Sidebar user={user} />
         <Db_Header setNotifOpen={setNotifOpen}/>
-
-
         {/* Navigation Tabs */}
         <nav className="col-start-2  border-b border-gray-200 py-3 flex items-center gap-2">
           <button 
@@ -67,9 +72,14 @@ export default function Analytics() {
         <main className="col-start-2 col-span-full row-start-3 row-span-full overflow-hidden">
           <div className="h-full ">
             {activeTab === "Overview" && 
-            <Overview  batchTotal={batchTotal} readings={readings} moistureReadingsLast24h={moistureReadingsLast24h}/>}
+            <Overview
+             batchTotal={batchTotal} 
+             readings={readings} 
+             moistureReadingsLast24h={moistureReadingsLast24h}
+             averageReadingsBySensor={averageReadingsBySensor}
+           />}
             {activeTab === "Seedling Stats" &&
-            <SeedlingStats />}
+            <SeedlingStats batchTotal={batchTotal}  averageReadingsBySensor={averageReadingsBySensor} />}
           </div>
         </main>
       </div>

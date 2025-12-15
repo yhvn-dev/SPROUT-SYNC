@@ -43,6 +43,35 @@ export const readMoistureReadingsLast24h = async () => {
 };
 
 
+// ===== READ average moisture across all time =====
+export const readAverageMoisture = async () => {
+  try {
+    const sql = `
+      SELECT AVG(r.value::numeric) AS avg_moisture
+      FROM sensor_readings r
+      JOIN sensors s ON r.sensor_id = s.sensor_id
+      WHERE s.sensor_type = 'moisture'
+    `;
+    const result = await query(sql);
+    return result.rows[0].avg_moisture || 0; 
+  } catch (error) {
+    console.error("Error fetching overall average moisture", error);
+    throw error;
+  }
+};
+
+export const readAverageBySensorType = async (sensorType) => {
+  const sql = `
+    SELECT ROUND(AVG(r.value::numeric), 3) AS average
+    FROM sensor_readings r
+    JOIN sensors s ON r.sensor_id = s.sensor_id
+    WHERE s.sensor_type = $1
+  `;
+  const result = await query(sql, [sensorType]);
+  return result.rows[0].average || 0;
+};
+
+
 // ===== CREATE a new reading =====
 export const createReadings = async (readingData) => {
   const {sensor_id, value} = readingData;

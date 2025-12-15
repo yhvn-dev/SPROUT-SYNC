@@ -36,6 +36,7 @@ export const getReadingById = async (req, res) => {
 };
 
 
+
 // ===== GET readings for last 24 hours =====
 export const getReadingsLast24h = async (req, res) => {
   try {
@@ -49,84 +50,122 @@ export const getReadingsLast24h = async (req, res) => {
 };
 
 
-// ===== CREATE a reading =====
+
+export const getAverageReadings = async (req, res) => {
+  try {
+    const readings = await readingModel.readAverageMoisture()
+    const averageReadings = parseFloat(readings).toFixed(1);
+    res.status(200).json(averageReadings);
+    console.log("AVERAGE MOISTURE READINGS:", readings);
+  } catch (err) {
+    console.error("CONTROLLER: Error getting average moisture readings", err);
+    res.status(500).json({ message: "Error getting readings", err });
+  }
+};
+
+
+export const getAverageBySensorType = async (req, res) => {
+  try {
+    const { sensor_type} = req.params;
+    if (!sensor_type) {
+      return res.status(400).json({
+        message: "sensorType parameter is required"
+      });
+    }
+    const average = await readingModel.readAverageBySensorType(sensor_type)
+    const averageReadings = parseFloat(average).toFixed(1);
+    res.status(200).json({
+      sensor_type: sensor_type,
+      average: Number(averageReadings)
+    });
+
+    console.log(`AVERAGE (${sensor_type}):`, averageReadings);
+  } catch (err) {
+    console.error("CONTROLLER: Error getting average by sensor type", err);
+    res.status(500).json({
+      message: "Error getting average sensor reading"
+    });
+  }
+};
+
+
+
+
+
+
 export const createReadings = async (req, res) => {
   try {
     const readingData = req.body;
-    const {sensor_id,value} = readingData;  
-    console.log("READINGS DATA",readingData)
+    const { sensor_id, value } = readingData;
 
     const existingSensor = await sensorModels.readSensorById(sensor_id);
     if (!existingSensor) {
       return res.status(404).json({ message: "Sensor with this id doesn't exist" });
     }
-    console.log("SENSOR DATA", existingSensor)
 
-    const {tray_id} = existingSensor
-    const selectedTray = await trayModels.readTrayById(tray_id)
-    console.log("TRAY DATA", selectedTray)
+    // check sensor type
+    const { sensor_type, tray_id } = existingSensor;
 
-    const {tray_group_id} = selectedTray
-    const selectedTrayGroup =  await trayGroupModels.readTrayGroupById(tray_group_id)
-    console.log("TRAY GROUP qDATA", selectedTrayGroup)
+    if (sensor_type === "moisture") {
+      if (!tray_id) {
+        return res.status(400).json({ message: "Moisture sensor must have a tray assigned" });
+      }
 
-    const {min_moisture,max_moisture} = selectedTrayGroup
-    
-    const moisture = Number(value);
-    const min = Number(min_moisture);
-    const max = Number(max_moisture);
+      const selectedTray = await trayModels.readTrayById(tray_id);
+      const { tray_group_id } = selectedTray;
+      const selectedTrayGroup = await trayGroupModels.readTrayGroupById(tray_group_id);
+      const { min_moisture, max_moisture } = selectedTrayGroup;
 
-    if (moisture < min) {
-    const percentageBelow = ((min - moisture) / min) * 100;
+      const moisture = Number(value);
+      const min = Number(min_moisture);
+      const max = Number(max_moisture);
 
-    if (percentageBelow > 15) { 
-      await notificationModels.createNotif({
-        type: "Alert",
-        message: "Soil is CRITICALLY DRY",
-        related_sensor: sensor_id,
-        status: "LOW"
-      });
-    } else { // Approaching low
-      await notificationModels.createNotif({
-        type: "Warning",
-        message: "Soil is approaching dryness",
-        related_sensor: sensor_id,
-        status: "LOW"
-      });
+      // Moisture notifications
+      if (moisture < min) {
+        const percentageBelow = ((min - moisture) / min) * 100;
+        if (percentageBelow > 15) {
+          await notificationModels.createNotif({
+            type: "Alert",
+            message: "Soil is CRITICALLY DRY",
+            related_sensor: sensor_id,
+            status: "LOW"
+          });
+        } else {
+          await notificationModels.createNotif({
+            type: "Warning",
+            message: "Soil is approaching dryness",
+            related_sensor: sensor_id,
+            status: "LOW"
+          });
+        }
+      } else if (moisture > max) {
+        const percentageAbove = ((moisture - max) / max) * 100;
+        if (percentageAbove > 15) {
+          await notificationModels.createNotif({
+            type: "Alert",
+            message: "Soil is TOO WET",
+            related_sensor: sensor_id,
+            status: "HIGH"
+          });
+        } else {
+          await notificationModels.createNotif({
+            type: "Warning",
+            message: "Soil is getting wet",
+            related_sensor: sensor_id,
+            status: "HIGH"
+          });
+        }
+      } else {
+        await notificationModels.createNotif({
+          type: "Info",
+          message: "Soil moisture is normal",
+          related_sensor: sensor_id,
+          status: "NORMAL"
+        });
+      }
     }
-  }
 
-  // HIGH thresholds
-  else if (moisture > max) {
-    const percentageAbove = ((moisture - max) / max) * 100;
-
-    if (percentageAbove > 15) { // Too wet
-      await notificationModels.createNotif({
-        type: "Alert",
-        message: "Soil is TOO WET",
-        related_sensor: sensor_id,
-        status: "HIGH"
-      });
-
-    } else { 
-      await notificationModels.createNotif({
-        type: "Warning",
-        message: "Soil is getting wet",
-        related_sensor: sensor_id,
-        status: "HIGH"
-      });
-    }
-  } 
-  
-  else {
-    await notificationModels.createNotif({
-      type: "Info",
-      message: "Soil moisture is normal",
-      related_sensor: sensor_id,
-      status: "NORMAL"
-    });
-  }
-    // ✅ create reading
+    // ✅ Create reading for ALL sensors (including ultrasonic)
     const reading = await readingModel.createReadings(readingData);
     res.status(201).json(reading);
     console.log("READING CREATED:", reading);
@@ -136,6 +175,10 @@ export const createReadings = async (req, res) => {
     res.status(500).json({ message: "Error creating reading", err });
   }
 };
+
+
+
+
 
 
 

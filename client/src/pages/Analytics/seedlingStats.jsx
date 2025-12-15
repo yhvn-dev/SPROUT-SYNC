@@ -14,13 +14,9 @@ const statusData = [
   { name: "Replanted", value: 15, color: "#f59e0b" },
 ];
 
-
-export const SeedlingStats = () => {
+export const SeedlingStats = ({batchTotal,averageReadingsBySensor}) => {
   return (
     <div className="h-full grid grid-cols-12 grid-rows-12 gap-3">
- 
-
- 
       <div className="col-span-8 row-span-7 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col">
         <h3 className="text-sm font-semibold text-gray-800 mb-2">Seedling Growth Over Time</h3>
         <div className="flex-1 min-h-0">
@@ -72,7 +68,7 @@ export const SeedlingStats = () => {
       {/* Stats Cards */}
       <div className="col-span-3 row-span-5 bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col items-center justify-center">
         <Sprout className="w-12 h-12 text-green-600 mb-2" />
-        <span className="text-3xl font-bold text-gray-800">192</span>
+        <span className="text-3xl font-bold text-gray-800">{batchTotal.total_seedlings}</span>
         <span className="text-sm text-gray-600 mt-1">Total Seedlings</span>
       </div>
 
@@ -90,10 +86,14 @@ export const SeedlingStats = () => {
 
       <div className="col-span-3 row-span-5 bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col items-center justify-center">
         <Droplets className="w-12 h-12 text-amber-600 mb-2" />
-        <span className="text-3xl font-bold text-gray-800">65%</span>
+            <span className="text-3xl font-bold text-gray-800">
+           {averageReadingsBySensor?.moisture.average ?? "--"}
+        </span>
         <span className="text-sm text-gray-600 mt-1">Avg Moisture</span>
       </div>
     </div>
+
+    
   );
 };
 

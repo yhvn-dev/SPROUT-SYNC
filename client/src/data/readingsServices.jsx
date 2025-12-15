@@ -26,8 +26,30 @@ export const fetchMoistureReadingsLast24hr = async () =>{
         const res = await api.get(`/readings/get/readings/last24h/`);
         return res.data
     } catch (error) {
-        console.error("Error Fetching Readings By Sensor",error);
+        console.error("Error Fetching Moisture Readings by 24hr",error);
         throw error
     }
 }
 
+export const fetchAverageReadings = async () =>{
+    try {
+        const res = await api.get(`/readings/get/readings/average`);
+        return res
+    } catch (error) {
+        console.error("Error Fetching Average Readings",error);
+        throw error
+    }
+}
+
+
+
+export const fetchAverageReadingsBySensor = async (sensor_type) =>{
+    console.log("SENSOR TYPE", sensor_type);
+    try {
+        const res = await api.get(`/readings/get/readings/average/${sensor_type}`);
+        return res.data; 
+    } catch (error) {
+        console.error("Error Fetching Average Readings By Sensor",error);
+        throw error;
+    }
+}
