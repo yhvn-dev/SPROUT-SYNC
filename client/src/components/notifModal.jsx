@@ -69,13 +69,11 @@ export function Notif_Modal({ isOpen, onClose}) {
         <div className="px-4 py-3 border-t border-gray-200">
           <button
             onClick={onClose}
-            className="w-full py-2 rounded-lg bg-[var(--sancgb)] text-white font-medium hover:bg-[var(--sancgd)] transition">
+            className="cursor-pointer w-full py-2 rounded-lg bg-[var(--sancgb)] text-white font-medium hover:bg-[var(--sancgd)] transition">
             Close
           </button>
         </div>
       </div>
      </aside>
-    
-   
   );
 }

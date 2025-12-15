@@ -36,10 +36,6 @@ function NurseryDashboard(){
     }));
   };
 
-  const alerts = [
-    { id: 1, type: 'warning', message: 'Spinach moisture below threshold (45%)' },
-    { id: 2, type: 'alert', message: 'Cilantro moisture above threshold (85%)' }
-  ];
   
   return (
 
@@ -122,10 +118,10 @@ function NurseryDashboard(){
                                 {/* Header */}
                                 <div className="flex items-start justify-between mb-3">
                                   <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">{tray.plant}</h3>
+                                    <h3 className="text-lg font-semibold text-gray-900">[{tray.tray_number}]{tray.plant}</h3>
                                     <p className="text-xs text-gray-600">{tray.status}</p>
                                   </div>
-                                
+                               
                                 </div>
 
                                     {/* Soil Moisture UI */}
@@ -135,11 +131,11 @@ function NurseryDashboard(){
                                           
                                           {/* Icon */}
                                           <div
-                                            className="w-20 h-10 rounded-xl flex items-center justify-center"
+                                            className="w-10 h-10 rounded-xl flex items-center justify-center"
                                             style={{ backgroundColor: `${moistureStatus.color}15` }}
                                           >
                                             <Droplet
-                                              className="w-5 h-5"
+                                              className="w-10 h-8"
                                               style={{ color: moistureStatus.color }}
                                             />
                                           </div>

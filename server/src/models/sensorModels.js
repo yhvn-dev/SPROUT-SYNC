@@ -27,8 +27,6 @@ export const readSensorById = async (sensor_id) => {
 };
 
 
-
-
 // ===== CREATE a new sensor =====
 export const createSensors = async (sensorData) => {
   const {tray_id, sensor_type,status } = sensorData;
@@ -48,13 +46,9 @@ export const createSensors = async (sensorData) => {
 };
 
 
-
-
-
 // ===== UPDATE sensor =====
 export const updateSensors = async (sensorData, sensor_id) => {
   const {tray_id, sensor_type,status} = sensorData;
-
   try {   
     const sql = `
       UPDATE sensors

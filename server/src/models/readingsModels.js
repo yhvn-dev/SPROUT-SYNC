@@ -1,27 +1,6 @@
 // readings.model.js
 import { query } from "../config/db.js";
 
-
-// ===== CREATE a new reading =====
-export const createReadings = async (readingData) => {
-  const {sensor_id, value} = readingData;
-
-  try {        
-    const sql = `
-      INSERT INTO sensor_readings (sensor_id,value)
-      VALUES ($1, $2)
-      RETURNING *
-    `;
-    const values = [sensor_id, value];
-    const result = await query(sql, values);
-    return result.rows[0];
-  } catch (error) {
-    throw error;
-  }
-
-};
-
-
 // ===== READ all readings =====
 export const readReadings = async () => {
   try {  
@@ -44,6 +23,44 @@ export const readReadingById = async (reading_id) => {
     throw error;
   }
 };
+
+// ===== READ moisture readings for last 24 hours =====
+export const readMoistureReadingsLast24h = async () => {
+  try {
+    const sql = `
+      SELECT r.*, s.sensor_type
+      FROM sensor_readings r
+      JOIN sensors s ON r.sensor_id = s.sensor_id
+      WHERE s.sensor_type = 'moisture'
+        AND r.recorded_at >= NOW() - INTERVAL '24 HOURS'
+      ORDER BY r.recorded_at ASC
+    `;
+    const result = await query(sql);
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+// ===== CREATE a new reading =====
+export const createReadings = async (readingData) => {
+  const {sensor_id, value} = readingData;
+
+  try {        
+    const sql = `
+      INSERT INTO sensor_readings (sensor_id,value)
+      VALUES ($1, $2)
+      RETURNING *
+    `;
+    const values = [sensor_id, value];
+    const result = await query(sql, values);
+    return result.rows[0];
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 
 // ===== UPDATE reading =====

@@ -21,4 +21,13 @@ export const fetchReadingsBySensor = async (sensor_id) =>{
     }
 }
 
+export const fetchMoistureReadingsLast24hr = async () =>{
+    try {
+        const res = await api.get(`/readings/get/readings/last24h/`);
+        return res.data
+    } catch (error) {
+        console.error("Error Fetching Readings By Sensor",error);
+        throw error
+    }
+}
 

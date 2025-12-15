@@ -36,10 +36,22 @@ export const getReadingById = async (req, res) => {
 };
 
 
+// ===== GET readings for last 24 hours =====
+export const getReadingsLast24h = async (req, res) => {
+  try {
+    const readings = await readingModel.readMoistureReadingsLast24h()
+    res.status(200).json(readings);
+    console.log("LAST 24H READINGS:", readings);
+  } catch (err) {
+    console.error("CONTROLLER: Error getting readings for last 24h", err);
+    res.status(500).json({ message: "Error getting readings", err });
+  }
+};
+
+
 // ===== CREATE a reading =====
 export const createReadings = async (req, res) => {
   try {
-
     const readingData = req.body;
     const {sensor_id,value} = readingData;  
     console.log("READINGS DATA",readingData)

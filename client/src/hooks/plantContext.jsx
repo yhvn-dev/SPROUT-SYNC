@@ -16,8 +16,11 @@ export const PlantDataProvider = ({ children }) => {
   const [batchTotal, setBatchTotal] = useState({});
   const [sensors, setSensors] = useState([]);
   const [readings, setReadings] = useState([]);
+  const [moistureReadingsLast24h, setMoistureReadingsLast24h] = useState([]);
   const [notifs, setNotifs] = useState([]);
 
+
+  
   // ------------------- LOAD FUNCTIONS -------------------
   const loadTrayGroups = useCallback(async () => {
     try {
@@ -73,6 +76,15 @@ export const PlantDataProvider = ({ children }) => {
     }
   }, []);
 
+  const loadMoistureReadingsLast24h = useCallback(async () => {
+    try {
+      const data = await readingsService.fetchMoistureReadingsLast24hr();
+      setMoistureReadingsLast24h(data);
+    } catch (error) {
+      console.error("Error loading moisture readings (last 24h)", error);
+    }
+  }, []);
+
   const loadNotifs = useCallback(async () => {
     try {
       const data = await notifService.fetchAllNotifs();
@@ -87,21 +99,34 @@ export const PlantDataProvider = ({ children }) => {
     loadTrayGroups();
     loadTrays();
     loadBatches();
-    loadBatchTotal(); 
+    loadBatchTotal();
     loadSensors();
     loadReadings();
+    loadMoistureReadingsLast24h();
     loadNotifs();
-  }, [loadTrayGroups, loadTrays, loadBatches, loadBatchTotal, loadSensors, loadReadings, loadNotifs]);
+  }, [
+    loadTrayGroups,
+    loadTrays,
+    loadBatches,
+    loadBatchTotal,
+    loadSensors,
+    loadReadings,
+    loadMoistureReadingsLast24h,
+    loadNotifs,
+  ]);
 
+  
   // ------------------- INTERVAL UPDATES -------------------
   useEffect(() => {
     const interval = setInterval(() => {
-      loadReadings(); // frequent updates for sensors
-    }, 5000); // every 5 seconds
+      loadReadings(); 
+      loadMoistureReadingsLast24h(); 
+    }, 5000); 
 
     return () => clearInterval(interval);
-  }, [loadReadings]);
+  }, [loadReadings, loadMoistureReadingsLast24h]);
 
+  
   return (
     <PlantDataContext.Provider
       value={{
@@ -111,6 +136,7 @@ export const PlantDataProvider = ({ children }) => {
         batchTotal,
         sensors,
         readings,
+        moistureReadingsLast24h,
         notifs,
         loadTrayGroups,
         loadTrays,
@@ -118,9 +144,9 @@ export const PlantDataProvider = ({ children }) => {
         loadBatchTotal,
         loadSensors,
         loadReadings,
+        loadMoistureReadingsLast24h,
         loadNotifs,
-      }}
-    >
+      }}>
       {children}
     </PlantDataContext.Provider>
   );

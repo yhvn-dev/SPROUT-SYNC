@@ -1,7 +1,7 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Droplets, AlertTriangle, Activity, TrendingUp, Sprout } from "lucide-react";
-import { useMemo } from "react"
-
+import { useEffect, useMemo } from "react"
+import { usePlantData } from "../../hooks/plantContext";
 
 // Gauge Component
 const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
@@ -41,33 +41,28 @@ const StatCard = ({ label, value, color }) => (
   </div>
 );
 
-export const Overview = ({batchTotal,readings}) => {
+
+export const Overview = ({batchTotal,readings,moistureReadingsLast24h}) => {
+
+
     const moistureData = useMemo(() => {
-    if (!readings || readings.length === 0) return [];
+    if (!moistureReadingsLast24h) return [];
 
-    const now = Date.now();
-    const last24Hours = now - 24 * 60 * 60 * 1000;
+    return moistureReadingsLast24h
+      .filter(r => r.sensor_type === "moisture") // optional, filter moisture sensors only
+      .map((reading) => {
+        const date = new Date(reading.recorded_at); // use recorded_at
+        return {
+          time: isNaN(date.getTime())
+            ? "Invalid"
+            : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+          value: parseFloat(reading.value) || 0, // convert string to number
+        };
+      });
+  }, [moistureReadingsLast24h]);
 
-    return readings
-      .filter(r => {
-        const time = new Date(r.recorded_at).getTime();
-        return !isNaN(time) && time >= last24Hours;
-      })
-      .sort(
-        (a, b) =>
-          new Date(a.recorded_at) - new Date(b.recorded_at)
-      )
-      .map(r => ({
-        time: new Date(r.recorded_at).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        }),
-        value: Number(r.value),
-      }));
-  }, [readings]);
-
-
-  return (
+      
+    return (
     <div className="h-full grid grid-cols-12 grid-rows-12 gap-4">
       {/* Top Row - Small Gauge / Stat Cards */}
       <div className="gap-4 flex items-start justify-evenly col-start-1 col-span-full row-start-1 row-end-4">
@@ -110,6 +105,7 @@ export const Overview = ({batchTotal,readings}) => {
               <Line type="monotone" dataKey="value" stroke="#027c68" strokeWidth={3} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
+
         </div>
       </div>
 
