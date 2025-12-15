@@ -1,5 +1,6 @@
 import { body, validationResult } from "express-validator";
 
+
 export const validateTrayGroups = [
     body("tray_group_name")
         .notEmpty()
@@ -18,7 +19,11 @@ export const validateTrayGroups = [
         .optional()
         .isBoolean()
         .withMessage("Is Watering must be true or false."),
-    
+    body("location")
+    .optional()
+    .isBoolean()
+    .withMessage("Location is Required"),
+        
     (req, res, next) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {return res.status(400).json({ errors: errors.array() });}

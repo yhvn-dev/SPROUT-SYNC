@@ -1,5 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Droplets, AlertTriangle, Activity, TrendingUp, Sprout } from "lucide-react";
+import { useMemo } from "react"
 
 
 // Gauge Component
@@ -40,20 +41,32 @@ const StatCard = ({ label, value, color }) => (
   </div>
 );
 
-// Sample Moisture Data
-const moistureData = [
-  { time: "00:00", value: 45 },
-  { time: "04:00", value: 42 },
-  { time: "08:00", value: 65 },
-  { time: "12:00", value: 58 },
-  { time: "16:00", value: 52 },
-  { time: "20:00", value: 48 },
-  { time: "24:00", value: 44 }
-];
+export const Overview = ({batchTotal,readings}) => {
+    const moistureData = useMemo(() => {
+    if (!readings || readings.length === 0) return [];
 
-export const Overview = ({batchTotal}) => {
+    const now = Date.now();
+    const last24Hours = now - 24 * 60 * 60 * 1000;
 
-  
+    return readings
+      .filter(r => {
+        const time = new Date(r.recorded_at).getTime();
+        return !isNaN(time) && time >= last24Hours;
+      })
+      .sort(
+        (a, b) =>
+          new Date(a.recorded_at) - new Date(b.recorded_at)
+      )
+      .map(r => ({
+        time: new Date(r.recorded_at).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        value: Number(r.value),
+      }));
+  }, [readings]);
+
+
   return (
     <div className="h-full grid grid-cols-12 grid-rows-12 gap-4">
       {/* Top Row - Small Gauge / Stat Cards */}

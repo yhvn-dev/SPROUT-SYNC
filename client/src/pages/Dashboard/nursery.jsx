@@ -50,8 +50,6 @@ function NurseryDashboard(){
       <div className="bg-gradient-to-br from-[#E8F3ED] to-white p-4 overflow-hidden w-full">
     
         <div className="max-w-7xl mx-auto space-y-4">
-
-          
           {/* Header */}
           <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
             <div className="flex items-center justify-between">
@@ -88,11 +86,11 @@ function NurseryDashboard(){
                             <Sprout className="w-6 h-6 text-white" />
                           </div>
                           <div>
-                            <h2 className="text-xl font-semibold text-gray-900">{group.tray_group_name}</h2>
-                            <p className="text-sm text-gray-500">{group.description}</p>
+                            <h2 className="text-xl font-semibold text-gray-900">[{group.group_number}]{group.tray_group_name}</h2>
+                            <p className="text-sm text-gray-500">{group.location}</p>
                           </div>
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-4 ">
                           <div className="text-right">
                             <p className="text-xs text-gray-500 uppercase tracking-wide">Threshold</p>
                             <p className="text-sm font-medium text-gray-900">{group.min_moisture}% - {group.max_moisture}%</p>
@@ -105,12 +103,16 @@ function NurseryDashboard(){
                     </div>
 
 
+
                     {isExpanded && (
                       <div className="px-6 pb-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {groupTrays.map(tray => {
+                            
                             // Find sensor for the tray
-                            const sensor = sensors.find(s => s.tray_id === tray.tray_id);
+                            const sensor = sensors.find(
+                              s => s.tray_id === tray.tray_id && s.sensor_type === "moisture"
+                            );
                             const reading = sensor ? readings.find(r => r.sensor_id === sensor.sensor_id) : null;
                             const moistureValue = reading ? reading.value : 0;
                             const moistureStatus = getMoistureStatus(moistureValue, group.min_moisture, group.max_moisture);
@@ -126,39 +128,48 @@ function NurseryDashboard(){
                                 
                                 </div>
 
-                                {/* Soil Moisture UI */}
-                                {sensor && (
-                                  <div className="bg-white rounded-xl p-4 shadow-sm">
-                                    <div className="flex">
-                                      <div 
-                                        className="w-20 h-10 rounded-xl flex items-center justify-center"
-                                        style={{ backgroundColor: `${moistureStatus.color}15` }}
-                                      >
-                                        <Droplet className="w-5 h-5" style={{ color: moistureStatus.color }} />
-                                      </div>
+                                    {/* Soil Moisture UI */}
+                                    {sensor?.sensor_type === "moisture" && (
+                                      <div className="bg-white rounded-xl p-4 shadow-sm">
+                                        <div className="flex items-center justify-between">
+                                          
+                                          {/* Icon */}
+                                          <div
+                                            className="w-20 h-10 rounded-xl flex items-center justify-center"
+                                            style={{ backgroundColor: `${moistureStatus.color}15` }}
+                                          >
+                                            <Droplet
+                                              className="w-5 h-5"
+                                              style={{ color: moistureStatus.color }}
+                                            />
+                                          </div>
 
-                                      <div className='w-full mx-4'>
-                                        <p className="text-xs text-gray-500 uppercase tracking-wide">{sensor.sensor_type} Sensor</p>
-                                        <p className="text-2xl font-bold text-gray-900">{moistureValue}%</p>
-                                      </div>   
-                                  
-                                      <div className='flex-row-reverse '>                                       
-                                          {sensor && (
-                                            <div 
+                                          {/* Sensor Info */}
+                                          <div className="flex-1 mx-4">
+                                            <p className="text-xs text-gray-500 uppercase tracking-wide">
+                                              Moisture Sensor
+                                            </p>
+                                            <p className="text-2xl font-bold text-gray-900">
+                                              {moistureValue}%
+                                            </p>
+                                          </div>
+
+                                          {/* Status Badge */}
+                                          <div className="flex">
+                                            <div
                                               className="px-3 py-1 rounded-full text-xs font-medium"
-                                              style={{ 
+                                              style={{
                                                 backgroundColor: `${moistureStatus.color}15`,
-                                                color: moistureStatus.color 
+                                                color: moistureStatus.color,
                                               }}
                                             >
                                               {moistureStatus.label}
                                             </div>
-                                          )}
-                                      </div>
-                                    </div>
-                                  </div>
-                                )}
+                                          </div>
 
+                                        </div>
+                                      </div>
+                                    )}
 
                               </div>
                             );
@@ -166,13 +177,11 @@ function NurseryDashboard(){
                         </div>
                       </div>
                     )}
-
-
-
-
                   </div>
                 );
               })}
+
+              
             </div>
 
 

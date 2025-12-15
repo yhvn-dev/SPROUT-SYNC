@@ -180,7 +180,7 @@ export function TrayGroupModal({
                   value={formData.tray_group_name}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg"
-                  required
+                
                 >
                   <option value="">Select a Plant Type</option>
                   {plantTypeOptions.map((plant) => (
@@ -228,7 +228,7 @@ export function TrayGroupModal({
                   value={formData.location}
                   onChange={handleChange}
                   className="w-full p-2 border rounded-lg"
-                  required
+               
                 >
                   <option value="">Select a Location</option>
                   <option value="Left 1">Left 1</option>

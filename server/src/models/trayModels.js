@@ -58,56 +58,67 @@ export const createTray = async (trayData) => {
 };
 
 
-
-
-// ===== UPDATE a tray =====
 export const updateTray = async (trayData, tray_id) => {
   let { tray_group_id, plant, status } = trayData;
-
+  const reindexSQL = `
+    WITH ordered AS (
+      SELECT tray_id,
+             ROW_NUMBER() OVER (ORDER BY tray_number) AS new_tray_number
+      FROM trays
+      WHERE tray_group_id = $1 AND plant ILIKE $2
+    )
+    UPDATE trays t
+    SET tray_number = o.new_tray_number
+    FROM ordered o
+    WHERE t.tray_id = o.tray_id
+  `;
   try {
+    
     // 1️⃣ Get existing tray
     const existingTrayQuery = await query(
       `SELECT tray_group_id, tray_number, plant FROM trays WHERE tray_id = $1`,
       [tray_id]
     );
+
     const existingTray = existingTrayQuery.rows[0];
     if (!existingTray) throw new Error("Tray not found");
-
+    const oldGroupId = existingTray.tray_group_id;
+    const oldPlant = existingTray.plant.trim();
     const newPlant = plant.trim();
-    let tray_number = existingTray.tray_number; // keep existing tray_number by default
 
-    // 2️⃣ If plant OR tray_group_id changed, recalc tray_number
-    if (newPlant !== existingTray.plant || tray_group_id !== existingTray.tray_group_id) {
-      const result = await query(
-        `
-        SELECT COALESCE(MAX(tray_number), 0) + 1 AS next_number
-        FROM trays
-        WHERE tray_group_id = $1 AND plant ILIKE $2
-        `,
-        [tray_group_id, newPlant]
+    // 2️⃣ If plant or tray_group_id changed, rename first
+    if (newPlant !== oldPlant || tray_group_id !== oldGroupId) {
+      // a) Temporarily update tray_group_id and plant
+      await query(
+        `UPDATE trays
+         SET tray_group_id = $1, plant = $2
+         WHERE tray_id = $3`,
+        [tray_group_id, newPlant, tray_id]
       );
-      tray_number = result.rows[0].next_number;
+
+      // b) Reindex old group/plant to remove gaps
+      await query(reindexSQL, [oldGroupId, oldPlant]);
+      await query(reindexSQL, [tray_group_id, newPlant]);
     }
 
-    // 3️⃣ Update tray
+    // 3️⃣ Update other fields (status, etc.)
     const sql = `
       UPDATE trays
-      SET tray_group_id = $1,
-          tray_number = $2,
-          plant = $3,
-          status = $4,
+      SET status = $1,
           updated_at = NOW()
-      WHERE tray_id = $5
+      WHERE tray_id = $2
       RETURNING *
     `;
-    const values = [tray_group_id, tray_number, newPlant, status || "Available", tray_id];
+    const values = [status || "Available", tray_id];
     const updated = await query(sql, values);
     return updated.rows[0];
 
   } catch (error) {
     throw error;
   }
+  
 };
+
 
 
 

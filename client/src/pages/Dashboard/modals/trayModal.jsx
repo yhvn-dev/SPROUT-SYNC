@@ -75,23 +75,19 @@ export function TrayModal({
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormErrors({});
+  
     try {
-      if (trayModalMode === "insert") {
-        if (!selectedTrayGroup?.tray_group_id || !formData.plant) {
-          setFormErrors({ general: "Tray group and plant are required." });
-          return;
-        }
 
+      if (trayModalMode === "insert") {
+       
         const newTray = await trayModels.insertTray({
           tray_group_id: selectedTrayGroup.tray_group_id,
           plant: formData.plant,
           status: formData.status,
         });
-
+        setFormErrors({});
         setSuccessMsg(`${newTray.plant} Tray Added`);
       }
-
       if (trayModalMode === "update") {
         const updatedTray = await trayModels.updateTray(
           {
@@ -102,21 +98,36 @@ export function TrayModal({
           selectedTray.tray_id
         );
 
+        setFormErrors({});
         setSuccessMsg(`${updatedTray.plant} Tray Updated`);
       }
-
       if (trayModalMode === "delete") {
         await trayModels.deleteTray(selectedTray.tray_id);
+        setFormErrors({});
         setSuccessMsg(`${selectedTray.plant} Tray Deleted`);
       }
-
+      
       reloadTray();
       onClose();
     } catch (error) {
-      console.error(error);
-      setFormErrors({ general: "Something went wrong." });
-    }
-  };
+      const rawErrors = error?.response?.data?.errors;
+      if (Array.isArray(rawErrors)) {
+          const formattedErrors = rawErrors.reduce((acc, err) => {
+              acc[err.path] = err.msg;
+              return acc;
+          }, {});
+          setFormErrors(formattedErrors);
+      } else {
+          setFormErrors({ general: "Something went wrong."});
+      }
+   };
+    
+
+  
+  }
+
+
+
 
   return (
     <motion.div className="fixed inset-0 bg-transparent backdrop-blur-2xl flex items-center justify-center p-4 z-50">
@@ -164,8 +175,9 @@ export function TrayModal({
         ) : (
           <form onSubmit={handleSubmit} className="p-6 space-y-5">
             <input type="hidden" name="tray_group_id" value={formData.tray_group_id} />
-
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+              
               {/* PLANT SELECT */}
               <div className="md:col-span-2 border rounded-xl p-4">
                 <label className="flex items-center gap-2 text-sm font-semibold mb-2">
@@ -175,15 +187,18 @@ export function TrayModal({
                   name="plant"
                   value={formData.plant}
                   onChange={handleChange}
-                  required
-                  className="w-full px-3 py-2 border rounded-lg bg-white"
-                >
+                  className="w-full px-3 py-2 border rounded-lg bg-white">
+
                   <option value="">Select Plant</option>
                   {plantOptions.map((plant) => (
                     <option key={plant} value={plant}>{plant}</option>
                   ))}
                 </select>
-                <p className="text-sm text-red-600 mt-1">{formErrors.plant}</p>
+                 {formErrors.plant && (
+                  <p className="text-sm text-[var(--color-danger-a)] mt-1">
+                    {formErrors.plant}
+                  </p>
+                )}
               </div>
 
               {/* STATUS */}
@@ -196,7 +211,7 @@ export function TrayModal({
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  required
+                 
                   className="w-full px-3 py-2 border rounded-lg bg-white"
                 >
                   <option value="">Select Status</option>
@@ -205,7 +220,11 @@ export function TrayModal({
                   <option value="Maintenance">Maintenance</option>
                   <option value="Disabled">Disabled</option>
                 </select>
-                <p className="text-sm text-red-600 mt-1">{formErrors.status}</p>
+                 {formErrors.status && (
+                  <p className="text-sm text-[var(--color-danger-a)] mt-1">
+                    {formErrors.status}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -214,7 +233,7 @@ export function TrayModal({
               <span className="text-sm text-gray-500">* Required fields</span>
               <div className="flex gap-3">
                 <button type="button" onClick={onClose} className="px-5 py-2 border rounded-lg">Cancel</button>
-                <button type="submit" className={`px-5 py-2.5 text-white rounded-lg font-medium shadow-lg transition-all ${trayModalMode === "insert" ? "bg-[var(--sancgb)] hover:bg-[var(--ptl-greenf)]" : "bg-[var(--purpluish--)] hover:bg-[var(--bluis--)]"}`}>
+                <button type="submit" className={`cursor-pointer px-5 py-2.5 text-white rounded-lg font-medium shadow-lg transition-all ${trayModalMode === "insert" ? "bg-[var(--sancgb)] hover:bg-[var(--ptl-greenf)]" : "bg-[var(--purpluish--)] hover:bg-[var(--bluis--)]"}`}>
                   {trayModalMode === "insert" ? "Create Tray" : "Update Tray"}
                 </button>
               </div>

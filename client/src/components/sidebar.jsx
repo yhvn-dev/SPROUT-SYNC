@@ -9,7 +9,6 @@ import * as Logo from "../components/logo"
 export function Sidebar({user}) {
   const [isOpen, setModal] = useState(false);
  
-  
   return (
     <section className="con bg-[var(--main-whiteb)]  flex flex-col col-start-1 col-end-2 row-start-1 row-span-full p-4 rounded-[10px] shadow-lg">
       
@@ -21,7 +20,7 @@ export function Sidebar({user}) {
       <div className="flex flex-col items-center justify-start gap-2 flex-grow h-full w-full">  
         {/* Dashboard */}
         <NavLink
-          to="/Dashboard"
+          to="/dashboard"
           end
           className={({ isActive }) =>
             `flex justify-start items-center text-[var(--acc-darkb)] gap-2 py-1 transition-colors duration-300 rounded-[10px] px-2 my-2 w-full
@@ -34,7 +33,7 @@ export function Sidebar({user}) {
           <p className="text-sm mr-2">Dashboard</p>
         </NavLink>
 
-        {user.role === "admin" &&    
+        {user?.role === "admin" &&    
           <NavLink
             to="/users"
             className={({ isActive }) =>
@@ -43,7 +42,7 @@ export function Sidebar({user}) {
                   isActive
                     ? "text-white bg-[var(--sancgb)] shadow-lg" 
                     : "text-[var(--acc-darkb)]  hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)]"
-                }  ${user.role === "viewer" ? "hidden" : "flex justify-start items-center"} `
+                }  ${user?.role === "viewer" ? "hidden" : "flex justify-start items-center"} `
             }>
             <User className="mx-1"  strokeWidth={1.5} size={18}/>
             <p className="text-sm mr-2">Users</p>

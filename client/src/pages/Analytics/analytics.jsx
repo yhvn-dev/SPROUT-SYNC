@@ -15,15 +15,18 @@ import { SeedlingStats } from './seedlingStats';
 
 export default function Analytics() {
   const { user } = useContext(UserContext);
-  const { batchTotal,loadBatchTotal} = usePlantData();
+  const { batchTotal,loadBatchTotal,readings,loadReadings} = usePlantData();
   const [isNotifOpen,setNotifOpen] = useState(false)
   const [activeTab, setActiveTab] = useState('Overview');
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     loadBatchTotal(); 
-  }, [loadBatchTotal]);
+    loadReadings()
+  }, [loadBatchTotal,loadReadings]);
 
+
+  
   return (
     <section className="h-screen w-screen overflow-hidden bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
 
@@ -40,7 +43,7 @@ export default function Analytics() {
         <nav className="col-start-2  border-b border-gray-200 py-3 flex items-center gap-2">
           <button 
             onClick={() => setActiveTab("Overview")}
-            className={`px-6 py-2 text-sm font-medium rounded-lg transition-all ${
+            className={`cursor-pointer px-6 py-2 text-sm font-medium rounded-lg transition-all ${
               activeTab === "Overview"
               ? "bg-white text-[#027c68] shadow-md"
               : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
@@ -51,7 +54,7 @@ export default function Analytics() {
 
           <button 
             onClick={() => setActiveTab("Seedling Stats")}
-            className={`px-6 py-2 text-sm font-medium rounded-lg transition-all ${
+            className={`cursor-pointer px-6 py-2 text-sm font-medium rounded-lg transition-all ${
               activeTab === "Seedling Stats"
                 ? "bg-white text-[#027c68] shadow-md"
                 : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
@@ -64,7 +67,7 @@ export default function Analytics() {
         {/* Main Content Area */}
         <main className="col-start-2 col-span-full row-start-3 row-span-full overflow-hidden">
           <div className="h-full ">
-            {activeTab === "Overview" && <Overview  batchTotal={batchTotal}/>}
+            {activeTab === "Overview" && <Overview  batchTotal={batchTotal} readings={readings}/>}
             {activeTab === "Seedling Stats" && <SeedlingStats />}
           </div>
         </main>
