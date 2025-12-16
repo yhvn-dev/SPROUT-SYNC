@@ -3,25 +3,26 @@ import { query } from "../config/db.js";
 
 // ===== READ all plant batches =====
 export const readPlantBatches = async () => {
-    try {  
-        const sql = `SELECT * FROM plant_batches ORDER BY batch_id ASC`;
-        const result = await query(sql);
-        return result.rows;       
-    } catch (error) {
-         throw error;
-    }
+  try {  
+    const sql = `SELECT * FROM plant_batches ORDER BY batch_id ASC`;
+    const result = await query(sql);
+    return result.rows;       
+  } catch (error) {
+    throw error;
+  }
 };
 
 // ===== READ single plant batch by ID =====
 export const readPlantBatchById = async (batch_id) => {
-    try {
-        const sql = `SELECT * FROM plant_batches WHERE batch_id = $1`;
-        const result = await query(sql, [batch_id]);
-        return result.rows[0];       
-    } catch (error) {
-        throw error;
-    }
+  try {
+    const sql = `SELECT * FROM plant_batches WHERE batch_id = $1`;
+    const result = await query(sql, [batch_id]);
+    return result.rows[0];       
+  } catch (error) {
+    throw error;
+  }
 };
+
 
 
 // ===== GET TOTALS OF SEEDLINGS =====
@@ -30,18 +31,17 @@ export const getPlantBatchTotals = async () => {
     const sql = `
       SELECT 
         SUM(total_seedlings) AS total_seedlings,
-        SUM(alive_seedlings) AS total_alive,
         SUM(dead_seedlings) AS total_dead,
         SUM(replanted_seedlings) AS total_replanted,
         SUM(fully_grown_seedlings) AS total_grown,
-         CASE 
+        CASE 
           WHEN SUM(total_seedlings) = 0 THEN 0
           ELSE ROUND(SUM(fully_grown_seedlings)::DECIMAL / SUM(total_seedlings) * 100, 2)
         END AS growth_rate_percentage,
-        CASE 
+        CASE
           WHEN SUM(total_seedlings) = 0 THEN 0
-          ELSE ROUND(SUM(alive_seedlings)::DECIMAL / SUM(total_seedlings) * 100, 2)
-        END AS survival_rate_percentage
+          ELSE ROUND(SUM(dead_seedlings)::DECIMAL / SUM(total_seedlings) * 100, 2)
+        END AS death_rate_percentage
       FROM plant_batches
     `;
     const result = await query(sql);
@@ -52,14 +52,66 @@ export const getPlantBatchTotals = async () => {
 };
 
 
+// ===== GET SEEDLING GROWTH PER WEEK FOR ALL BATCHES =====
+export const getSeedlingGrowthByWeekAll = async () => {
+  try {
+    const sql = `
+     SELECT
+          DATE_TRUNC('week', date_planted) AS week_start,
+          SUM(COALESCE(fully_grown_seedlings, 0)) AS total_grown,
+          SUM(COALESCE(dead_seedlings, 0)) AS total_dead,
+          SUM(COALESCE(replanted_seedlings, 0)) AS total_replanted
+      FROM plant_batches
+      GROUP BY week_start
+      ORDER BY week_start;
+    `;
+    const result = await query(sql);
+    return result.rows; 
+  } catch (error) {
+    throw error;
+  }
+};
 
-// ===== CREATE a new plant batch =====
+
+
+// ===== CREATE a plant batch =====
 export const createPlantBatch = async (batchData) => {
   const {
     tray_id,
     plant_name,
     total_seedlings,
-    alive_seedlings,
+    dead_seedlings = 0,
+    replanted_seedlings = 0,
+    fully_grown_seedlings = 0,
+    growth_stage = "Seedling",
+    date_planted,
+    expected_harvest_days,
+    status = "Growing"
+  } = batchData;
+
+  const computedTotal = total_seedlings + replanted_seedlings;
+
+  const sql = `
+    INSERT INTO plant_batches (
+      tray_id,
+      plant_name,
+      total_seedlings,
+      dead_seedlings,
+      replanted_seedlings,
+      fully_grown_seedlings,
+      growth_stage,
+      date_planted,
+      expected_harvest_days,
+      status
+    )
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+    RETURNING *
+  `;
+
+  const values = [
+    tray_id,
+    plant_name,
+    computedTotal,
     dead_seedlings,
     replanted_seedlings,
     fully_grown_seedlings,
@@ -67,35 +119,10 @@ export const createPlantBatch = async (batchData) => {
     date_planted,
     expected_harvest_days,
     status
-  } = batchData;
+  ];
 
-  try {
-    const sql = `
-      INSERT INTO plant_batches 
-      (tray_id, plant_name, total_seedlings, alive_seedlings, dead_seedlings, replanted_seedlings, fully_grown_seedlings, growth_stage, date_planted, expected_harvest_days, status) 
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
-      RETURNING *
-    `;
-
-    const values = [
-      tray_id,
-      plant_name,
-      total_seedlings !== undefined ? total_seedlings : null,
-      alive_seedlings !== undefined ? alive_seedlings : null,
-      dead_seedlings !== undefined ? dead_seedlings : null,
-      replanted_seedlings !== undefined ? replanted_seedlings : null,
-      fully_grown_seedlings !== undefined ? fully_grown_seedlings : null,
-      growth_stage || 'Seedling',
-      date_planted,
-      expected_harvest_days,
-      status || 'Growing'
-    ];
-
-    const result = await query(sql, values);
-    return result.rows[0];
-  } catch (error) {
-    throw error;
-  }
+  const result = await query(sql, values);
+  return result.rows[0];
 };
 
 
@@ -107,46 +134,46 @@ export const updatePlantBatch = async (batchData, batch_id) => {
     tray_id,
     plant_name,
     total_seedlings,
-    alive_seedlings,
-    dead_seedlings,
-    replanted_seedlings,
-    fully_grown_seedlings,
-    growth_stage,
+    dead_seedlings = 0,
+    replanted_seedlings = 0,
+    fully_grown_seedlings = 0,
+    growth_stage = "Seedling",
     date_planted,
     expected_harvest_days,
-    status
+    status = "Growing"
   } = batchData;
+
+  const computedTotal = total_seedlings + replanted_seedlings;
 
   try {
     const sql = `
       UPDATE plant_batches
-      SET tray_id = $1,
-          plant_name = $2,
-          total_seedlings = $3,
-          alive_seedlings = $4,
-          dead_seedlings = $5,
-          replanted_seedlings = $6,
-          fully_grown_seedlings = $7,
-          growth_stage = $8,
-          date_planted = $9,
-          expected_harvest_days = $10,
-          status = $11
-      WHERE batch_id = $12
+      SET
+        tray_id = $1,
+        plant_name = $2,
+        total_seedlings = $3,
+        dead_seedlings = $4,
+        replanted_seedlings = $5,
+        fully_grown_seedlings = $6,
+        growth_stage = $7,
+        date_planted = $8,
+        expected_harvest_days = $9,
+        status = $10
+      WHERE batch_id = $11
       RETURNING *
     `;
 
     const values = [
       tray_id,
       plant_name,
-      total_seedlings !== undefined ? total_seedlings : null,
-      alive_seedlings !== undefined ? alive_seedlings : null,
-      dead_seedlings !== undefined ? dead_seedlings : null,
-      replanted_seedlings !== undefined ? replanted_seedlings : null,
-      fully_grown_seedlings !== undefined ? fully_grown_seedlings : null,
-      growth_stage || 'Seedling',
+      computedTotal,
+      dead_seedlings,
+      replanted_seedlings,
+      fully_grown_seedlings,
+      growth_stage,
       date_planted,
       expected_harvest_days,
-      status || 'Growing',
+      status,
       batch_id
     ];
 
@@ -159,13 +186,14 @@ export const updatePlantBatch = async (batchData, batch_id) => {
 
 
 
+
 // ===== DELETE a plant batch =====
 export const deletePlantBatch = async (batch_id) => {
-    try {
-        const sql = `DELETE FROM plant_batches WHERE batch_id = $1 RETURNING *`;
-        const result = await query(sql, [batch_id]);
-        return result.rows[0];        
-    } catch (error) {
-        throw error;
-    }
+  try {
+    const sql = `DELETE FROM plant_batches WHERE batch_id = $1 RETURNING *`;
+    const result = await query(sql, [batch_id]);
+    return result.rows[0];        
+  } catch (error) {
+    throw error;
+  }
 };

@@ -1,15 +1,13 @@
 import { useState, useEffect } from 'react';
 import { X, Sprout, Calendar, TrendingUp, Trash2, AlertCircle } from 'lucide-react';
-
 import * as batchModels from "../../../data/batchesData"
 
-export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selectedBatch,setSuccessMsg,reloadBatches}) {
+export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, selectedBatch, setSuccessMsg, reloadBatches }) {
    
   const [formData, setFormData] = useState({
-    tray_id:0,
+    tray_id: 0,
     plant_name: "",
     total_seedlings: "",
-    alive_seedlings: "",
     dead_seedlings: "",
     replanted_seedlings: "",
     fully_grown_seedlings: "", 
@@ -31,7 +29,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selec
     return `${year}-${month}-${day}`;
   };
 
-
   useEffect(() => {
     if (!isOpen) return;             
     if (!selectedTray) return;          
@@ -45,7 +42,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selec
         tray_id: selectedBatch.tray_id,
         plant_name: selectedBatch.plant_name,
         total_seedlings: selectedBatch.total_seedlings ?? 0,
-        alive_seedlings: selectedBatch.alive_seedlings ?? 0,
         dead_seedlings: selectedBatch.dead_seedlings ?? 0,
         replanted_seedlings: selectedBatch.replanted_seedlings ?? 0,
         fully_grown_seedlings: selectedBatch.fully_grown_seedlings ?? 0,
@@ -60,7 +56,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selec
         tray_id: trayId,
         plant_name: plantName,
         total_seedlings: "",
-        alive_seedlings: "",
         dead_seedlings: "",
         replanted_seedlings: "",
         fully_grown_seedlings: "",
@@ -75,7 +70,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selec
         tray_id: selectedBatch.tray_id,
         plant_name: selectedBatch.plant_name ?? "",
         total_seedlings: selectedBatch.total_seedlings ?? 0,
-        alive_seedlings: selectedBatch.alive_seedlings ?? 0,
         dead_seedlings: selectedBatch.dead_seedlings ?? 0,
         replanted_seedlings: selectedBatch.replanted_seedlings ?? 0,
         fully_grown_seedlings: selectedBatch.fully_grown_seedlings ?? 0,
@@ -88,9 +82,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selec
 
   }, [isOpen, selectedTray, selectedBatch, batchModalMode]);
 
-
-
-  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormErrors({});
@@ -101,7 +92,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selec
         tray_id: batchModalMode === "insert" ? selectedTray.tray_id : formData.tray_id,
         plant_name: batchModalMode === "insert" ? selectedTray.plant : formData.plant_name,
         total_seedlings: formData.total_seedlings !== "" ? parseInt(formData.total_seedlings) : null,
-        alive_seedlings: formData.alive_seedlings !== "" ? parseInt(formData.alive_seedlings) : null,
         dead_seedlings: formData.dead_seedlings !== "" ? parseInt(formData.dead_seedlings) : null,
         replanted_seedlings: formData.replanted_seedlings !== "" ? parseInt(formData.replanted_seedlings) : null,
         fully_grown_seedlings: formData.fully_grown_seedlings !== "" ? parseInt(formData.fully_grown_seedlings) : null,
@@ -137,8 +127,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selec
   };
 
   const handleChange = (e) => {
-    setFormData({ ...formData, 
-      [e.target.name]: e.target.value });
+    setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   return (
@@ -146,10 +135,10 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selec
       onClick={onClose}
       className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
 
-
       <div
         onClick={(e) => e.stopPropagation()}
         className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        
         {/* HEADER */}
         <div className="px-8 py-6 border-b border-gray-200 bg-[#E8F3ED]">
           <div className="flex items-center justify-between">
@@ -216,16 +205,16 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selec
           ) : (
             <div className="space-y-6">
 
-
               {/* Bento Grid Layout */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> 
 
                 <input
-                disabled
-                type="text"
-                name="tray_id"
-                value={formData.tray_id}  
-                className={`py-3 rounded-lg hidden`}/>
+                  disabled
+                  type="text"
+                  name="tray_id"
+                  value={formData.tray_id}  
+                  className="py-3 rounded-lg hidden"
+                />
 
                 {/* PLANT NAME */}
                 <div className="md:col-span-2">
@@ -233,20 +222,17 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selec
                     <Sprout className="w-4 h-4 inline mr-2" /> 
                     Plant Name *
                   </label>
-                   
-                    <input
+                  <input
                     disabled
                     type="text"
                     name="plant_name"
                     value={formData.plant_name}  
-                    className={`py-3 rounded-lg`}/>
-                                     
-                    {formErrors.plant_name && (
-                        <p className="text-red-600 text-sm mt-1">{formErrors.plant_name}</p>
-                    )}               
+                    className="py-3 rounded-lg"
+                  />
+                  {formErrors.plant_name && (
+                      <p className="text-red-600 text-sm mt-1">{formErrors.plant_name}</p>
+                  )}               
                 </div>
-
-
 
                 {/* TOTAL SEEDLINGS */}
                 <div>
@@ -266,27 +252,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray,selec
                   />
                   {formErrors.total_seedlings && (
                     <p className="text-red-600 text-sm mt-1">{formErrors.total_seedlings}</p>
-                  )}
-                </div>
-
-                {/* ALIVE SEEDLINGS */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-[#155d27]">
-                    Alive Seedlings *
-                  </label>
-                  <input
-                    type="number"
-                    name="alive_seedlings"
-                    value={formData.alive_seedlings}
-                    onChange={handleChange}
-                    className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all ${
-                    formErrors.alive_seedlings ? 'border-red-500' : 'border-[#C4DED0]'
-                    }`}
-                    placeholder="0 (Optional)"
-                    min="0"
-                  />
-                  {formErrors.alive_seedlings && (
-                    <p className="text-red-600 text-sm mt-1">{formErrors.alive_seedlings}</p>
                   )}
                 </div>
 

@@ -45,7 +45,7 @@ function Tray_groups({
         <div className="w-1/2 flex items-center justify-start flex-row-reverse">
           <button
             onClick={handleAdd}
-            className="rounded-xl shadow-lg px-4 py-2 bg-[var(--sancgb)] text-[var(--main-white--)] cursor-pointer">
+            className="hidden rounded-xl shadow-lg px-4 py-2 bg-[var(--sancgb)] text-[var(--main-white--)] cursor-pointer">
             Add Tray Group
           </button>
         </div>
@@ -127,7 +127,7 @@ function Tray_groups({
                   </button>
                   <button
                     onClick={() => handleDelete(group)}
-                    className="cursor-pointer u_btn shadow-lg bg-[var(--color-danger-b)] text-white"
+                    className="hidden cursor-pointer u_btn shadow-lg bg-[var(--color-danger-b)] text-white"
                   >
                     DELETE
                   </button>

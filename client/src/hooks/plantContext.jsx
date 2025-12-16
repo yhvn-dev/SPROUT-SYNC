@@ -15,16 +15,13 @@ export const PlantDataProvider = ({ children }) => {
 
   const [batches, setBatches] = useState([]);
   const [batchTotal, setBatchTotal] = useState({});
+  const [growthOvertime,setGrowthOvertime] = useState([])
 
   const [sensors, setSensors] = useState([]);
-
-
   
   const [readings, setReadings] = useState([]);
   const [moistureReadingsLast24h, setMoistureReadingsLast24h] = useState([]);
   const [averageReadingsBySensor, setAverageReadingsBySensor] = useState({});
-
-
 
 
   const [notifs, setNotifs] = useState([]);
@@ -65,6 +62,19 @@ export const PlantDataProvider = ({ children }) => {
       console.error("Error loading batch totals", error);
     }
   }, []);
+
+
+  
+  const loadGrowthOvertime = useCallback(async () => {
+    try {
+      const data = await plantBatches.fetchSeedlingsGrowthOvertime()
+      setGrowthOvertime(data);
+    } catch (error) {
+      console.error("Error loading batch totals", error);
+    }
+  }, []);
+
+
 
   const loadSensors = useCallback(async () => {
     try {
@@ -119,12 +129,15 @@ export const PlantDataProvider = ({ children }) => {
     }
   }, []);
 
-  // ------------------- INITIAL LOAD -------------------
+
+
+  
   useEffect(() => {
     loadTrayGroups();
     loadTrays();
     loadBatches();
     loadBatchTotal();
+    loadGrowthOvertime();
     loadSensors();
     loadReadings();
     loadMoistureReadingsLast24h();
@@ -136,6 +149,7 @@ export const PlantDataProvider = ({ children }) => {
     loadTrays,
     loadBatches,
     loadBatchTotal,
+    loadGrowthOvertime,
     loadSensors,
     loadReadings,
     loadMoistureReadingsLast24h,
@@ -143,6 +157,8 @@ export const PlantDataProvider = ({ children }) => {
     loadNotifs,
   ]);
 
+
+  
   // ------------------- INTERVAL UPDATES -------------------
   useEffect(() => {
     const interval = setInterval(() => {
@@ -161,6 +177,7 @@ export const PlantDataProvider = ({ children }) => {
         trays,
         batches,
         batchTotal,
+        growthOvertime,
         sensors,
         readings,
         moistureReadingsLast24h,
@@ -170,6 +187,7 @@ export const PlantDataProvider = ({ children }) => {
         loadTrays,
         loadBatches,
         loadBatchTotal,
+        loadGrowthOvertime,
         loadSensors,
         loadReadings,
         loadMoistureReadingsLast24h,

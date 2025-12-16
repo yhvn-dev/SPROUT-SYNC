@@ -1,37 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
 import { Droplets, AlertTriangle, Activity, TrendingUp, Sprout } from "lucide-react";
-import { useEffect, useMemo } from "react"
-import { usePlantData } from "../../hooks/plantContext";
-
-// Gauge Component
-const GaugeChart = ({ value, max, label, unit, icon: Icon, color }) => {
-  const percentage = (value / max) * 100;
-  return (
-    <div className="flex flex-col items-center justify-center h-full">
-      <div className="relative w-20 h-20">
-        <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-          <circle cx="50" cy="50" r="45" fill="none" stroke="#E8F3ED" strokeWidth="8" />
-          <circle
-            cx="50"
-            cy="50"
-            r="45"
-            fill="none"
-            stroke={color}
-            strokeWidth="8"
-            strokeDasharray={`${percentage * 2.827} 282.7`}
-            strokeLinecap="round"
-          />
-        </svg>
-        <div className="absolute inset-0 flex flex-col items-center justify-center">
-          {Icon && <Icon className="w-4 h-4 mb-1" style={{ color }} />}
-          <span className="text-xl font-bold text-gray-800">{value}</span>
-          {unit && <span className="text-xs text-gray-600">{unit}</span>}
-        </div>
-      </div>
-      <p className="text-xs text-gray-700 mt-2 font-medium text-center">{label}</p>
-    </div>
-  );
-};
+import {  useMemo } from "react"
 
 // Number/Stat Card Component
 const StatCard = ({ label, value, color }) => (
@@ -63,12 +32,7 @@ export const Overview = ({batchTotal,readings,moistureReadingsLast24h,averageRea
     return (
     <div className="h-full grid grid-cols-12 grid-rows-12 gap-4">
       <div className="gap-4 flex items-start justify-evenly col-start-1 col-span-full row-start-1 row-end-4">
-        
-        {/* Alive % - Gauge */}
-        <div className="flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
-          <GaugeChart value={batchTotal.total_alive} max={100} label="Alive %" unit="%" icon={Droplets} color="#10b981" />
-        </div>
-
+  
           {/* TOTAL */}
           <div className="flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
               <StatCard label="Total Seedlings" value={batchTotal.total_seedlings} color="#25a244" />    
@@ -134,8 +98,6 @@ export const Overview = ({batchTotal,readings,moistureReadingsLast24h,averageRea
           <p className="text-base font-semibold text-gray-800 mt-4">Water Level</p>
         </div>
       </div>
-
-
     </div>
   );
 };

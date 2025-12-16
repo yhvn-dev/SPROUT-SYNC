@@ -103,7 +103,6 @@ export const createReadings = async (req, res) => {
       return res.status(404).json({ message: "Sensor with this id doesn't exist" });
     }
 
-    // check sensor type
     const { sensor_type, tray_id } = existingSensor;
 
     if (sensor_type === "moisture") {
@@ -114,7 +113,7 @@ export const createReadings = async (req, res) => {
       const selectedTray = await trayModels.readTrayById(tray_id);
       const { tray_group_id } = selectedTray;
       const selectedTrayGroup = await trayGroupModels.readTrayGroupById(tray_group_id);
-      const { min_moisture, max_moisture } = selectedTrayGroup;
+      const { min_moisture,max_moisture,tray_group_name} = selectedTrayGroup;
 
       const moisture = Number(value);
       const min = Number(min_moisture);
@@ -124,16 +123,16 @@ export const createReadings = async (req, res) => {
       if (moisture < min) {
         const percentageBelow = ((min - moisture) / min) * 100;
         if (percentageBelow > 15) {
-          await notificationModels.createNotif({
+          await notificationModels.createNotif({           
             type: "Alert",
-            message: "Soil is CRITICALLY DRY",
+            message: `${tray_group_name}'s soil is Critically Dry`,
             related_sensor: sensor_id,
             status: "LOW"
           });
         } else {
           await notificationModels.createNotif({
             type: "Warning",
-            message: "Soil is approaching dryness",
+            message: `${tray_group_name}'s soil is approaching dryness`,
             related_sensor: sensor_id,
             status: "LOW"
           });
@@ -143,14 +142,14 @@ export const createReadings = async (req, res) => {
         if (percentageAbove > 15) {
           await notificationModels.createNotif({
             type: "Alert",
-            message: "Soil is TOO WET",
+            message: `${tray_group_name}'s soil is too wet`,
             related_sensor: sensor_id,
             status: "HIGH"
           });
         } else {
           await notificationModels.createNotif({
             type: "Warning",
-            message: "Soil is getting wet",
+            message: `${tray_group_name}'s soil is getting wet`,
             related_sensor: sensor_id,
             status: "HIGH"
           });
@@ -158,7 +157,7 @@ export const createReadings = async (req, res) => {
       } else {
         await notificationModels.createNotif({
           type: "Info",
-          message: "Soil moisture is normal",
+          message: `${tray_group_name} soil moisture is normal`,
           related_sensor: sensor_id,
           status: "NORMAL"
         });

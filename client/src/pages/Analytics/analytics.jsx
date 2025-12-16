@@ -16,6 +16,7 @@ import { SeedlingStats } from './seedlingStats';
 export default function Analytics() {
   const { user } = useContext(UserContext);
   const { batchTotal,loadBatchTotal,
+          growthOvertime,loadGrowthOvertime,
           readings,loadReadings, 
           moistureReadingsLast24h,loadMoistureReadingsLast24h,        
           averageReadingsBySensor,loadAverageReadingsBySensor,
@@ -26,13 +27,13 @@ export default function Analytics() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
-    loadBatchTotal(); 
-    loadReadings()
-    loadMoistureReadingsLast24h()
+    loadBatchTotal();
+    loadGrowthOvertime();
+    loadReadings();
+    loadMoistureReadingsLast24h();
     loadAverageReadingsBySensor("moisture");
     loadAverageReadingsBySensor("ultra_sonic");
-    console.log("AVERAGE READINGS BY SENSOR",averageReadingsBySensor) 
-  }, [loadBatchTotal,loadReadings, loadMoistureReadingsLast24h, loadAverageReadingsBySensor]);
+  }, [loadBatchTotal,loadGrowthOvertime,loadReadings,loadMoistureReadingsLast24h, loadAverageReadingsBySensor]);
 
 
 
@@ -70,18 +71,24 @@ export default function Analytics() {
 
         {/* Main Content Area */}
         <main className="col-start-2 col-span-full row-start-3 row-span-full overflow-hidden">
-          <div className="h-full ">
+          <div className="h-full">
+            
             {activeTab === "Overview" && 
-            <Overview
-             batchTotal={batchTotal} 
-             readings={readings} 
-             moistureReadingsLast24h={moistureReadingsLast24h}
-             averageReadingsBySensor={averageReadingsBySensor}
-           />}
-            {activeTab === "Seedling Stats" &&
-            <SeedlingStats batchTotal={batchTotal}  averageReadingsBySensor={averageReadingsBySensor} />}
+              <Overview
+              batchTotal={batchTotal} 
+              readings={readings} 
+              moistureReadingsLast24h={moistureReadingsLast24h}
+              averageReadingsBySensor={averageReadingsBySensor}/>}
+              
+              {activeTab === "Seedling Stats" &&
+              <SeedlingStats 
+              batchTotal={batchTotal} 
+              growthOvertime={growthOvertime}
+              averageReadingsBySensor={averageReadingsBySensor} />}
           </div>
+          
         </main>
+        
       </div>
       
 

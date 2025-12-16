@@ -22,7 +22,16 @@ export const fetchTotalBatchesData = async () =>{
     }
 }
 
-
+export const fetchSeedlingsGrowthOvertime = async () =>{
+    try {
+        const res = await api.get("/pb/get/pb/growthbyweek");
+        const pb = res.data.seedlingGrowthData
+        return pb
+    } catch (error) {
+        console.error("Error Fetching Plant Batches",error);
+        throw error
+    }
+}
 
 
 
