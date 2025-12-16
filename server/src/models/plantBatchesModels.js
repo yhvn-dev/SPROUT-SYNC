@@ -25,7 +25,6 @@ export const readPlantBatchById = async (batch_id) => {
 
 
 // ===== GET TOTALS OF SEEDLINGS =====
-// ===== GET TOTALS OF SEEDLINGS =====
 export const getPlantBatchTotals = async () => {
   try {
     const sql = `
@@ -34,7 +33,15 @@ export const getPlantBatchTotals = async () => {
         SUM(alive_seedlings) AS total_alive,
         SUM(dead_seedlings) AS total_dead,
         SUM(replanted_seedlings) AS total_replanted,
-        SUM(fully_grown_seedlings) AS total_grown
+        SUM(fully_grown_seedlings) AS total_grown,
+         CASE 
+          WHEN SUM(total_seedlings) = 0 THEN 0
+          ELSE ROUND(SUM(fully_grown_seedlings)::DECIMAL / SUM(total_seedlings) * 100, 2)
+        END AS growth_rate_percentage,
+        CASE 
+          WHEN SUM(total_seedlings) = 0 THEN 0
+          ELSE ROUND(SUM(alive_seedlings)::DECIMAL / SUM(total_seedlings) * 100, 2)
+        END AS survival_rate_percentage
       FROM plant_batches
     `;
     const result = await query(sql);
@@ -43,6 +50,7 @@ export const getPlantBatchTotals = async () => {
     throw error;
   }
 };
+
 
 
 // ===== CREATE a new plant batch =====

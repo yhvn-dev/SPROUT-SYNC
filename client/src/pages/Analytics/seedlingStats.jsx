@@ -74,13 +74,13 @@ export const SeedlingStats = ({batchTotal,averageReadingsBySensor}) => {
 
       <div className="col-span-3 row-span-5 bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col items-center justify-center">
         <TrendingUp className="w-12 h-12 text-blue-600 mb-2" />
-        <span className="text-3xl font-bold text-gray-800">+24</span>
+        <span className="text-3xl font-bold text-gray-800">{parseFloat(batchTotal.growth_rate_percentage).toFixed(1)}%</span>
         <span className="text-sm text-gray-600 mt-1">Growth This Week</span>
       </div>
 
       <div className="col-span-3 row-span-5 bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col items-center justify-center">
         <Activity className="w-12 h-12 text-purple-600 mb-2" />
-        <span className="text-3xl font-bold text-gray-800">87%</span>
+        <span className="text-3xl font-bold text-gray-800">{parseFloat(batchTotal.survival_rate_percentage).toFixed(1)}%</span>
         <span className="text-sm text-gray-600 mt-1">Survival Rate</span>
       </div>
 

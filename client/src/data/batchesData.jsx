@@ -16,11 +16,12 @@ export const fetchTotalBatchesData = async () =>{
         const res = await api.get("/pb/get/pb/total");
         const pb = res.data
         return pb
-    }catch(err){
-        console.err("Error Fetching Plant Batches",err);
-        throw err
+    }catch(error){
+        console.error("Error Fetching Plant Batches",error);
+        throw error
     }
 }
+
 
 
 

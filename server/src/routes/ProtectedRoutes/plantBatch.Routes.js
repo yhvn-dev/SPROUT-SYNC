@@ -1,11 +1,9 @@
 // plantBatches.routes.js
 import * as plantBatchController from "../../controllers/plantBatch.Controller.js";
-import {validatePlantBatch  } from "../../middlewares/plantBatchesMiddleware.js";
+import {validatePlantBatch} from "../../middlewares/plantBatchesMiddleware.js";
 import express from "express";
 
 const router = express.Router();
-
-
 
 router.get("/get/pb", plantBatchController.getPlantBatches);
 router.get("/get/pb/total",plantBatchController.getPlantBatchTotals)

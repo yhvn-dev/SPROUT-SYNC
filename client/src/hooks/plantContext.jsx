@@ -12,12 +12,21 @@ const PlantDataContext = createContext(null);
 export const PlantDataProvider = ({ children }) => {
   const [trayGroups, setTrayGroups] = useState([]);
   const [trays, setTrays] = useState([]);
+
   const [batches, setBatches] = useState([]);
   const [batchTotal, setBatchTotal] = useState({});
+
   const [sensors, setSensors] = useState([]);
+
+
+  
   const [readings, setReadings] = useState([]);
   const [moistureReadingsLast24h, setMoistureReadingsLast24h] = useState([]);
-const [averageReadingsBySensor, setAverageReadingsBySensor] = useState({});
+  const [averageReadingsBySensor, setAverageReadingsBySensor] = useState({});
+
+
+
+
   const [notifs, setNotifs] = useState([]);
 
   // ------------------- LOAD FUNCTIONS -------------------

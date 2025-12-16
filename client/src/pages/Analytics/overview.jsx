@@ -55,7 +55,7 @@ export const Overview = ({batchTotal,readings,moistureReadingsLast24h,averageRea
           time: isNaN(date.getTime())
             ? "Invalid"
             : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          value: parseFloat(reading.value) || 0, // convert string to number
+          value: parseFloat(reading.value) || 0, 
         };
       });
   }, [moistureReadingsLast24h]);
