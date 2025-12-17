@@ -13,8 +13,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
     fully_grown_seedlings: "", 
     growth_stage: "Seedling",
     date_planted: "",
-    expected_harvest_days: "",
-    status: "Growing"
+    expected_harvest_days: ""
   });
   
   const [formErrors, setFormErrors] = useState({});
@@ -47,8 +46,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
         fully_grown_seedlings: selectedBatch.fully_grown_seedlings ?? 0,
         growth_stage: selectedBatch.growth_stage ?? "Seedling",
         date_planted: formatDate(selectedBatch.date_planted),
-        expected_harvest_days: selectedBatch.expected_harvest_days ?? 0,
-        status: selectedBatch.status ?? "Growing"
+        expected_harvest_days: selectedBatch.expected_harvest_days ?? 0
       });
       
     } else if (batchModalMode === "insert") {
@@ -61,8 +59,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
         fully_grown_seedlings: "",
         growth_stage: "Seedling",
         date_planted: "",
-        expected_harvest_days: "",
-        status: "Growing"
+        expected_harvest_days: ""
       });
       
     } else if (batchModalMode === "delete") {
@@ -75,8 +72,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
         fully_grown_seedlings: selectedBatch.fully_grown_seedlings ?? 0,
         growth_stage: selectedBatch.growth_stage ?? "Seedling",
         date_planted: selectedBatch.date_planted,
-        expected_harvest_days: selectedBatch.expected_harvest_days ?? 0,
-        status: selectedBatch.status ?? "Growing"
+        expected_harvest_days: selectedBatch.expected_harvest_days ?? 0
       });
     }
 
@@ -323,22 +319,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                   </select>
                 </div>
 
-                {/* STATUS */}
-                <div>
-                  <label className="block text-sm font-semibold mb-2 text-[#155d27]">
-                    Status *
-                  </label>
-                  <select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border-2 border-[#C4DED0] focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all text-[#155d27]"
-                  >
-                    <option value="Growing">Growing</option>
-                    <option value="Harvested">Harvested</option>
-                    <option value="Failed">Failed</option>
-                  </select>
-                </div>
+              
 
                 {/* DATE PLANTED */}
                 <div>

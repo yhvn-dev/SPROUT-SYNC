@@ -92,7 +92,6 @@ export const getAverageBySensorType = async (req, res) => {
 
 
 
-
 export const createReadings = async (req, res) => {
   try {
     const readingData = req.body;
@@ -113,13 +112,12 @@ export const createReadings = async (req, res) => {
       const selectedTray = await trayModels.readTrayById(tray_id);
       const { tray_group_id } = selectedTray;
       const selectedTrayGroup = await trayGroupModels.readTrayGroupById(tray_group_id);
-      const { min_moisture,max_moisture,tray_group_name} = selectedTrayGroup;
+      const { min_moisture, max_moisture, tray_group_name } = selectedTrayGroup;
 
       const moisture = Number(value);
       const min = Number(min_moisture);
       const max = Number(max_moisture);
 
-      // Moisture notifications
       if (moisture < min) {
         const percentageBelow = ((min - moisture) / min) * 100;
         if (percentageBelow > 15) {
@@ -154,17 +152,10 @@ export const createReadings = async (req, res) => {
             status: "HIGH"
           });
         }
-      } else {
-        await notificationModels.createNotif({
-          type: "Info",
-          message: `${tray_group_name} soil moisture is normal`,
-          related_sensor: sensor_id,
-          status: "NORMAL"
-        });
       }
     }
 
-    // ✅ Create reading for ALL sensors (including ultrasonic)
+  
     const reading = await readingModel.createReadings(readingData);
     res.status(201).json(reading);
     console.log("READING CREATED:", reading);
@@ -174,7 +165,6 @@ export const createReadings = async (req, res) => {
     res.status(500).json({ message: "Error creating reading", err });
   }
 };
-
 
 
 

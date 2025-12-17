@@ -29,14 +29,11 @@ CREATE TABLE tray_groups (
     min_moisture NUMERIC NOT NULL,
     max_moisture NUMERIC NOT NULL,
     is_watering BOOLEAN DEFAULT FALSE,
-    plant_type VARCHAR(50),
-    soil_type VARCHAR(50),
     location VARCHAR(100),
     created_at TIMESTAMP DEFAULT NOW(),
     updated_at TIMESTAMP DEFAULT NOW(),
     UNIQUE (tray_group_name, group_number)
 );
-
 
  
 CREATE TABLE trays (
@@ -54,8 +51,7 @@ CREATE TABLE plant_batches (
     batch_id SERIAL PRIMARY KEY,
     tray_id INT NOT NULL,
     plant_name VARCHAR(100) NOT NULL,
-    total_seedlings INT DEFAULT NULL,    
-    alive_seedlings INT DEFAULT NULL,    
+    total_seedlings INT DEFAULT NULL,     
     dead_seedlings INT DEFAULT NULL,    
     replanted_seedlings INT DEFAULT NULL, 
     fully_grown_seedlings INT DEFAULT NULL,

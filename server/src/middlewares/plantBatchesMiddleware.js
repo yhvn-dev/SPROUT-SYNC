@@ -45,12 +45,6 @@ export const validatePlantBatch = [
   body("expected_harvest_days")
       .notEmpty()
       .withMessage("Please enter expected harvest days."),
-  // Status
-  body("status")
-      .optional()
-      .isIn(["Growing", "Harvested", "Failed"])
-      .withMessage("Status must be 'Growing', 'Harvested', or 'Failed'."),
-
   // Middleware to handle validation result
   (req, res, next) => {
       const errors = validationResult(req);

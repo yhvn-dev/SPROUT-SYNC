@@ -85,8 +85,7 @@ export const createPlantBatch = async (batchData) => {
     fully_grown_seedlings = 0,
     growth_stage = "Seedling",
     date_planted,
-    expected_harvest_days,
-    status = "Growing"
+    expected_harvest_days
   } = batchData;
 
   const computedTotal = total_seedlings + replanted_seedlings;
@@ -101,10 +100,9 @@ export const createPlantBatch = async (batchData) => {
       fully_grown_seedlings,
       growth_stage,
       date_planted,
-      expected_harvest_days,
-      status
+      expected_harvest_days
     )
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
     RETURNING *
   `;
 
@@ -117,8 +115,7 @@ export const createPlantBatch = async (batchData) => {
     fully_grown_seedlings,
     growth_stage,
     date_planted,
-    expected_harvest_days,
-    status
+    expected_harvest_days
   ];
 
   const result = await query(sql, values);
@@ -139,8 +136,7 @@ export const updatePlantBatch = async (batchData, batch_id) => {
     fully_grown_seedlings = 0,
     growth_stage = "Seedling",
     date_planted,
-    expected_harvest_days,
-    status = "Growing"
+    expected_harvest_days
   } = batchData;
 
   const computedTotal = total_seedlings + replanted_seedlings;
@@ -157,9 +153,8 @@ export const updatePlantBatch = async (batchData, batch_id) => {
         fully_grown_seedlings = $6,
         growth_stage = $7,
         date_planted = $8,
-        expected_harvest_days = $9,
-        status = $10
-      WHERE batch_id = $11
+        expected_harvest_days = $9
+      WHERE batch_id = $10
       RETURNING *
     `;
 
@@ -173,7 +168,6 @@ export const updatePlantBatch = async (batchData, batch_id) => {
       growth_stage,
       date_planted,
       expected_harvest_days,
-      status,
       batch_id
     ];
 

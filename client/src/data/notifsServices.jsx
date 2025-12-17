@@ -4,6 +4,7 @@ export const fetchAllNotifs = async () => {
     try{
         const res = await api.get("/notif/get/notif");
         const notifData = res.data
+        console.log("NOTIFICATION DATA",notifData)
         return notifData
     }catch(err){
         console.error("Error Fetching Readings",err);
