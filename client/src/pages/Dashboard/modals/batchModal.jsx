@@ -133,31 +133,31 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
 
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* HEADER */}
-        <div className="px-8 py-6 border-b border-gray-200 bg-[#E8F3ED]">
+        <div className="px-6 py-4 border-b border-gray-200 bg-[#E8F3ED]">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <div 
-                className={`p-3 rounded-xl shadow-sm ${
+                className={`p-2 rounded-xl shadow-sm ${
                   batchModalMode === "delete" ? 'bg-red-500' : 'bg-[#208b3a]'
                 }`}>
                 {batchModalMode === "delete" ? (
-                  <Trash2 className="w-6 h-6 text-white" />
+                  <Trash2 className="w-5 h-5 text-white" />
                 ) : (
-                  <Sprout className="w-6 h-6 text-white" />
+                  <Sprout className="w-5 h-5 text-white" />
                 )}
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-[#155d27]">
+                <h2 className="text-xl font-bold text-[#155d27]">
                   {batchModalMode === "delete" 
                     ? "Delete Batch" 
                     : batchModalMode === "insert" 
                     ? "Add New Batch" 
                     : "Update Batch"}
                 </h2>
-                <p className="text-sm mt-1 text-[#5A8F73]">
+                <p className="text-xs mt-0.5 text-[#5A8F73]">
                   {batchModalMode === "delete" 
                     ? `Are you sure you want to delete ${selectedBatch?.plant_name} batch?`
                     : `Manage plant batch for ${selectedTray?.plant}`}
@@ -166,56 +166,56 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-white/80 rounded-lg transition-colors text-[#5A8F73]"
+              className="cursor-pointer p-2 hover:bg-white/80 rounded-lg transition-colors text-[#5A8F73]"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
         
         {/* CONTENT */}
-        <div className="p-8 overflow-y-auto max-h-[calc(90vh-140px)]">
+        <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {batchModalMode === "delete" ? (
             <>
-              <div className="flex items-center gap-3 p-4 rounded-lg mb-6 bg-red-50">
-                <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3  rounded-lg mb-4 bg-red-50">
+                <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
                 <p className="text-sm text-red-800">
                   Are you sure you want to delete the batch for <strong>{selectedBatch.plant_name}</strong>? This action cannot be undone.
                 </p>
               </div>
-              <div className="flex gap-3 justify-end">
+              <div className="flex gap-2 justify-end">
                 <button
                   onClick={onClose}
-                  className="px-6 py-2.5 rounded-lg font-medium transition-colors border-2 border-[#C4DED0] text-[#5A8F73] hover:bg-gray-50"
+                  className="cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors border-2 border-[#C4DED0] text-[#5A8F73] hover:bg-gray-50 text-sm"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="px-6 py-2.5 rounded-lg font-medium transition-colors text-white bg-red-500 hover:bg-red-600"
+                  className="cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors text-white bg-red-500 hover:bg-red-600 text-sm"
                 >
                   Delete
                 </button>
               </div>
             </>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-4">
 
               {/* Bento Grid Layout */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6"> 
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
 
                 <input
                   disabled
                   type="text"
                   name="tray_id"
                   value={formData.tray_id}  
-                  className="py-3 rounded-lg hidden"
+                  className="py-2 rounded-lg hidden"
                 />
 
                 {/* PLANT NAME */}
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-semibold mb-2 text-[#155d27]"> 
-                    <Sprout className="w-4 h-4 inline mr-2" /> 
+                  <label className="block text-xs font-semibold mb-1.5 text-[#155d27]"> 
+                    <Sprout className="w-3 h-3 inline mr-1" /> 
                     Plant Name *
                   </label>
                   <input
@@ -223,16 +223,16 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     type="text"
                     name="plant_name"
                     value={formData.plant_name}  
-                    className="py-3 rounded-lg"
+                    className="py-2 rounded-lg text-sm"
                   />
                   {formErrors.plant_name && (
-                      <p className="text-red-600 text-sm mt-1">{formErrors.plant_name}</p>
+                      <p className="text-red-600 text-xs mt-1">{formErrors.plant_name}</p>
                   )}               
                 </div>
 
                 {/* TOTAL SEEDLINGS */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-[#155d27]">
+                  <label className="block text-xs font-semibold mb-1.5 text-[#155d27]">
                     Total Seedlings *
                   </label>
                   <input
@@ -240,20 +240,20 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     name="total_seedlings"
                     value={formData.total_seedlings}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all ${
+                    className={`w-full px-3 py-2 text-sm rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all ${
                       formErrors.total_seedlings ? 'border-red-500' : 'border-[#C4DED0]'
                     }`}
                     placeholder="0"
                     min="0"
                   />
                   {formErrors.total_seedlings && (
-                    <p className="text-red-600 text-sm mt-1">{formErrors.total_seedlings}</p>
+                    <p className="text-red-600 text-xs mt-1">{formErrors.total_seedlings}</p>
                   )}
                 </div>
 
                 {/* DEAD SEEDLINGS */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-[#155d27]">
+                  <label className="block text-xs font-semibold mb-1.5 text-[#155d27]">
                     Dead Seedlings
                   </label>
                   <input
@@ -261,7 +261,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     name="dead_seedlings"
                     value={formData.dead_seedlings}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border-2 border-[#C4DED0] focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all"
+                    className="w-full px-3 py-2 text-sm rounded-lg border-2 border-[#C4DED0] focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all"
                     placeholder="0 (Optional)"
                     min="0"
                   />
@@ -269,7 +269,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
 
                 {/* REPLANTED SEEDLINGS */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-[#155d27]">
+                  <label className="block text-xs font-semibold mb-1.5 text-[#155d27]">
                     Replanted Seedlings
                   </label>
                   <input
@@ -277,7 +277,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     name="replanted_seedlings"
                     value={formData.replanted_seedlings}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border-2 border-[#C4DED0] focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all"
+                    className="w-full px-3 py-2 text-sm rounded-lg border-2 border-[#C4DED0] focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all"
                     placeholder="0 (Optional)"
                     min="0"
                   />
@@ -285,7 +285,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
 
                 {/* FULLY GROWN SEEDLINGS */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-[#155d27]">
+                  <label className="block text-xs font-semibold mb-1.5 text-[#155d27]">
                     Fully Grown Seedlings
                   </label>
                   <input
@@ -293,7 +293,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     name="fully_grown_seedlings"
                     value={formData.fully_grown_seedlings}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border-2 border-[#C4DED0] focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all"
+                    className="w-full px-3 py-2 text-sm rounded-lg border-2 border-[#C4DED0] focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all"
                     placeholder="0 (Optional)"
                     min="0"
                   />
@@ -301,15 +301,15 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
 
                 {/* GROWTH STAGE */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-[#155d27]">
-                    <TrendingUp className="w-4 h-4 inline mr-2" />
+                  <label className="block text-xs font-semibold mb-1.5 text-[#155d27]">
+                    <TrendingUp className="w-3 h-3 inline mr-1" />
                     Growth Stage *
                   </label>
                   <select
                     name="growth_stage"
                     value={formData.growth_stage}
                     onChange={handleChange}
-                    className="w-full px-4 py-3 rounded-lg border-2 border-[#C4DED0] focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all text-[#155d27]"
+                    className="w-full px-3 py-2 text-sm rounded-lg border-2 border-[#C4DED0] focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all text-[#155d27]"
                   >
                     <option value="Seedling">Seedling</option>
                     <option value="Vegetative">Vegetative</option>
@@ -323,8 +323,8 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
 
                 {/* DATE PLANTED */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-[#155d27]">
-                    <Calendar className="w-4 h-4 inline mr-2" />
+                  <label className="block text-xs font-semibold mb-1.5 text-[#155d27]">
+                    <Calendar className="w-3 h-3 inline mr-1" />
                     Date Planted *
                   </label>
                   <input
@@ -332,18 +332,18 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     name="date_planted"
                     value={formData.date_planted}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all ${
+                    className={`w-full px-3 py-2 text-sm rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all ${
                       formErrors.date_planted ? 'border-red-500' : 'border-[#C4DED0]'
                     }`}
                   />
                   {formErrors.date_planted && (
-                    <p className="text-red-600 text-sm mt-1">{formErrors.date_planted}</p>
+                    <p className="text-red-600 text-xs mt-1">{formErrors.date_planted}</p>
                   )}
                 </div>
 
                 {/* EXPECTED HARVEST DAYS */}
                 <div>
-                  <label className="block text-sm font-semibold mb-2 text-[#155d27]">
+                  <label className="block text-xs font-semibold mb-1.5 text-[#155d27]">
                     Expected Harvest (Days) *
                   </label>
                   <input
@@ -351,38 +351,38 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     name="expected_harvest_days"
                     value={formData.expected_harvest_days}
                     onChange={handleChange}
-                    className={`w-full px-4 py-3 rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all ${
+                    className={`w-full px-3 py-2 text-sm rounded-lg border-2 focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all ${
                       formErrors.expected_harvest_days ? 'border-red-500' : 'border-[#C4DED0]'
                     }`}
                     placeholder="e.g., 60"
                     min="0"
                   />
                   {formErrors.expected_harvest_days && (
-                    <p className="text-red-600 text-sm mt-1">{formErrors.expected_harvest_days}</p>
+                    <p className="text-red-600 text-xs mt-1">{formErrors.expected_harvest_days}</p>
                   )}
                 </div>
 
               </div>
 
               {/* FOOTER */}
-              <div className="flex items-center justify-between pt-6 border-t border-[#C4DED0]">
+              <div className="flex items-center justify-between pt-4 border-t border-[#C4DED0]">
                 {batchModalMode !== "delete" && (
-                  <p className="text-sm text-[#5A8F73]">
+                  <p className="text-xs text-[#5A8F73]">
                     * Required fields
                   </p>
                 )}
-                <div className="flex gap-3 ml-auto">
+                <div className="flex gap-2 ml-auto">
                   <button
                     onClick={onClose}
                     type='submit'
-                    className="cursor-pointer px-6 py-2.5 rounded-lg font-medium transition-colors border-2 border-[#C4DED0] text-[#5A8F73] hover:bg-gray-50"
+                    className="cursor-pointer px-4 py-2 text-sm rounded-lg font-medium transition-colors border-2 border-[#C4DED0] text-[#5A8F73] hover:bg-gray-50"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleSubmit}
                     type='submit'
-                    className="cursor-pointer px-6 py-2.5 rounded-lg font-medium transition-colors text-white bg-[#208b3a] hover:bg-[#155d27] shadow-lg"
+                    className="cursor-pointer px-4 py-2 text-sm rounded-lg font-medium transition-colors text-white bg-[#208b3a] hover:bg-[#155d27] shadow-lg"
                   >
                     {batchModalMode === "insert" ? "Create Batch" : "Update Batch"}
                   </button>

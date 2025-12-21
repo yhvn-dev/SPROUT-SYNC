@@ -25,6 +25,8 @@ export const PlantDataProvider = ({ children }) => {
 
 
   const [notifs, setNotifs] = useState([]);
+  const [notifsCount,setNotifCount] = useState([]);
+  const [readNotifs,setReadNotifs] = useState([])
 
   // ------------------- LOAD FUNCTIONS -------------------
   const loadTrayGroups = useCallback(async () => {
@@ -130,6 +132,27 @@ export const PlantDataProvider = ({ children }) => {
   }, []);
 
 
+  
+  const loadNotifsCount = useCallback(async () => {
+    try {
+      const data = await notifService.fetchNotifsCount()
+      setNotifCount(data);
+    } catch (error) {
+      console.error("Error loading total notifications ", error);
+    }
+  }, []);
+
+
+  const markNotifsAsRead = useCallback(async () => {
+    try {
+        const data = await notifService.markNotifAsRead()
+        setReadNotifs(data)
+    } catch (error) {
+      console.error("Error reading notifications ", error);
+    }
+  }, []);
+
+
 
   
   useEffect(() => {
@@ -144,6 +167,8 @@ export const PlantDataProvider = ({ children }) => {
     loadAverageReadingsBySensor("moisture");
     loadAverageReadingsBySensor("ultra_sonic");
     loadNotifs();
+    loadNotifsCount(),
+    markNotifsAsRead()
   }, [
     loadTrayGroups,
     loadTrays,
@@ -155,10 +180,11 @@ export const PlantDataProvider = ({ children }) => {
     loadMoistureReadingsLast24h,
     loadAverageReadingsBySensor,
     loadNotifs,
+    loadNotifsCount,
+    markNotifsAsRead
   ]);
-
-
   
+
   // ------------------- INTERVAL UPDATES -------------------
   useEffect(() => {
     const interval = setInterval(() => {
@@ -170,6 +196,12 @@ export const PlantDataProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [loadReadings,loadMoistureReadingsLast24h,loadAverageReadingsBySensor]);
   
+  // RENDER NOTIFICATION WHEN READINGS CHANGE
+  useEffect(() => {
+   loadNotifsCount()
+   loadNotifs()
+  }, [readings]); 
+
   return (
     <PlantDataContext.Provider
       value={{
@@ -183,6 +215,8 @@ export const PlantDataProvider = ({ children }) => {
         moistureReadingsLast24h,
         averageReadingsBySensor,
         notifs,
+        notifsCount,
+        readNotifs,
         loadTrayGroups,
         loadTrays,
         loadBatches,
@@ -193,6 +227,8 @@ export const PlantDataProvider = ({ children }) => {
         loadMoistureReadingsLast24h,
         loadAverageReadingsBySensor,
         loadNotifs,
+        loadNotifsCount,
+        markNotifsAsRead
       }}>
       {children}
     </PlantDataContext.Provider>

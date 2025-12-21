@@ -1,28 +1,90 @@
-import { Clock, AlertCircle, CheckCircle, AlertTriangle } from "lucide-react";
+import { Clock, AlertCircle, CheckCircle, AlertTriangle,Trash2 ,Bell} from "lucide-react";
 import { usePlantData } from "../hooks/plantContext";
+import { useEffect, useState } from "react";
+import * as notifService from "./../data/notifsServices"
 
-const getColorScheme = (type) => {
+
+
+const getColorScheme = (type, status) => {
   switch (type.toLowerCase()) {
+    case "alert":
     case "danger":
     case "critical":
-      return { bg: "#fde2e1", text: "#c92c2c", icon: AlertCircle };
+      return { 
+        bg: "#fee2e2", 
+        text: "#dc2626", 
+        icon: AlertCircle 
+      };
     case "warning":
-      return { bg: "#fff4e5", text: "#d97706", icon: AlertTriangle };
+      return { 
+        bg: "#fef3c7", 
+        text: "#d97706", 
+        icon: AlertTriangle 
+      };
+    case "info":  // ✅ NEW! For 10% approaching thresholds
+      return { 
+        bg: "#dbeafe", 
+        text: "#2563eb", 
+        icon: Clock  // ⏰ Approaching/early warning
+      };
     case "success":
     case "optimal":
     case "normal":
-      return { bg: "#e6f4ea", text: "#15803d", icon: CheckCircle };
+      return { 
+        bg: "#d1fae5", 
+        text: "#059669", 
+        icon: CheckCircle 
+      };
     default:
-      return { bg: "#f3f4f6", text: "#374151", icon: AlertCircle };
+      return { 
+        bg: "#f3f4f6", 
+        text: "#374151", 
+        icon: AlertCircle 
+      };
   }
 };
 
+export function DeleteNotifModal({isOpen,onClose}){
+  
 
-export function Notif_Modal({ isOpen, onClose}) {
-  const {notifs} = usePlantData()
 
   if (!isOpen) return null;
 
+
+}
+
+export function Notif_Modal({ isOpen, onClose}) {
+  const {notifs,loadNotifs,markNotifsAsRead} = usePlantData()
+  const [notifData,setNoifData] = useState([])
+
+  useEffect(() => {
+    if (isOpen) {
+      markNotifsAsRead();
+    }
+  }, [isOpen, markNotifsAsRead]); 
+
+
+
+  const handleDelete = async (notifData) =>{
+    try {
+      setNoifData(notifData)
+    } catch (error) {
+      
+    }
+  }
+
+  const handleSubmit = async (e) =>{
+    e.preventDefault()
+    try {
+        await notifService.deleteNotifs(notifData.notification_id)
+        loadNotifs()
+    } catch (error) {
+      console.error("Error Deleting Notifications")
+    }
+  }
+  
+  
+  if (!isOpen) return null;
   return (
     <aside className="absolute top-4 right-4">
       <div className="bg-white rounded-2xl w-96 max-h-[80vh] shadow-lg overflow-y-auto flex flex-col">
@@ -34,10 +96,18 @@ export function Notif_Modal({ isOpen, onClose}) {
             ✕
           </button>
         </div>
-      
+     
 
         {/* Notification List */}
-        <div className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+        <form onSubmit={handleSubmit} className="flex-1 overflow-y-auto px-4 py-3 space-y-3">
+         
+          {notifs.length === 0 && (
+            <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+              <Bell size={48} className="mb-3 opacity-50" />
+              <p className="text-lg font-medium">No notifications at the moment</p>
+            </div>
+          )}
+
           {(notifs || []).map((notif) => {
             const { bg, text, icon: Icon } = getColorScheme(notif.type);
             return (
@@ -60,10 +130,14 @@ export function Notif_Modal({ isOpen, onClose}) {
                     <Clock size={12} /> {new Date(notif.created_at).toLocaleString()}
                   </div>
                 </div>
+
+                <button type="submit" onClick={() => handleDelete(notif)}className="rounded-full p-2 h-5 w-5 cursor-pointer mx-2">
+                  <Trash2 className="text-[var(--acc-darkc)]" size={16}/>
+                  </button>
               </div>
             );
           })}
-        </div>
+        </form>
 
         {/* Footer */}
         <div className="px-4 py-3 border-t border-gray-200">
@@ -74,6 +148,8 @@ export function Notif_Modal({ isOpen, onClose}) {
           </button>
         </div>
       </div>
-     </aside>
+    </aside>
   );
 }
+
+

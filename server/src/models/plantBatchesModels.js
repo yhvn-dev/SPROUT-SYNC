@@ -12,6 +12,7 @@ export const readPlantBatches = async () => {
   }
 };
 
+
 // ===== READ single plant batch by ID =====
 export const readPlantBatchById = async (batch_id) => {
   try {
@@ -73,8 +74,6 @@ export const getSeedlingGrowthByWeekAll = async () => {
 };
 
 
-
-// ===== CREATE a plant batch =====
 export const createPlantBatch = async (batchData) => {
   const {
     tray_id,
@@ -88,34 +87,32 @@ export const createPlantBatch = async (batchData) => {
     expected_harvest_days
   } = batchData;
 
-  const computedTotal = total_seedlings + replanted_seedlings;
+  // ✅ AUTO-ADJUST: Never exceed total_seedlings
+  const safeReplanted = Math.min(replanted_seedlings, total_seedlings);
+  const safeFullyGrown = Math.min(fully_grown_seedlings, total_seedlings);
+  const totalGrowth = safeReplanted + safeFullyGrown;
+  const totalAlive = total_seedlings - dead_seedlings;
+  
+  // Cap growth to alive plants only
+  const finalReplanted = Math.min(safeReplanted, totalAlive);
+  const finalFullyGrown = Math.min(safeFullyGrown, totalAlive - finalReplanted);
+  
+  console.log(`Adjusted: total=${total_seedlings}, dead=${dead_seedlings}, replanted=${finalReplanted}, grown=${finalFullyGrown}`);
 
   const sql = `
     INSERT INTO plant_batches (
-      tray_id,
-      plant_name,
-      total_seedlings,
-      dead_seedlings,
-      replanted_seedlings,
-      fully_grown_seedlings,
-      growth_stage,
-      date_planted,
-      expected_harvest_days
+      tray_id, plant_name, total_seedlings, dead_seedlings,
+      replanted_seedlings, fully_grown_seedlings, growth_stage,
+      date_planted, expected_harvest_days
     )
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
     RETURNING *
   `;
 
   const values = [
-    tray_id,
-    plant_name,
-    computedTotal,
-    dead_seedlings,
-    replanted_seedlings,
-    fully_grown_seedlings,
-    growth_stage,
-    date_planted,
-    expected_harvest_days
+    tray_id, plant_name, total_seedlings, dead_seedlings,
+    finalReplanted, finalFullyGrown, growth_stage,
+    date_planted, expected_harvest_days
   ];
 
   const result = await query(sql, values);

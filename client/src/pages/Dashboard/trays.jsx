@@ -93,19 +93,19 @@ function Trays({traysData,trayGroupsData,setTrayModalOpen,setTrayModalMode,setBa
               <div className="flex items-center justify-center gap-2 mt-8 h-full">
                 <button
                   onClick={() => handleAddBatches(tray)}
-                  className="cursor-pointer u_btn shadow-lg bg-[var(--sancgc)] text-white">
+                  className="cursor-pointer text-sm shadow-xl py-[2px] px-4 rounded-lg bg-[var(--sancgb)] text-white">
                   ADD BATCH
                 </button>
 
                 <button
                   onClick={() => handleUpdateTray(tray)}
-                  className="cursor-pointer u_btn shadow-lg bg-[var(--white-blple--)] text-white">
+                  className="cursor-pointer text-sm shadow-xl py-[2px] px-4 rounded-lg bg-[var(--purpluish--)] text-white">
                   UPDATE
                 </button>
 
                 <button
                   onClick={() => handleDeleteTray(tray)}
-                  className="cursor-pointer u_btn shadow-lg bg-[var(--color-danger-b)] text-white">
+                  className="cursor-pointer text-sm shadow-xl py-[2px] px-4 rounded-lg bg-[var(--color-danger-a)] text-white">
                   DELETE
                 </button>
               </div>

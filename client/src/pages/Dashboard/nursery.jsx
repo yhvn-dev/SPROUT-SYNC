@@ -36,7 +36,6 @@ function NurseryDashboard(){
     }));
   };
 
-  
   return (
 
     <main className='bg-white
@@ -64,6 +63,15 @@ function NurseryDashboard(){
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
             {/* Main Content - Zones */}
             <div className="lg:col-span-2 space-y-4 overflow-y-auto max-h-[calc(100vh-200px)]">
+                 
+              {trayGroups.length === 0 && (
+                <div className="flex flex-col items-center justify-center py-12 text-gray-400">
+                  <Sprout size={48} className="mb-3 opacity-50" />
+                  <p className="text-lg font-medium">No Tray Groups found</p>
+                  <p className="text-sm">Create a tray group to start tracking plants</p>
+                </div>
+              )}
+
               {trayGroups.length > 0 && trayGroups.map((group) => {
                 const isExpanded = expandedZones[group.tray_group_id];
                 const groupTrays = trays.filter(t => t.tray_group_id === group.tray_group_id);
@@ -193,6 +201,15 @@ function NurseryDashboard(){
                 </div>
 
                 <div className="space-y-3 max-h-[calc(100vh-350px)] overflow-y-auto">  
+
+                  {batches.length === 0 && (
+                    <div className="flex flex-col items-center justify-center py-10 text-gray-400">
+                      <Sprout size={48} className="mb-3 opacity-50" />
+                      <p className="text-lg font-medium">No Batches found</p>
+                      <p className="text-sm">Assign a batch to each tray start tracking plants</p>
+                    </div>
+                  )}
+
                   {batches.length > 0 && batches.map(batch => (
                     <div key={batch.batch_id} className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-4 border border-gray-100">
                       <div className="flex items-start justify-between mb-3">

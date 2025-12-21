@@ -1,4 +1,5 @@
 // plantBatches.controller.js
+
 import * as plantBatchModels from "../models/plantBatchesModels.js"
 import * as trayModels from "../models/trayModels.js"
 
@@ -46,21 +47,19 @@ export const getPlantBatchTotals = async (req, res) => {
   
 };
 
+
+
+
 // ===== GET Seedling Growth Over Time per Batch =====
 export const getSeedlingGrowthOverTime = async (req, res) => {
   try {
-    // Call the model function
     const growthData = await plantBatchModels.getSeedlingGrowthByWeekAll();
-
-    // Map the data safely with month names
     const seedlingGrowthData = growthData.map(item => {
       const grown = Number(item.total_grown ?? 0);
       const dead = Number(item.total_dead ?? 0);
       const replanted = Number(item.total_replanted ?? 0);
 
       const weekDate = new Date(item.week_start);
-
-      // Format: "Week of Dec 15, 2025"
       const weekLabel = `Week of ${weekDate.toLocaleDateString('en-US', {
         year: 'numeric',
         month: 'short',
@@ -95,9 +94,9 @@ export const createPlantBatch = async (req, res) => {
 
     const existingTray = await trayModels.readTrayById(tray_id)
     if (!existingTray) return res.status(404).json({ message: "Selected Tray not found" });
-  
-    const batch = await plantBatchModels.createPlantBatch(batchData)
+    const batch = await plantBatchModels.createPlantBatch(batchData)  
     res.status(201).json(batch);
+   
     console.log("PLANT BATCH CREATED:", batch);  
   } catch (err) {
     console.error("CONTROLLER: Error creating plant batch", err);
@@ -115,7 +114,6 @@ export const updatePlantBatch = async (req, res) => {
     const batchData = req.body;
     const {tray_id} = batchData
 
-    
     const existingTray = await trayModels.readTrayById(tray_id)
     if (!existingTray) return res.status(404).json({ message: "Selected Tray not found" });
 

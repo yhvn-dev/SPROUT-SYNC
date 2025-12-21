@@ -77,12 +77,12 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
                 <div className="flex items-center my-4 gap-2 h-full ">
                   <button
                     onClick={() => handleUpdateBatches(pb)}
-                    className="cursor-pointer u_btn shadow-lg bg-[var(--white-blple--)] text-white">
+                    className="cursor-pointer text-sm shadow-xl py-[2px] px-4 rounded-lg bg-[var(--purpluish--)] text-white">
                     UPDATE
                   </button>
                   <button
                     onClick={() => handleDeleteBatches(pb)}
-                    className="cursor-pointer u_btn shadow-lg bg-[var(--color-danger-b)] text-white">
+                    className="cursor-pointer text-sm shadow-xl py-[2px] px-4 rounded-lg bg-[var(--color-danger-a)] text-white">
                     DELETE
                   </button>
                 </div>

@@ -122,8 +122,16 @@ export const updateTray = async (trayData, tray_id) => {
 
 
 
-
-
+// ===== DELETE a tray =====
+export const updateTrayBaseonTrayGroupName = async (tray_group_name, tray_group_id) => {
+  try {
+    const sql = `UPDATE trays SET plant = $1 WHERE tray_group_id = $2 RETURNING *`;
+    const result = await query(sql, [tray_group_name, tray_group_id]);
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
 
 // ===== DELETE a tray =====
 export const deleteTray = async (tray_id) => {

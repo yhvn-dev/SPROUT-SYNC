@@ -45,7 +45,7 @@ function Tray_groups({
         <div className="w-1/2 flex items-center justify-start flex-row-reverse">
           <button
             onClick={handleAdd}
-            className="hidden rounded-xl shadow-lg px-4 py-2 bg-[var(--sancgb)] text-[var(--main-white--)] cursor-pointer">
+            className=" rounded-xl shadow-lg px-4 py-2 bg-[var(--sancgb)] text-[var(--main-white--)] cursor-pointer">
             Add Tray Group
           </button>
         </div>
@@ -55,6 +55,7 @@ function Tray_groups({
       <div className="h-[245px] overflow-hidden">
         <div className="space-y-3 h-full overflow-y-auto pr-2">
 
+        
           {trayGroupsData.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-gray-400">
               <Sprout size={48} className="mb-3 opacity-50" />
@@ -115,19 +116,19 @@ function Tray_groups({
                 <div className="flex items-center justify-center h-full gap-2 my-4">
                   <button
                     onClick={() => handleAddTray(group)}
-                    className="cursor-pointer u_btn shadow-lg bg-[var(--sancgc)] text-white"
+                    className="cursor-pointer text-sm shadow-xl py-[2px] px-4 rounded-lg bg-[var(--sancgb)] text-white"
                   >
                     ADD TRAY
                   </button>
                   <button
                     onClick={() => handleUpdate(group)}
-                    className="cursor-pointer u_btn shadow-lg bg-[var(--white-blple--)] text-white"
+                    className="cursor-pointer text-sm shadow-xl py-[2px] px-4 rounded-lg bg-[var(--purpluish--)] text-white"
                   >
                     UPDATE
                   </button>
                   <button
                     onClick={() => handleDelete(group)}
-                    className="hidden cursor-pointer u_btn shadow-lg bg-[var(--color-danger-b)] text-white"
+                    className="cursor-pointer text-sm shadow-xl py-[2px] px-4 rounded-lg bg-[var(--color-danger-a)] text-white"
                   >
                     DELETE
                   </button>

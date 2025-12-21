@@ -1,160 +1,225 @@
-import { Droplets, Sun, Wind, Activity, User ,LayoutPanelTop ,ChartNoAxesCombined, LogOut } from 'lucide-react';
-
-import {Img_Logo} from "../../components/logo"
-import {GaugeChart}  from '../../components/charts';
+import React, { useState } from 'react';
+import {
+  Droplet,
+  ChevronDown,
+  ChevronUp,
+  Sprout,
+  Calendar,
+  TrendingUp,
+  LayoutDashboard,
+  Leaf,
+  User,
+  LogOut,
+} from 'lucide-react';
 
 export function Dashboard_Mockup() {
-  return (
-    <>
-      <section id="dashboard" className="py-24 bg-white">
+  const [expandedZones, setExpandedZones] = useState({});
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-bold text-[#003333] mb-6">
-              Your Control Center
-            </h2>
-            <p className="text-xl text-[#5A8F73] max-w-2xl mx-auto">
-              Access all your farm data through our intuitive dashboard interface
-            </p>
+  const toggleZone = (zoneId) => {
+    setExpandedZones(prev => ({ ...prev, [zoneId]: !prev[zoneId] }));
+  };
+
+  const trayGroups = [
+    {
+      tray_group_id: 1,
+      group_number: '1',
+      tray_group_name: 'Cucumber',
+      location: 'Left Section',
+      min_moisture: 60,
+      max_moisture: 80,
+      trays: [
+        { tray_id: 1, tray_number: '1', plant: 'Cucumber', hasSensor: true },
+        { tray_id: 2, tray_number: '2', plant: 'Cucumber', hasSensor: false }
+      ]
+    },
+    {
+      tray_group_id: 2,
+      group_number: '2',
+      tray_group_name: 'Lettuce',
+      location: 'Right Section',
+      min_moisture: 50,
+      max_moisture: 70,
+      trays: [
+        { tray_id: 3, tray_number: '1', plant: 'Lettuce', hasSensor: true }
+      ]
+    }
+  ];
+
+  const batches = [
+    {
+      batch_id: 1,
+      plant_name: 'Cucumber',
+      date_planted: new Date(),
+      expected_harvest_days: 45,
+      total_seedlings: 120,
+      alive_seedlings: 90,
+      dead_seedlings: 10
+    }
+  ];
+
+  return (
+    <div className="flex flex-col md:flex-row items-center justify-center min-h-screen w-[90%]  p-2 md:p-0">
+      {/* ================= BROWSER WINDOW CONTAINER ================= */}
+      <div className="flex-1 w-full max-w-[1600px] h-[90vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-300">
+
+        {/* ================= APPLE-STYLE TOP BAR ================= */}
+        <div className="flex items-center justify-between gap-3 p-3 border-b border-gray-200 bg-white/80 backdrop-blur-md">
+          {/* Stoplight buttons */}
+          <div className="flex gap-2 ml-2 md:ml-4">
+            <span className="w-3 h-3 rounded-full bg-red-500"></span>
+            <span className="w-3 h-3 rounded-full bg-yellow-400"></span>
+            <span className="w-3 h-3 rounded-full bg-green-500"></span>
           </div>
 
-          {/* Mac Browser Mockup */}
-          <div className="relative max-w-6xl mx-auto">
-            <div className="rounded-3xl overflow-hidden shadow-2xl border-8 border-[#003333] bg-[#003333]">
-              {/* Browser Chrome */}
-              <div className="bg-[#E8F3ED] px-4 py-3 flex items-center gap-2 ">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-[#ff5f57]"></div>
-                  <div className="w-3 h-3 rounded-full bg-[#ffbd2e]"></div>
-                  <div className="w-3 h-3 rounded-full bg-[#28ca42]"></div>
-                </div>
-                <div className="flex-1 mx-4 bg-white rounded-lg px-4 py-1.5 text-sm text-[#5A8F73] flex items-center">
-                  <span className="text-[#003333] font-medium">sproutsync.farm/dashboard</span>
-                </div>
-              </div>
+          {/* Fake URL bar */}
+          <div className="flex-1 h-6 bg-gray-200/50 backdrop-blur-sm rounded-full flex items-center px-3 text-gray-700 text-sm mx-2 md:mx-4">
+            https://nursery-dashboard.local
+          </div>
 
+          {/* Right placeholder */}
+          <div className="flex gap-3 text-gray-400 mr-2 md:mr-4">
+            <span>🔍</span>
+            <span>⋮</span>
+          </div>
+        </div>
 
+        {/* ================= MAIN DASHBOARD ================= */}
+        <div className="flex flex-1 overflow-hidden">
 
-              {/* Dashboard Content */}
-              <div className="grid grid-cols-[1.5fr_8.5fr] grid-rows-[10vhfr_30vh_40vh] max-h-[100vh] gap-4 bg-gradient-to-br from-[#E8F3ED] to-white">
-                <aside className='bg-white flex flex-col items-center justify-evenly rounded-[10px] col-start-1 col-end-1 row-start-1 row-end-4 shadow-lg '>
-                    <Img_Logo/>
-                    <p className='rounded-2xl shadow-lg p-2'><LayoutPanelTop strokeWidth={1.5} size={30}/></p>
-                    <p className='rounded-2xl shadow-lg p-2'><User strokeWidth={1.5} size={30}/></p>
-                    <p className='rounded-2xl shadow-lg p-2'><ChartNoAxesCombined strokeWidth={1.5} size={30} /></p>
-                    <p className='rounded-2xl shadow-lg p-2'><LogOut strokeWidth={1.5} size={30} /></p>                          
-                </aside>
+          {/* ================= SIDEBAR ================= */}
+          <aside className={`fixed md:relative z-20 inset-y-0 left-0 w-64 bg-white/70 backdrop-blur-xl border-r border-gray-200 p-6 flex flex-col gap-8 transform md:translate-x-0 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+            <div className="flex justify-between items-center md:hidden">
+              <h1 className="text-lg font-semibold">🌱 SPROUTSYNC</h1>
+              <button onClick={() => setSidebarOpen(false)}>✕</button>
+            </div>
 
-                <header className="flex items-center justify-end bg-white shadow-lg rounded-[10px] p-2">
-                    <div className='rounded-full w-8 h-8 mx-4 bg-[var(--pal2-whiteb)]'></div>
-                </header>
-                
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-                  {[
-                    { color: '#027c68',chart:<GaugeChart value={6.8} max={14} label="Moisture" unit="" icon={Droplets} color="var(--sancgb)" /> },                       
-                    { color: '#5A8F73',chart:<GaugeChart value={6.8} max={14} label="Water Level" unit="" icon={Droplets} color="var(--purpluish--" /> }
-                  ].map((stat, index) => (
-                    <div key={index} className="bg-white rounded-2xl p-4 shadow-lg">
-                      <div className="relateive flex flex-col items-center text-center ">
-                        <div className="w-50 h-50 aboluste">{stat.chart}</div>
+            <h1 className="text-lg font-semibold hidden md:block">🌱 SPROUTSYNC</h1>
+            <nav className="space-y-4">
+              <SidebarItem icon={LayoutDashboard} label="Dashboard" active />
+              <SidebarItem icon={User} label="Users" />
+              <SidebarItem icon={TrendingUp} label="Analytics" />
+              <SidebarItem icon={LogOut} label="Logout" />
+            </nav>
+          </aside>
+
+          {/* Mobile menu button */}
+          <button className="md:hidden absolute top-4 left-4 z-30 p-2 bg-white rounded-lg shadow" onClick={() => setSidebarOpen(true)}>
+            ☰
+          </button>
+
+          {/* ================= CONTENT ================= */}
+          <main className="flex-1 p-2 md:p-6 overflow-y-auto">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6">
+
+              {/* ================= ZONES ================= */}
+              <section className="lg:col-span-2 space-y-4">
+                {trayGroups.map(group => {
+                  const isExpanded = expandedZones[group.tray_group_id];
+                  return (
+                    <div key={group.tray_group_id} className="bg-white rounded-3xl shadow-sm border border-gray-200">
+
+                      {/* Header */}
+                      <div
+                        className="p-4 md:p-6 flex justify-between items-center cursor-pointer hover:bg-gray-50 rounded-3xl"
+                        onClick={() => toggleZone(group.tray_group_id)}
+                      >
+                        <div className="flex items-center gap-3 md:gap-4">
+                          <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-[#34c759] flex items-center justify-center">
+                            <Sprout className="text-white" />
+                          </div>
+                          <div>
+                            <h3 className="text-md md:text-lg font-semibold">[{group.group_number}] {group.tray_group_name}</h3>
+                            <p className="text-xs md:text-sm text-gray-500">{group.location}</p>
+                          </div>
+                        </div>
+
+                        <div className="flex items-center gap-2 md:gap-4">
+                          <span className="text-xs md:text-sm text-gray-600">{group.min_moisture}%–{group.max_moisture}%</span>
+                          {isExpanded ? <ChevronUp /> : <ChevronDown />}
+                        </div>
+                      </div>
+
+                      {/* Trays */}
+                      {isExpanded && (
+                        <div className="px-3 md:px-6 pb-4 md:pb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                          {group.trays.map(tray => (
+                            <div key={tray.tray_id} className="rounded-2xl bg-[#f5f5f7] p-3 md:p-4">
+                              <h4 className="font-semibold text-sm md:text-base">Tray {tray.tray_number}</h4>
+
+                              {tray.hasSensor ? (
+                                <div className="mt-2 md:mt-3 bg-white rounded-xl p-3 md:p-4 flex items-center gap-2 md:gap-3 shadow-sm">
+                                  <Droplet className="text-[#34c759]" />
+                                  <div>
+                                    <p className="text-xs text-gray-500">Moisture</p>
+                                    <p className="text-lg md:text-xl font-bold">65%</p>
+                                  </div>
+                                  <span className="ml-auto text-[10px] md:text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">
+                                    Optimal
+                                  </span>
+                                </div>
+                              ) : (
+                                <p className="mt-2 md:mt-3 text-xs md:text-sm text-gray-500">No sensor attached</p>
+                              )}
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </section>
+
+              {/* ================= BATCHES ================= */}
+              <aside className="space-y-4">
+                <div className="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-gray-200">
+                  <h3 className="text-lg font-semibold mb-4">Plant Batches</h3>
+
+                  {batches.map(batch => (
+                    <div key={batch.batch_id} className="rounded-2xl bg-[#f5f5f7] p-3 md:p-4 mb-2">
+                      <h4 className="font-semibold text-sm md:text-base">{batch.plant_name}</h4>
+
+                      <div className="text-[10px] md:text-xs text-gray-600 mt-2 space-y-1">
+                        <div className="flex items-center gap-1 md:gap-2">
+                          <Calendar size={12} /> {batch.date_planted.toLocaleDateString()}
+                        </div>
+                        <div className="flex items-center gap-1 md:gap-2">
+                          <Calendar size={12} /> {batch.expected_harvest_days} days
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-3 gap-1 md:gap-2 mt-2 md:mt-4 text-center text-[10px] md:text-xs">
+                        <Stat label="Total" value={batch.total_seedlings} />
+                        <Stat label="Alive" value={batch.alive_seedlings} />
+                        <Stat label="Dead" value={batch.dead_seedlings} />
                       </div>
                     </div>
                   ))}
                 </div>
-                
-                  <div className="col-start-2 col-end-3 row-start-3 row-end-3 bg-white rounded-2xl p-6 shadow-lg space-y-6">
-  
-                    {/* Cucumber Tray */}
-                    <div>
-                      <div className="text-sm font-semibold text-[#003333] mb-4">Cucumber Tray</div>
-                      <div className="grid grid-cols-3 gap-6">
-                        {[
-                          { id: "A1", value: 65, status: "Optimal" },
-                          { id: "A2", value: 72, status: "Optimal" },
-                          { id: "A3", value: 58, status: "Dry" },
-                      
-                        ].map((tray) => (
-                          <div
-                            key={tray.id}
-                            className="relative bg-gradient-to-br from-green-50 to-white rounded-xl border-2 border-dashed border-green-200 h-32 flex items-center justify-center shadow-sm"
-                          >
-                            <p className="absolute top-2 left-2 text-xs font-bold text-[#027c68]">{tray.id}</p>
+              </aside>
 
-                            <div
-                              className={`absolute bottom-3 right-3 rounded-lg px-3 py-2 text-white shadow-md text-center ${
-                                tray.value < 30
-                                  ? "bg-red-500"
-                                  : tray.value < 60
-                                  ? "bg-[var(--color-warning-a)] text-black"
-                                  : "bg-[#027c68]"
-                              }`}
-                            >
-                              <div className="flex items-center gap-1 justify-center">
-                                <Droplets size={14} />
-                                <span className="text-xs uppercase">Moisture</span>
-                              </div>
-                              <div className="text-base font-bold">{tray.value}%</div>
-                              <div className="text-[10px] opacity-90">{tray.status}</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* Lettuce Tray */}
-                    <div>
-                      <div className="text-sm font-semibold text-[#003333] mb-4">Lettuce Tray</div>
-                      <div className="grid grid-cols-3 gap-6">
-                        {[
-                          { id: "B1", value: 55, status: "Optimal" },
-                          { id: "B2", value: 60, status: "Optimal" },
-                          { id: "B3", value: 50, status: "Dry" },
-                         
-                        ].map((tray) => (
-                          <div
-                            key={tray.id}
-                            className="relative bg-gradient-to-br from-green-50 to-white rounded-xl border-2 border-dashed border-green-200 h-32 flex items-center justify-center shadow-sm"
-                          >
-                            <p className="absolute top-2 left-2 text-xs font-bold text-[#027c68]">{tray.id}</p>
-
-                            <div
-                              className={`absolute bottom-3 right-3 rounded-lg px-3 py-2 text-white shadow-md text-center ${
-                                tray.value < 30
-                                  ? "bg-red-500"
-                                  : tray.value < 60
-                                  ? "bg-[var(--color-warning-a)] text-black"
-                                  : "bg-[#027c68]"
-                              }`}
-                            >
-                              <div className="flex items-center gap-1 justify-center">
-                                <Droplets size={14} />
-                                <span className="text-xs uppercase">Moisture</span>
-                              </div>
-                              <div className="text-base font-bold">{tray.value}%</div>
-                              <div className="text-[10px] opacity-90">{tray.status}</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-
-                  </div>
-
-              </div>
             </div>
-          </div>
-
-          <div className="mt-12 text-center">
-            <p className="text-lg text-[#5A8F73] mb-6">
-              Real-time data visualization • Multi-bed management • Historical analytics
-            </p>
-          </div>
+          </main>
         </div>
-      </section>
-    </>
-  )
-
-
+      </div>
+    </div>
+  );
 }
 
+function SidebarItem({ icon: Icon, label, active }) {
+  return (
+    <div className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer ${active ? 'bg-[var(--sancgb)] text-white' : 'text-gray-700 hover:bg-gray-100'}`}>
+      <Icon size={18} />
+      <span className="text-sm font-medium">{label}</span>
+    </div>
+  );
+}
 
+function Stat({ label, value }) {
+  return (
+    <div>
+      <p className="text-gray-500">{label}</p>
+      <p className="font-bold">{value}</p>
+    </div>
+  );
+}

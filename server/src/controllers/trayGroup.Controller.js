@@ -1,5 +1,8 @@
-// trayGroups.controller.js
 import * as trayGroupModels from "../models/trayGroupsModel.js";
+import * as trayModels from "../models/trayModels.js"
+
+
+
 
 // ===== GET all tray groups =====
 export const getTrayGroups = async (req, res) => {
@@ -45,26 +48,30 @@ export const createTrayGroup = async (req, res) => {
 };
 
 
-
-// ===== UPDATE a tray group =====
 export const updateTrayGroup = async (req, res) => {
   try {
-    
-    const {tray_group_id}= req.params
+    const { tray_group_id } = req.params;
+    const { tray_group_name } = req.body;
     const trayGroupData = req.body;
 
-    const existingGroup = await trayGroupModels.readTrayGroupById(tray_group_id)
-    if (!existingGroup) return res.status(404).json({ message: "Tray group not found" });
+    const existingGroup = await trayGroupModels.readTrayGroupById(tray_group_id);
+    if (!existingGroup) {
+      return res.status(404).json({ message: "Tray group not found" });
+    }
 
-    const updatedGroup = await trayGroupModels.updateTrayGroups(trayGroupData,tray_group_id);
-    res.status(200).json(updatedGroup);
-    console.log("TRAY GROUP UPDATED:", updatedGroup);
+    const updatedGroup = await trayGroupModels.updateTrayGroups(trayGroupData, tray_group_id);
+    const updatedTrays = await trayModels.updateTrayBaseonTrayGroupName(tray_group_name, tray_group_id); // Fixed function name
+
+    res.status(200).json({ 
+      trayGroup: updatedGroup, 
+      traysUpdated: updatedTrays 
+    });
+
   } catch (err) {
     console.error("CONTROLLER: Error updating tray group", err);
-    res.status(500).json({ message: "Error updating tray group", err });
+    res.status(500).json({ message: "Error updating tray group" });
   }
 };
-
 
 
 

@@ -1,9 +1,7 @@
-import { Droplets, Sun, Wind,Activity,TrendingUp, Bell } from 'lucide-react';
+import { Droplets,TrendingUp, Bell } from 'lucide-react';
 
 export function FeatureSection(){
-
     return(
-
      <>
         {/* Features Section */}
       <section id="features" className="py-24 bg-gradient-to-b from-white to-[#E8F3ED]">

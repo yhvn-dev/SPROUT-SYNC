@@ -188,7 +188,9 @@ function Home(){
       </section>
 
         <FeatureSection/>
-        <Dashboard_Mockup/>
+        <div className='center'>
+           <Dashboard_Mockup/>   
+        </div>
         <Farm_Info_Section/>
         <BenefitSection/>
         <Logo_Page/>

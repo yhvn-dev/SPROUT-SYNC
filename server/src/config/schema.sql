@@ -39,7 +39,7 @@ CREATE TABLE tray_groups (
 CREATE TABLE trays (
     tray_id SERIAL PRIMARY KEY,
     tray_group_id INT REFERENCES tray_groups(tray_group_id) ON DELETE CASCADE,
-    group_number INTEGER NOT NULL,    
+    tray_number INTEGER NOT NULL,    
     plant VARCHAR(100) NOT NULL,
     status VARCHAR(50) DEFAULT 'Active',
     created_at TIMESTAMP DEFAULT NOW(),
@@ -83,11 +83,22 @@ CREATE TABLE sensor_readings (
    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- COMPLETE notifications table schema with is_read column
 CREATE TABLE notifications (
     notification_id SERIAL PRIMARY KEY,         
-    type VARCHAR(50) NOT NULL,                
-    message TEXT NOT NULL,                  
+    type VARCHAR(50) NOT NULL,                  
+    message TEXT NOT NULL,                      
     related_sensor INT REFERENCES sensors(sensor_id), 
-    status VARCHAR(10) DEFAULT 'Unread',        
-    created_at TIMESTAMP DEFAULT NOW()        
+    status VARCHAR(10) DEFAULT 'NORMAL',        
+    is_read BOOLEAN DEFAULT false,            
+    created_at TIMESTAMP DEFAULT NOW()
 );
+
+
+
+-- Reset sequences to start from 1
+ALTER SEQUENCE sensor_readings_reading_id_seq RESTART WITH 1;
+ALTER SEQUENCE notifications_notification_id_seq RESTART WITH 1;
+ALTER SEQUENCE sensors_sensor_id_seq RESTART WITH 1;
+ALTER SEQUENCE trays_tray_id_seq RESTART WITH 1;
+ALTER SEQUENCE tray_groups_tray_group_id_seq RESTART WITH 1;

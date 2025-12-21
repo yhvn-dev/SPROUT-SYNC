@@ -74,20 +74,15 @@ export const readAverageBySensorType = async (sensorType) => {
 
 // ===== CREATE a new reading =====
 export const createReadings = async (readingData) => {
-  const {sensor_id, value} = readingData;
-
-  try {        
-    const sql = `
-      INSERT INTO sensor_readings (sensor_id,value)
-      VALUES ($1, $2)
-      RETURNING *
-    `;
-    const values = [sensor_id, value];
-    const result = await query(sql, values);
-    return result.rows[0];
-  } catch (error) {
-    throw error;
-  }
+  const { sensor_id, value} = readingData;
+  
+  const { rows } = await query(`
+    INSERT INTO sensor_readings (sensor_id, value, recorded_at) 
+    VALUES ($1, $2, NOW()) 
+    RETURNING *
+  `, [sensor_id, value]);
+  
+  return rows[0]; 
 };
 
 

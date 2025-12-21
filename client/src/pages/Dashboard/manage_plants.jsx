@@ -86,8 +86,6 @@ const ManagePlants = ({reloadTrayGroups,reloadTrays,reloadBatches}) => {
     }
   }
 
-
-
   return (
   <>
       <style>{`
@@ -101,6 +99,7 @@ const ManagePlants = ({reloadTrayGroups,reloadTrays,reloadBatches}) => {
       `}</style>
 
       <div className="max-w-7xl mx-auto relative">
+
         {/* Header */}
         <div className='mb-4'>
           <SucessMsgs txt={successMsg} clearMsg={clearMsg}/>    
@@ -111,8 +110,7 @@ const ManagePlants = ({reloadTrayGroups,reloadTrays,reloadBatches}) => {
             <div>
               <h1 className="text-3xl font-semibold text-gray-900">Plant Management</h1>
               <p className="text-sm text-gray-500 mt-1">Configure tray groups, trays, and plant batches</p>
-            </div>
-          
+            </div>         
           </div>
         </div>
 
@@ -125,7 +123,7 @@ const ManagePlants = ({reloadTrayGroups,reloadTrays,reloadBatches}) => {
               onClick={() => setActiveTab('trayGroups')}
               className={`cursor-pointer flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-2xl font-medium transition-all ${
                 activeTab === 'trayGroups'
-                  ? 'bg-gradient-to-r from-[#A8C7B8] to-[#7BA591] text-white shadow-md'
+                  ? 'bg-gradient-to-r from-[var(--sancgd)] to-[#7BA591] text-white shadow-md'
                   : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
@@ -136,7 +134,7 @@ const ManagePlants = ({reloadTrayGroups,reloadTrays,reloadBatches}) => {
               onClick={() => setActiveTab('trays')}
               className={`cursor-pointer flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-2xl font-medium transition-all ${
                 activeTab === 'trays'
-                  ? 'bg-gradient-to-r from-[#A8C7B8] to-[#7BA591] text-white shadow-md'
+                  ? 'bg-gradient-to-r from-[var(--sancgd)] to-[#7BA591] text-white shadow-md'
                   : 'text-gray-600 hover:bg-gray-50'
               }`}
             >
@@ -147,7 +145,7 @@ const ManagePlants = ({reloadTrayGroups,reloadTrays,reloadBatches}) => {
               onClick={() => setActiveTab('batches')}
               className={`cursor-pointer flex-1 flex items-center justify-center gap-2 px-6 py-3 rounded-2xl font-medium transition-all ${
                 activeTab === 'batches'
-                  ? 'bg-gradient-to-r from-[#A8C7B8] to-[#7BA591] text-white shadow-md'
+                  ? 'bg-gradient-to-r from-[var(--sancgd)] to-[#7BA591] text-white shadow-md'
                   : 'text-gray-600 hover:bg-gray-50'
               }`}
             >

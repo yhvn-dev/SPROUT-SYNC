@@ -9,8 +9,6 @@ export const insertRefreshToken = async (user_id,tokenBody) =>{
 
         const { rows } = await query(`INSERT INTO tokens (user_id,refresh_token,device) 
         VALUES ($1,$2,$3) RETURNING *`,[user_id,refresh_token,device])
-
-        
         return rows[0]
         
     }catch(err){

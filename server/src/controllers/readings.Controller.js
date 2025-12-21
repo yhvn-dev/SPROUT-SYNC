@@ -102,72 +102,159 @@ export const createReadings = async (req, res) => {
       return res.status(404).json({ message: "Sensor with this id doesn't exist" });
     }
 
-    const { sensor_type, tray_id } = existingSensor;
+    const { sensor_type } = existingSensor;
+    const reading = await readingModel.createReadings(readingData);
 
-    if (sensor_type === "moisture") {
-      if (!tray_id) {
-        return res.status(400).json({ message: "Moisture sensor must have a tray assigned" });
+    // **NOTIFICATIONS ARE BONUS** (won't block readings)
+    try {
+      if (sensor_type === "moisture") {
+        await handleMoistureNotifications(existingSensor, value);
+      } else if (sensor_type === "ultra_sonic") {
+        await handleUltrasonicNotifications(sensor_id, value);
       }
-
-      const selectedTray = await trayModels.readTrayById(tray_id);
-      const { tray_group_id } = selectedTray;
-      const selectedTrayGroup = await trayGroupModels.readTrayGroupById(tray_group_id);
-      const { min_moisture, max_moisture, tray_group_name } = selectedTrayGroup;
-
-      const moisture = Number(value);
-      const min = Number(min_moisture);
-      const max = Number(max_moisture);
-
-      if (moisture < min) {
-        const percentageBelow = ((min - moisture) / min) * 100;
-        if (percentageBelow > 15) {
-          await notificationModels.createNotif({           
-            type: "Alert",
-            message: `${tray_group_name}'s soil is Critically Dry`,
-            related_sensor: sensor_id,
-            status: "LOW"
-          });
-        } else {
-          await notificationModels.createNotif({
-            type: "Warning",
-            message: `${tray_group_name}'s soil is approaching dryness`,
-            related_sensor: sensor_id,
-            status: "LOW"
-          });
-        }
-      } else if (moisture > max) {
-        const percentageAbove = ((moisture - max) / max) * 100;
-        if (percentageAbove > 15) {
-          await notificationModels.createNotif({
-            type: "Alert",
-            message: `${tray_group_name}'s soil is too wet`,
-            related_sensor: sensor_id,
-            status: "HIGH"
-          });
-        } else {
-          await notificationModels.createNotif({
-            type: "Warning",
-            message: `${tray_group_name}'s soil is getting wet`,
-            related_sensor: sensor_id,
-            status: "HIGH"
-          });
-        }
-      }
+    } catch (notifError) {
+      console.error("❌ Notification failed (reading still created):", notifError);
     }
 
-  
-    const reading = await readingModel.createReadings(readingData);
     res.status(201).json(reading);
-    console.log("READING CREATED:", reading);
+    console.log("✅ READING CREATED:", reading);
 
   } catch (err) {
     console.error("CONTROLLER: Error creating reading", err);
-    res.status(500).json({ message: "Error creating reading", err });
+    res.status(500).json({ message: "Error creating reading" });
   }
 };
 
 
 
+
+// Extracted helper functions (cleaner)
+const handleMoistureNotifications = async (existingSensor, value) => {
+  const { tray_id } = existingSensor;
+  if (!tray_id) return;
+
+  const selectedTray = await trayModels.readTrayById(tray_id);
+  const { tray_group_id } = selectedTray;
+  const selectedTrayGroup = await trayGroupModels.readTrayGroupById(tray_group_id);
+  const { min_moisture, max_moisture, tray_group_name } = selectedTrayGroup;
+
+  const moisture = Number(value);
+  const min = Number(min_moisture);
+  const max = Number(max_moisture);
+
+  // TOO LOW - 10% or more below minimum
+  if (moisture < min) {
+    const percentageBelow = ((min - moisture) / min) * 100;
+    
+    if (percentageBelow >= 15) {
+      // CRITICAL
+      await notificationModels.createNotif({
+        type: "Alert",
+        message: `${tray_group_name}'s soil is Critically Dry`,
+        related_sensor: existingSensor.sensor_id,
+        status: "LOW"
+      });
+    } else {
+      // APPROACHING DRYNESS
+      await notificationModels.createNotif({
+        type: "Warning",
+        message: `${tray_group_name}'s soil is approaching dryness`,
+        related_sensor: existingSensor.sensor_id,
+        status: "LOW"
+      });
+    }
+  } 
+  // 10% APPROACHING MINIMUM (NEW!)
+  else if (moisture <= (min * 1.10)) { 
+    await notificationModels.createNotif({
+      type: "Info",
+      message: `${tray_group_name}'s soil is approaching minimum threshold (${moisture.toFixed(1)}%)`,
+      related_sensor: existingSensor.sensor_id,
+      status: "LOW"
+    });
+  }
+  // TOO HIGH - 10% or more above maximum
+  else if (moisture > max) {
+    const percentageAbove = ((moisture - max) / max) * 100;
+    
+    if (percentageAbove >= 15) {
+      // TOO WET
+      await notificationModels.createNotif({
+        type: "Alert",
+        message: `${tray_group_name}'s soil is too wet`,
+        related_sensor: existingSensor.sensor_id,
+        status: "HIGH"
+      });
+    } else {
+      // GETTING WET
+      await notificationModels.createNotif({
+        type: "Warning",
+        message: `${tray_group_name}'s soil is getting wet`,
+        related_sensor: existingSensor.sensor_id,
+        status: "HIGH"
+      });
+    }
+  }
+  // 10% APPROACHING MAXIMUM (NEW!)
+  else if (moisture >= (max * 0.90)) {
+    await notificationModels.createNotif({
+      type: "Info",
+      message: `${tray_group_name}'s soil is approaching maximum threshold (${moisture.toFixed(1)}%)`,
+      related_sensor: existingSensor.sensor_id,
+      status: "HIGH"
+    });
+  }
+};
+
+
+
+
+const handleUltrasonicNotifications = async (value) => {
+  const waterLevel = Number(value);
+  const maxWaterHeight = 20;
+  const minWaterHeight = 2;
+
+  // CRITICAL HIGH - Overflow
+  if (waterLevel > maxWaterHeight) {
+    await notificationModels.createNotif({
+      type: "Alert",
+      message: `Water Tank is OVERFLOWING (${waterLevel}cm)`,
+      status: "HIGH"
+    });
+  } 
+  // APPROACHING MAX (NEW! - 3cm below max)
+  else if (waterLevel > (maxWaterHeight - 3)) {
+    await notificationModels.createNotif({
+      type: "Info",
+      message: `Water Tank approaching overflow (${waterLevel}cm)`,
+      status: "HIGH"
+    });
+  }
+  // CRITICAL LOW - Empty
+  else if (waterLevel < minWaterHeight) {
+    await notificationModels.createNotif({
+      type: "Alert",
+      message: `Water Tank is CRITICALLY LOW (${waterLevel}cm)`,
+      status: "LOW"
+    });
+  } 
+  // WARNING LOW - Getting low (2-5cm)
+  else if (waterLevel < (minWaterHeight + 3)) {
+    await notificationModels.createNotif({
+      type: "Warning",
+      message: `Water Tank level is getting low (${waterLevel}cm)`,
+      status: "LOW"
+    });
+  }
+  // APPROACHING MIN (NEW! - 5-8cm)
+  else if (waterLevel < (minWaterHeight + 6)) {
+    await notificationModels.createNotif({
+      type: "Info",
+      message: `Water Tank approaching minimum level (${waterLevel}cm)`,
+      status: "LOW"
+    });
+  }
+};
 
 
 

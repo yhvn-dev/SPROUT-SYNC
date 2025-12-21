@@ -14,14 +14,13 @@ function Dashboard() {
   const { user } = useContext(UserContext);
   const [activeTab, setActiveTab] = useState("Overview");
   const [isNotifOpen, setNotifOpen] = useState(false);
-
-  const { loadTrayGroups, loadTrays, loadBatches, loadReadings } = usePlantData();
+  const { loadTrayGroups} = usePlantData();
 
   return (
     <>
       <section
         className="bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]
-        grid grid-cols-[12fr_30fr_58fr] grid-rows-[8vh_30vh_57vh] gap-4
+        grid  lg:grid-cols-[15fr_30fr_55fr] grid-rows-[8vh_30vh_57vh] gap-4
         h-[100vh] w-[100%] overflow-y-auto relative">
           
         {/* HEADER */}
@@ -62,7 +61,7 @@ function Dashboard() {
           {activeTab === "Overview" ? (
               <Nursery_Dashboard/>
           ) : (
-            <ManagePlants reloadTrayGroups={loadTrayGroups} />
+             <ManagePlants reloadTrayGroups={loadTrayGroups} />
           )}
         </main>
 
@@ -71,9 +70,10 @@ function Dashboard() {
           <Notif_Modal
             isOpen={isNotifOpen}
             onClose={() => setNotifOpen(false)}
-
           />
         )}
+
+
       </section>
     </>
   );

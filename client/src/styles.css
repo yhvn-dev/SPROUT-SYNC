@@ -13,9 +13,8 @@
     --blue-white: hsl(195, 44%, 86%);
     --color-dark--blue: hsl(225, 15%, 25%);
 
-
     /* [PL2]Accueil1 */;
-    --acc-darka: hsl(165, 9%, 15%);
+    --acc-darka: #232a28;
     --acc-darkb: hsl(180, 3%, 29%);
     --acc-darkc: #6b7070;
     

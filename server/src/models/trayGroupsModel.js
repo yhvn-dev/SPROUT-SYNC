@@ -141,10 +141,6 @@ export const updateTrayGroups = async (trayGroupData, tray_group_id) => {
 
 
 
-
-
-
-
 // ===== DELETE a tray group =====
 export const deleteTrayGroups = async (tray_group_id) => {
     try {

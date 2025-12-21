@@ -21,7 +21,7 @@ export const readNotif = async () => {
       "SELECT * FROM notifications ORDER BY created_at ASC"
     );
     
-    return rows; // ✅ lahat na ang ibabalik
+    return rows; 
   } catch (error) {
     console.error("MODELS: Error Reading Notifications", error);
     throw error;
@@ -36,35 +36,59 @@ export const readNotifById = async (notification_id) =>{
         return rows[0];
     } catch (error) {   
         console.error("MODELS: Error Reading Notifications")
+        throw error;
     }
 }
 
 
+export const readTotalUnreadNotifCount = async () => {
+    try {
+        const { rows } = await query(
+            "SELECT COUNT(*) as total FROM notifications WHERE is_read = false",[]);
+        return rows[0].total;
+    } catch (error) {   
+        console.error("MODELS: Error Reading Total Unread Notifications Count", error);
+        throw error; 
+    }
+};
 
 
-export const createNotif = async (notifData) => {
-  const {type,message,related_sensor,status} = notifData
-  try {
-    const { rows } = await query(`INSERT INTO notifications (type,message,related_sensor,status) 
-         VALUES ($1, $2, $3, $4) RETURNING *`,[type,message,related_sensor,status])
+
+// Mark ALL unread notifications as read (clears the count)
+export const markAllNotificationsAsRead = async () => {
+    try {
+        await query("UPDATE notifications SET is_read = true WHERE is_read = false");
+        return true;
+    } catch (error) {
+        console.error("MODELS: Error marking all notifications as read", error);
+        throw error;
+    }
+};
+
+
+export const createNotif = async (notificationData) => {
+    const { type, message, related_sensor, status } = notificationData;
+    const { rows } = await query(`
+        INSERT INTO notifications (type, message, related_sensor, status, is_read, created_at) 
+        VALUES ($1, $2, $3, $4, false, NOW())
+        RETURNING *
+    `, [type, message, related_sensor, status]);
     return rows[0];
-  } catch (error) {
-    console.error('Error creating notification:', error);
-    throw error;
-  }
 };
 
 
 export const updateNotif = async function (notifData,notification_id) {
-  const {type,message,related_sensor,status} = notifData
+  const {type,message,related_sensor,status,is_read} = notifData
+
   try {
       const { rows } = await query(`UPDATE notifications SET 
-        type = $1, 
-        message = $2, 
-        related_sensor = $3,
-        status = $4 WHERE notification_id = $5
+        type = $1, message = $2, 
+        related_sensor = $3, 
+        status = $4, 
+        is_read = $5 WHERE 
+        notification_id = $6
         RETURNING *`,
-        [type,message,related_sensor,status,notification_id])
+        [type,message,related_sensor,status,is_read,notification_id])
 
     return rows[0];
   } catch (error) {

@@ -50,7 +50,7 @@ export function LogoutModal({isOpen,onClose}) {
          exit={{ scale: 0.9, opacity: 0 }}
          transition={{ duration: 0.5 }}>
           
-          <button className='logout-btn cancel-btn absolute top-[20px] right-[20px]' onClick={onClose}>
+          <button className='cursor-pointer logout-btn cancel-btn absolute top-[20px] right-[20px]' onClick={onClose}>
             <div className="transiton-1s rounded-[10px] p-[1px] transition-colors duration-300 hover:bg-[var(--pal2-whiteb)]"><X/></div>
           </button>
           
@@ -60,9 +60,9 @@ export function LogoutModal({isOpen,onClose}) {
           </ul>
  
           <ul className="btn_box w-full h-full flex items-center justify-around p-t">
-            <button className='logout-choices logout-all bg-[var(--color-danger-b)] rounded-[10px]'
+            <button className='cursor-pointer px-4 py-1 logout-choices logout-all bg-[var(--color-danger-b)] rounded-[10px]'
             onClick={handleAllLogout}>To all devices</button>
-            <button className='logout-choices logout-device btn-a rounded-[10px]
+            <button className='cursor-pointer px-4 py-1 logout-choices logout-device btn-a rounded-[10px]
             'onClick={handleDeviceLogout}>This devices only</button>
           </ul>
       </motion.div>

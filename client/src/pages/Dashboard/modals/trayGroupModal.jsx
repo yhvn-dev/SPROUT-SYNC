@@ -15,18 +15,19 @@ export function TrayGroupModal({
 }) {
   if (!isOpen) return null;
 
+  
   const plantOptions = [
-    { name: "Lettuce", min: 55, max: 75 },
-    { name: "Spinach", min: 60, max: 80 },
-    { name: "Kangkong", min: 65, max: 85 },
-    { name: "Basil", min: 55, max: 70 },
-    { name: "Mint", min: 60, max: 75 },
-    { name: "Tomato", min: 65, max: 85 },
-    { name: "Cucumber", min: 70, max: 85 },
-    { name: "Bell Pepper", min: 60, max: 80 },
-    { name: "Bokchoy", min: 55, max: 75 },
-    { name: "Pechay", min: 60, max: 80 },
-    { name: "Mustasa", min: 55, max: 75 },
+    { name: "Bokchoy", min: 45, max: 70 },
+    { name: "Pechay", min: 50, max: 75 },
+    { name: "Mustasa", min: 45, max: 70 },
+    { name: "Lettuce", min: 50, max: 75 },
+    { name: "Spinach", min: 50, max: 75 },
+    { name: "Kangkong", min: 55, max: 80 },
+    { name: "Basil", min: 45, max: 70 },
+    { name: "Mint", min: 50, max: 75 },
+    { name: "Tomato", min: 40, max: 70 },
+    { name: "Cucumber", min: 50, max: 75 },
+    { name: "Bell Pepper", min: 45, max: 75 }
   ];
 
   const [formData, setFormData] = useState({
@@ -34,6 +35,7 @@ export function TrayGroupModal({
     min_moisture: "",
     max_moisture: "",
     location: "",
+    is_watering: false
   });
 
 

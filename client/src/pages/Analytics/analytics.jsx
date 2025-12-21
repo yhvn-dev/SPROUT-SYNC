@@ -1,4 +1,5 @@
 import { useState,useContext, useEffect} from 'react';
+import { Welcome_box } from "../../components/welcome_box"
 import { Sidebar } from '../../components/sidebar';
 import { Db_Header } from '../../components/db_header';
 import { UserContext } from "../../hooks/userContext";
@@ -35,13 +36,19 @@ export default function Analytics() {
     loadAverageReadingsBySensor("ultra_sonic");
   }, [loadBatchTotal,loadGrowthOvertime,loadReadings,loadMoistureReadingsLast24h, loadAverageReadingsBySensor]);
 
-
-
   return (
     <section className="h-screen w-screen overflow-hidden bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
       
       {/* Main Grid Layout */}
       <div className="h-full grid grid-cols-[12fr_30fr_58fr] gap-4 grid-rows-[auto_auto_1fr] ">
+        <Welcome_box text={
+          <>
+            <div className="flex items-center justify-center py-2">
+              <p className='border-r border-[var(--acc-darka)] text-xl py-2 pr-2'>Analytics</p>       
+              <p className='p-2 text-sm'>Welcome to Analytics Dashboard</p>            
+            </div>                  
+          </>}/>
+
         {/* Sidebar */}
         <Sidebar user={user} />
         <Db_Header setNotifOpen={setNotifOpen}/>
@@ -91,7 +98,6 @@ export default function Analytics() {
         
       </div>
       
-
       <Notif_Modal isOpen={isNotifOpen} onClose={() => setNotifOpen(false)}/>
 
     </section>
