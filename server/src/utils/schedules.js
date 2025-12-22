@@ -1,7 +1,7 @@
 import cron from "node-cron";
 import * as notifyController  from "../controllers/notifications.Controller.js";
 
-cron.schedule('0 8 * * *', async () => {
+cron.schedule('0 16 * * *', async () => {
   console.log('⏰ Running daily harvest check...');
   await notifyController.notifyReplantDate();
 });

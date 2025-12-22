@@ -10,6 +10,7 @@ return (
          <LogOut className="mx-2" strokeWidth={1.5} size={16} />
           <p className='text-sm'>Logout</p>
     </button>
+    
   </>
 )
 

@@ -179,23 +179,18 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
 
     
 
-
-
-
- 
     // ================================================================================
     return (
-        <main className="flex items-center justify-start flex-col full">
-
+        <main className="flex items-center justify-start flex-col full row-span-full">
         {/* USER CHART ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
-          <div className="grid grid-rows-1 grid-cols-[4fr_3fr_3fr] h-[30%] w-full gap-4 ">
-            
+          <div className="grid  row-span-full grid-rows-1 flex-col sm:grid-cols-[4fr_3fr_3fr] md:h-[30%]  w-full gap-4 ">            
           {/* CARD A USER STATUS */}
             <div className="center rounded-2xl shadow-lg border 
             border-gray-200 w-full h-full p-4 pointer-events-none relative bg-white ">     
               <p className="absolute top-4 left-4 text-[var(--acc-darkc)] text-sm">User status</p>
               {<StatusChart statusData={statusData} COLORS={COLORS}/>}   
            </div>
+           
 
              {/* CARD B USER COUNT */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-200 w-full h-full p-6 flex flex-col justify-between">
@@ -239,16 +234,10 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
             
         </div>
             
-
-
-
-
-
-            
           {/* USER TABLE ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
-          <div className="bg-white workspace flex flex-col h-[100%] w-full row-start-4 row-end-4
-          col-start-2 col-end-4 overflow-y-auto gap-x- rounded-[10px] my-4">
-            <div className="wp_header flex w-full h-[20%] ">
+          <div className="bg-white workspace flex flex-col w-full flex-1 row-start-4 row-span-full
+          col-start-2 col-end-4 overflow-y-auto  rounded-[10px] my-4 ">
+            <div className="wp_header flex w-full h-[10%] md:h-[20%] ">
                 <ol className='h_part left flex items-center justify-start w-1/2 '>
                     <User className="mx-4" size={24}/>
                     <span className='text-2xl'>Users</span>
@@ -275,7 +264,7 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
 
             <SucessMsgs txt={sucessMsg} clearMsg={clearMsg}/>
             
-            <div className="bg-white table_holder flex flex-col items-center justify-start h-full w-full  overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] rounded-[10px]">
+            <div className="bg-white table_holder flex flex-col items-center justify-start flex-1 w-full  overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] rounded-[10px]">
                 <UserTable
                   users={filtered.length > 0 ? filtered : allUsers}
                   setOpen={() => setOpen(true)}
@@ -296,6 +285,10 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
                 setBackendError={setBackendError}
             />)}       
           </div>
+
+
+
+
 
     </main>
 
