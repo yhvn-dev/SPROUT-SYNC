@@ -177,21 +177,17 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
     const newUsersThisMonth = 143;
     const COLORS = ['#7BA591',"#6b7070"];
 
-    
-
     // ================================================================================
     return (
-        <main className="flex items-center justify-start flex-col full row-span-full">
+        <main className="flex flex-col h-full w-full gap-4">  
         {/* USER CHART ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
-          <div className="grid  row-span-full grid-rows-1 flex-col sm:grid-cols-[4fr_3fr_3fr] md:h-[30%]  w-full gap-4 ">            
-          {/* CARD A USER STATUS */}
+          <div className="grid row-span-full grid-rows-1 flex-col md:grid-cols-[1fr_1fr_1fr] h-[50%] md:h-[30%]  w-full gap-4 ">                  
             <div className="center rounded-2xl shadow-lg border 
             border-gray-200 w-full h-full p-4 pointer-events-none relative bg-white ">     
               <p className="absolute top-4 left-4 text-[var(--acc-darkc)] text-sm">User status</p>
               {<StatusChart statusData={statusData} COLORS={COLORS}/>}   
            </div>
-           
-
+          
              {/* CARD B USER COUNT */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-200 w-full h-full p-6 flex flex-col justify-between">
               <div className="flex items-start justify-between">
@@ -212,32 +208,26 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
 
               <div className="flex items-start justify-between">
                 <div>
-                  <p className="text-sm font-medium text-gray-500 mb-1">New Users</p>
+                  <p className="flex text-sm font-medium text-gray-500 mb-1"> 
+                    
+                    New Users
+                  </p>
                   <h2 className="text-4xl font-bold text-gray-900">{newUsersThisMonth}</h2>
                   <p className="text-xs text-gray-500 mt-1">this month</p>
                 </div>
                   <Activity className="w-6 h-6 text-[var(--acc-darkb)]" />
               </div>
-
-
-              
-              <div className="mt-4 space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <div className="flex items-center gap-2">
-                    <UserCheck className="w-4 h-4 text-green-600" />
-                    <span className="text-gray-600">Verified</span>
-                  </div>
-            
-                </div>
-              </div>
             </div>
             
         </div>
             
+            
           {/* USER TABLE ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
           <div className="bg-white workspace flex flex-col w-full flex-1 row-start-4 row-span-full
-          col-start-2 col-end-4 overflow-y-auto  rounded-[10px] my-4 ">
-            <div className="wp_header flex w-full h-[10%] md:h-[20%] ">
+          col-start-2 col-end-4 overflow-y-auto  rounded-[10px] my-4">
+
+          
+            <div className="wp_header flex w-full h-[20%] md:h-[20%] ">
                 <ol className='h_part left flex items-center justify-start w-1/2 '>
                     <User className="mx-4" size={24}/>
                     <span className='text-2xl'>Users</span>

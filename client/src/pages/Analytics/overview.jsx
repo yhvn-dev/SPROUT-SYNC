@@ -4,7 +4,7 @@ import {  useMemo } from "react"
 
 // Number/Stat Card Component
 const StatCard = ({ label, value, color }) => (
-  <div className={`bg-white rounded-xl  flex flex-col items-center justify-center p-4 `}>
+  <div className={`bg-white rounded-xl  flex flex-col items-center justify-center    `}>
     <p className="text-xs text-gray-500">{label}</p>
     <h2 className={`text-3xl font-bold`} style={{ color }}>{value}</h2>
   </div>
@@ -30,24 +30,26 @@ export const Overview = ({batchTotal,readings,moistureReadingsLast24h,averageRea
   }, [moistureReadingsLast24h]);
       
     return (
-    <div className="h-full grid grid-cols-12 grid-rows-12 gap-4">
-      <div className="gap-4 flex items-start justify-evenly col-start-1 col-span-full row-start-1 row-end-4">
+    <div className="h-full grid  md:grid-cols-12 md:grid-rows-12 gap-4">
+      
+      <div className="gap-4 w-full grid grid-cols-4 md:flex md:items-start md:justify-evenly 
+      col-start-1 center col-span-7 md:col-span-full row-start-1 row-end-4 ">
   
           {/* TOTAL */}
-          <div className="flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
+          <div className="w-full md:flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
               <StatCard label="Total Seedlings" value={batchTotal.total_seedlings} color="#25a244" />    
           </div>
           {/* GROWN */}
-          <div className="flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
+          <div className="w-full md:flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
               <StatCard label="Grown" value={batchTotal.total_grown} color="var(--color-success-a)" />
          </div>
          
           {/* DEAD */}
-          <div className="flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
+          <div className="w-full md:flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
             <StatCard label="Dead" value={batchTotal.total_dead} color="var(--color-danger-a)" />    
           </div>
 
-          <div className="flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
+          <div className="w-full md:flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
               <StatCard label="Replanted" value={batchTotal.total_replanted}color="var(--color-warning)" />
           </div>    
       </div>
@@ -66,12 +68,14 @@ export const Overview = ({batchTotal,readings,moistureReadingsLast24h,averageRea
               <Line type="monotone" dataKey="value" stroke="#027c68" strokeWidth={3} dot={{ r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
-
         </div>
       </div>
 
+
+
+
       {/* Featured Large Gauge - Water Level */}
-      <div className="col-span-5 row-span-9 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-6">
+      <div className="col-span-7 md:col-span-5 row-span-9 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-6">
         <div className="flex flex-col items-center justify-center">
           <div className="relative w-40 h-40">
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
@@ -87,17 +91,23 @@ export const Overview = ({batchTotal,readings,moistureReadingsLast24h,averageRea
                 strokeLinecap="round"
               />
             </svg>
+
+            
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <Droplets className="w-10 h-10 mb-2" style={{ color: "var(--white-blple--)" }} />
               <span className="text-4xl font-bold text-gray-800">
                 {averageReadingsBySensor?.ultra_sonic.average ?? "--"}       
               </span>
               <span className="text-lg text-gray-600">%</span>
-            </div>
+            </div>  
           </div>
+          
           <p className="text-base font-semibold text-gray-800 mt-4">Water Level</p>
+          
         </div>
       </div>
     </div>
+
+    
   );
 };

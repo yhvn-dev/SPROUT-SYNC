@@ -7,6 +7,7 @@
   import { Workspace } from "./workspace";
   import { UserInsights } from './userInsights';
   import { Notif_Modal } from '../../components/notifModal';
+  import { LogoutModal } from '../../components/logoutModal';
 
   import { Menu } from "lucide-react";
   import "./users.css";
@@ -19,7 +20,8 @@
     const [activeTab, setActiveTab] = useState('Overview');
     const [isNotifOpen, setNotifOpen] = useState(false);
     const [sidebarOpen, setSidebarOpen] = useState(false); // <-- mobile sidebar toggle
-
+    const [logoutOpen, setLogoutOpen] = useState(false);
+    
     const token = localStorage.getItem("accessToken");
 
     // Fetch chart data
@@ -64,8 +66,9 @@
     };
 
     return (
+
     <section className="users grid grid-cols-1 sm:grid-cols-[12fr_30fr_58fr] 
-      grid-rows-[8vh_10vh_200vh] md:grid-rows-[8vh_10vh_82vh] gap-4 h-[100vh] w-full overflow-x-hidden overflow-y-auto 
+      grid-rows-[8vh_10vh_200vh] md:grid-rows-[8vh_10vh_82vh] gap-4 h-[100vh] w-full overflow-x-hidden overflow-y-auto  md:overflow-hidden 
       relative bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
 
         {/* ================= MOBILE MENU BUTTON ================= */}
@@ -90,43 +93,62 @@
             sidebarOpen ? "fixed inset-y-0 left-0 w-64 z-50" : "hidden"
           } md:static md:block`}
         >
-          <Sidebar user={user} />
+          <Sidebar user={user}  setLogoutOpen={setLogoutOpen}   />
         </aside>
 
         {/* ================= HEADER ================= */}
-        <Db_Header
-          input={
-            <div className="form_box center h-full">
-              <input
-                className="border-[1px] border-[var(--acc-darkc)] rounded-2xl px-4"
-                onChange={handleSearchChange}
-                type="text"
-                value={searchValue}
-                placeholder="Search for Users"
-              />
-            </div>
-          }
-          setNotifOpen={setNotifOpen}
-        />
+        <div className='col-start-1 col-span-full md:col-start-2'>
+
+          <Db_Header
+            input={
+              <div className="form_box center h-full flex-grow-1  ">
+                <input
+                  className="border-[1px] w-full md:w-1/2 border-[var(--acc-darkc)] rounded-2xl px-4"
+                  onChange={handleSearchChange}
+                  type="text"
+                  value={searchValue}
+                  placeholder="Search for Users"
+                />
+              </div>
+            }
+            setNotifOpen={setNotifOpen}
+          />
+        </div>
+    
 
         {/* ================= TAB NAVIGATION ================= */}
-        <div className='flex col-start-2 col-span-full row-start-2 row-end-2 my-4'>
-          <button
-            onClick={() => setActiveTab("Overview")}
-            className={`cursor-pointer ${activeTab === "Overview" ? "bg-white text-[#027c68] shadow-md" : "bg-white/50 text-[#5A8F73] hover:bg-white/70"} mr-2 px-6 py-2 text-sm rounded-lg transition-all duration-200`}
-          >
-            Overview
-          </button>
-          <button
-            onClick={() => setActiveTab("User Insights")}
-            className={`cursor-pointer ${activeTab === "User Insights" ? "bg-white text-[#027c68] shadow-md" : "bg-white/50 text-[#5A8F73] hover:bg-white/70"} ml-2 px-6 py-2 text-sm rounded-lg transition-all duration-200`}
-          >
-            User Insights
-          </button>
+        <div className='flex col-start-1 col-span-full md:col-start-2  row-start-2 row-end-2 my-4 '>
+         <button
+          onClick={() => setActiveTab("Overview")}
+          className={`
+            cursor-pointer
+            flex-1 md:flex-none
+            ${activeTab === "Overview"
+              ? "bg-white text-[#027c68] shadow-md"
+              : "bg-white/50 text-[#5A8F73] hover:bg-white/70"}
+            mr-2 px-6 py-2 text-sm rounded-lg transition-all duration-200
+          `}
+        >
+          Overview
+        </button>
+
+        <button
+          onClick={() => setActiveTab("User Insights")}
+          className={`
+            cursor-pointer
+            flex-1 md:flex-none
+            ${activeTab === "User Insights"
+              ? "bg-white text-[#027c68] shadow-md"
+              : "bg-white/50 text-[#5A8F73] hover:bg-white/70"}
+            ml-2 px-6 py-2 text-sm rounded-lg transition-all duration-200
+          `}
+        >
+          User Insights
+        </button>
         </div>
 
         {/* ================= MAIN CONTENT ================= */}
-        <main className='w-full h-full col-start-2 col-span-full row-start-3 row-span-full rounded-lg'>
+        <main className='w-full h-full col-start-1 md:col-start-2 col-span-full row-start-3 row-span-full rounded-lg'>
           {activeTab === "Overview"
             ? <Workspace
                 refreshChart={fetchChartData}
@@ -147,6 +169,12 @@
           />
         )}
 
+         {logoutOpen && (
+          <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
+        )}
+
+
+        
       </section>
     );
   }

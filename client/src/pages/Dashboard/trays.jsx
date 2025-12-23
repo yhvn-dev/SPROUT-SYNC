@@ -44,19 +44,19 @@ function Trays({
       {/* HEADER */}
       <header className="flex py-4">
         <div className="h-full w-1/2 flex items-center justify-start">
-          {/* ✅ Sprout icon */}
           <Sprout className="mr-4" size={24} />
           <p className="text-2xl">Trays</p>
         </div>
       </header>
 
+
+
       {/* TRAYS LIST */}
-      <div className="h-[235px] overflow-y-auto space-y-3">
+      <div className="sm:h-[330px] overflow-y-auto space-y-3">
 
         {/* EMPTY STATE */}
         {traysData.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-            {/* ✅ Sprout icon */}
             <Sprout size={48} className="mb-3 opacity-50" />
             <p className="text-lg font-medium">No Trays found</p>
             <p className="text-sm">
@@ -76,7 +76,7 @@ function Trays({
               hover:shadow-xl transition-shadow
             "
           >
-            <div className="flex items-start justify-between">
+            <div className="flex flex-col lg:flex-row gap-3">
 
               {/* LEFT CONTENT */}
               <div className="flex-1">
@@ -86,7 +86,6 @@ function Trays({
                     bg-gradient-to-br from-[#92e6a7] to-[#25a244]
                     flex items-center justify-center
                   ">
-                    {/* ✅ Sprout icon */}
                     <Sprout className="w-5 h-5 text-white" />
                   </div>
 
@@ -94,6 +93,7 @@ function Trays({
                     <h3 className="text-lg font-semibold text-gray-900">
                       [{tray.tray_number}] {tray.plant || "No Plant"} Tray
                     </h3>
+
                     <p className="text-sm text-gray-500">
                       Tray Group:{" "}
                       {trayGroupsData?.find(
@@ -104,9 +104,9 @@ function Trays({
                 </div>
 
                 {/* STATUS */}
-                <div className="ml-13 flex items-center gap-6 mt-3">
+                <div className="flex items-center gap-6 mt-3 text-xs sm:text-sm">
                   <div className="flex items-center gap-2">
-                    <span className="text-xs text-gray-500 uppercase tracking-wide">
+                    <span className="text-gray-500 uppercase tracking-wide">
                       Status:
                     </span>
 
@@ -124,8 +124,13 @@ function Trays({
                 </div>
               </div>
 
-              {/* ACTION BUTTONS */}
-              <div className="flex items-center gap-2 mt-8 h-full">
+              {/* ACTION BUTTONS (RESPONSIVE) */}
+              <div
+                className="
+                  flex flex-col items-end gap-2
+                  lg:flex-row lg:items-center
+                "
+              >
                 <button
                   onClick={() => handleAddBatches(tray)}
                   className="
@@ -172,17 +177,14 @@ function Trays({
                     shadow
                     hover:shadow-md
                     transition
-                  "
-                >
+                  ">
                   DELETE
                 </button>
               </div>
 
-
-
-
             </div>
           </div>
+          
         ))}
       </div>
     </div>

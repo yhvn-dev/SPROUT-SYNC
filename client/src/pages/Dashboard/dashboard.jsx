@@ -12,7 +12,7 @@ import { usePlantData } from "../../hooks/plantContext.jsx";
 import Nursery_Dashboard from "./nursery.jsx";
 import ManagePlants from "./manage_plants.jsx";
 
-function Dashboard() {
+export function Dashboard() {
   const { user } = useContext(UserContext);
   const [activeTab, setActiveTab] = useState("Overview");
   const [isNotifOpen, setNotifOpen] = useState(false);
@@ -23,13 +23,7 @@ function Dashboard() {
   return (
     <section
       className="
-        w-full min-h-screen
-        bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]
-
-        /* MOBILE */
-        flex flex-col
-
-        /* DESKTOP */
+        w-full min-h-screen bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] flex flex-col
         md:grid md:grid-cols-[15fr_85fr]
         md:grid-rows-[auto_auto_1fr]
 
@@ -83,10 +77,10 @@ function Dashboard() {
               activeTab === "Overview"
                 ? "bg-white text-[#027c68] shadow-md"
                 : "bg-white/50 text-[#5A8F73]"
-            }`}
-        >
+            }`}>
           Overview
         </button>
+
 
         <button
           onClick={() => setActiveTab("Manage Plants")}
@@ -95,8 +89,8 @@ function Dashboard() {
               activeTab === "Manage Plants"
                 ? "bg-white text-[#027c68] shadow-md"
                 : "bg-white/50 text-[#5A8F73]"
-            }`}
-        >
+            }`}>
+
           Manage Plants
         </button>
       </div>

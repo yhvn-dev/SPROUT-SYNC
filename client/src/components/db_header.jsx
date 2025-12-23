@@ -16,7 +16,7 @@ export function Db_Header({ input, setNotifOpen }) {
   return (
     <section className="bg-[var(--main-whiteb)] col-start-3 col-span-full md:col-start-3 md:col-span-2 row-start-1 px-4 md:px-0  rounded-[10px] flex items-center justify-between shadow-lg min-h-[4rem] gap-2">    
  
-      <div className="flex items-center justify-start flex-1 min-w-0 md:mx-4">
+      <div className="flex items-center justify-end md:justify-start w-full md:w-1/2 md:mx-4">
         <Search input={input} />
       </div>
       

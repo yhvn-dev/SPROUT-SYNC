@@ -91,19 +91,10 @@ const ManagePlants = ({ reloadTrayGroups, reloadTrays, reloadBatches }) => {
           <SucessMsgs txt={successMsg} clearMsg={clearMsg} />
         </div>
 
-        {/* HEADER */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100 mb-4 sm:mb-6">
-          <h1 className="text-xl sm:text-3xl font-semibold text-gray-900">
-            Plant Management
-          </h1>
-          <p className="text-xs sm:text-sm text-gray-500 mt-1">
-            Configure tray groups, trays, and plant batches
-          </p>
-        </div>
-
+  
 
         {/* TABS */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 mb-4 sm:mb-6">
+        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 sm:mb-6">
           <div className="flex  sm:flex-row gap-2 p-2">
             {[
               { key: 'trayGroups', label: 'Tray Groups', icon:LayoutGrid  },
@@ -139,7 +130,7 @@ const ManagePlants = ({ reloadTrayGroups, reloadTrays, reloadBatches }) => {
 
 
         {/* CONTENT */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 p-3 sm:p-6">   
+        <div className="bg-white rounded-2xl h-[450px] sm:rounded-3xl shadow-sm border  border-gray-100 p-3 sm:p-6">   
           {activeTab === 'trayGroups' && (
             <Tray_groups
               trayGroupsData={trayGroupsData}

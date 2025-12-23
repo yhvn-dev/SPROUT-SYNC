@@ -47,7 +47,7 @@ function NurseryDashboard() {
 
   return (
     <main className="bg-white flex flex-col items-center justify-start h-full w-full col-start-2 col-end-4 row-start-3 row-end-3 rounded-[10px] overflow-hidden">
-      <div className="bg-gradient-to-br from-[#E8F3ED] to-white w-full sm:px-4 lg:px-6 overflow-hidden">
+      <div className="bg-gradient-to-br from-[#E8F3ED] to-white w-full  overflow-hidden">
         {/* Main container: full width on mobile, max-width on desktop */}
         <div className="w-full max-w-full sm:max-w-7xl mx-auto space-y-4">
 

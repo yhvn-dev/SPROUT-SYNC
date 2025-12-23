@@ -62,8 +62,10 @@ function Tray_groups({
         </div>
       </header>
 
+
+
       {/* LIST CONTAINER */}
-      <div className="max-h-[65vh] sm:h-[245px] overflow-y-auto">
+      <div className="sm:h-[330px] overflow-y-auto">
         <div className="h-full space-y-3 pr-1 sm:pr-2">
 
           {/* EMPTY STATE */}
@@ -144,7 +146,7 @@ function Tray_groups({
 
                 {/* ACTION BUTTONS */}
                 <div className="
-                  flex flex-col gap-2
+                  flex flex-col items-end gap-2
                   lg:flex-row lg:items-center
                 ">
                   <button
