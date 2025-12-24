@@ -3,118 +3,13 @@ import { Menu, Trash2, Calendar, Sprout, TrendingUp, AlertCircle } from "lucide-
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
 import { Notif_Modal } from '../../components/notifModal';
+import { Batch_History_Modal } from "./modal"
+
 import { LogoutModal } from '../../components/logoutModal';
 import { UserContext } from '../../hooks/userContext';
 import { usePlantData } from '../../hooks/plantContext';
 
-// Mock data - replace with actual API calls
-const mockHistoryData = [
-  {
-    history_id: 1,
-    batch_id: 101,
-    tray_id: 5,
-    plant_name: "Lettuce",
-    date_recorded: "2024-12-20",
-    total_seedlings: 48,
-    dead_seedlings: 2,
-    replanted_seedlings: 2,
-    fully_grown_seedlings: 0,
-    growth_stage: "Seedling",
-    expected_harvest_days: 30,
-    notes: "Good germination rate",
-    created_at: "2024-12-20T08:30:00"
-  },
-  {
-    history_id: 2,
-    batch_id: 101,
-    tray_id: 5,
-    plant_name: "Lettuce",
-    date_recorded: "2024-12-22",
-    total_seedlings: 48,
-    dead_seedlings: 1,
-    replanted_seedlings: 1,
-    fully_grown_seedlings: 0,
-    growth_stage: "Vegetative",
-    expected_harvest_days: 28,
-    notes: "Healthy growth observed",
-    created_at: "2024-12-22T09:15:00"
-  },
-  {
-    history_id: 3,
-    batch_id: 102,
-    tray_id: 8,
-    plant_name: "Tomato",
-    date_recorded: "2024-12-18",
-    total_seedlings: 36,
-    dead_seedlings: 3,
-    replanted_seedlings: 3,
-    fully_grown_seedlings: 0,
-    growth_stage: "Seedling",
-    expected_harvest_days: 60,
-    notes: "Some pest damage observed",
-    created_at: "2024-12-18T10:00:00"
-  },
-  {
-    history_id: 4,
-    batch_id: 103,
-    tray_id: 12,
-    plant_name: "Basil",
-    date_recorded: "2024-12-23",
-    total_seedlings: 50,
-    dead_seedlings: 0,
-    replanted_seedlings: 0,
-    fully_grown_seedlings: 15,
-    growth_stage: "Mature",
-    expected_harvest_days: 5,
-    notes: "Ready for harvest soon",
-    created_at: "2024-12-23T11:20:00"
-  },
-  {
-    history_id: 5,
-    batch_id: 104,
-    tray_id: 3,
-    plant_name: "Spinach",
-    date_recorded: "2024-12-21",
-    total_seedlings: 40,
-    dead_seedlings: 2,
-    replanted_seedlings: 2,
-    fully_grown_seedlings: 0,
-    growth_stage: "Vegetative",
-    expected_harvest_days: 25,
-    notes: "Strong growth pattern",
-    created_at: "2024-12-21T14:30:00"
-  },
-  {
-    history_id: 6,
-    batch_id: 105,
-    tray_id: 15,
-    plant_name: "Cucumber",
-    date_recorded: "2024-12-19",
-    total_seedlings: 30,
-    dead_seedlings: 1,
-    replanted_seedlings: 1,
-    fully_grown_seedlings: 0,
-    growth_stage: "Seedling",
-    expected_harvest_days: 45,
-    notes: "Standard growth",
-    created_at: "2024-12-19T09:00:00"
-  },
-  {
-    history_id: 7,
-    batch_id: 106,
-    tray_id: 20,
-    plant_name: "Bell Pepper",
-    date_recorded: "2024-12-24",
-    total_seedlings: 25,
-    dead_seedlings: 0,
-    replanted_seedlings: 0,
-    fully_grown_seedlings: 10,
-    growth_stage: "Mature",
-    expected_harvest_days: 10,
-    notes: "Excellent quality",
-    created_at: "2024-12-24T08:45:00"
-  }
-];
+
 
 // Stats Card Component
 const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
@@ -133,15 +28,16 @@ const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
 );
 
 function Batch_History() {
-  const { user } = useContext(UserContext);
-  const [historyData, setHistoryData] = useState(mockHistoryData);
-  const [filteredData, setFilteredData] = useState(mockHistoryData);
+  const { user } = useContext(UserContext);;
+  const {batchHistory,loadBatchHistory} = usePlantData()
+  const [filteredData, setFilteredData] = useState(batchHistory);
   const [searchValue, setSearchValue] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isNotifOpen, setNotifOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
-  const {batchHistory,loadBatchHistory} = usePlantData()
-  const [selectedStage, setSelectedStage] = useState("All");
+  const [selectedStage,setSelectedStage] = useState("All")
+  const [selectedBatch, setSelectedBatch] = useState([]);
+  const [isModalOpen,setModalOpen] = useState(false)
 
   const token = localStorage.getItem("accessToken");
   
@@ -167,7 +63,6 @@ function Batch_History() {
     if (searchValue) {
       filtered = filtered.filter(record =>
         record.plant_name.toLowerCase().includes(searchValue.toLowerCase()) ||
-        record.batch_id.toString().includes(searchValue) ||
         record.growth_stage.toLowerCase().includes(searchValue.toLowerCase())
       );
     }
@@ -177,12 +72,12 @@ function Batch_History() {
     }
 
     setFilteredData(filtered);
-  }, [searchValue, selectedStage, historyData]);
+  }, [searchValue, selectedStage, batchHistory]);
 
-  const handleDelete = (historyId) => {
-    if (window.confirm("Are you sure you want to delete this record?")) {
-      setHistoryData(prev => prev.filter(record => record.history_id !== historyId));
-    }
+  const handleDelete = (historyData) => {
+    setSelectedBatch(historyData)
+    setModalOpen(true)
+    console.log("DELETE")
   };
 
   const handleSearchChange = (e) => {
@@ -285,7 +180,7 @@ function Batch_History() {
           <div className='flex items-center justify-start w-1/2'><p>Batch History</p></div>
           <div className='flex items-center justify-start flex-row-reverse w-1/2'>                     
               <select
-                value={selectedStage}
+                value={selectedBatch}
                 onChange={(e) => setSelectedStage(e.target.value)}
                 className="mx-4 border border-[#027c68] rounded-lg px-4 py-[1px] focus:outline-none focus:ring-2 focus:ring-[#027c68] bg-white"
               >
@@ -360,7 +255,7 @@ function Batch_History() {
                     
                       <td className="px-4 py-3 text-sm text-center">
                         <button
-                          onClick={() => handleDelete(record.history_id)}
+                          onClick={() => handleDelete(record)}
                           className="inline-flex items-center p-2 hover:bg-red-100 rounded-full transition-colors group"
                           title="Delete record"
                         >
@@ -452,8 +347,17 @@ function Batch_History() {
       {logoutOpen && (
         <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
       )}
+
+      {isModalOpen && (
+        <Batch_History_Modal 
+         isModalOpen={isModalOpen}
+         selectedBatch={selectedBatch} 
+         reloadBatchHistory={loadBatchHistory()}
+         onClose={() => setModalOpen(false)}/>
+      )}
     </section>
   );
+  
 }
 
 export default Batch_History;

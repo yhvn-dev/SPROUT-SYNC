@@ -56,3 +56,20 @@ export const createHistoryRecord = async (req, res) => {
 };
 
 
+
+// ===== DELETE a plant batch =====
+export const deletePlantBatchHistory = async (req, res) => {
+  try {
+    const { history_id } = req.params;
+    const existingBatchHistory = await historyModels.readHistoryByBatchId(history_id)
+    if (!existingBatchHistory) return res.status(404).json({ message: "Plant batch history not found" });
+
+    const deletedBatchHistory = await historyModels.deleteHistoryRecord(history_id )
+    res.status(200).json({ message: "Plant batch history deleted successfully", deletedBatchHistory});
+    console.log("PLANT BATCH HISTORY DELETED:", deletedBatchHistory);
+  } catch (err) {
+    console.error("CONTROLLER: Error deleting plant batch history", err);
+    res.status(500).json({ message: "Error deleting plant batch history", err });
+  }
+};
+

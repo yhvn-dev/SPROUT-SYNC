@@ -174,10 +174,7 @@ export const updatePlantBatch = async (batchData, batch_id) => {
     throw error;
   }
 };
-
-
-
-
+  
 // ===== DELETE a plant batch =====
 export const deletePlantBatch = async (batch_id) => {
   try {
