@@ -66,8 +66,17 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
                         setOpen(true);
                         setMode("update");
                       }}
-                      className="rounded-xl px-4 py-2 shadow-lg bg-[var(--white-blple--)] text-white text-sm"
-                    >
+                      className="
+                        cursor-pointer
+                        text-xs
+                        px-2.5 py-1
+                        rounded-md
+                        bg-[var(--purpluish--)]
+                      text-white
+                        shadow
+                        hover:shadow-md
+                        transition"
+                      >
                       UPDATE
                     </button>
 
@@ -77,7 +86,17 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
                         setOpen(true);
                         setMode("delete");
                       }}
-                      className="rounded-xl px-4 py-2 shadow-lg bg-[var(--color-danger-b)] text-white text-sm"
+                      className="
+                        cursor-pointer
+                        text-xs
+                        px-2.5 py-1
+                        rounded-md
+                        bg-[var(--color-danger-a)]
+                      text-white
+                        shadow
+                        hover:shadow-md
+                        transition                       
+                      "
                     >
                       DELETE
                     </button>
@@ -158,13 +177,22 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
 
               {/* ACTION BUTTONS */}
               <div className="flex gap-2 pt-3 border-t border-gray-200">
-                {/* <button
+                <button
                   onClick={() => {
                     setSelectedUser(u);
                     setOpen(true);
                     setMode("update");
                   }}
-                  className=""
+                  className="
+                    cursor-pointer
+                    text-xs
+                    px-2.5 py-1
+                    rounded-md
+                    bg-[var(--purpluish--)]
+                  text-white
+                    shadow
+                    hover:shadow-md
+                    transition"
                 >
                   UPDATE
                 </button>
@@ -175,13 +203,11 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
                     setOpen(true);
                     setMode("delete");
                   }}
-                  className=""
+                  className="cursor-pointer text-xs px-2.5 py-1 rounded-md bg-[var(--color-danger-a)] text-white shadow hover:shadow-md transition"
                 >
                   DELETE
-                </button> */}        
+                </button>
               </div>
-              
-              
             </div>
           ))}
         </div>

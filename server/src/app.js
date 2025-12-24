@@ -3,6 +3,7 @@ import pageRoutes from "./routes/ProtectedRoutes/page.Routes.js"
 import publicRoutes from "./routes/UnprotectedRoutes/public.Routes.js"
 import trayGroupRoutes from "./routes/ProtectedRoutes/trayGroup.Routes.js"
 import plantBatchRoutes from "./routes/ProtectedRoutes/plantBatch.Routes.js"
+import platBatchHistroyRoutes from "./routes/ProtectedRoutes/plantBatchHistory.Routes.js"
 import traysRoutes from "./routes/ProtectedRoutes/tray.Routes.js"
 import sensorRoutes from "./routes/ProtectedRoutes/sensor.Routes.js"
 import readingRoutes from "./routes/ProtectedRoutes/readings.Routes.js"
@@ -32,17 +33,18 @@ app.use(cors({ origin: "http://localhost:3000",credentials: true }));
 app.use(cookieParser());
 app.use("/uploads",express.static(path.join(__dirname, "./../uploads")));;
 
-
 app.use('',userRoutes)
 app.use('/trays',traysRoutes)
 app.use('/tg',trayGroupRoutes)
 app.use('/pb',plantBatchRoutes)
+app.use('/pbh',platBatchHistroyRoutes)
 app.use('/sensors',sensorRoutes)
 app.use('/readings',readingRoutes)
 app.use('/notif',notifificationRoutes)
 app.use('/auth',publicRoutes)
 app.use('/page',pageRoutes)
- 
+
+
 app.get("/data",(req,res) =>{
     console.log('ESP32 requested data!');
     res.send('Hello from Node.js server');

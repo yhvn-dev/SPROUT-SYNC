@@ -120,15 +120,19 @@ export function Notif_Modal({ isOpen, onClose}) {
                   <Icon size={20} color={text} />
                 </div>
                 <div className="flex-1">
-                  <p className="text-sm font-semibold" style={{ color: text }}>
+                  <p
+                    className="text-sm font-semibold" style={{ color: text, whiteSpace: "pre-line" }}>
                     {notif.message}{" "}
                     <span className="text-xs font-normal text-gray-600">
                       ({notif.status})
                     </span>
                   </p>
+                  
                   <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
                     <Clock size={12} /> {new Date(notif.created_at).toLocaleString()}
                   </div>
+                  
+
                 </div>
 
                 <button type="submit" onClick={() => handleDelete(notif)}className="rounded-full p-2 h-5 w-5 cursor-pointer mx-2">

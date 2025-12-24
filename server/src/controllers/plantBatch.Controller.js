@@ -2,6 +2,7 @@
 
 import * as plantBatchModels from "../models/plantBatchesModels.js"
 import * as trayModels from "../models/trayModels.js"
+import * as plantBatchHistoryModel from "../models/plantBatchesHistoryModels.js"
 
 // ===== GET all plant batches =====
 export const getPlantBatches = async (req, res) => {
@@ -88,7 +89,6 @@ export const getSeedlingGrowthOverTime = async (req, res) => {
 // ===== CREATE a new plant batch =====
 export const createPlantBatch = async (req, res) => {
   try {
-    
     const batchData = req.body;
     const {tray_id} = batchData
 
@@ -130,20 +130,19 @@ export const updatePlantBatch = async (req, res) => {
   }
 };
 
-
-
-
 // ===== DELETE a plant batch =====
 export const deletePlantBatch = async (req, res) => {
   try {
     const { batch_id } = req.params;
-
     const existingBatch = await plantBatchModels.readPlantBatchById(batch_id);
     if (!existingBatch) return res.status(404).json({ message: "Plant batch not found" });
 
+    await plantBatchHistoryModel.createHistoryRecord(existingBatch)
     const deletedBatch = await plantBatchModels.deletePlantBatch(batch_id);
-    res.status(200).json({ message: "Plant batch deleted successfully", deletedBatch });
+    res.status(200).json({ message: "Plant batch deleted successfully", deletedBatch});
     console.log("PLANT BATCH DELETED:", deletedBatch);
+
+    
   } catch (err) {
     console.error("CONTROLLER: Error deleting plant batch", err);
     res.status(500).json({ message: "Error deleting plant batch", err });

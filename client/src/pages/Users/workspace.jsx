@@ -181,7 +181,7 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
     return (
         <main className="flex flex-col h-full w-full gap-4">  
         {/* USER CHART ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
-          <div className="grid row-span-full grid-rows-1 flex-col md:grid-cols-[1fr_1fr_1fr] h-[50%] md:h-[30%]  w-full gap-4 ">                  
+          <div className="grid row-span-full grid-rows-1 flex-col md:grid-cols-[1fr_1fr] h-[50%] md:h-[30%]  w-full gap-4 ">                  
             <div className="center rounded-2xl shadow-lg border 
             border-gray-200 w-full h-full p-4 pointer-events-none relative bg-white ">     
               <p className="absolute top-4 left-4 text-[var(--acc-darkc)] text-sm">User status</p>
@@ -203,22 +203,6 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
             </div>
                  
 
-             {/* Card C: New Users This Month */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 w-full h-full p-6 flex flex-col justify-between">
-
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="flex text-sm font-medium text-gray-500 mb-1"> 
-                    
-                    New Users
-                  </p>
-                  <h2 className="text-4xl font-bold text-gray-900">{newUsersThisMonth}</h2>
-                  <p className="text-xs text-gray-500 mt-1">this month</p>
-                </div>
-                  <Activity className="w-6 h-6 text-[var(--acc-darkb)]" />
-              </div>
-            </div>
-            
         </div>
             
             

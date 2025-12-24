@@ -3,6 +3,7 @@ import { createContext, useContext, useEffect, useState, useCallback } from "rea
 import * as trayGroupService from "../data/trayGroupServices";
 import * as traysService from "../data/traysServices";
 import * as plantBatches from "../data/batchesData";
+import * as plantBatchHistory from "../data/plantBatchesHistory"
 import * as sensorService from "../data/sensorServices";
 import * as readingsService from "../data/readingsServices";
 import * as notifService from "../data/notifsServices";
@@ -14,6 +15,7 @@ export const PlantDataProvider = ({ children }) => {
   const [trays, setTrays] = useState([]);
 
   const [batches, setBatches] = useState([]);
+  const [batchHistory,setBatchHistory] = useState([]);
   const [batchTotal, setBatchTotal] = useState({});
   const [growthOvertime,setGrowthOvertime] = useState([])
 
@@ -22,7 +24,6 @@ export const PlantDataProvider = ({ children }) => {
   const [readings, setReadings] = useState([]);
   const [moistureReadingsLast24h, setMoistureReadingsLast24h] = useState([]);
   const [averageReadingsBySensor, setAverageReadingsBySensor] = useState({});
-
 
   const [notifs, setNotifs] = useState([]);
   const [notifsCount,setNotifCount] = useState([]);
@@ -55,6 +56,18 @@ export const PlantDataProvider = ({ children }) => {
       console.error("Error loading batches", error);
     }
   }, []);
+  
+
+  
+  const loadBatchHistory = useCallback(async () => {
+    try {
+      const data = await plantBatchHistory.fetchAllBatchHistory()
+      setBatchHistory(data)
+    } catch (error) {
+      console.error("Error loading batch history", error);
+    }
+  }, []);
+
 
   const loadBatchTotal = useCallback(async () => {
     try {
@@ -121,7 +134,6 @@ export const PlantDataProvider = ({ children }) => {
   }, []);
 
 
-
   const loadNotifs = useCallback(async () => {
     try {
       const data = await notifService.fetchAllNotifs();
@@ -153,13 +165,13 @@ export const PlantDataProvider = ({ children }) => {
   }, []);
 
 
-
   
   useEffect(() => {
     loadTrayGroups();
     loadTrays();
     loadBatches();
     loadBatchTotal();
+    loadBatchHistory();
     loadGrowthOvertime();
     loadSensors();
     loadReadings();
@@ -174,6 +186,7 @@ export const PlantDataProvider = ({ children }) => {
     loadTrays,
     loadBatches,
     loadBatchTotal,
+    loadBatchHistory,
     loadGrowthOvertime,
     loadSensors,
     loadReadings,
@@ -209,6 +222,7 @@ export const PlantDataProvider = ({ children }) => {
         trays,
         batches,
         batchTotal,
+        batchHistory,
         growthOvertime,
         sensors,
         readings,
@@ -221,6 +235,7 @@ export const PlantDataProvider = ({ children }) => {
         loadTrays,
         loadBatches,
         loadBatchTotal,
+        loadBatchHistory,
         loadGrowthOvertime,
         loadSensors,
         loadReadings,

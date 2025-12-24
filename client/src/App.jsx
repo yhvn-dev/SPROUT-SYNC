@@ -6,6 +6,7 @@ import About from "./pages/About/about.jsx"
 import Dashboard from "./pages/Dashboard/dashboard.jsx";
 import Users from "./pages/Users/users.jsx"
 import Analytics from './pages/Analytics/analytics.jsx';
+import Batch_History from "./pages/Batch_History/batch_history.jsx";
 
 
 import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";
@@ -31,17 +32,24 @@ function App() {
                 </ProtectedRoute>
               }/>
 
-              <Route path='/analytics' element={
-                <ProtectedRoute allowedRoles={['admin','viewer']}>
-                  <Analytics/>
-                </ProtectedRoute>
-              }/>
-
               <Route path='/users' element={
                 <ProtectedRoute allowedRoles={['admin']}>
                   <Users/>
                 </ProtectedRoute>
               }/>
+
+               <Route path='/analytics' element={
+                <ProtectedRoute allowedRoles={['admin','viewer']}>
+                  <Analytics/>
+                </ProtectedRoute>
+              }/>
+
+              <Route path='/batch_history' element={
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <Batch_History/>
+                </ProtectedRoute>
+              }/>
+
           </Routes>
         </BrowserRouter>
     </PlantDataProvider>
