@@ -136,7 +136,7 @@ const handleMoistureNotifications = async (existingSensor, value) => {
   const selectedTray = await trayModels.readTrayById(tray_id);
   const { tray_group_id } = selectedTray;
   const selectedTrayGroup = await trayGroupModels.readTrayGroupById(tray_group_id);
-  const { min_moisture, max_moisture, tray_group_name } = selectedTrayGroup;
+  const { min_moisture, max_moisture, tray_group_name,group_number} = selectedTrayGroup;
 
   const moisture = Number(value);
   const min = Number(min_moisture);
@@ -150,7 +150,7 @@ const handleMoistureNotifications = async (existingSensor, value) => {
       // CRITICAL
       await notificationModels.createNotif({
         type: "Alert",
-        message: `${tray_group_name}'s soil is Critically Dry`,
+        message: `[${group_number}] ${tray_group_name}'s soil is Critically Dry`,
         related_sensor: existingSensor.sensor_id,
         status: "LOW"
       });

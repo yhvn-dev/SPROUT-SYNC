@@ -62,8 +62,8 @@
 
 
     /* SIGNS */
-    --color-danger-a: hsl(355, 100%, 70%);
-    --color-danger-b: hsl(355,100%, 85%);
+    --color-danger-a: #ff6673;
+    --color-danger-b: #ffb3b9;
     --color-danger-c:hsl(353, 40%, 90%);
     --color-warning: #f0bd75;
     --color-success-a: hsl(125, 85%, 60%);

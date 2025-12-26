@@ -148,7 +148,8 @@
         </div>
 
         {/* ================= MAIN CONTENT ================= */}
-        <main className='w-full h-full col-start-1 md:col-start-2 col-span-full row-start-3 row-span-full rounded-lg'>
+        <main className='w-full h-full 
+        col-start-1 md:col-start-2 col-span-full row-start-3 row-span-full rounded-lg'>
           {activeTab === "Overview"
             ? <Workspace
                 refreshChart={fetchChartData}

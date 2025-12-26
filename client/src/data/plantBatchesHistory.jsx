@@ -12,6 +12,31 @@ export const fetchAllBatchHistory = async () => {
     }
 }
 
+export const fetchAllBatchHistoryTotal = async () =>{
+    try {
+        const res = await api.get("/pbh/get/pbh/total");
+        const pbh = res.data
+        console.log("PLANT BATCH HISTORY TOTAL",pbh)
+        return pbh
+    } catch (error) {
+        console.error("Error Fetching Plant Batch History Total",error);
+        throw error
+    }
+}
+
+
+export const fetchSeedlingsGrowthOvertime = async () =>{
+    try {
+        const res = await api.get("/pbh/get/pbh/growthbyweek");
+        const pb = res.data.seedlingGrowthData
+        return pb
+    } catch (error) {
+        console.error("Error Fetching Plant Batches",error);
+        throw error
+    }
+}
+
+
 
 
 export const deleteBatchHistory = async (batch_id) =>{

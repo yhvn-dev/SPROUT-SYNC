@@ -40,7 +40,7 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
         </div>
       </header>
 
-      <div className="sm:h-[330px] overflow-y-auto pr-2 space-y-3">
+      <div className="h-[330px] overflow-y-auto pr-2 space-y-3">
 
         {batchesData.length === 0 && (
           <div className="flex flex-col items-center justify-center py-12 text-gray-400">

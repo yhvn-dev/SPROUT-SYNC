@@ -130,7 +130,7 @@ const ManagePlants = ({ reloadTrayGroups, reloadTrays, reloadBatches }) => {
 
 
         {/* CONTENT */}
-        <div className="bg-white rounded-2xl h-[450px] sm:rounded-3xl shadow-sm border  border-gray-100 p-3 sm:p-6">   
+        <div className="bg-white rounded-2xl h-[450px] sm:rounded-3xl shadow-sm border  border-gray-100 p-3 sm:p-6 mt-4">   
           {activeTab === 'trayGroups' && (
             <Tray_groups
               trayGroupsData={trayGroupsData}

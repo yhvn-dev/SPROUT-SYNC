@@ -17,6 +17,7 @@ export const PlantDataProvider = ({ children }) => {
   const [batches, setBatches] = useState([]);
   const [batchHistory,setBatchHistory] = useState([]);
   const [batchTotal, setBatchTotal] = useState({});
+  const [batchHistoryTotal,setBatchHistoryTotal] = useState({})
   const [growthOvertime,setGrowthOvertime] = useState([])
 
   const [sensors, setSensors] = useState([]);
@@ -58,7 +59,7 @@ export const PlantDataProvider = ({ children }) => {
   }, []);
   
 
-  
+  // Finished
   const loadBatchHistory = useCallback(async () => {
     try {
       const data = await plantBatchHistory.fetchAllBatchHistory()
@@ -69,6 +70,17 @@ export const PlantDataProvider = ({ children }) => {
   }, []);
 
 
+  const loadBatchTotalHistory = useCallback(async () =>{
+    try {
+      const data = await plantBatchHistory.fetchAllBatchHistoryTotal()
+      setBatchHistoryTotal(data)
+    } catch (error) {
+      console.error("Error loading batch history", error);
+    }
+  },[])
+
+
+  // Active
   const loadBatchTotal = useCallback(async () => {
     try {
       const data = await plantBatches.fetchTotalBatchesData();
@@ -77,12 +89,12 @@ export const PlantDataProvider = ({ children }) => {
       console.error("Error loading batch totals", error);
     }
   }, []);
-
+  
 
   
   const loadGrowthOvertime = useCallback(async () => {
     try {
-      const data = await plantBatches.fetchSeedlingsGrowthOvertime()
+      const data = await plantBatchHistory.fetchSeedlingsGrowthOvertime()
       setGrowthOvertime(data);
     } catch (error) {
       console.error("Error loading batch totals", error);
@@ -172,6 +184,7 @@ export const PlantDataProvider = ({ children }) => {
     loadBatches();
     loadBatchTotal();
     loadBatchHistory();
+    loadBatchTotalHistory();
     loadGrowthOvertime();
     loadSensors();
     loadReadings();
@@ -187,6 +200,7 @@ export const PlantDataProvider = ({ children }) => {
     loadBatches,
     loadBatchTotal,
     loadBatchHistory,
+    loadBatchTotalHistory,
     loadGrowthOvertime,
     loadSensors,
     loadReadings,
@@ -223,6 +237,7 @@ export const PlantDataProvider = ({ children }) => {
         batches,
         batchTotal,
         batchHistory,
+        batchHistoryTotal,
         growthOvertime,
         sensors,
         readings,
@@ -236,6 +251,7 @@ export const PlantDataProvider = ({ children }) => {
         loadBatches,
         loadBatchTotal,
         loadBatchHistory,
+        loadBatchTotalHistory,
         loadGrowthOvertime,
         loadSensors,
         loadReadings,

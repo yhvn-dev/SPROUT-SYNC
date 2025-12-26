@@ -87,6 +87,8 @@ CREATE TABLE plant_batches (
         ON DELETE CASCADE
 );
 
+
+
 CREATE TABLE plant_batch_history (
     history_id SERIAL PRIMARY KEY,
     batch_id INT,                           -- Reference to the main batch, nullable

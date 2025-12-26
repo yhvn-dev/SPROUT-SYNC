@@ -35,7 +35,7 @@ function Tray_groups({
   return (
     <>
       {/* HEADER */}
-      <header className="flex flex-col sm:flex-row py-3 sm:py-4 gap-3 sm:gap-0">
+      <header className="flex flex-col sm:flex-row py-3 sm:py-4 gap-3 sm:gap-0 ">
         <div className="flex items-center gap-2 sm:w-1/2">
           {/* ✅ Trays icon */}
           <LayoutGrid size={20} className="sm:size-[24px]" />
@@ -65,7 +65,7 @@ function Tray_groups({
 
 
       {/* LIST CONTAINER */}
-      <div className="sm:h-[330px] overflow-y-auto">
+      <div className="h-[330px] overflow-y-auto ">
         <div className="h-full space-y-3 pr-1 sm:pr-2">
 
           {/* EMPTY STATE */}
@@ -81,6 +81,8 @@ function Tray_groups({
               </p>
             </div>
           )}
+
+          
 
           {/* GROUP CARDS */}
           {trayGroupsData?.map((group) => (

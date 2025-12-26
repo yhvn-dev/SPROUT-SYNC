@@ -52,7 +52,7 @@ function Trays({
 
 
       {/* TRAYS LIST */}
-      <div className="sm:h-[330px] overflow-y-auto space-y-3">
+      <div className="h-[330px] overflow-y-auto space-y-3">
 
         {/* EMPTY STATE */}
         {traysData.length === 0 && (

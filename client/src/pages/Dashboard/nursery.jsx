@@ -47,7 +47,7 @@ function NurseryDashboard() {
 
   return (
     <main className="bg-white flex flex-col items-center justify-start h-full w-full col-start-2 col-end-4 row-start-3 row-end-3 rounded-[10px] overflow-hidden">
-      <div className="bg-gradient-to-br from-[#E8F3ED] to-white w-full  overflow-hidden">
+      <div className="bg-gradient-to-br from-[#E8F3ED] to-white w-full overflow-hidden">
         {/* Main container: full width on mobile, max-width on desktop */}
         <div className="w-full max-w-full sm:max-w-7xl mx-auto space-y-4">
 
@@ -65,9 +65,9 @@ function NurseryDashboard() {
             </div>
           </div>
 
-          {/* Grid layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
+          {/* Grid layout */}
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4  overflow-hidden ">
             {/* Left Content - Tray Groups and Trays */}
             <div className="lg:col-span-2 space-y-4 overflow-y-auto max-h-[calc(100vh-200px)] w-full">
               {trayGroups.length === 0 && (
@@ -169,6 +169,9 @@ function NurseryDashboard() {
               })}
             </div>
 
+            
+
+
             {/* Sidebar */}
             <div className="space-y-4 w-full">
               <div className="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100 sticky top-4 w-full">
@@ -201,8 +204,12 @@ function NurseryDashboard() {
                           <span className="text-gray-600">Planted: {new Date(batch.date_planted).toLocaleDateString()}</span>
                         </div>
                         <div className="flex items-center gap-2 text-xs">
-                          <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                          <span className="text-gray-600">Harvest at : {batch.expected_harvest_days} days</span>
+                          <Calendar className="w-3.5 h-3.5 text-gray-400"/>
+
+                          <span className="text-gray-600">
+                            Harvest at: {batch.expected_harvest_days} {batch.expected_harvest_days === 1 ? "day" : "days"}
+                          </span>
+                          
                         </div>
                       </div>
 
@@ -215,10 +222,7 @@ function NurseryDashboard() {
                           <p className="text-xs text-gray-500">Grown</p>
                           <p className="text-lg font-bold text-[#208b3a]">{batch.fully_grown_seedlings}</p>
                         </div>
-                        <div className="text-center">
-                          <p className="text-xs text-gray-500">Alive</p>
-                          <p className="text-lg font-bold text-[var(--color-success-a)]">{batch.alive_seedlings}</p>
-                        </div>
+                       
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Dead</p>
                           <p className="text-lg font-bold text-[var(--color-danger-b)]">{batch.dead_seedlings}</p>
@@ -229,11 +233,7 @@ function NurseryDashboard() {
                         </div>
                       </div>
                     </div>
-                  ))}
-
-
-
-                  
+                  ))}        
                 </div>
               </div>
             </div>
@@ -242,6 +242,7 @@ function NurseryDashboard() {
         </div>
       </div>
     </main>
+    
   );
 }
 

@@ -1,113 +1,190 @@
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
-import { Droplets, AlertTriangle, Activity, TrendingUp, Sprout } from "lucide-react";
-import {  useMemo } from "react"
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import { Droplets } from "lucide-react";
+import { useMemo } from "react";
 
-// Number/Stat Card Component
-const StatCard = ({ label, value, color }) => (
-  <div className={`bg-white rounded-xl  flex flex-col items-center justify-center    `}>
+// =====================
+// STAT CARD
+// =====================
+const StatCard = ({ label, value, gradient, color }) => (
+  <div
+    className={`w-full h-full rounded-xl shadow-lg hover:shadow-xl transition-shadow
+    flex flex-col items-center justify-center p-3 bg-gradient-to-tr ${gradient}`}>
     <p className="text-xs text-gray-500">{label}</p>
-    <h2 className={`text-3xl font-bold`} style={{ color }}>{value}</h2>
+    <h2 className="text-3xl font-bold" style={{ color }}>
+      {value ?? 0}
+    </h2>
   </div>
 );
 
+// =====================
+// OVERVIEW
+// =====================
+export const Overview = ({ batchTotal, moistureReadingsLast24h, averageReadingsBySensor,
+}) => {
 
-export const Overview = ({batchTotal,readings,moistureReadingsLast24h,averageReadingsBySensor}) => {
+  console.log("MOISTURE READINGS LAST 24HR",moistureReadingsLast24h)
 
-    const moistureData = useMemo(() => {
+  // =====================
+  // MOISTURE CHART DATA
+  // =====================
+  const moistureData = useMemo(() => {
     if (!moistureReadingsLast24h) return [];
 
     return moistureReadingsLast24h
-      .filter(r => r.sensor_type === "moisture") // optional, filter moisture sensors only
+      .filter((r) => r.sensor_type === "moisture")
       .map((reading) => {
-        const date = new Date(reading.recorded_at); // use recorded_at
+        const date = new Date(reading.recorded_at);
         return {
-          time: isNaN(date.getTime())
-            ? "Invalid"
-            : date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-          value: parseFloat(reading.value) || 0, 
+          time: isNaN(date)
+            ? "--"
+            : date.toLocaleTimeString([], {
+                hour: "2-digit",
+                minute: "2-digit",
+              }),
+          value: Number(reading.value) || 0,
         };
       });
   }, [moistureReadingsLast24h]);
-      
-    return (
-    <div className="h-full grid  md:grid-cols-12 md:grid-rows-12 gap-4">
-      
-      <div className="gap-4 w-full grid grid-cols-4 md:flex md:items-start md:justify-evenly 
-      col-start-1 center col-span-7 md:col-span-full row-start-1 row-end-4 ">
-  
-          {/* TOTAL */}
-          <div className="w-full md:flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
-              <StatCard label="Total Seedlings" value={batchTotal.total_seedlings} color="#25a244" />    
-          </div>
-          {/* GROWN */}
-          <div className="w-full md:flex-grow h-full  bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
-              <StatCard label="Grown" value={batchTotal.total_grown} color="var(--color-success-a)" />
-         </div>
-         
-          {/* DEAD */}
-          <div className="w-full md:flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
-            <StatCard label="Dead" value={batchTotal.total_dead} color="var(--color-danger-a)" />    
-          </div>
 
-          <div className="w-full md:flex-grow h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-shadow flex items-center justify-center p-3">
-              <StatCard label="Replanted" value={batchTotal.total_replanted}color="var(--color-warning)" />
-          </div>    
+
+  
+
+  // =====================
+  // AVERAGES
+  // =====================
+  const avgMoisture =
+    averageReadingsBySensor?.moisture?.average ?? "--";
+
+  const waterLevel =
+    averageReadingsBySensor?.ultra_sonic?.average ?? "--";
+
+  return (
+    <div className="h-full grid md:grid-cols-12 md:grid-rows-12 gap-4">
+
+      {/* =====================
+          STAT CARDS
+      ====================== */}
+      <div
+        className="gap-4 w-full grid grid-cols-2 md:grid-cols-5
+        col-span-full row-start-1 row-end-4"
+      >
+        <StatCard
+          label="Active Total Seedlings"
+          value={batchTotal?.total_seedlings}
+          gradient="from-white via-green-100 to-blue-50"
+          color="#25a244"
+        />
+
+        <StatCard
+          label="Active Grown"
+          value={batchTotal?.total_grown}
+          gradient="from-white to-green-50"
+          color="var(--color-success-a)"
+        />
+
+        <StatCard
+          label="Active Dead"
+          value={batchTotal?.total_dead}
+          gradient="from-white to-red-50"
+          color="var(--color-danger-a)"
+        />
+
+        <StatCard
+          label="Active Replanted"
+          value={batchTotal?.total_replanted}
+          gradient="from-white to-orange-50"
+          color="var(--color-warning)"
+        />
+
+        <StatCard
+          label="Average Moisture (%)"
+          value={avgMoisture}
+          gradient="from-white to-blue-50"
+          color="#027c68"
+        />
       </div>
 
+      {/* =====================
+          MOISTURE LINE CHART
+      ====================== */}
+      <div className="col-span-7 row-span-9 bg-white rounded-xl shadow-lg p-4 flex flex-col">
+        <h3 className="text-sm font-semibold text-gray-800 mb-2">
+          Soil Moisture Trend (Last 24h)
+        </h3>
 
-      {/* Moisture Chart */}
-      <div className="col-span-7 row-span-9 bg-white rounded-xl shadow-lg hover:shadow-md transition-shadow p-4 flex flex-col">
-        <h3 className="text-sm font-semibold text-gray-800 mb-2">Soil Moisture Trend (24h)</h3>
         <div className="flex-1 min-h-0">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={moistureData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
+              <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="time" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} />
               <Tooltip />
-              <Line type="monotone" dataKey="value" stroke="#027c68" strokeWidth={3} dot={{ r: 4 }} />
+              <Line
+                type="monotone"
+                dataKey="value"
+                stroke="#027c68"
+                strokeWidth={3}
+                dot={{ r: 3 }}
+              />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
 
-
-
-
-      {/* Featured Large Gauge - Water Level */}
-      <div className="col-span-7 md:col-span-5 row-span-9 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow flex items-center justify-center p-6">
-        <div className="flex flex-col items-center justify-center">
+      {/* =====================
+          WATER LEVEL GAUGE
+      ====================== */}
+      <div className="col-span-5 row-span-9 bg-white rounded-xl shadow-sm flex items-center justify-center p-6">
+        <div className="flex flex-col items-center">
           <div className="relative w-40 h-40">
-            <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
-              <circle cx="50" cy="50" r="45" fill="none" stroke="#E8F3ED" strokeWidth="8" />
+            <svg
+              className="w-full h-full transform -rotate-90"
+              viewBox="0 0 100 100"
+            >
               <circle
                 cx="50"
                 cy="50"
                 r="45"
                 fill="none"
-                stroke="var(--white-blple--)"
+                stroke="#E8F3ED"
                 strokeWidth="8"
-                strokeDasharray={`${(48 / 100) * 282.7} 282.7`}
+              />
+              <circle
+                cx="50"
+                cy="50"
+                r="45"
+                fill="none"
+                stroke="#027c68"
+                strokeWidth="8"
+                strokeDasharray={`${
+                  (Number(waterLevel) / 100) * 282.7
+                } 282.7`}
                 strokeLinecap="round"
               />
             </svg>
 
-            
             <div className="absolute inset-0 flex flex-col items-center justify-center">
-              <Droplets className="w-10 h-10 mb-2" style={{ color: "var(--white-blple--)" }} />
+              <Droplets className="w-10 h-10 mb-2 text-[#027c68]" />
               <span className="text-4xl font-bold text-gray-800">
-                {averageReadingsBySensor?.ultra_sonic.average ?? "--"}       
+                {waterLevel}
               </span>
-              <span className="text-lg text-gray-600">%</span>
-            </div>  
+              <span className="text-sm text-gray-600">%</span>
+            </div>
           </div>
-          
-          <p className="text-base font-semibold text-gray-800 mt-4">Water Level</p>
-          
+
+          <p className="text-base font-semibold text-gray-800 mt-4">
+            Water Level
+          </p>
         </div>
       </div>
     </div>
-
-    
   );
 };

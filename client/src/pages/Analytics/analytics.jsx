@@ -16,6 +16,8 @@ export default function Analytics() {
   const {
     batchTotal,
     loadBatchTotal,
+    batchHistoryTotal,
+    loadBatchTotalHistory,
     growthOvertime,
     loadGrowthOvertime,
     readings,
@@ -33,6 +35,7 @@ export default function Analytics() {
 
   useEffect(() => {
     loadBatchTotal();
+    loadBatchTotalHistory();
     loadGrowthOvertime();
     loadReadings();
     loadMoistureReadingsLast24h();
@@ -40,6 +43,7 @@ export default function Analytics() {
     loadAverageReadingsBySensor("ultra_sonic");
   }, [
     loadBatchTotal,
+    loadBatchTotalHistory,
     loadGrowthOvertime,
     loadReadings,
     loadMoistureReadingsLast24h,
@@ -150,6 +154,7 @@ export default function Analytics() {
             batchTotal={batchTotal}
             growthOvertime={growthOvertime}
             averageReadingsBySensor={averageReadingsBySensor}
+            batchHistoryTotal={batchHistoryTotal}
           />
         )}
       </main>

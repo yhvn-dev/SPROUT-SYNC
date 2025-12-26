@@ -36,6 +36,82 @@ export const readHistoryByBatchId = async (batch_id) => {
 
 
 
+// ===== GET TOTALS OF SEEDLINGS =====
+export const readPlantBatchHistoryTotals = async () => {
+  try {
+    const sql = `
+      SELECT 
+        SUM(total_seedlings) AS total_seedlings,
+        SUM(dead_seedlings) AS total_dead,
+        SUM(replanted_seedlings) AS total_replanted,
+        SUM(fully_grown_seedlings) AS total_grown,
+        CASE 
+          WHEN SUM(total_seedlings) = 0 THEN 0
+          ELSE ROUND(SUM(fully_grown_seedlings)::DECIMAL / SUM(total_seedlings) * 100, 2)
+        END AS growth_rate_percentage,
+        CASE
+          WHEN SUM(total_seedlings) = 0 THEN 0
+          ELSE ROUND(SUM(dead_seedlings)::DECIMAL / SUM(total_seedlings) * 100, 2)
+        END AS death_rate_percentage
+      FROM plant_batch_history
+    `;
+    const result = await query(sql);
+    return result.rows[0]; 
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+// ===== GET TOTALS OF SEEDLINGS =====
+export const getPlantBatchTotals = async () => {
+  try {
+    const sql = `
+      SELECT 
+        SUM(total_seedlings) AS total_seedlings,
+        SUM(dead_seedlings) AS total_dead,
+        SUM(replanted_seedlings) AS total_replanted,
+        SUM(fully_grown_seedlings) AS total_grown,
+        CASE 
+          WHEN SUM(total_seedlings) = 0 THEN 0
+          ELSE ROUND(SUM(fully_grown_seedlings)::DECIMAL / SUM(total_seedlings) * 100, 2)
+        END AS growth_rate_percentage,
+        CASE
+          WHEN SUM(total_seedlings) = 0 THEN 0
+          ELSE ROUND(SUM(dead_seedlings)::DECIMAL / SUM(total_seedlings) * 100, 2)
+        END AS death_rate_percentage
+      FROM plant_batch_history
+    `;
+    const result = await query(sql);
+    return result.rows[0]; 
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+// ===== GET SEEDLING GROWTH PER WEEK FOR ALL BATCHES =====
+export const readSeedlingGrowthByWeekAll = async () => {
+  try {
+    const sql = `
+     SELECT
+          DATE_TRUNC('week', date_recorded) AS week_start,
+          SUM(COALESCE(fully_grown_seedlings, 0)) AS total_grown,
+          SUM(COALESCE(dead_seedlings, 0)) AS total_dead,
+          SUM(COALESCE(replanted_seedlings, 0)) AS total_replanted
+      FROM plant_batch_history
+      GROUP BY week_start
+      ORDER BY week_start;
+    `;
+    const result = await query(sql);
+    return result.rows; 
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
 // ===== CREATE a history record =====
 export const createHistoryRecord = async (historyData) => {
   const {

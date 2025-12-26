@@ -2,9 +2,6 @@
 @import "tailwindcss";
 
 :root{
-
-    
-
     /* [PL1] FOUNDATIONS */
     --main-white--: hsl(258, 44%, 93%);
     --white-blple--: hsl(221, 32%, 77%);

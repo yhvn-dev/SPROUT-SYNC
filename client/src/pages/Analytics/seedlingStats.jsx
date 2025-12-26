@@ -8,42 +8,46 @@ import {
   Bar,
   PieChart,
   Pie,
-  Cell,
+  Cell
 } from "recharts";
 import { Droplets, TrendingUp, Sprout, X } from "lucide-react";
 
 export const SeedlingStats = ({
-  batchTotal,
-  averageReadingsBySensor,
   growthOvertime,
+  batchHistoryTotal
 }) => {
-  const total_grown = batchTotal?.total_grown ?? 0;
-  const total_dead = batchTotal?.total_dead ?? 0;
-  const total_replanted = batchTotal?.total_replanted ?? 0;
-  const total = batchTotal?.total_seedlings ?? 0;
+
+  /* ================= SOURCE OF TRUTH (HISTORY) ================= */
+  const totals = batchHistoryTotal ?? {};
+
+  const total_grown = totals?.total_grown ?? 0;
+  const total_dead = totals?.total_dead ?? 0;
+  const total_replanted = totals?.total_replanted ?? 0;
+  const total = totals?.total_seedlings ?? 0;
 
   const statusData = [
     {
       name: "Grown",
       value: total ? parseFloat(((total_grown / total) * 100).toFixed(1)) : 0,
-      color: "#10b981",
+      color: "#027c68",
     },
     {
       name: "Dead",
       value: total ? parseFloat(((total_dead / total) * 100).toFixed(1)) : 0,
-      color: "#ef4444",
+      color: "#ff6673",
     },
     {
       name: "Replanted",
       value: total
         ? parseFloat(((total_replanted / total) * 100).toFixed(1))
         : 0,
-      color: "#f59e0b",
+      color: "#f0bd75",
     },
   ];
 
   return (
     <div className="w-full h-full grid gap-4 md:grid-cols-[6fr_4fr] md:grid-rows-[2fr_1fr] overflow-x-hidden">
+
       {/* ================= GROWTH OVER TIME ================= */}
       <div className="col-span-full md:col-span-1 bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col">
         <h3 className="text-sm font-semibold text-gray-800 mb-2">
@@ -57,9 +61,9 @@ export const SeedlingStats = ({
               <XAxis dataKey="week" tick={{ fontSize: 11 }} />
               <YAxis tick={{ fontSize: 11 }} />
               <Tooltip />
-              <Bar dataKey="grown" stackId="a" fill="#10b981" />
-              <Bar dataKey="dead" stackId="a" fill="#ef4444" />
-              <Bar dataKey="replanted" stackId="a" fill="#f59e0b" />
+              <Bar dataKey="grown" stackId="a" fill="#027c68" />
+              <Bar dataKey="dead" stackId="a" fill="#ff6673" />
+              <Bar dataKey="replanted" stackId="a" fill="#f0bd75" />
             </BarChart>
           </ResponsiveContainer>
         </div>
@@ -94,46 +98,49 @@ export const SeedlingStats = ({
           <div className="absolute flex flex-col items-center">
             <p className="text-xs text-gray-500">Total</p>
             <p className="text-sm font-semibold text-[var(--acc-darkc)]">
-              {batchTotal?.total_seedlings ?? 0}
+              {total}
             </p>
           </div>
+          
         </div>
       </div>
+
 
       {/* ================= STATS CARDS ================= */}
       <div className="col-span-full grid grid-cols-2 md:grid-cols-4 gap-4">
         <StatCard
           icon={Sprout}
-          value={batchTotal?.total_seedlings ?? 0}
+          value={total}
           label="Total Seedlings"
-          gradient="from-green-50 to-emerald-50"
+          gradient="from-blue-50 to-cyan-50"
           iconColor="text-green-500"
         />
 
         <StatCard
           icon={TrendingUp}
-          value={`${parseFloat(batchTotal?.growth_rate_percentage ?? 0).toFixed(1)}%`}
-          label="Growth This Week"
-          gradient="from-blue-50 to-cyan-50"
+          value={total_grown}
+          label="Total Grown"
+          gradient="from-green-50 to-[var(#027c68)]"
           iconColor="text-blue-500"
         />
 
         <StatCard
           icon={X}
-          value={`${parseFloat(batchTotal?.death_rate_percentage ?? 0).toFixed(1)}%`}
-          label="Death Rate"
+          value={total_dead}
+          label="Total Dead"
           gradient="from-red-50 to-pink-50"
           iconColor="text-red-500"
         />
 
         <StatCard
           icon={Droplets}
-          value={averageReadingsBySensor?.moisture?.average ?? "--"}
-          label="Avg Moisture"
+          value={total_replanted}
+          label="Total Replanted"
           gradient="from-amber-50 to-orange-50"
           iconColor="text-amber-500"
         />
       </div>
+
     </div>
   );
 };

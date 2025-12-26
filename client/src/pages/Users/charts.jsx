@@ -26,37 +26,35 @@ export function UserChartLegend({roleCount,colors}){
   )
 }
 
-export function RoleChart({chartData}) {
- const { count, roleCount } = chartData || {};
- 
-  const colors = [color.setRoleColor.adminColor,
-                  color.setRoleColor.viewerColor];
+
+
+export function RoleChart({ chartData }) {
+  const { count = { total_users: 0 }, roleCount = [] } = chartData || {};
+  
+  const colors = [
+    color.setRoleColor.adminColor,
+    color.setRoleColor.viewerColor
+  ];
 
   return (
     <div className="flex items-center justify-center flex-col w-auto max-w-[100%] h-full relative">
-
       <ul className="column absolute top-0 left-0 m-4">
-        
-          <h2 className="text-xl font-semibold text-gray-800 mb-2">Role Distribution</h2>
-          <p className="text-sm text-gray-600">
-            Number of user base on roles
-          </p>
+        <h2 className="text-xl font-semibold text-gray-800 mb-2">Role Distribution</h2>
+        <p className="text-sm text-gray-600">Number of users based on roles</p>
       </ul>
-      
-      <ul className="flex flex-col items-center justify-center absolute rounded-full mb-12 ">
-          <p className="">Total</p>
-          <p className="num_data">{count?.total_users ?? 0}</p>
-      </ul>
-      
-      
 
-    <ResponsiveContainer width="100%" height={300}>
-      <PieChart width={550} height={430}>
-            <defs>
-              <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
-                <feDropShadow dx="5" dy="10" stdDeviation="3" floodColor="rgba(0,0,0,0.1)" />
-              </filter>
-            </defs>
+      <ul className="flex flex-col items-center justify-center absolute rounded-full mb-12 ">
+        <p>Total</p>
+        <p className="num_data">{count.total_users}</p>
+      </ul>
+
+      <ResponsiveContainer width="100%" height={300}>
+        <PieChart width={550} height={430}>
+          <defs>
+            <filter id="shadow" x="-50%" y="-50%" width="200%" height="200%">
+              <feDropShadow dx="5" dy="10" stdDeviation="3" floodColor="rgba(0,0,0,0.1)" />
+            </filter>
+          </defs>
 
           <Pie
             data={roleCount}
@@ -64,42 +62,41 @@ export function RoleChart({chartData}) {
             nameKey="role"
             cx="50%"
             cy="50%"
-            innerRadius={60}    
-            outerRadius={120} 
-            label={({ role, total_users }) => `${role}: ${total_users}`}>
-              
-            {Array.isArray(roleCount) && roleCount.map((entry, index) => (
+            innerRadius={60}
+            outerRadius={120}
+            label={({ name, value }) => `${name}: ${value}`}>
+            {roleCount.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
                 fill={colors[index % colors.length]}
                 filter="url(#shadow)"
               />
             ))}
-
           </Pie>
-        <Tooltip />
-      </PieChart>
-   </ResponsiveContainer>
-  
-        
-      <div className="center mt-4 gap-12 ">
-          {roleCount.map((rc, index) => (
-            <div key={rc.role} className="flex items-center justify-start flex-col gap-2">
-              <div
-                className="w-4 h-4 rounded-sm shadow-md"style={{ backgroundColor: colors[index % colors.length] }}
-              ></div>
-              <span className="text-sm">
-                {rc.role}: {rc.total_users}
-              </span>
-            </div>
-          ))}
-        </div>
+          <Tooltip />
+        </PieChart>
+      </ResponsiveContainer>
 
-      
+      <div className="center mt-4 gap-12 ">
+        {roleCount.map((rc, index) => (
+          <div key={rc.role} className="flex items-center justify-start flex-col gap-2">
+            <div
+              className="w-4 h-4 rounded-sm shadow-md"
+              style={{ backgroundColor: colors[index % colors.length] }}
+            ></div>
+            <span className="text-sm">
+              {rc.role}: {rc.total_users}
+            </span>
+          </div>
+        ))}
+      </div>
     </div>
   );
- 
 }
+
+
+
+
 
 export function chartBg({}){
   <PieChart width={450} height={230}></PieChart>

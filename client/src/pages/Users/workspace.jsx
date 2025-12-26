@@ -4,9 +4,10 @@ import { useEffect, useState } from "react"
 import { Modal } from "./modal"
 import { User} from "react-feather"
 import { SucessMsgs} from "../../components/sucessMsgs"
-import { Users, UserCheck,  Activity } from 'lucide-react'
-import { PieChart, Pie, Cell, ResponsiveContainer,  Tooltip } from 'recharts';
-import { StatusChart } from "./charts"
+import { Users} from 'lucide-react'
+
+import { StatusChart,RoleChart} from "./charts"
+
 
 import * as userService from "../../data/userService"
 
@@ -35,7 +36,7 @@ export function StatusChartLegend({statusCount,colors}){
   )
 }
 
-export function Workspace({refreshChart,searchValue,userCount,statusData,refreshStatus}) {
+export function Workspace({refreshChart,searchValue,userCount,statusData,refreshStatus,chartData}) {
   const [open,setOpen] = useState(false)
   const [mode,setMode] = useState("")
   const [sucessMsg,setSucessMsg] = useState("");
@@ -48,6 +49,7 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
 
   useEffect(() =>{
     renderUsers();
+    console.log("CHART DATA",chartData)
   },[])
   
   const renderUsers = async () =>{
@@ -180,6 +182,7 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
     // ================================================================================
     return (
         <main className="flex flex-col h-full w-full gap-4">  
+        
         {/* USER CHART ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
           <div className="grid row-span-full grid-rows-1 flex-col md:grid-cols-[1fr_1fr] h-[50%] md:h-[30%]  w-full gap-4 ">                  
             <div className="center rounded-2xl shadow-lg border 
@@ -187,8 +190,10 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
               <p className="absolute top-4 left-4 text-[var(--acc-darkc)] text-sm">User status</p>
               {<StatusChart statusData={statusData} COLORS={COLORS}/>}   
            </div>
-          
-             {/* CARD B USER COUNT */}
+
+        
+
+             {/* CARD C USER COUNT */}
             <div className="bg-white rounded-2xl shadow-lg border border-gray-200 w-full h-full p-6 flex flex-col justify-between">
               <div className="flex items-start justify-between">
                 <div>
@@ -201,7 +206,7 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
               </div>
 
             </div>
-                 
+
 
         </div>
             

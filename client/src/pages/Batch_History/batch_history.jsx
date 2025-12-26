@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { Menu, Trash2, Calendar, Sprout, TrendingUp, AlertCircle } from "lucide-react";
+import { Menu, Trash2, Calendar, Sprout, TrendingUp, AlertCircle,FileText } from "lucide-react";
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
 import { Notif_Modal } from '../../components/notifModal';
@@ -8,7 +8,6 @@ import { Batch_History_Modal } from "./modal"
 import { LogoutModal } from '../../components/logoutModal';
 import { UserContext } from '../../hooks/userContext';
 import { usePlantData } from '../../hooks/plantContext';
-
 
 
 // Stats Card Component
@@ -26,6 +25,7 @@ const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
     </div>
   </div>
 );
+
 
 function Batch_History() {
   const { user } = useContext(UserContext);;
@@ -172,12 +172,14 @@ function Batch_History() {
             subtitle="Average across batches"
             color="#009983"
           />
-        </div>
+        </div> 
 
-        <main>         
+        <main className='bg-white rounded-tr-2xl rounded-tl-2xl'>         
 
         <nav className='center w-full py-4 '>
-          <div className='flex items-center justify-start w-1/2'><p>Batch History</p></div>
+          <div className='flex items-center justify-start w-1/2'>
+            <FileText className='ml-4' size={20}/> <p className='text-xl mx-4'>Batch History</p>
+          </div>
           <div className='flex items-center justify-start flex-row-reverse w-1/2'>                     
               <select
                 value={selectedBatch}
@@ -210,7 +212,7 @@ function Batch_History() {
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Replanted</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Grown</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Stage</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Harvest Day</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Harvest Day/s</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
