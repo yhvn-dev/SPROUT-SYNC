@@ -15,7 +15,7 @@ export function FeatureSection(){
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-2 gap-8">
             {[
               {
                 icon: Droplets,

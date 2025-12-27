@@ -82,110 +82,98 @@ function Home(){
       }
       />
 
-      {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center pt-4 overflow-hidden bg-white">
+      <section className="relative min-h-screen flex flex-col md:flex-row items-center pt-4 overflow-hidden bg-white">
         {/* Backdrop Blobs */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-20 -left-20 w-96 h-96 bg-[#E8F3ED] rounded-full blur-3xl opacity-60 animate-pulse"></div>
-          <div className="absolute top-40 right-10 w-80 h-80 bg-[#C4DED0] rounded-full blur-3xl opacity-50 animate-pulse" style={{animationDelay: '1s'}}></div>
-          <div className="absolute bottom-20 left-1/3 w-72 h-72 bg-[#b0e892]/30 rounded-full blur-3xl opacity-40 animate-pulse" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-20 -left-20 w-72 h-72 md:w-96 md:h-96 bg-[#E8F3ED] rounded-full blur-3xl opacity-60 animate-pulse"></div>
+          <div className="absolute top-40 right-10 w-60 h-60 md:w-80 md:h-80 bg-[#C4DED0] rounded-full blur-3xl opacity-50 animate-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute bottom-20 left-1/4 w-60 h-60 md:w-72 md:h-72 bg-[#b0e892]/30 rounded-full blur-3xl opacity-40 animate-pulse" style={{animationDelay: '2s'}}></div>
         </div>
 
-        <div className="max-w-7xl mx-auto px-6 py-16 relative z-10">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto px-6 py-16 relative z-10 w-full">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             {/* Text Content */}
-            <div className="space-y-8">
-              <div className="inline-block px-4 py-2 bg-[#E8F3ED] rounded-full">
-                <span className="text-[#027c68] font-semibold text-sm">Smart Agriculture Solution</span>
+            <div className="space-y-6 md:space-y-8">
+              <div className="inline-block px-3 py-1 bg-[#E8F3ED] rounded-full text-center">
+                <span className="text-[#027c68] font-semibold text-sm md:text-base">Smart Agriculture Solution</span>
               </div>
               
-              <h1 className="hook-txt-a text-6xl md:text-5xl lg:text-7xl font-bold text-[#003333] leading-none">
-                Nurture
-                <br/>
-                  <span className="text-[var(--sancgb)] font-bold">
-                    Growth
-                  </span>
-                <br />
+              <h1 className="hook-txt-a text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-[#003333] leading-snug">
+                Nurture <br/>
+                <span className="text-[var(--sancgb)] font-bold">Growth</span> <br />
                 Effortlessly
               </h1>
                 
-              <p className="text-lg text-[#5A8F73] leading-relaxed max-w-lg">
+              <p className="text-base sm:text-lg text-[#5A8F73] leading-relaxed max-w-full md:max-w-lg">
                 Revolutionize your farming with our intelligent automatic plant watering system. Monitor soil moisture, water levels and seedlings cycle in real-time.
               </p>
 
-              <div className="flex flex-wrap gap-4">
-                <button className="px-4 py-2 bg-gradient-to-r from-[#027c68] to-[#009983] text-white rounded-2xl font-semibold text-lg hover:shadow-2xl transition-all transform hover:-translate-y-1">
+              <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
+                <button className="px-4 py-2 bg-gradient-to-r from-[#027c68] to-[#009983] text-white rounded-2xl font-semibold text-lg hover:shadow-lg transition-all transform hover:-translate-y-1">
                   Explore Dashboard
                 </button> 
-                <button className="px-4 py-2  border-2 border-[#7BA591] text-[#003333] rounded-2xl font-semibold text-lg hover:bg-[#E8F3ED] transition-all">
+                <button className="px-4 py-2 border-2 border-[#7BA591] text-[#003333] rounded-2xl font-semibold text-lg hover:bg-[#E8F3ED] transition-all">
                   Learn More
                 </button>
               </div>
 
-              <div className="flex items-center gap-8 pt-4">
-                <div>
-                  <div className="text-2xl font-bold text-[#027c68]">24/7</div>
-                  <div className="text-sm text-[#5A8F73]">Monitoring</div>
+              <div className="flex flex-wrap gap-4 pt-4 justify-start sm:justify-start">
+                <div className="flex items-center gap-4">
+                  <div className="text-2xl sm:text-3xl font-bold text-[#027c68]">24/7</div>
+                  <div className="text-sm sm:text-base text-[#5A8F73]">Monitoring</div>
                 </div>
-                <div className="w-px h-12 bg-[#C4DED0]"></div>
-                <div>
-                  <div className="text-2xl font-bold text-[#027c68]">100%</div>
-                  <div className="text-sm text-[#5A8F73]">Automated</div>
+                <div className="w-px h-12 bg-[#C4DED0] hidden sm:block"></div>
+                <div className="flex items-center gap-4">
+                  <div className="text-2xl sm:text-3xl font-bold text-[#027c68]">100%</div>
+                  <div className="text-sm sm:text-base text-[#5A8F73]">Automated</div>
                 </div>
-                <div className="w-px h-12 bg-[#C4DED0]"></div>
-                <div>
-                  <div className="text-2xl font-bold text-[#027c68]">Smart</div>
-                  <div className="text-sm text-[#5A8F73]">Analytics</div>
+                <div className="w-px h-12 bg-[#C4DED0] hidden sm:block"></div>
+                <div className="flex items-center gap-4">
+                  <div className="text-2xl sm:text-3xl font-bold text-[#027c68]">Smart</div>
+                  <div className="text-sm sm:text-base text-[#5A8F73]">Analytics</div>
                 </div>
               </div>
             </div>
 
-            {/* Image/Visual Space */}
-            <div className="relative">
-              <div className="center rounded-3xl  p-8">
-                <div className="relative rounded-full h-130 w-130 bg-white shadow-sm flex items-center justify-center">
-                  <div className="text-center space-y-4">
-                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-[#027c68] to-[#009983] rounded-full flex items-center justify-center">
-                      <Droplets className="w-16 h-16 text-white" />
-                    </div>
-                    <div className="text-[#003333] font-semibold text-lg">Smart Irrigation</div>
-                    <div className="text-[#5A8F73]">Powered by IoT Sensors</div>
+            {/* Visual Section */}
+            <div className="relative flex justify-center md:justify-end mt-8 md:mt-0">
+              <div className="w-64 sm:w-80 md:w-96 lg:w-[24rem] h-auto bg-white rounded-3xl shadow-sm flex items-center justify-center relative">
+                <div className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 bg-gradient-to-br from-[#027c68] to-[#009983] rounded-full flex items-center justify-center">
+                  <Droplets className="w-12 h-12 sm:w-14 sm:h-14 text-white" />
+                </div>
 
-                    {/* Floating Cards */}
-                    <div className="absolute -top-4 -right-4 bg-white rounded-2xl shadow-xl p-4 border border-[#E8F3ED]">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-[#E8F3ED] rounded-xl flex items-center justify-center">
-                          <Droplets className="w-6 h-6 text-[#027c68]" />
-                        </div>
-                        <div>
-                          <div className="text-sm text-[#5A8F73]">Moisture</div>
-                          <div className="text-xl font-bold text-[#003333]">40 %</div>
-                        </div>
-                      </div>
+                {/* Floating Cards */}
+                <div className="absolute -top-2 -right-2 bg-white rounded-2xl shadow-lg p-3 border border-[#E8F3ED] w-28 sm:w-32">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#E8F3ED] rounded-xl flex items-center justify-center">
+                      <Droplets className="w-4 h-4 sm:w-6 sm:h-6 text-[#027c68]" />
                     </div>
-
-                    <div className="absolute -bottom-4 -left-4 bg-white rounded-2xl shadow-xl p-4 border border-[#E8F3ED]">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 bg-[#E8F3ED] rounded-xl flex items-center justify-center">
-                          <Droplets className="w-6 h-6 text-[#027c68]" />
-                        </div>
-                        <div>
-                          <div className="text-sm text-[#5A8F73]">Water Level</div>
-                          <div className="text-xl font-bold text-[#003333]">65%</div>
-                        </div>
-                      </div>
+                    <div>
+                      <div className="text-xs sm:text-sm text-[#5A8F73]">Moisture</div>
+                      <div className="text-lg sm:text-xl font-bold text-[#003333]">40 %</div>
                     </div>
-
-                
                   </div>
                 </div>
+
+                <div className="absolute -bottom-2 -left-2 bg-white rounded-2xl shadow-lg p-3 border border-[#E8F3ED] w-28 sm:w-32">
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#E8F3ED] rounded-xl flex items-center justify-center">
+                      <Droplets className="w-4 h-4 sm:w-6 sm:h-6 text-[#027c68]" />
+                    </div>
+                    <div>
+                      <div className="text-xs sm:text-sm text-[#5A8F73]">Water Level</div>
+                      <div className="text-lg sm:text-xl font-bold text-[#003333]">65%</div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
-              
-           
             </div>
           </div>
         </div>
+
       </section>
+
 
         <FeatureSection/>
         <div className='center'>

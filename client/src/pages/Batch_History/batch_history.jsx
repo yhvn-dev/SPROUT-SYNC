@@ -4,7 +4,6 @@ import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
 import { Notif_Modal } from '../../components/notifModal';
 import { Batch_History_Modal } from "./modal"
-
 import { LogoutModal } from '../../components/logoutModal';
 import { UserContext } from '../../hooks/userContext';
 import { usePlantData } from '../../hooks/plantContext';
