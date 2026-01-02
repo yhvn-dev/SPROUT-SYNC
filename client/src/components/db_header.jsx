@@ -4,6 +4,7 @@ import { usePlantData } from "../hooks/plantContext";
 import Pfp from "../assets/Images/Default Profile Picture 2.jpg";
 import { Search } from "./search";
 import { Bell } from "lucide-react";
+import { Darkmode } from "../features/darkmode";
 
 export function Db_Header({ input, setNotifOpen }) {
   const { user } = useContext(UserContext);
@@ -13,16 +14,17 @@ export function Db_Header({ input, setNotifOpen }) {
     loadNotifsCount();
   }, []);
   
+
   return (
-    <section className="bg-[var(--main-whiteb)] col-start-3 col-span-full md:col-start-3 md:col-span-2 row-start-1 px-4 md:px-0  rounded-[10px] flex items-center justify-between shadow-lg min-h-[4rem] gap-2">    
+    <section className="db_header bg-[var(--main-whiteb)] col-start-3 col-span-full md:col-start-3 md:col-span-2 row-start-1 px-4 md:px-0  rounded-[10px] flex items-center justify-between shadow-lg min-h-[4rem] gap-2">    
  
       <div className="flex items-center justify-end md:justify-start w-full md:w-1/2 md:mx-4">
         <Search input={input} />
       </div>
-      
+           
       {/* User Info Section */}
       <div className="flex items-center gap-2 flex-shrink-0 md:mr-4">
-        
+          <Darkmode/>
         {/* Notification Button */}
         <button 
           onClick={() => setNotifOpen(true)} 
@@ -30,7 +32,7 @@ export function Db_Header({ input, setNotifOpen }) {
           aria-label="Notifications"
           >
             <Bell size={18} />
-          {notifsCount > 0 && (
+          {notifsCount > 0 && ( 
             <span className="absolute rounded-full min-w-[1rem] h-4 text-xs text-[var(--main-white--)] bg-[var(--sancgb)] flex items-center justify-center px-1 top-0 right-0">
               {notifsCount}
             </span>
@@ -53,13 +55,9 @@ export function Db_Header({ input, setNotifOpen }) {
             alt="Profile"
             className="profile-img w-10 h-10 rounded-full object-cover"
           />
-
-
-
         </div>
-        
-      
 
+      
       </div>
 
 

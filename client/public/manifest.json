@@ -1,0 +1,22 @@
+{
+  "name": "SproutSync",
+  "short_name": "SproutSync",
+  "description": "An IoT-Based Automated Nursery Irrigation and Monitoring System with Soil Moisture Sensing",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#027c68",
+  "icons": [
+    {
+      "src": "./icons/SPROUTSYNC LOGO.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./icons/SPROUTSYNC LOGO.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

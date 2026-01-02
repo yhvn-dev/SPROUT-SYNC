@@ -1,8 +1,10 @@
-import {User,Lock} from "lucide-react"
+import {User,Lock,Eye,EyeOff} from "lucide-react"
+import { useState } from "react"
 import { colors } from "./../../utils/colors"
 import * as Logo from "../../components/logo"
 
 export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef,status}) {
+  const [showPassword, setShowPassword] = useState(false)
 
   return (  
 
@@ -30,12 +32,52 @@ export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef
             </ol>
             
 
+         
             {/* password */}
             <div className="form_box input_box w-1/2 relative mt-4">
-                <input ref={passwordRef} className="px-2 py-1 border-2  border-[var(--acc-darkc)]" type="text" name="password-inp" placeholder=""/>
-                <label>Password</label>
-                <Lock size={8} className='mt-[1px]' color="var(--acc-darkc)"/>
+            <input
+                ref={passwordRef}
+                className="px-2 py-1 border-2 border-[var(--acc-darkc)] pr-10 transition-all duration-300"
+                type={showPassword ? "text" : "password"}
+                name="password-inp"
+                placeholder=""
+            />
+
+            <label>Password</label>
+
+            <Lock size={8} className="mt-[1px]" color="var(--acc-darkc)" />
+
+            {/* toggle password */}
+            <button
+                type="button"
+                onClick={() => setShowPassword(prev => !prev)}
+                className="
+                cursor-pointer absolute right-8 top-[6px] -translate-y-1/2
+                p-1 rounded-full
+                transition-all duration-300
+                hover:bg-gray-200
+                active:scale-90
+                "
+            >
+                {showPassword ? (
+                <EyeOff
+                    size={16}
+                    className="animate-fadeIn"
+                    color="var(--acc-darkc)"
+                />
+                ) : (
+                <Eye
+                    size={16}
+                    className="animate-fadeIn"
+                    color="var(--acc-darkc)"
+                />
+                )}
+            </button>
             </div>
+
+
+
+
             <ol className="center flex mt-4">
                 {errorMsg.password && <p className=" bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm">{errorMsg.password}</p>} 
             </ol>

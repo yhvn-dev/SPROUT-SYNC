@@ -3,7 +3,8 @@ import { Droplets,TrendingUp, Bell } from 'lucide-react';
 export function FeatureSection(){
     return(
      <>
-        {/* Features Section */}
+     
+      {/* Features Section */}
       <section id="features" className="py-24 bg-gradient-to-b from-white to-[#E8F3ED]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">

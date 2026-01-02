@@ -175,23 +175,23 @@ function Batch_History() {
 
         <main className='bg-white rounded-tr-2xl rounded-tl-2xl'>         
 
-        <nav className='center w-full py-4 '>
-          <div className='flex items-center justify-start w-1/2'>
-            <FileText className='ml-4' size={20}/> <p className='text-xl mx-4'>Batch History</p>
-          </div>
-          <div className='flex items-center justify-start flex-row-reverse w-1/2'>                     
-              <select
-                value={selectedBatch}
-                onChange={(e) => setSelectedStage(e.target.value)}
-                className="mx-4 border border-[#027c68] rounded-lg px-4 py-[1px] focus:outline-none focus:ring-2 focus:ring-[#027c68] bg-white"
-              >
-                {growthStages.map(stage => (
-                  <option key={stage} value={stage}>{stage}</option>
-                ))}
-              </select>
-              <label className="text-sm font-medium text-[#027c68] ">Filter by Stage:</label>
-          </div>
-        </nav>
+          <nav className='center w-full py-4 '>
+            <div className='flex items-center justify-start w-1/2'>
+              <FileText className='ml-4' size={20}/> <p className='text-xl mx-4'>Batch History</p>
+            </div>
+            <div className='flex items-center justify-start flex-row-reverse w-1/2'>                     
+                <select
+                  value={selectedBatch}
+                  onChange={(e) => setSelectedStage(e.target.value)}
+                  className="mx-4 border border-[#027c68] rounded-lg px-4 py-[1px] focus:outline-none focus:ring-2 focus:ring-[#027c68] bg-white"
+                >
+                  {growthStages.map(stage => (
+                    <option key={stage} value={stage}>{stage}</option>
+                  ))}
+                </select>
+                <label className="text-sm font-medium text-[#027c68] ">Filter by Stage:</label>
+            </div>
+          </nav>
 
           {/* TABLE SECTION */}
           <div className="bg-white rounded-2xl shadow-lg 

@@ -1,0 +1,264 @@
+@import "tailwindcss";
+
+:root {
+    --main-white: hsl(258, 44%, 93%);
+    --white-blple: hsl(221, 32%, 77%);
+    --purpluish: hsl(225, 25%, 65%);
+    --bluis: hsl(220, 74%, 62%);
+    --mainblue: hsl(225, 46%, 44%);
+    --gainsbro: hsl(0, 0%, 96%);
+    --blue-white: hsl(195, 44%, 86%);
+
+    /* Moon Phases */
+    --moon-phases-a: hsl(204, 19%, 15%);
+    --moon-phases-b: hsl(210, 19%, 22%);
+    --moon-phases-c: hsl(197, 65%, 24%);
+    --moon-phases-d: hsl(192, 11%, 52%);
+    --moon-phases-e: hsl(120, 13%, 85%);
+
+    /* Dark mode palette */
+    --metal-dark1: hsl(0, 2%, 14%);
+    --metal-dark2: hsl(0, 1%, 25%);
+    --metal-dark3: hsl(0, 0%, 13%);
+    --metal-dark4: hsl(240, 2%, 53%);
+    --metal-dark5: hsl(0, 0%, 7%);
+
+    /* Ash tones */
+    --ash1-darka: hsl(204, 21%, 15%);
+    --ash1-darkb: hsl(204, 18%, 27%);
+    --ash1-gray: hsl(204, 16%, 45%);
+    --ash1-lgray: hsl(204, 26%, 60%);
+
+    /* Grays */
+    --gray_1--: hsl(0, 0%, 50%);
+    --color-jk-dark: hsl(204, 19%, 15%);
+    --color-jk-dgray: hsl(210, 100%, 99%);
+
+    /* Status colors */
+    --color-danger-a: hsl(355, 100%, 70%);
+    --color-danger-b: hsl(355, 70%, 80%);
+    --color-danger-c:hsl(353, 40%, 90%);
+    --color-warning: hsl(35, 80%, 70%);
+    --color-success-a: hsl(125, 85%, 60%);
+    --color-success-b: hsl(160,60%, 70%);
+    --color-success-c:hsl(150, 80%, 80%);
+
+    /* Dark variants */
+    --dark-variant: hsl(220, 7%, 19%);
+    --dark-variantb: hsl(0, 78%, 2%);
+    --color-dark-blue: hsl(210, 29%, 15%);
+
+    /* Shadows */
+    --shad-alpha: rgba(53,53,53,0.5);
+    --shad-alpha-b: rgba(53,53,53,0.4);
+    --shad-alpha-c: rgba(53,53,53,0.3);
+    --shad-alpha-d: rgba(53,53,53,0.2);
+    --shad-alpha-e: rgba(53,53,53,0.1);
+
+    --shad-dark: rgb(0,0,0);
+    --shad-dark-b: rgba(0,0,0,0.7);
+    --shad-dark-c: rgba(0,0,0,0.6);
+    --shad-dark-d: rgba(0,0,0,0.5);
+    --shad-dark-e: rgba(0,0,0,0.4);
+    --shad-dark-f: rgba(0,0,0,0.3);
+    --shad-dark-g: rgba(0,0,0,0.2);
+    --shad-dark-h: rgba(0,0,0,0.1);
+
+    /* Font sizes */
+    --fns-default-down-0-6:0.618rem;
+    --fns-down-1:0.8rem;
+    --fns-default-1:1rem;
+    --fns-up2:1.3rem;
+    --fns-default-up1-6:1.618rem;
+    --fns-up4:2.1rem;
+    --fns-default-up2-6:2.617rem;
+    --fns-default-up4-2:4.23rem;
+    --fns-default-up-6-8:6.84rem;
+    --fns-up-8-96:8.96rem;
+    --fns-deafult-up-11-08:11.08rem;
+
+    /* Margin */
+    --szd-0-6:0.618rem;
+    --sz-0-8:0.8rem;
+    --szd-1:1rem;
+    --sz-1-3:1.3rem;
+    --szd-1-6:1.618rem;
+    --sz-2-1:2.1rem;
+    --szd-2-6:2.617rem;
+    --szd-4-2:4.23rem;
+    --szd-6-8:6.84rem;
+    --sz-8-96:8.96rem;
+    --szd-11-08:11.08rem;
+}
+
+body {
+transition: 1s;
+}
+
+/* Default light mode background */
+body.light {
+    @apply bg-[var(--gainsbro)] text-[var(--metal-dark1)];
+}
+body.dark section{
+      @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
+}
+body .dmode-box {
+    @apply transition-colors duration-700 ease-in-out;
+}
+
+body .dmode-btn {
+    @apply w-5 h-5 rounded-full cursor-pointer transition-all duration-500 ease-in-out;
+}
+
+
+
+
+/* Scrollbar for dark mode */
+body.dark::-webkit-scrollbar-track {
+    background: var(--dark-variant); 
+}
+body.dark::-webkit-scrollbar-thumb {
+    background: var(--metal-dark4);
+    @apply border-2 rounded-2xl border-[var(--dark-variant)] cursor-pointer;
+}
+
+
+
+
+/* HEADER  */
+body.dark {
+    @apply bg-[var(--metal-dark1)] text-[var(--main-white)];
+}
+body.dark .db_header{
+    @apply bg-[var(--metal-dark1)];
+    box-shadow: 1px 4px 3px 1px var(--shad-dark-b);
+}
+body.dark .dmode-box {
+    @apply border-[1px] border-[var(--metal-dark4)];
+    box-shadow: 5px 5px 5px 1px rgba(0,0,0,0.5);
+}
+
+body.dark .dmode-btn {
+    @apply stroke-[var(--main-white)];
+}
+
+body.dark .sidebar{
+    @apply bg-[var(--metal-dark1)];
+    box-shadow: 1px 4px 3px 1px var(--shad-dark-b);
+}
+
+
+
+
+
+/* SIDEBAR  */
+body.dark svg {
+    @apply stroke-[var(--main-white)];
+}
+
+/* Layout containers */
+body.dark .wrapper,
+body.dark .con,
+body.dark .sections,
+body.dark .hero-main-box {
+    @apply bg-[var(--metal-dark2)];
+    box-shadow: 5px 5px 10px 1px rgba(0,0,0,0.6);
+}
+
+body.dark p,
+body.dark a,
+body.dark h2,
+body.dark h3,
+body.dark span,
+body.dark .hook-txt {
+    @apply text-[var(--main-white)];
+}
+
+
+body.dark .moonstar {
+    @apply stroke-[var(--main-white)];
+}
+/* Header / navigation */
+body.dark .db_header p {
+    @apply text-[var(--main-white)];
+}
+body.dark .navs-btn {
+    @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
+}
+
+
+
+
+
+/* DASHBOARD */
+body.dark .con_main {
+    
+}
+    body.dark .nursery_nav button{
+        @apply bg-[var(--metal-dark1)];
+        box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
+    }
+        body.dark .conb{
+            @apply bg-[var(--metal-dark3)];
+        }
+        body.dark .conb p{
+            @apply text-[var(--main-white)];
+        }
+        body.dark .conb h1{
+            @apply text-[var(--main-white)];
+        }
+        body.dark .nursery_data_div{
+            background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
+        }
+        body.dark .con_main{
+            background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
+        }
+
+        
+/* Dark mode hover */
+body.dark .tray_group_div:hover {
+  @apply bg-[var(--metal-dark1)];
+}
+body.dark .main_tray_group_div{
+    box-shadow: 2px 3px 2px 1px var(--shad-dark-b);
+}
+body.dark .dropdown_nursery{
+ @apply bg-[var(--metal-dark1)];
+ box-shadow: 2px 3px 2px 1px var(--shad-dark-b);
+}
+
+
+
+body.dark .tray_groups_main_div::-webkit-scrollbar{
+    @apply bg-[var(--metal-dark1)];
+}
+body.dark .tray_groups_main_div::-webkit-scrollbar-thumb{
+    @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+}
+body.dark .tray_list_div{
+    background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
+    box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
+    border:0px;
+}
+    body.dark .sensor_div{
+        background: linear-gradient(to bottom right, var(--sancgb), var(--sancga));
+    }
+
+
+
+
+
+
+    
+
+body.dark .batch_div {
+    background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
+    box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
+    border:0px solid;
+}
+    body.dark .batch_scroll_div::-webkit-scrollbar {
+        @apply bg-[var(--metal-dark1)]
+    }
+     body.dark .batch_scroll_div::-webkit-scrollbar-thumb {
+        @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+    }

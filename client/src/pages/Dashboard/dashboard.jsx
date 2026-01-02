@@ -22,22 +22,18 @@ export function Dashboard() {
 
   return (
     <section
-      className="
+      className="con_main 
         w-full min-h-screen bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] flex flex-col
         md:grid md:grid-cols-[15fr_85fr]
         md:grid-rows-[auto_auto_1fr]
-
         gap-4
         overflow-hidden
-        relative
-       
-      "
-    >
+        relative">
+        
       {/* MOBILE MENU BUTTON */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg"
-      >
+        className="md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
         <Menu size={22} className="text-[var(--acc-darkb)]" />
       </button>
 
@@ -70,7 +66,7 @@ export function Dashboard() {
       </div>
 
       {/* TABS */}
-      <div className="flex flex-wrap gap-2 px-4 md:px-0 md:col-start-2">
+      <nav className="nursery_nav flex flex-wrap gap-2 px-4 md:px-0 md:col-start-2">
         <button
           onClick={() => setActiveTab("Overview")}
           className={`cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2 text-xs md:text-sm rounded-lg
@@ -82,10 +78,10 @@ export function Dashboard() {
           Overview
         </button>
 
-
+        
         <button
           onClick={() => setActiveTab("Manage Plants")}
-          className={`cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2 text-xs md:text-sm rounded-lg
+          className={`nursery_nav cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2 text-xs md:text-sm rounded-lg
             ${
               activeTab === "Manage Plants"
                 ? "bg-white text-[#027c68] shadow-md"
@@ -94,7 +90,7 @@ export function Dashboard() {
 
           Manage Plants
         </button>
-      </div>
+      </nav>
 
       {/* MAIN CONTENT */}
       <main

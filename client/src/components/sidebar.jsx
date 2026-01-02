@@ -19,7 +19,7 @@ export function Sidebar({ user, setLogoutOpen }) {
   }, []);
 
   return (
-    <aside className="con h-[100vh] bg-white flex flex-col col-start-1 col-end-2 row-start-1 row-span-full p-4 rounded-[10px] shadow-lg w-full md:w-auto">
+    <aside className="sidebar h-[100vh] bg-white flex flex-col col-start-1 col-end-2 row-start-1 row-span-full p-4 rounded-[10px] shadow-lg w-full md:w-auto">
       
       {/* Logo - Always visible */}
       <div className="logo_div flex items-center justify-center h-[10%] w-[95%] mb-6 text-xl font-bold text-green-600">

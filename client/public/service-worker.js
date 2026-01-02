@@ -17,6 +17,7 @@ self.addEventListener("install", (event) => {
   );
 });
 
+
 // Fetch event - serve cached files when offline
 self.addEventListener("fetch", (event) => {
   event.respondWith(
