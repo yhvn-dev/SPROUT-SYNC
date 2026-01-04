@@ -142,7 +142,7 @@ export function TrayGroupModal({
   return (
     <motion.div className="modal_backdrop fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50">
       <motion.div
-        className={`bg-white rounded-xl shadow-xl p-6 relative ${
+        className={`conb bg-white rounded-xl shadow-xl p-6 relative ${
           tgModalMode === "delete" ? "w-[420px]" : "w-[600px]"
         }`}
         initial={{ scale: 0.9, opacity: 0 }}

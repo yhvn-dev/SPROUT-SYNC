@@ -11,7 +11,7 @@ import { usePlantData } from '../../hooks/plantContext';
 
 // Stats Card Component
 const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
-  <div className="bg-white rounded-2xl shadow-md p-4 lg:p-6 hover:shadow-lg transition-shadow">
+  <div className="conb bg-white rounded-2xl shadow-md p-4 lg:p-6 hover:shadow-lg transition-shadow">
     <div className="flex items-start justify-between">
       <div>
         <p className="text-xs lg:text-sm text-gray-600 mb-1">{title}</p>
@@ -85,18 +85,30 @@ function Batch_History() {
 
   const growthStages = ["All", "Seedling", "Vegetative", "Mature", "Harvest"];
 
-  const getStageColor = (stage) => {
-    const colors = {
-      'Seedling': '#b0e892',
-      'Vegetative': '#7BA591',
-      'Mature': '#027c68',
-      'Harvest': '#2dc653'
-    };
-    return colors[stage] || '#5A8F73';
+  
+
+  const getStageColor = (stage, isDark = false) => {
+  const lightColors = {
+    'Seedling': '#b0e892',
+    'Vegetative': '#7BA591',
+    'Mature': '#027c68',
+    'Harvest': '#2dc653'
   };
 
+  const darkColors = {
+    'Seedling': '#0f4420',
+    'Vegetative': '#1a5042',
+    'Mature': '#025047',
+    'Harvest': '#1a6b38'
+  };
+  return isDark ? darkColors[stage] || '#5A8F73' : lightColors[stage] || '#5A8F73';
+};
+
+
+
+
   return (
-    <section className="grid grid-cols-1 sm:grid-cols-[12fr_30fr_58fr] 
+    <section className="con_main grid grid-cols-1 sm:grid-cols-[12fr_30fr_58fr] 
     grid-rows-[8vh_10vh_auto] 
     md:grid-rows-[8vh_10vh_82vh] gap-4 h-screen w-full overflow-x-hidden 
     overflow-y-auto md:overflow-hidden 
@@ -173,7 +185,7 @@ function Batch_History() {
           />
         </div> 
 
-        <main className='bg-white rounded-tr-2xl rounded-tl-2xl'>         
+        <main className='conb bg-white rounded-tr-2xl rounded-tl-2xl'>         
 
           <nav className='center w-full py-4 '>
             <div className='flex items-center justify-start w-1/2'>
@@ -194,22 +206,22 @@ function Batch_History() {
           </nav>
 
           {/* TABLE SECTION */}
-          <div className="bg-white rounded-2xl shadow-lg 
+          <div className="batch_history_table  rounded-2xl shadow-lg 
                     h-[55vh] md:h-[57vh] 
                     overflow-y-auto">
               
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto overflow-y-auto">
               <table className="w-full f overflow-y-auto">
-                <thead className="bg-[#E8F3ED]  overflow-y-auto">
+                <thead className="  overflow-y-auto">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Batch ID</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Plant Name</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Date</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Date Planted</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Total</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Dead</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Replanted</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Grown</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Replanted</th>
+
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Dead</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Stage</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Harvest Day/s</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Actions</th>
@@ -222,26 +234,32 @@ function Batch_History() {
                       className={`hover:bg-[#E8F3ED] transition-colors ${
                         index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                       }`}>
-
-                      <td className="px-4 py-3 text-sm font-medium text-gray-900">#{record.batch_id}</td>               
                       <td className="px-4 py-3 text-sm font-medium text-[#027c68]">{record.plant_name}</td>
-                      <td className="px-4 py-3 text-sm text-gray-600 whitespace-nowrap">{new Date(record.date_recorded).toLocaleDateString()}</td>
+                      <td className="date_planted_data px-4 py-3 text-sm text-gray-600 whitespace-nowrap">{new Date(record.date_recorded).toLocaleDateString()}</td>
                       <td className="px-4 py-3 text-sm text-center font-semibold">{record.total_seedlings}</td>
-                      <td className="px-4 py-3 text-sm text-center">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
-                          {record.dead_seedlings}
+                    
+
+                     <td className="px-4 py-3 text-sm text-center">
+                        <span className="fully_grown_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                          {record.fully_grown_seedlings}
                         </span>
-                      </td>
+                      </td> 
+
+
+
                       <td className="px-4 py-3 text-sm text-center">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                        <span className="replanted_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                           {record.replanted_seedlings}
                         </span>
                       </td>
+                     
                       <td className="px-4 py-3 text-sm text-center">
-                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
-                          {record.fully_grown_seedlings}
+                        <span className="dead_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                          {record.dead_seedlings}
                         </span>
                       </td>
+                      
+                      
                       <td className="px-4 py-3 text-sm">
                         <span
                           className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white"
@@ -320,6 +338,7 @@ function Batch_History() {
                       <p className="text-gray-600">Grown</p>
                       <p className="font-bold text-green-600">{record.fully_grown_seedlings}</p>
                     </div>
+              
                   </div>
                 </div>
               ))}

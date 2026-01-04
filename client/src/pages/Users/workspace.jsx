@@ -185,8 +185,8 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
         
         {/* USER CHART ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
           <div className="grid row-span-full grid-rows-1 flex-col md:grid-cols-[1fr_1fr] h-[50%] md:h-[30%]  w-full gap-4 ">                  
-            <div className="center rounded-2xl shadow-lg border 
-            border-gray-200 w-full h-full p-4 pointer-events-none relative bg-white ">     
+            <div className="conb center rounded-2xl shadow-lg 
+            w-full h-full p-4 pointer-events-none relative bg-white con_b  ">     
               <p className="absolute top-4 left-4 text-[var(--acc-darkc)] text-sm">User status</p>
               {<StatusChart statusData={statusData} COLORS={COLORS}/>}   
            </div>
@@ -194,7 +194,7 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
         
 
              {/* CARD C USER COUNT */}
-            <div className="bg-white rounded-2xl shadow-lg border border-gray-200 w-full h-full p-6 flex flex-col justify-between">
+            <div className="conb  bg-white rounded-2xl shadow-lg w-full h-full p-6 flex flex-col justify-between">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="text-sm font-medium text-gray-500 mb-1">Total Users</p>
@@ -212,10 +212,8 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
             
             
           {/* USER TABLE ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
-          <div className="bg-white workspace flex flex-col w-full flex-1 row-start-4 row-span-full
-          col-start-2 col-end-4 overflow-y-auto  rounded-[10px] my-4">
-
-          
+          <div className="conb bg-white workspace flex flex-col w-full flex-1 row-start-4 row-span-full
+          col-start-2 col-end-4 overflow-y-auto  rounded-[10px] my-4">    
             <div className="wp_header flex w-full h-[20%] md:h-[20%] ">
                 <ol className='h_part left flex items-center justify-start w-1/2 '>
                     <User className="mx-4" size={24}/>
@@ -243,7 +241,7 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
 
             <SucessMsgs txt={sucessMsg} clearMsg={clearMsg}/>
             
-            <div className="bg-white table_holder flex flex-col items-center justify-start flex-1 w-full  overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] rounded-[10px]">
+            <div className="user_table_div bg-white table_holder flex flex-col items-center justify-start flex-1 w-full  overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] rounded-[10px]">
                 <UserTable
                   users={filtered.length > 0 ? filtered : allUsers}
                   setOpen={() => setOpen(true)}

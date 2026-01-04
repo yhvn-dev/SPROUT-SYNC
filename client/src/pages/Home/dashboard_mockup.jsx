@@ -8,6 +8,7 @@ import {
   TrendingUp,
   LayoutDashboard,
   Leaf,
+  FileText,
   User,
   LogOut,
 } from 'lucide-react';
@@ -61,7 +62,7 @@ export function Dashboard_Mockup() {
   return (
     <div className="flex flex-col md:flex-row items-center justify-center min-h-screen w-[90%]  p-2 md:p-0">
       {/* ================= BROWSER WINDOW CONTAINER ================= */}
-      <div className="flex-1 w-full max-w-[1600px] h-[90vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-300">
+      <div className="browser_window_main_container flex-1 w-full max-w-[1600px] h-[90vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-300">
 
         {/* ================= APPLE-STYLE TOP BAR ================= */}
         <div className="flex items-center justify-between gap-3 p-3 border-b border-gray-200 bg-white/80 backdrop-blur-md">
@@ -88,7 +89,7 @@ export function Dashboard_Mockup() {
         <div className="flex flex-1 overflow-hidden">
 
           {/* ================= SIDEBAR ================= */}
-          <aside className={`fixed md:relative z-20 inset-y-0 left-0 w-64 bg-white/70 backdrop-blur-xl border-r border-gray-200 p-6 flex flex-col gap-8 transform md:translate-x-0 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
+          <aside className={`mockup_dashboard_sidebar fixed md:relative z-20 inset-y-0 left-0 w-64 bg-white/70 backdrop-blur-xl border-r border-gray-200 p-6 flex flex-col gap-8 transform md:translate-x-0 transition-transform duration-300 ease-in-out ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
             <div className="flex justify-between items-center md:hidden">
               <h1 className="text-lg font-semibold">🌱 SPROUTSYNC</h1>
               <button onClick={() => setSidebarOpen(false)}>✕</button>
@@ -99,6 +100,7 @@ export function Dashboard_Mockup() {
               <SidebarItem icon={LayoutDashboard} label="Dashboard" active />
               <SidebarItem icon={User} label="Users" />
               <SidebarItem icon={TrendingUp} label="Analytics" />
+               <SidebarItem icon={FileText } label="Batch History" />
               <SidebarItem icon={LogOut} label="Logout" />
             </nav>
           </aside>
@@ -117,13 +119,15 @@ export function Dashboard_Mockup() {
                 {trayGroups.map(group => {
                   const isExpanded = expandedZones[group.tray_group_id];
                   return (
-                    <div key={group.tray_group_id} className="bg-white rounded-3xl shadow-sm border border-gray-200">
+                    <div key={group.tray_group_id} className="mockup_traygroup_div overflow-hidden rounded-3xl shadow-sm border border-gray-200">
+
+
+
 
                       {/* Header */}
                       <div
-                        className="p-4 md:p-6 flex justify-between items-center cursor-pointer hover:bg-gray-50 rounded-3xl"
-                        onClick={() => toggleZone(group.tray_group_id)}
-                      >
+                        className="mockup_db_pb_header  p-4 md:p-6 flex justify-between items-center cursor-pointer hover:bg-gray-50 rounded-3xl"
+                        onClick={() => toggleZone(group.tray_group_id)}>
                         <div className="flex items-center gap-3 md:gap-4">
                           <div className="w-10 h-10 md:w-12 md:h-12 rounded-2xl bg-[#34c759] flex items-center justify-center">
                             <Sprout className="text-white" />
@@ -140,15 +144,17 @@ export function Dashboard_Mockup() {
                         </div>
                       </div>
 
+
+
                       {/* Trays */}
                       {isExpanded && (
-                        <div className="px-3 md:px-6 pb-4 md:pb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                        <div className="conb  px-3 md:px-6 pb-4 md:pb-6 grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
                           {group.trays.map(tray => (
-                            <div key={tray.tray_id} className="rounded-2xl bg-[#f5f5f7] p-3 md:p-4">
+                            <div key={tray.tray_id} className="mockup_db_tray_div rounded-2xl bg-[#f5f5f7] p-3 md:p-4">
                               <h4 className="font-semibold text-sm md:text-base">Tray {tray.tray_number}</h4>
 
                               {tray.hasSensor ? (
-                                <div className="mt-2 md:mt-3 bg-white rounded-xl p-3 md:p-4 flex items-center gap-2 md:gap-3 shadow-sm">
+                                <div className="mockup_db_sensor_div  mt-2 md:mt-3 bg-white rounded-xl p-3 md:p-4 flex items-center gap-2 md:gap-3 shadow-sm">
                                   <Droplet className="text-[#34c759]" />
                                   <div>
                                     <p className="text-xs text-gray-500">Moisture</p>
@@ -164,6 +170,8 @@ export function Dashboard_Mockup() {
                             </div>
                           ))}
                         </div>
+
+                        
                       )}
                     </div>
                   );
@@ -172,19 +180,19 @@ export function Dashboard_Mockup() {
 
               {/* ================= BATCHES ================= */}
               <aside className="space-y-4">
-                <div className="bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-gray-200">
+                <div className="plant_batch_div  bg-white rounded-3xl p-4 md:p-6 shadow-sm border border-gray-200">
                   <h3 className="text-lg font-semibold mb-4">Plant Batches</h3>
 
                   {batches.map(batch => (
-                    <div key={batch.batch_id} className="rounded-2xl bg-[#f5f5f7] p-3 md:p-4 mb-2">
+                    <div key={batch.batch_id} className="conb rounded-2xl bg-[#f5f5f7] p-3 md:p-4 mb-2">
                       <h4 className="font-semibold text-sm md:text-base">{batch.plant_name}</h4>
 
                       <div className="text-[10px] md:text-xs text-gray-600 mt-2 space-y-1">
                         <div className="flex items-center gap-1 md:gap-2">
-                          <Calendar size={12} /> {batch.date_planted.toLocaleDateString()}
+                          <Calendar size={12}/> <p>{batch.date_planted.toLocaleDateString()}</p>
                         </div>
                         <div className="flex items-center gap-1 md:gap-2">
-                          <Calendar size={12} /> {batch.expected_harvest_days} days
+                          <Calendar size={12}/> <p>{batch.expected_harvest_days} days</p>
                         </div>
                       </div>
 
@@ -208,7 +216,7 @@ export function Dashboard_Mockup() {
 
 function SidebarItem({ icon: Icon, label, active }) {
   return (
-    <div className={`flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer ${active ? 'bg-[var(--sancgb)] text-white' : 'text-gray-700 hover:bg-gray-100'}`}>
+    <div className={`sidebar_item_div flex items-center gap-3 px-4 py-2 rounded-xl cursor-pointer ${active ? 'bg-[var(--sancgb)] text-white' : 'text-gray-700 hover:bg-gray-100'}`}>
       <Icon size={18} />
       <span className="text-sm font-medium">{label}</span>
     </div>

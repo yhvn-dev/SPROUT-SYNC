@@ -35,7 +35,7 @@ function Tray_groups({
   return (
     <>
       {/* HEADER */}
-      <header className="flex flex-col sm:flex-row py-3 sm:py-4 gap-3 sm:gap-0 ">
+      <header className="flex flex-col sm:flex-row py-3 sm:py-4 gap-3 sm:gap-0  ">
         <div className="flex items-center gap-2 sm:w-1/2">
           {/* ✅ Trays icon */}
           <LayoutGrid size={20} className="sm:size-[24px]" />
@@ -47,7 +47,7 @@ function Tray_groups({
         <div className="flex sm:w-1/2 sm:justify-end">
           <button
             onClick={handleAdd}
-            className="
+            className="cursor-pointer
               rounded-lg sm:rounded-xl
               px-3 py-1.5 sm:px-4 sm:py-2
               text-xs sm:text-sm
@@ -65,7 +65,7 @@ function Tray_groups({
 
 
       {/* LIST CONTAINER */}
-      <div className="h-[330px] overflow-y-auto ">
+      <div className="tg_data_container h-[330px] overflow-y-auto  ">
         <div className="h-full space-y-3 pr-1 sm:pr-2">
 
           {/* EMPTY STATE */}
@@ -82,13 +82,12 @@ function Tray_groups({
             </div>
           )}
 
-          
 
           {/* GROUP CARDS */}
           {trayGroupsData?.map((group) => (
             <div
               key={group.tray_group_id}
-              className="
+              className="tg_conb
                 bg-gradient-to-br from-[#E8F3ED] to-white
                 rounded-xl sm:rounded-2xl
                 shadow-md hover:shadow-lg

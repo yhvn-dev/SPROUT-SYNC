@@ -40,9 +40,10 @@ export function InstallButton() {
   return (
     <button
       onClick={handleInstall}
-      className="cursor-pointer flex fixed bottom-6 right-6 z-50 px-6 py-4 rounded-full bg-[var(--sancgb)] text-white"
+      className="cursor-pointer flex fixed bottom-6 right-6 z-50 px-6 py-4 rounded-full 
+      bg-[var(--sancgb)] hover:bg-[var(--sancgc)] text-white"
     >
-     <ArrowBigDown/> Install SproutSync
+     <ArrowBigDown className="mr-8"/> Install SproutSync
     </button>
   );
 }

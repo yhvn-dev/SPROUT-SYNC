@@ -94,7 +94,7 @@ const ManagePlants = ({ reloadTrayGroups, reloadTrays, reloadBatches }) => {
   
 
         {/* TABS */}
-        <div className="bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 sm:mb-6">
+        <nav className="manage_plants_nav bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 sm:mb-6">
           <div className="flex  sm:flex-row gap-2 p-2">
             {[
               { key: 'trayGroups', label: 'Tray Groups', icon:LayoutGrid  },
@@ -125,12 +125,12 @@ const ManagePlants = ({ reloadTrayGroups, reloadTrays, reloadBatches }) => {
               );
             })}
           </div>
-        </div>
+        </nav>
 
 
 
         {/* CONTENT */}
-        <div className="bg-white rounded-2xl h-[450px] sm:rounded-3xl shadow-sm border  border-gray-100 p-3 sm:p-6 mt-4">   
+        <div className="manage_plants_page_wrapper bg-white rounded-2xl h-[450px] sm:rounded-3xl shadow-sm border  border-gray-100 p-3 sm:p-6 mt-4">   
           {activeTab === 'trayGroups' && (
             <Tray_groups
               trayGroupsData={trayGroupsData}

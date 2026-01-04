@@ -87,7 +87,7 @@ export function Notif_Modal({ isOpen, onClose}) {
   if (!isOpen) return null;
   return (
     <aside className="absolute top-4 right-4">
-      <div className="bg-white rounded-2xl w-96 max-h-[80vh] shadow-lg overflow-y-auto flex flex-col">
+      <div className="notif_box bg-white rounded-2xl w-96 max-h-[80vh] shadow-lg overflow-y-auto flex flex-col">
 
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
@@ -117,7 +117,7 @@ export function Notif_Modal({ isOpen, onClose}) {
                 style={{ backgroundColor: bg }}
               >
                 <div className="mt-1">
-                  <Icon size={20} color={text} />
+                  <Icon size={20} className="clock_icon" color={text} />
                 </div>
                 <div className="flex-1">
                   <p
@@ -129,14 +129,14 @@ export function Notif_Modal({ isOpen, onClose}) {
                   </p>
                   
                   <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
-                    <Clock size={12} /> {new Date(notif.created_at).toLocaleString()}
+                    <Clock size={12} className="clock_icon" /> {new Date(notif.created_at).toLocaleString()}
                   </div>
                   
 
                 </div>
 
                 <button type="submit" onClick={() => handleDelete(notif)}className="rounded-full p-2 h-5 w-5 cursor-pointer mx-2">
-                  <Trash2 className="text-[var(--acc-darkc)]" size={16}/>
+                  <Trash2 className="delete_notif text-[var(--acc-darkc)]" size={16}/>
                   </button>
               </div>
             );

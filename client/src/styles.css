@@ -343,7 +343,7 @@ button{
 
 .form_box input:focus ~ label,
 .form_box input:not(:placeholder-shown) ~ label{
-    transform: translateY(-150%); font-size: var(--fns-default-down-0-6);
+    transform: translateY(-200%); font-size: var(--fns-default-down-0-6);
 }
 
 .succes_msg_pro{
@@ -361,16 +361,14 @@ select{
 }
 
 
-
-
 /* ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====  */
 .viewer_color{
-    @apply  bg-gray-200 rounded-[10px] px-[0.3rem] py-[0.3rem];
+    @apply  bg-gray-200 rounded-[10px] rounded-2xl px-[0.3rem] py-[0.3rem] text-xs;
 }
 .admin_color{
-    @apply  bg-[var(--color-warning-c)] rounded-[10px] px-[0.3rem] py-[0.3rem];
+    @apply  bg-[var(--color-warning-c)] rounded-2xl px-[0.3rem] py-[0.3rem] text-xs;
 }
 .owner_color{
-    @apply  bg-[var(--color-danger-c)] rounded-[10px] px-[0.3rem] py-[0.3rem];
+    @apply  bg-[var(--color-danger-c)] rounded-2xl px-[0.3rem] py-[0.3rem] text-xs;
 }
 

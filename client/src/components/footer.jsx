@@ -5,7 +5,7 @@ export function Footer() {
   
   
   return (
-    <footer className="bg-[#003333] text-white ">
+    <footer id="footer" className="bg-[#003333] text-white ">
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Main Footer Content */}
         <div className="grid md:grid-cols-4 gap-8 mb-8">
@@ -43,7 +43,7 @@ export function Footer() {
             <h3 className="text-[#b0e892] font-semibold mb-4">Quick Links</h3>
             <ul className="space-y-3">
               <li>
-                <a href="#" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors flex items-center gap-2 group">
+                <a href="#farm" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors flex items-center gap-2 group">
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                   About Us
                 </a>
@@ -54,20 +54,9 @@ export function Footer() {
                   Services
                 </a>
               </li>
+             
               <li>
-                <a href="#" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors flex items-center gap-2 group">
-                  <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  Projects
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors flex items-center gap-2 group">
-                  <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  Blog
-                </a>
-              </li>
-              <li>
-                <a href="#" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors flex items-center gap-2 group">
+                <a href="#footer" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors flex items-center gap-2 group">
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                   Contact
                 </a>

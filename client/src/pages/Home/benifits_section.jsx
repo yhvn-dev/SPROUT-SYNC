@@ -16,19 +16,19 @@ export function BenefitSection(){
           </div>
 
           <div className="grid md:grid-cols-3 gap-8">
-            <div className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-3xl p-8 shadow-lg">
+            <div className="benefits_containers bg-gradient-to-br from-[#E8F3ED] to-white rounded-3xl p-8 shadow-lg">
               <div className="text-6xl font-bold text-[#027c68] mb-4">30%</div>
               <h3 className="text-2xl font-bold text-[#003333] mb-3">Water Savings</h3>
               <p className="text-[#5A8F73]">Reduce water consumption through precise, need-based irrigation</p>
             </div>
 
-            <div className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-3xl p-8 shadow-lg">
+            <div className="benefits_containers  bg-gradient-to-br from-[#E8F3ED] to-white rounded-3xl p-8 shadow-lg">
               <div className="text-6xl font-bold text-[#027c68] mb-4">25%</div>
               <h3 className="text-2xl font-bold text-[#003333] mb-3">Yield Increase</h3>
               <p className="text-[#5A8F73]">Optimal growing conditions lead to healthier, more productive plants</p>
             </div>
 
-            <div className="bg-gradient-to-br from-[#E8F3ED] to-white rounded-3xl p-8 shadow-lg">
+            <div className="benefits_containers bg-gradient-to-br from-[#E8F3ED] to-white rounded-3xl p-8 shadow-lg">
               <div className="text-6xl font-bold text-[#027c68] mb-4">50%</div>
               <h3 className="text-2xl font-bold text-[#003333] mb-3">Time Saved</h3>
               <p className="text-[#5A8F73]">Automation reduces manual monitoring and irrigation tasks</p>

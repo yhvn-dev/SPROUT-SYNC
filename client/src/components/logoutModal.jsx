@@ -39,11 +39,13 @@ export function LogoutModal({isOpen,onClose}) {
       }
     }
 
+
+    
   return (
     <section className="center flex items-center justify-center h-full w-full absolute
-    top-0 left-0 bg-transparent-[20%]  backdrop-blur-[10px] z-[50]">
+    top-0 left-0 bg-transparent-[100%]  backdrop-blur-[10px] z-[50]">
 
-        <motion.div className="bg-[var(--main-whiteb)] p-4
+        <motion.div className="conb bg-[var(--main-whiteb)] p-4
          w-[450px] h-[250px] relative rounded-[10px] shadow-lg"  
          initial={{ scale: 0.9, opacity: 0 }}
          animate={{ scale: 1, opacity: 1 }}

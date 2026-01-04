@@ -7,7 +7,7 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
     <div className="w-full">
 
       {/* ================= DESKTOP TABLE VIEW ================= */}
-      <div className="hidden md:block overflow-x-auto">
+      <div className="conb hidden md:block overflow-x-auto ">
         <table className="w-full text-base">
           <thead>
             <tr>
@@ -23,7 +23,8 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
           <tbody className="userTbody">
             {users.map((u) => (
               <tr className="u_tr" key={u.user_id}>
-                <td className="u_td p-3">
+                
+                <td className="u_td">
                   <div className="flex items-center">
                     <div
                       className={`w-3 h-3 rounded-full mr-2 ${
@@ -36,30 +37,27 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
                   </div>
                 </td>
 
-                <td className="u_td p-3">
+                <td className="u_td">
                   <div className="flex items-center">
                     <img
                       src={u.profile_picture || Pfp}
                       alt="profile"
-                      className="h-12 w-12 object-cover rounded-full"
+                      className="h-10 w-10 object-cover rounded-full"
                     />
                     <p className="ml-3 truncate">{u.fullname}</p>
                   </div>
                 </td>
-
-                <td className="u_td p-3">{u.email}</td>
-                <td className="u_td p-3">{u.phone_number}</td>
-
-                <td className="u_td p-3">
+                <td className="u_td">{u.email}</td>
+                <td className="u_td">{u.phone_number}</td>
+                <td className="text-sm text-center ">
                   <p className={u.role === "admin" ? "admin_color" : "viewer_color"}>
                     {u.role}
                   </p>
                 </td>
 
-                <td className="p-3">
+                <td className="u_td">
                   <div className="flex items-center justify-center gap-2">
-                    <button
-                      onClick={() => {
+                    <button onClick={() => {
                         setSelectedUser(u);
                         setOpen(true);
                         setMode("update");
@@ -107,20 +105,20 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
       </div>
 
       {/* ================= MOBILE CARD VIEW (SCROLLABLE) ================= */}
-      <div className="md:hidden w-full">
+      <div className="conb md:hidden w-full">
         {/* SCROLL CONTAINER */}
-        <div className="max-h-[70vh]  pr-1">
+        <div className="conb max-h-[70vh]  pr-1">
           {users.map((u) => (
             <div
               key={u.user_id}
-              className="bg-white rounded-lg shadow-md p-4 mb-4"
-            >
+              className="conb bg-white rounded-lg shadow-md p-4 mb-4">
+
               {/* HEADER */}
               <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-200">
                 <img
                   src={u.profile_picture || Pfp}
                   alt="profile"
-                  className="h-16 w-16 object-cover rounded-full"
+                  className="h-10 w-10 object-cover rounded-full"
                 />
 
                 <div className="flex-1 min-w-0">

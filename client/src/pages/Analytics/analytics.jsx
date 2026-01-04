@@ -53,9 +53,8 @@ export default function Analytics() {
   return (
     <section
       className="
-      w-full
-      min-h-[120vh]        
-      md:min-h-screen    
+
+      con_main  w-full min-h-[120vh] md:min-h-screen    
       bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]
       grid
       grid-cols-1       
@@ -65,11 +64,9 @@ export default function Analytics() {
       gap-4
       overflow-hidden
       relative
-     "
->
+    ">
 
-
-      
+ 
     {/* MOBILE MENU BUTTON */}
     <button
         onClick={() => setSidebarOpen(true)}
@@ -106,7 +103,6 @@ export default function Analytics() {
         
       </aside>
 
-
       {/* HEADER */}
       <div className="row-start-1 row-end-1 col-start-1 md:col-start-2 md:col-span-full">
         <Db_Header setNotifOpen={setNotifOpen} />
@@ -114,23 +110,30 @@ export default function Analytics() {
 
 
       {/* NAVIGATION TABS */}
-      <nav className="row-start-2 row-end-2 col-start-1 col-end-3 md:col-start-2 border-b border-gray-200 py-3 flex flex-wrap items-center gap-2 px-4 md:px-0">
+      <nav className="analytics_nav row-start-2 row-end-2 col-start-1 col-end-3 md:col-start-2 border-b border-gray-200 py-3 flex flex-wrap items-center gap-2 px-4 md:px-0">
+          
+
         <button
           onClick={() => setActiveTab("Overview")}
-          className={`cursor-pointer px-4 md:px-6 py-1 md:py-2 text-xs md:text-sm font-medium rounded-lg transition-all ${
-            activeTab === "Overview"
-              ? "bg-white text-[#027c68] shadow-md"
-              : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
-          }`}
+          className={`
+            cursor-pointer px-4 py-1 rounded-lg transition-all
+            ${activeTab === "Overview" 
+              ? "active bg-white text-[#027c68] shadow-md dark:bg-[var(--metal-dark3)] dark:text-[#00ffe0] dark:shadow-md"
+              : " bg-white/50 text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark1)]"
+            }
+          `}
         >
           Overview
         </button>
+
+
+
 
         <button
           onClick={() => setActiveTab("Seedling Stats")}
           className={`cursor-pointer px-4 md:px-6 py-1 md:py-2 text-xs md:text-sm font-medium rounded-lg transition-all ${
             activeTab === "Seedling Stats"
-              ? "bg-white text-[#027c68] shadow-md"
+              ? "active bg-white text-[#027c68] shadow-md"
               : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
           }`}
         >

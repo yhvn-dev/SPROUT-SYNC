@@ -80,6 +80,7 @@ export function Sidebar({ user, setLogoutOpen }) {
         </NavLink>
 
 
+          {/* BATCH HISTORY */}
          <NavLink
           to="/batch_history"
           className={({ isActive }) =>

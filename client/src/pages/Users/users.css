@@ -117,9 +117,8 @@
     @apply rounded-[10px];
 }
 .u_td {
-   @apply p-8 text-[0.9rem] text-start break-words ;
+   @apply p-4 text-sm text-start break-words ;
 }
-
 
 .u_btn{
     @apply rounded-[8px] text-[0.9rem] text-[var(--acc-darkb)];

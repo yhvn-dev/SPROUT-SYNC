@@ -65,32 +65,44 @@ export function Dashboard() {
         <Db_Header setNotifOpen={setNotifOpen} />
       </div>
 
-      {/* TABS */}
-      <nav className="nursery_nav flex flex-wrap gap-2 px-4 md:px-0 md:col-start-2">
-        <button
-          onClick={() => setActiveTab("Overview")}
-          className={`cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2 text-xs md:text-sm rounded-lg
-            ${
-              activeTab === "Overview"
-                ? "bg-white text-[#027c68] shadow-md"
-                : "bg-white/50 text-[#5A8F73]"
-            }`}>
-          Overview
-        </button>
 
-        
-        <button
-          onClick={() => setActiveTab("Manage Plants")}
-          className={`nursery_nav cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2 text-xs md:text-sm rounded-lg
-            ${
-              activeTab === "Manage Plants"
-                ? "bg-white text-[#027c68] shadow-md"
-                : "bg-white/50 text-[#5A8F73]"
-            }`}>
+    {/* TABS */}
+    <nav className="nursery_nav flex flex-wrap gap-2 px-4 md:px-0 md:col-start-2">
+      <button
+        onClick={() => setActiveTab("Overview")}
+        className={`
+          cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
+          text-xs md:text-sm rounded-lg transition
+          ${activeTab === "Overview"
+            ? "bg-white text-[#027c68] shadow-md active"
+            : "bg-white/50 text-[#5A8F73]"
+          }
+        `}
+      >
+        Overview
+      </button>
 
-          Manage Plants
-        </button>
-      </nav>
+      <button
+        onClick={() => setActiveTab("Manage Plants")}
+        className={`
+          cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
+          text-xs md:text-sm rounded-lg transition
+          ${activeTab === "Manage Plants"
+            ? "bg-white text-[#027c68] shadow-md active"
+            : "bg-white/50 text-[#5A8F73]"
+          }
+        `}
+      >
+        Manage Plants
+      </button>
+    </nav>
+
+
+
+    
+
+
+
 
       {/* MAIN CONTENT */}
       <main

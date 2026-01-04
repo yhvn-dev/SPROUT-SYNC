@@ -5,12 +5,12 @@ export function Farm_Info_Section(){
     return(
         <>    
         {/* Farm Information Section */}
-        <section id="farm" className="py-24 bg-gradient-to-b from-[#E8F3ED] to-white">
+        <section id="farm" className="farm_info_section py-24 bg-gradient-to-b from-[#E8F3ED] to-white">
         <div className="max-w-7xl mx-auto px-6">
             <div className="grid md:grid-cols-2 gap-16 items-center">
             <div>
-                <div className="inline-block px-4 py-2 bg-white rounded-full mb-6 shadow-md">
-                <span className="text-[#027c68] font-semibold text-sm">Our Implementation</span>
+                <div className="our_implementation_container inline-block px-4 py-2 bg-white rounded-full mb-6 shadow-md">
+                <span className=" text-[#027c68] font-semibold text-sm">Our Implementation</span>
                 </div>
                 <h2 className="text-5xl md:text-6xl font-bold text-[#003333] mb-6">
                 FLOR and Daisy's Farm
@@ -21,7 +21,7 @@ export function Farm_Info_Section(){
                 
                 <div className="space-y-6">
                 <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-white shadow-lg flex items-center justify-center flex-shrink-0">
+                    <div className="farm_info_icons w-12 h-12 rounded-xl bg-white shadow-lg flex items-center justify-center flex-shrink-0">
                     <MapPin className="w-6 h-6 text-[#027c68]" />
                     </div>
                     <div>
@@ -31,7 +31,7 @@ export function Farm_Info_Section(){
                 </div>
 
                 <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-white shadow-lg flex items-center justify-center flex-shrink-0">
+                    <div className="farm_info_icons  w-12 h-12 rounded-xl bg-white shadow-lg flex items-center justify-center flex-shrink-0">
                     <Leaf className="w-6 h-6 text-[#027c68]" />
                     </div>
                     <div>
@@ -41,7 +41,7 @@ export function Farm_Info_Section(){
                 </div>
 
                 <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-xl bg-white shadow-lg flex items-center justify-center flex-shrink-0">
+                    <div className="farm_info_icons  w-12 h-12 rounded-xl bg-white shadow-lg flex items-center justify-center flex-shrink-0">
                     <TrendingUp className="w-6 h-6 text-[#027c68]" />
                     </div>
                     <div>
@@ -54,8 +54,8 @@ export function Farm_Info_Section(){
 
             <div className="relative">
                 <div className="rounded-3xl overflow-hidden shadow-2xl bg-gradient-to-br from-[#027c68] to-[#009983] p-8">
-                <div className="bg-white rounded-2xl p-8 text-center space-y-6">
-                    <div className="w-24 h-24 mx-auto bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] rounded-full flex items-center justify-center">
+                <div className="conb bg-white rounded-2xl p-8 text-center space-y-6">
+                    <div className="farm_info_icons  w-24 h-24 mx-auto bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] rounded-full flex items-center justify-center">
                     <Leaf className="w-12 h-12 text-[#027c68]" />
                     </div>
                   

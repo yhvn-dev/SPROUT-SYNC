@@ -129,14 +129,14 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
   return (
     <div
       onClick={onClose}
-      className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+      className="batch_modal fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
 
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        className="conb  bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* HEADER */}
-        <div className="px-6 py-4 border-b border-gray-200 bg-[#E8F3ED]">
+        <header className="pb_modal_header px-6 py-4 border-b border-gray-200 bg-[#E8F3ED]">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div 
@@ -171,13 +171,13 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
               <X className="w-4 h-4" />
             </button>
           </div>
-        </div>
+        </header>
         
         {/* CONTENT */}
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {batchModalMode === "delete" ? (
             <>
-              <div className="flex items-center gap-3 p-3  rounded-lg mb-4 bg-red-50">
+              <div className="pb_delete_modal flex items-center gap-3 p-3  rounded-lg mb-4 bg-red-50">
                 <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
                 <p className="text-sm text-red-800">
                   Are you sure you want to delete the batch for <strong>{selectedBatch.plant_name}</strong>? This action cannot be undone.
@@ -382,7 +382,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                   <button
                     onClick={handleSubmit}
                     type='submit'
-                    className="cursor-pointer px-4 py-2 text-sm rounded-lg font-medium transition-colors text-white bg-[#208b3a] hover:bg-[#155d27] shadow-lg"
+                    className="cursor-pointer px-4 py-2 text-sm rounded-lg font-medium transition-colors text-white bg-[var(--purpluish)] hover:bg-[var(--white-blple)] shadow-lg"
                   >
                     {batchModalMode === "insert" ? "Create Batch" : "Update Batch"}
                   </button>

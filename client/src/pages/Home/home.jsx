@@ -51,11 +51,14 @@ export function InstallButton() {
   return (
     <button
       onClick={handleInstall}
-      className="cursor-pointer flex fixed bottom-6 right-6 z-50 px-6 py-4 rounded-full bg-[var(--sancgb)] text-white">
-     <ArrowBigDown/> Install SproutSync
+      className="cursor-pointer hover:bg-[var(--sancgd)] flex fixed bottom-6 right-6 z-50 px-6 py-4 rounded-full 
+      bg-[var(--sancgb)] text-white">
+     <ArrowBigDown className='mr-4'/> Install SproutSync
     </button>
   );
 }
+
+
 
 function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -113,7 +116,7 @@ function Home() {
                 {mobileMenuOpen && (
                   <div className="md:hidden space-y-3">
                     <Link to="/login" className="block bg-[var(--sancgb)] text-[var(--sage-lighter)] rounded-2xl px-4 py-1 hover:text-[#027c68]">
-                      Get Started
+                      Login
                     </Link>
                     <a href="#features" className="block text-[#5A8F73] rounded-2xl px-4 py-1 hover:text-[#027c68]">
                       Features
@@ -130,21 +133,21 @@ function Home() {
             }
           />
 
-          
-
+        
           {/* Hero Section */}
-          <section className="relative min-h-screen flex flex-col md:flex-row items-center pt-4 overflow-hidden bg-white">
+          <section className="hero_section relative min-h-screen flex flex-col md:flex-row items-center pt-4 overflow-hidden bg-white">
             <div className="absolute inset-0 overflow-hidden">
-              <div className="absolute top-20 -left-20 w-72 h-72 md:w-96 md:h-96 bg-[#E8F3ED] rounded-full blur-3xl opacity-60 animate-pulse"></div>
-              <div className="absolute top-40 right-10 w-60 h-60 md:w-80 md:h-80 bg-[#C4DED0] rounded-full blur-3xl opacity-50 animate-pulse" style={{ animationDelay: '1s' }}></div>
-              <div className="absolute bottom-20 left-1/4 w-60 h-60 md:w-72 md:h-72 bg-[#b0e892]/30 rounded-full blur-3xl opacity-40 animate-pulse" style={{ animationDelay: '2s' }}></div>
+              <div className="gd_a absolute top-20 -left-20 w-72 h-72 md:w-96 md:h-96 bg-[#E8F3ED] rounded-full blur-3xl opacity-60 animate-pulse"></div>
+              <div className="gd_b absolute top-40 right-10 w-60 h-60 md:w-80 md:h-80 bg-[#C4DED0] rounded-full blur-3xl opacity-50 animate-pulse" style={{ animationDelay: '1s' }}></div>
+              <div className="gd_c absolute bottom-20 left-1/4 w-60 h-60 md:w-72 md:h-72 bg-[#b0e892]/30 rounded-full blur-3xl opacity-40 animate-pulse" style={{ animationDelay: '2s' }}></div>
             </div>
 
             <div className="max-w-7xl mx-auto px-6 py-16 relative z-10 w-full">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+
                 {/* Text Content */}
                 <div className="space-y-6 md:space-y-8">
-                  <div className="inline-block px-3 py-1 bg-[#E8F3ED] rounded-full text-center">
+                  <div className="smart_agriculture_solutions  inline-block px-3 py-1 bg-[#E8F3ED] rounded-full text-center">
                     <span className="text-[#027c68] font-semibold text-sm md:text-base">Smart Agriculture Solution</span>
                   </div>
 
@@ -159,10 +162,10 @@ function Home() {
                   </p>
 
                   <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
-                    <button className="px-4 py-2 bg-gradient-to-r from-[#027c68] to-[#009983] text-white rounded-2xl font-semibold text-lg hover:shadow-lg transition-all transform hover:-translate-y-1">
+                    <button className="cursor-pointer px-4 py-2 bg-gradient-to-r from-[#027c68] to-[#009983] text-white rounded-2xl font-semibold text-lg hover:shadow-lg transition-all transform hover:-translate-y-1">
                       Explore Dashboard
                     </button> 
-                    <button className="px-4 py-2 border-2 border-[#7BA591] text-[#003333] rounded-2xl font-semibold text-lg hover:bg-[#E8F3ED] transition-all">
+                    <button className="learn-more-button cursor-pointer px-4 py-2 border-2 border-[#7BA591] text-[#003333] rounded-2xl font-semibold text-lg hover:bg-[#E8F3ED] transition-all">
                       Learn More
                     </button>
                   </div>
@@ -185,34 +188,38 @@ function Home() {
                   </div>
                 </div>
 
+
+
+
+
                 {/* Visual Section */}
                 <div className="relative flex justify-center md:justify-end mt-8 md:mt-0">
-                  <div className="w-64 sm:w-80 md:w-96 lg:w-[24rem] h-auto bg-white rounded-3xl shadow-sm flex items-center justify-center relative">
+                  <div className="conb sw-64 p-4 sm:w-80 md:w-96 lg:w-[24rem] h-auto bg-white rounded-3xl shadow-sm flex items-center justify-center relative">
                     <div className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 bg-gradient-to-br from-[#027c68] to-[#009983] rounded-full flex items-center justify-center">
                       <Droplets className="w-12 h-12 sm:w-14 sm:h-14 text-white" />
                     </div>
 
                     {/* Floating Cards */}
-                    <div className="absolute -top-2 -right-2 bg-white rounded-2xl shadow-lg p-3 border border-[#E8F3ED] w-28 sm:w-32">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#E8F3ED] rounded-xl flex items-center justify-center">
+                    <div className="floating_card_a absolute -top-2 -right-2 bg-white rounded-2xl shadow-lg p-3 border border-[#E8F3ED] w-28 sm:w-32">
+                      <div className=" flex items-center gap-2">
+                        <div className="hero_icons_a w-8 h-8 sm:w-10 sm:h-10 my-4bg-[#E8F3ED] rounded-xl flex items-center justify-center">
                           <Droplets className="w-4 h-4 sm:w-6 sm:h-6 text-[#027c68]" />
                         </div>
                         <div>
-                          <div className="text-xs sm:text-sm text-[#5A8F73]">Moisture</div>
-                          <div className="text-lg sm:text-xl font-bold text-[#003333]">40 %</div>
+                          <p className="text-xs sm:text-sm text-[#5A8F73]">Moisture</p>
+                          <p className="text-lg sm:text-xl font-bold text-[#003333]">40 %</p>
                         </div>
                       </div>
                     </div>
 
-                    <div className="absolute -bottom-2 -left-2 bg-white rounded-2xl shadow-lg p-3 border border-[#E8F3ED] w-28 sm:w-32">
-                      <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 sm:w-10 sm:h-10 bg-[#E8F3ED] rounded-xl flex items-center justify-center">
+                    <div className="floating_card_b absolute -bottom-2 -left-2 bg-white rounded-2xl shadow-lg p-3 border border-[#E8F3ED] w-28 sm:w-32">
+                      <div className=" flex items-center gap-2">
+                        <div className="hero_icons_b w-8 h-8 sm:w-10 sm:h-10 bg-[#E8F3ED] rounded-xl flex items-center justify-center">
                           <Droplets className="w-4 h-4 sm:w-6 sm:h-6 text-[#027c68]" />
                         </div>
                         <div>
-                          <div className="text-xs sm:text-sm text-[#5A8F73]">Water Level</div>
-                          <div className="text-lg sm:text-xl font-bold text-[#003333]">65%</div>
+                          <p className="text-xs sm:text-sm text-[#5A8F73]">Water Level</p>
+                          <p className="text-lg sm:text-xl font-bold text-[#003333]">65%</p>
                         </div>
                       </div>
                     </div>
@@ -222,6 +229,7 @@ function Home() {
               </div>
             </div>
           </section>
+
 
           {/* Fixed Install Button - Bottom Right Corner */}
           <InstallButton/>

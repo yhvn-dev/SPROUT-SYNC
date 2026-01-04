@@ -49,12 +49,12 @@ function NurseryDashboard() {
   
   return (
     <main className="flex flex-col items-center justify-start h-full w-full col-start-2 col-end-4 row-start-3 row-end-3 rounded-[10px] overflow-hidden">
-      <div className="nursery_data_div  bg-gradient-to-br from-[#E8F3ED] to-white w-full overflow-hidden">
+      <div className="nursery_data_div con_a bg-gradient-to-br from-[#E8F3ED] to-white w-full overflow-hidden">
         {/* Main container: full width on mobile, max-width on desktop */}
         <div className="w-full max-w-full sm:max-w-7xl mx-auto space-y-4">
 
           {/* Header */}
-          <div className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100">
+          <div className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm ">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
                 <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">Nursery Dashboard</h1>
@@ -179,7 +179,7 @@ function NurseryDashboard() {
             
             {/* BATCHES */}
             <div className="space-y-4 w-full ">
-              <div className="conb  bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-gray-100 sticky top-4 w-full">
+              <div className="conb  bg-white rounded-3xl p-4 sm:p-6 shadow-sm  sticky top-4 w-full">
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#92e6a7] to-[#25a244] flex items-center justify-center">
                     <TrendingUp className="w-5 h-5 text-white" />

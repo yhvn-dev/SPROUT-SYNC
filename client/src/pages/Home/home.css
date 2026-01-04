@@ -85,8 +85,8 @@
     --dis-2-6:2.617rem;
     --dis-4-2:4.23rem;
     --dis-6-8:6.84rem;
-
 }
+
 
 @font-face {
     font-family: "Moonet";
@@ -103,7 +103,6 @@
             .links p{
                 font-size:var(--fns-down-1);
             }
-
         .links::after{
             position: absolute;
             content: '';

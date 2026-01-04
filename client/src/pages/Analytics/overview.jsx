@@ -15,7 +15,7 @@ import { useMemo } from "react";
 // =====================
 const StatCard = ({ label, value, gradient, color }) => (
   <div
-    className={`w-full h-full rounded-xl shadow-lg hover:shadow-xl transition-shadow
+    className={`stat_card w-full h-full rounded-xl shadow-lg hover:shadow-xl transition-shadow
     flex flex-col items-center justify-center p-3 bg-gradient-to-tr ${gradient}`}>
     <p className="text-xs text-gray-500">{label}</p>
     <h2 className="text-3xl font-bold" style={{ color }}>
@@ -112,10 +112,13 @@ export const Overview = ({ batchTotal, moistureReadingsLast24h, averageReadingsB
         />
       </div>
 
+
+
+
       {/* =====================
           MOISTURE LINE CHART
       ====================== */}
-      <div className="col-span-7 row-span-9 bg-white rounded-xl shadow-lg p-4 flex flex-col">
+      <div className="conb  col-span-7 row-span-9 bg-white rounded-xl shadow-lg p-4 flex flex-col">
         <h3 className="text-sm font-semibold text-gray-800 mb-2">
           Soil Moisture Trend (Last 24h)
         </h3>
@@ -139,16 +142,16 @@ export const Overview = ({ batchTotal, moistureReadingsLast24h, averageReadingsB
         </div>
       </div>
 
+
       {/* =====================
           WATER LEVEL GAUGE
       ====================== */}
-      <div className="col-span-5 row-span-9 bg-white rounded-xl shadow-sm flex items-center justify-center p-6">
+      <div className="conb col-span-5 row-span-9 bg-white rounded-xl shadow-sm flex items-center justify-center p-6">
         <div className="flex flex-col items-center">
           <div className="relative w-40 h-40">
             <svg
               className="w-full h-full transform -rotate-90"
-              viewBox="0 0 100 100"
-            >
+              viewBox="0 0 100 100">
               <circle
                 cx="50"
                 cy="50"

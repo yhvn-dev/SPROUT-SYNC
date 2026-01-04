@@ -2,7 +2,6 @@ import { AlertCircle } from 'lucide-react'
 import * as plantBatchHistory from "../../data/plantBatchesHistory"
 
 export function Batch_History_Modal({isModalOpen,onClose,selectedBatch,reloadBatchHistory}) {
-
   if(!isModalOpen) return null
 
   const handleSubmit = async (e) =>{
@@ -20,8 +19,13 @@ export function Batch_History_Modal({isModalOpen,onClose,selectedBatch,reloadBat
   return (
     <>
      <section className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <form onSubmit={handleSubmit} className="flex items-center justify-between bg-white flex-col p-6 overflow-y-auto h-[200px] rounded-2xl">
-            <div className="flex items-center gap-3 p-3 mt-4  rounded-lg  bg-red-50">
+        <form onSubmit={handleSubmit} className="conb flex items-center justify-between bg-white flex-col p-6 overflow-y-auto h-auto rounded-2xl">
+
+            <div className="flex items-start justify-start w-full">
+                 <p className='text-2xl'>Delete Batch History</p>     
+            </div>
+           
+            <div className="pbh_modal_messsage flex items-center justify-start  gap-3 p-3 my-4  rounded-lg  bg-red-50">
                 <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
                 <p className="text-sm text-red-800">
                     Are you sure you want to delete {selectedBatch.plant_name} Batch this action cannot be undone.
@@ -41,6 +45,8 @@ export function Batch_History_Modal({isModalOpen,onClose,selectedBatch,reloadBat
         </form>
     </section>
     </>
+
+
   )
 }
 

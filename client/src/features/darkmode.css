@@ -125,6 +125,7 @@ body.dark::-webkit-scrollbar-thumb {
 
 
 
+
 /* HEADER  */
 body.dark {
     @apply bg-[var(--metal-dark1)] text-[var(--main-white)];
@@ -182,25 +183,39 @@ body.dark .moonstar {
 body.dark .db_header p {
     @apply text-[var(--main-white)];
 }
+
+
+
+/* DASHBOARD ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== */
 body.dark .navs-btn {
     @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
 }
+    body.dark .con_main{
+            background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark5));
+        }
+        /* DARK MODE – default (inactive tab) */
+        body.dark .nursery_nav button {
+            @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
+            box-shadow: none;
+        }
+        /* DARK MODE – ACTIVE tab */
+        body.dark .nursery_nav button.active {
+            @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
+            box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
+        }
 
 
 
 
 
-/* DASHBOARD */
-body.dark .con_main {
     
-}
-    body.dark .nursery_nav button{
-        @apply bg-[var(--metal-dark1)];
-        box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
-    }
         body.dark .conb{
             @apply bg-[var(--metal-dark3)];
+            box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
         }
+
+    
+        
         body.dark .conb p{
             @apply text-[var(--main-white)];
         }
@@ -210,22 +225,18 @@ body.dark .con_main {
         body.dark .nursery_data_div{
             background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
         }
-        body.dark .con_main{
-            background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
-        }
+    
 
-        
-/* Dark mode hover */
 body.dark .tray_group_div:hover {
   @apply bg-[var(--metal-dark1)];
 }
-body.dark .main_tray_group_div{
-    box-shadow: 2px 3px 2px 1px var(--shad-dark-b);
-}
-body.dark .dropdown_nursery{
- @apply bg-[var(--metal-dark1)];
- box-shadow: 2px 3px 2px 1px var(--shad-dark-b);
-}
+    body.dark .main_tray_group_div{
+        box-shadow: 2px 3px 2px 1px var(--shad-dark-b);
+    }
+        body.dark .dropdown_nursery{
+        @apply bg-[var(--metal-dark1)];
+        box-shadow: 2px 3px 2px 1px var(--shad-dark-b);
+        }
 
 
 
@@ -259,6 +270,547 @@ body.dark .batch_div {
     body.dark .batch_scroll_div::-webkit-scrollbar {
         @apply bg-[var(--metal-dark1)]
     }
-     body.dark .batch_scroll_div::-webkit-scrollbar-thumb {
+    body.dark .batch_scroll_div::-webkit-scrollbar-thumb {
         @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
     }
+
+
+
+
+
+
+/* MANAGE PLANTS ============================== ============================================= =====*/
+body.dark .manage_plants_page_wrapper{
+      @apply bg-[var(--metal-dark1)] border-0;
+}
+body.dark .manage_plants_nav{
+     @apply bg-[var(--metal-dark1)] border-0;
+}
+body.dark .manage_plants_nav button{
+     @apply text-[var(--main-white)];
+}
+body.dark .manage_plants_nav button{
+     @apply text-[var(--main-white)];
+}
+
+    /* Tray groups */
+    body.dark .tg_conb {
+        background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
+        box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
+        border:0px solid;
+    }    
+        body.dark .tg_data_container::-webkit-scrollbar{
+            @apply bg-[var(--metal-dark1)];
+        }
+          body.dark .tg_data_container::-webkit-scrollbar-thumb {
+            @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+         }
+
+        
+         
+        
+        /* TRAYS */
+    body.dark .trays_conb {
+        background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
+        box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
+        border:0px solid;
+    }
+     body.dark .trays_data_container::-webkit-scrollbar{
+            @apply bg-[var(--metal-dark1)];
+        }
+          body.dark .trays_data_container::-webkit-scrollbar-thumb {
+            @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+         }
+
+    
+    /* Available */
+    .status-available {
+        background: #dcfce7;
+        color: var(--color-success-a);
+    }
+    /* Occupied */
+    .status-occupied {
+        background: var(--color-warning-c);
+        color: #f97316;
+    }
+
+    /* Maintenance */
+    .status-maintenance {
+    background: var(--color-warning-b);
+    color: #f97316;
+    }
+
+    /* Disabled */
+    .status-disabled {
+    background: #fee2e2;
+    color: var(--acc-darkc);
+    }
+
+     body.dark .status-data {
+         background: transparent;
+    }
+
+        /* Available */
+        body.dark .status-available {
+        color: #4ade80;
+        border-color: #4ade80;
+        }
+        /* Occupied */
+        body.dark .status-occupied {
+        color: #fb923c;
+        border-color: #fb923c;
+        }
+        /* Maintenance */
+        body.dark .status-maintenance {
+        color: #facc15;
+        border-color: #facc15;
+        }
+
+        /* Disabled */
+        body.dark .status-disabled {
+        color: #f87171;
+        border-color: #f87171;
+        }
+
+
+
+body.dark .pb_con{
+    background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
+    box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
+    border:0px solid;
+}
+
+  body.dark .pb_data_container::-webkit-scrollbar{
+            @apply bg-[var(--metal-dark1)];
+        }
+          body.dark .pb_data_container::-webkit-scrollbar-thumb {
+            @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+         }
+
+         
+    body.dark .pb_name_div {
+        background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
+        box-shadow: 5px 5px 5px 1px var(--shad-dark-e);
+        border:0px solid;
+    }
+
+    body.dark .total_seedlings_div{
+    @apply bg-[var(--metal-dark2)];
+    }
+
+    body.dark .alive_seeedlings_div{
+        @apply bg-[var(--metal-dark2)];
+    }
+
+    body.dark .fully_grown_seeedlings_div{
+        @apply bg-[var(--metal-dark2)];
+    }
+
+    body.dark .dead_seeedlings_div{
+        @apply bg-[var(--metal-dark2)];
+    }
+    body.dark .replanted_seeedlings_div{
+        @apply bg-[var(--metal-dark2)];
+    }
+
+
+
+
+
+/* USERS ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== */
+body.dark .user_table_div::-webkit-scrollbar{
+    @apply bg-[var(--metal-dark1)];
+}
+    /* DARK MODE – default (inactive tab) */
+    body.dark .users_nav button {
+        @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
+        box-shadow: none;
+    }
+    /* DARK MODE – ACTIVE tab */
+    body.dark .users_nav button.active {
+        @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
+        box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
+    }
+     /* DARK MODE – default (inactive tab) */
+    body.dark button {       
+        box-shadow: none;
+    }
+    
+
+    body.dark .user_table_div::-webkit-scrollbar-thumb{
+        @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+    }
+    body.dark .error-txt{
+       @apply bg-[var(--metal-dark3)] text-red-400;
+    }
+
+
+
+
+
+/* ANALYTICS PAGE */
+
+
+
+    /* DARK MODE – default (inactive tab) */
+    body.dark .analytics_nav button {
+        @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
+        box-shadow: none;
+    }
+    /* DARK MODE – ACTIVE tab */
+    body.dark .analytics_nav button.active {
+        @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
+        box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
+    }
+        body.dark .stat_card {
+            @apply  bg-gradient-to-tr  
+            from-[var(--metal-dark3)] 
+            via-[var(--metal-dark1)] 
+            to-[var(--metal-dark3)];
+            box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
+        }
+
+
+
+
+/* DARK MODE */
+body.dark .admin_color {
+  @apply bg-transparent border-[1px] border-[var(--acc-darkc)];
+}
+body.dark .viewer_color {
+  @apply bg-transparent border-[1px] border-[var(--color-warning)];
+}
+body.dark .owner_color {
+  @apply bg-transparent border-[1px] border-[var(--color-danger-c)];
+}
+
+
+
+
+
+
+/* ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====  */
+.viewer_color{
+    @apply  bg-transparent rounded-[10px] px-[0.3rem] py-[0.3rem];
+}
+.admin_color{
+    @apply  bg-[var(--color-warning-c)] rounded-[10px] px-[0.3rem] py-[0.3rem];
+}
+.owner_color{
+    @apply  bg-[var(--color-danger-c)] rounded-[10px] px-[0.3rem] py-[0.3rem];
+}
+
+
+/* BATCH HISTORY */
+body.dark .batch_history_table tr:nth-child(odd){
+    @apply bg-[var(--metal-dark1)];
+}
+body.dark .batch_history_table tr:nth-child(even){
+    @apply bg-[var(--metal-dark3)];
+}   
+
+    body.dark .date_planted_data{
+        @apply text-[var(--main-white)];
+    }
+    body.dark select{
+        @apply bg-[var(--metal-dark3)];
+    }
+    body.dark .pbh_modal_messsage{
+         @apply bg-[var(--metal-dark3)];
+    }
+    body.dark .fully_grown_seedlings_data {
+        @apply bg-transparent border-[1px] border-[var(--sancgb)];
+    }
+    body.dark .dead_seedlings_data {
+        @apply bg-transparent border-[1px] border-[var(--color-danger-b)];
+    }
+    body.dark .replanted_seedlings_data {
+        @apply bg-transparent border-[1px] border-[var(--color-warning)];
+    }
+    
+
+
+
+
+
+
+/* MODALS */
+body.dark .btn_box{
+     @apply text-[var(--metal-dark5)];
+}
+    body.dark .user_modal label{
+         @apply bg-[var(--metal-dark1)];
+    }
+
+
+    body.dark .user_modal select{
+        @apply bg-[var(--metal-dark1)];
+        box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
+    }
+    body.dark .user_modal .upload_profile_button{
+        @apply bg-[var(--metal-dark1)];
+        box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
+    }
+
+    body.dark .user_modal button{
+        box-shadow: none;
+    }   
+
+
+
+
+     /* batch modal  */
+      body.dark .pb_modal_header {
+            @apply  bg-gradient-to-tr  
+            from-[var(--metal-dark3)] 
+            via-[var(--metal-dark1)] 
+            to-[var(--metal-dark3)];
+           
+            border:none;
+        }
+        
+        body.dark .batch_modal label{
+            @apply text-[var(--main-white-b)];
+        }
+        body.dark .batch_modal button{
+            @apply text-[var(--main-white-b)];
+        }
+         body.dark select{
+            @apply text-[var(--main-white-b)];
+        }
+            body.dark option{
+                @apply bg-[var(--metal-dark3)]; 
+            }
+                body.dark .pb_delete_modal {
+                     @apply bg-[var(--metal-dark3)]; 
+                }
+
+
+
+    /* tray modal */
+    body.dark .tray_modal_header {
+        @apply  bg-gradient-to-tr  
+            from-[var(--metal-dark3)] 
+            via-[var(--metal-dark1)] 
+            to-[var(--metal-dark3)];
+            
+            border:none;
+    }
+        body.dark .tray_modal select{
+         @apply bg-[var(--metal-dark3)]
+        }
+           body.dark .tray_modal input{
+         @apply bg-[var(--metal-dark3)]
+        }
+
+
+
+body.dark .succMsg{
+    @apply bg-transparent border-[1px] border-[var(--sancgb)]; 
+}
+/* FRONT PAGE */
+
+body.dark .hero{
+    @apply bg-[var(--metal-dark1)];
+}
+
+    body.dark .hero_section{
+        @apply  from-[var(--metal-dark2)] 
+         via-[var(--metal-dark3)]
+        to-[var(--metal-dark3)];
+    }
+        body.dark .smart_agriculture_solutions{
+             @apply text-[var(--main-white)]  bg-[var(--metal-dark2)];
+             
+        }
+        body.dark .hero_section p{
+            @apply text-[var(--main-white)];
+        }
+          body.dark .hero_section h1 {
+            @apply text-[var(--main-white)];
+        }
+        body.dark .learn-more-button{
+            @apply text-[var(--main-white)];
+        }
+            body.dark .learn-more-button:hover{
+              @apply bg-[var(--metal-dark2)];
+        }
+
+    body.dark .farm_info_section{
+        @apply  bg-gradient-to-tr  
+            from-[var(--metal-dark3)] 
+            via-[var(--metal-dark1)] 
+            to-[var(--metal-dark3)];
+        }
+
+
+
+
+    /* features */
+    body.dark .feature_section{
+         @apply bg-gradient-to-b 
+         from-[var(--metal-dark2)] 
+         via-[var(--metal-dark3)]
+        to-[var(--metal-dark3)];
+    }
+
+        body.dark .feature_sect_icon {
+            @apply bg-gradient-to-tr 
+            from-[var(--metal-dark2)] 
+            via-[var(--metal-dark3)]
+            to-[var(--sancga)];
+            box-shadow:4px 4px 5px 1px var(--shad-dark); 
+        }
+        body.dark .gd_a{
+            @apply bg-[var(--sancga)];
+        }
+        body.dark .gd_b{
+            @apply bg-[var(--sancga)];
+        }
+        body.dark .gd_c{
+            @apply bg-[var(--metal-dark2)];
+        }
+            /* features */
+            body.dark .feature_section{
+                @apply bg-gradient-to-b 
+                from-[var(--metal-dark2)] 
+                via-[var(--metal-dark3)]
+                to-[var(--metal-dark3)];
+            }
+
+
+    body.dark .benefits_containers{
+             @apply bg-gradient-to-tr 
+                from-[var(--metal-dark5)] 
+                via-[var(--metal-dark3)]
+                to-[var(--metal-dark3)];
+            box-shadow:4px 4px 5px 1px var(--shad-dark); 
+    }
+
+
+    body.dark .notif_box{
+        @apply bg-[var(--metal-dark2)];
+    }
+
+     body.dark .notif_box{
+        @apply bg-[var(--metal-dark1)];
+    }
+
+      body.dark .notif_box .delete_notif{
+        @apply stroke-[var(--color-danger-a)] border-[1px] border-gray-100 rounded-full;
+    }
+    
+      body.dark .notif_box .clock_icon{
+        @apply stroke-[var(--metal-dark5)] border-[1px] border-gray-100 rounded-full;
+    }
+
+
+
+/* LOGIN FORM */
+body.dark .login_form{
+    @apply bg-[var(--metal-dark1)];
+    box-shadow:4px 4px 5px 1px var(--shad-dark); 
+}
+body.dark .login_form label{
+    @apply bg-[var(--metal-dark1)];
+}
+
+
+
+
+
+
+
+
+body.dark .browser_window_main_container{
+  @apply bg-[var(--metal-dark3)];
+   box-shadow:5px 5px 5px 1px var(--shad-dark); 
+}
+
+
+    body.dark .mockup_traygroup_div{
+          @apply bg-[var(--metal-dark3)];
+              box-shadow:5px 5px 5px 1px var(--shad-dark); 
+        
+    }
+
+    body.dark .mockup_db_pb_header:hover{
+       @apply bg-gradient-to-tr 
+        from-[var(--metal-dark5)] 
+        via-[var(--metal-dark3)]
+        to-[var(--metal-dark3)];
+        
+    }   
+        body.dark .mockup_db_tray_div {
+            @apply bg-[var(--metal-dark3)];
+            box-shadow:5px 5px 5px 1px var(--shad-dark); 
+        }
+        body.dark .mockup_db_sensor_div {
+            @apply bg-[var(--sancga)];
+        }
+            body.dark .mockup_db_sensor_div span{
+            @apply bg-transparent border-[1px];
+        }
+
+    body.dark .plant_batch_div {
+          @apply bg-[var(--metal-dark1)];
+          box-shadow:5px 5px 5px 1px var(--shad-dark); 
+    }   
+
+       body.dark .plant_batch_div {
+          @apply bg-[var(--metal-dark1)];
+          box-shadow:5px 5px 5px 1px var(--shad-dark); 
+    }
+
+
+
+    /* db mockup home */
+    body.dark .mockup_dashboard_sidebar{
+        @apply bg-[var(--metal-dark5)];
+        border:none;
+        box-shadow:5px 5px 5px 1px var(--shad-dark); 
+    }
+
+    body.dark .our_implementation_container{
+            @apply bg-[var(--metal-dark2)];
+    }
+        body.dark .sidebar_item_div:hover{
+            @apply bg-[var(--sancga)];
+        }
+    
+    body.dark .farm_info_icons{
+            @apply bg-gradient-to-tr 
+        from-[var(--metal-dark2)] 
+        via-[var(--metal-dark3)]
+        to-[var(--sancga)];
+        box-shadow:4px 4px 5px 1px var(--shad-dark); 
+    }
+
+
+    body.dark .hero_icons_a{
+         @apply bg-gradient-to-tr 
+            from-[var(--metal-dark2)] 
+            via-[var(--metal-dark3)]
+            to-[var(--sancgc)];
+    }
+    body.dark .hero_icons_b{
+         @apply bg-gradient-to-tr 
+            from-[var(--metal-dark2)] 
+            via-[var(--metal-dark3)]
+            to-[var(--purpluish)];
+    }
+    body.dark .floating_card_a{
+            @apply bg-[var(--metal-dark2)];
+        border:none;
+    }
+        body.dark .floating_card_a p{
+            @apply  text-[var(--main-white--)];
+        }
+
+    body.dark .floating_card_b{
+    @apply bg-[var(--metal-dark2)];
+    border:none;
+    }
+        body.dark .floating_card_b p{
+            @apply  text-[var(--main-white--)];
+        }

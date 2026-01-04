@@ -8,7 +8,7 @@ export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef
 
   return (  
 
-    <form onSubmit={handleSubmit} className="h-[80%] w-[90%] md:w-[35%]  bg-[var(--main-whiteb)] rounded-[10px] shadow-xl">
+    <form onSubmit={handleSubmit} className="login_form h-[80%] w-[90%] md:w-[35%]  bg-[var(--main-whiteb)] rounded-[10px] shadow-xl">
 
         {/* right */}                            
         <div className="flex items-center flex-col h-[20%] w-full ">
@@ -79,7 +79,7 @@ export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef
 
 
             <ol className="center flex mt-4">
-                {errorMsg.password && <p className=" bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm">{errorMsg.password}</p>} 
+                {errorMsg.password && <p className="error-txt bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm">{errorMsg.password}</p>} 
             </ol>
         
             
@@ -88,8 +88,8 @@ export function Form({handleSubmit,errorMsg,successMsg,loginInputRef,passwordRef
             </div>
 
             <ol className="successMsgBox mt-4">
-                {errorMsg.server && <p className="justify-start text-sm bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg">{errorMsg.server}</p>}
-                {errorMsg.message && <p className="justify-start text-sm bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg">{errorMsg.message}</p>}
+                {errorMsg.server && <p className="error-txt justify-start text-sm bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg">{errorMsg.server}</p>}
+                {errorMsg.message && <p className="error-txt justify-start text-sm bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg">{errorMsg.message}</p>}
                 {successMsg && <p className="formMsg succMsg text-sm  bg-green-50 border-1 border-green-200 px-4 py-1 rounded-lg">{successMsg}</p>}
             </ol>            
         </ul>

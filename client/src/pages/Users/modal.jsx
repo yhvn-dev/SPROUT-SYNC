@@ -95,7 +95,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
         bg-transparent-[20%] backdrop-blur-[10px] top-0 left-0 absolute transition-opacity duration-300
         ease-out ${isOpen ? "opacity-100" : "opacity-0"}`}>
 
-            <motion.div className={`p-4 ${mode === "delete" ? "w-[500px]" && "h-[200px]" : "w-[700px]"} flex flex-col items-center justify-center 
+            <motion.div className={`user_modal conb p-4 ${mode === "delete" ? "w-[500px]" && "h-[200px]" : "w-[700px]"} flex flex-col items-center justify-center 
             rounded-[10px] border-[var(-acc-darkc)] relative bg-white modals z-2 shadow-lg`} 
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
@@ -237,7 +237,7 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                         <img src={preview || Pfp} className='border-[3px]  
                         border-[var(--pal2-whiteb)] rounded-full profile-img 
                         max-w-[10rem] max-h-[10rem] h-[8rem] w-[8rem]' alt={Pfp} width={200}/>                             
-                          <input type="file" className="cursor-pointer  shadow-lg bg-[var(--pal2-whiteb)] my-4 center px-10 py-1 text-sm" name="profile_picture"
+                          <input type="file" className="upload_profile_button cursor-pointer  shadow-lg bg-[var(--pal2-whiteb)] my-4 center px-10 py-1 text-sm" name="profile_picture"
                           onChange={handleFileChanges}/>                                          
                       </ul>
                   
@@ -271,10 +271,10 @@ export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,se
                         {/* FORM MSG BOX */}
                         <div className="flex items-center justify-around h-[2rem]  w-full">
                           {errors.status && !status && (
-                            <p className='error-nav-txt'>{errors.status}</p>
+                            <p className='.error-txt text-sm text-[var(--color-danger-a)]'>{errors.status}</p>
                           )}
                           {errors.role && !role && (
-                            <p className="error-nav-txt">{errors.role}</p>                             
+                            <p className=".error-txt text-sm text-[var(--color-danger-a)]">{errors.role}</p>                             
                           )}       
                         </div>       
                       </section>

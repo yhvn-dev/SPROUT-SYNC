@@ -67,14 +67,15 @@
 
     return (
 
-    <section className="users grid grid-cols-1 sm:grid-cols-[12fr_30fr_58fr] 
+
+    <section className="con_main users grid grid-cols-1 sm:grid-cols-[12fr_30fr_58fr] 
       grid-rows-[8vh_10vh_200vh] md:grid-rows-[8vh_10vh_82vh] gap-4 h-[100vh] w-full overflow-x-hidden overflow-y-auto  md:overflow-hidden 
       relative bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
 
         {/* ================= MOBILE MENU BUTTON ================= */}
         <button
           onClick={() => setSidebarOpen(true)}
-          className="md:hidden fixed top-4 left-4 z-50 bg-white p-2.5 rounded-lg shadow-lg"
+          className="conb md:hidden fixed top-4 left-4 z-50 bg-white p-2.5 rounded-lg shadow-lg"
         >
           <Menu size={22} className="text-[var(--acc-darkb)]" />
         </button>
@@ -115,37 +116,43 @@
           />
         </div>
     
-
         {/* ================= TAB NAVIGATION ================= */}
-        <div className='flex col-start-1 col-span-full md:col-start-2  row-start-2 row-end-2 my-4 '>
-         <button
-          onClick={() => setActiveTab("Overview")}
-          className={`
-            cursor-pointer
-            flex-1 md:flex-none
-            ${activeTab === "Overview"
-              ? "bg-white text-[#027c68] shadow-md"
-              : "bg-white/50 text-[#5A8F73] hover:bg-white/70"}
-            mr-2 px-6 py-2 text-sm rounded-lg transition-all duration-200
-          `}
-        >
-          Overview
-        </button>
+        <nav className='users_nav flex col-start-1 col-span-full md:col-start-2 row-start-2 row-end-2 my-4'>
+          <button
+            onClick={() => setActiveTab("Overview")}
+            className={`
+              cursor-pointer flex-1 md:flex-none
+              px-6 py-2 text-sm rounded-lg transition-all duration-200
+              mr-2
+              ${
+                activeTab === "Overview"
+                  ? "bg-white text-[#027c68] shadow-md active"  // ← add active class here
+                  : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
+              }
+            `}
+          >
+            Overview
+          </button>
 
-        <button
-          onClick={() => setActiveTab("User Insights")}
-          className={`
-            cursor-pointer
-            flex-1 md:flex-none
-            ${activeTab === "User Insights"
-              ? "bg-white text-[#027c68] shadow-md"
-              : "bg-white/50 text-[#5A8F73] hover:bg-white/70"}
-            ml-2 px-6 py-2 text-sm rounded-lg transition-all duration-200
-          `}
-        >
-          User Insights
-        </button>
-        </div>
+          <button
+            onClick={() => setActiveTab("User Insights")}
+            className={`
+              cursor-pointer flex-1 md:flex-none
+              px-6 py-2 text-sm rounded-lg transition-all duration-200
+              ml-2
+              ${
+                activeTab === "User Insights"
+                  ? "bg-white text-[#027c68] shadow-md active" // ← add active class here
+                  : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
+              }
+            `}
+          >
+            User Insights
+          </button>
+        </nav>
+
+
+
 
         {/* ================= MAIN CONTENT ================= */}
         <main className='w-full h-full 

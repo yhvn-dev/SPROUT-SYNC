@@ -52,7 +52,7 @@ function Trays({
 
 
       {/* TRAYS LIST */}
-      <div className="h-[330px] overflow-y-auto space-y-3">
+      <div className="trays_data_container h-[330px] overflow-y-auto space-y-3">
 
         {/* EMPTY STATE */}
         {traysData.length === 0 && (
@@ -69,7 +69,7 @@ function Trays({
         {traysData?.map((tray) => (
           <div
             key={tray.tray_id}
-            className="
+            className="trays_conb
               bg-gradient-to-br from-[#E8F3ED] to-white
               rounded-2xl shadow-md p-5
               border border-gray-100
@@ -103,26 +103,30 @@ function Trays({
                   </div>
                 </div>
 
+
+
                 {/* STATUS */}
                 <div className="flex items-center gap-6 mt-3 text-xs sm:text-sm">
                   <div className="flex items-center gap-2">
-                    <span className="text-gray-500 uppercase tracking-wide">
+                    <span className=" text-gray-500 uppercase tracking-wide">
                       Status:
-                    </span>
-
+                    </span>                  
                     <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium
-                        ${tray.status === "Available" && "bg-green-100 text-[var(--color-success-a)]"}
-                        ${tray.status === "Occupied" && "bg-[var(--color-warning-c)] text-orange-500"}
-                        ${tray.status === "Maintenance" && "bg-[var(--color-warning-b)] text-orange-500"}
-                        ${tray.status === "Disabled" && "bg-red-100 text-[var(--acc-darkc)]"}
+                      className={`status-data text-xs py-1 px-2 rounded-2xl border-[1px]
+                        ${tray.status === "Available" && "status-available"}
+                        ${tray.status === "Occupied" && "status-occupied"}
+                        ${tray.status === "Maintenance" && "status-maintenance"}
+                        ${tray.status === "Disabled" && "status-disabled"}
                       `}
                     >
                       {tray.status || "Unknown"}
-                    </span>
+                    </span>                
                   </div>
                 </div>
+
+                
               </div>
+
 
               {/* ACTION BUTTONS (RESPONSIVE) */}
               <div
