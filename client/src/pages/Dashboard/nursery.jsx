@@ -47,6 +47,7 @@ function NurseryDashboard() {
 
 
   
+  
   return (
     <main className="flex flex-col items-center justify-start h-full w-full col-start-2 col-end-4 row-start-3 row-end-3 rounded-[10px] ">
       <div className="nursery_data_div con_a bg-gradient-to-br from-[#E8F3ED] to-white w-full overflow-hidden">
@@ -246,9 +247,11 @@ function NurseryDashboard() {
           </div>
         </div>
       </div>
-    </main>
-    
+    </main>    
   );
 }
+
+
+
 
 export default NurseryDashboard;
