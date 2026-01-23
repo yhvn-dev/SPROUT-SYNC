@@ -34,6 +34,16 @@ PlantSensor sensors[3] = {
   {34, 3, "Mustasa", 2800, 1700, 23, 45, 85}
 };
 
+// ===== FUNCTION: CONVERT TO PERCENTAGE =====
+int moistureToPercentage(PlantSensor sensor) {
+  int range = sensor.moistureMax - sensor.moistureMin;
+  if (range == 0) return 0; // avoid division by zero
+  int percentage = (sensor.moisture - sensor.moistureMin) * 100 / range;
+  if (percentage < 0) percentage = 0;
+  if (percentage > 100) percentage = 100;
+  return percentage;
+}
+
 // ===== FUNCTION: SEND SENSOR VALUE TO API =====
 void sendSensorReading(PlantSensor sensor) {
   if (WiFi.status() == WL_CONNECTED) {
@@ -41,9 +51,11 @@ void sendSensorReading(PlantSensor sensor) {
     http.begin(apiUrl);
     http.addHeader("Content-Type", "application/json");
 
+    int percentage = moistureToPercentage(sensor);
+
     String payload = "{ \"sensor_id\": " + String(sensor.id) + 
                      ", \"sensor_name\": \"" + String(sensor.name) + "\"" +
-                     ", \"value\": " + String(sensor.moisture) + " }";
+                     ", \"value\": " + String(percentage) + " }";
 
     int httpResponseCode = http.POST(payload);
 
@@ -115,10 +127,6 @@ void setup() {
 unsigned long lastSend = 0;
 const unsigned long sendInterval = 5000; // 5 seconds
 
-
-
-
-
 void loop() {
   webSocket.loop(); // REQUIRED
 
@@ -129,8 +137,11 @@ void loop() {
       // Update sensor reading (simulate)
       sensors[i].moisture = random(sensors[i].moistureMin, sensors[i].moistureMax + 1);
 
+      // Convert to percentage
+      int moisturePercent = moistureToPercentage(sensors[i]);
+
       // Print to Serial
-      Serial.printf("%s: %d\n", sensors[i].name, sensors[i].moisture);
+      Serial.printf("%s: %d%%\n", sensors[i].name, moisturePercent);
 
       // Send to API
       sendSensorReading(sensors[i]);
@@ -139,12 +150,10 @@ void loop() {
       if (webSocket.isConnected()) {
         String wsPayload = "{ \"sensor_id\": " + String(sensors[i].id) +
                            ", \"sensor_name\": \"" + String(sensors[i].name) + "\"" +
-                           ", \"value\": " + String(sensors[i].moisture) + " }";
+                           ", \"value\": " + String(moisturePercent) + " }";
         webSocket.sendTXT(wsPayload);
       }
     }
     lastSend = millis();
   }
-  
-
 }
