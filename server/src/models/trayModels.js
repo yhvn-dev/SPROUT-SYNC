@@ -24,8 +24,6 @@ export const readTrayById = async (tray_id) => {
 };
 
 
-
-
 // ===== CREATE a new tray =====
 export const createTray = async (trayData) => {
   let { tray_group_id, plant, status } = trayData;

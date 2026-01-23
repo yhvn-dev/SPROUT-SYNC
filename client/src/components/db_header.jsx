@@ -49,12 +49,7 @@ export function Db_Header({ input, setNotifOpen }) {
               {user?.role || "Viewer"}
             </p>
           </div>
-          
-          <img 
-            src={user?.profile_picture ? `http://localhost:5000/uploads/${user.profile_picture}` : Pfp} 
-            alt="Profile"
-            className="profile-img w-10 h-10 rounded-full object-cover"
-          />
+         
         </div>
 
       

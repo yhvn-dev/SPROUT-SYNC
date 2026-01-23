@@ -9,6 +9,7 @@ import { UserContext } from '../../hooks/userContext';
 import { usePlantData } from '../../hooks/plantContext';
 
 
+
 // Stats Card Component
 const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
   <div className="conb bg-white rounded-2xl shadow-md p-4 lg:p-6 hover:shadow-lg transition-shadow">
@@ -251,18 +252,17 @@ function Batch_History() {
                         <span className="replanted_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
                           {record.replanted_seedlings}
                         </span>
-                      </td>
-                     
-                      <td className="px-4 py-3 text-sm text-center">
-                        <span className="dead_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      </td>            
+                       
+                      <td className="px-4 py-3 text-sm text-center">    
+                        {record.dead_seedlings === null ? "" : 
+                         <span className="dead_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                           {record.dead_seedlings}
-                        </span>
-                      </td>
-                      
-                      
+                        </span> }                    
+                      </td>                                            
                       <td className="px-4 py-3 text-sm">
                         <span
-                          className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white"
+                          className="bh_growth_stage inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white"
                           style={{ backgroundColor: getStageColor(record.growth_stage) }}
                         >
                           {record.growth_stage}
@@ -311,12 +311,14 @@ function Batch_History() {
                     </button>
                   </div>
 
+
                   <div className="flex items-center gap-2 mb-2">
                     <span
-                      className="px-2 py-1 rounded-full text-xs font-semibold text-white"
+                      className="bh_stage px-2 py-1 
+                      rounded-full text-xs font-semibold text-black"
                       style={{ backgroundColor: getStageColor(record.growth_stage) }}
                     >
-                      {record.growth_stage}
+                    
                     </span>
                     <span className="text-xs text-gray-600">{record.expected_harvest_days} days to harvest</span>
                   </div>
@@ -381,3 +383,4 @@ function Batch_History() {
 }
 
 export default Batch_History;
+

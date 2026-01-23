@@ -19,6 +19,8 @@ export const loginValidation = ({ loginInput, password }) => {
 
 
 
+
+
 export const validateUserEmptyFields = (payload, password, mode) => {
   let errors = {};
 
@@ -31,6 +33,7 @@ export const validateUserEmptyFields = (payload, password, mode) => {
     errors.username = "Username is required";
   }
 
+  
   // Fullname
   if (payload.fullname && payload.fullname.trim() !== "") {
     payload.fullname = payload.fullname.trim();
@@ -38,6 +41,9 @@ export const validateUserEmptyFields = (payload, password, mode) => {
     errors.fullname = "Fullname is required";
   }
 
+
+
+  
   // Email
   if (payload.email && payload.email.trim() !== "") {
     payload.email = payload.email.trim();
@@ -49,6 +55,8 @@ export const validateUserEmptyFields = (payload, password, mode) => {
     errors.email = "Email is required";
   }
 
+
+  
   // Password rules
   if (mode === "insert") {
     // Insert: required
@@ -81,9 +89,6 @@ export const validateUserEmptyFields = (payload, password, mode) => {
       if (!payload.role || payload.role.trim() === "") {
         errors.role = "Role is required";
       }
-      if (!payload.status || payload.status.trim() === "") {
-        errors.status = "Status is required";
-      }
     } else {
       payload.role = payload.role.trim();
       payload.status = payload.status.trim();
@@ -92,10 +97,8 @@ export const validateUserEmptyFields = (payload, password, mode) => {
     if (payload.role && payload.role.trim() === "") {
       errors.role = "Role is required";
     }
-    if (payload.status && payload.status.trim() === "") {
-      errors.status = "Status is required";
-    }
   }
 
+  
   return { payload, errors };
 };

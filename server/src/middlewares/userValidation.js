@@ -12,7 +12,6 @@ export const insertUserValidation = [
         .notEmpty().withMessage("Password is required")
         .isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
     body("role").notEmpty().withMessage("Role is required"),
-    body("status").notEmpty().withMessage("Status is required"),
 
     (req,res,next) => {
         const errors = validationResult(req);
@@ -33,7 +32,7 @@ export const updateUserValidation = [
     body("password").optional({ checkFalsy: true }) 
         .isLength({ min: 6 }).withMessage("Password must be at least 6 characters"),
     body("role").notEmpty().withMessage("Role is required"),
-    body("status").notEmpty().withMessage("Status is required"),
+
 
     (req,res,next) => {
         const errors = validationResult(req);

@@ -20,6 +20,8 @@ export function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { loadTrayGroups } = usePlantData();
 
+
+
   return (
     <section
       className="con_main 
@@ -33,7 +35,7 @@ export function Dashboard() {
       {/* MOBILE MENU BUTTON */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
+        className="menu_button md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
         <Menu size={22} className="text-[var(--acc-darkb)]" />
       </button>
 
@@ -98,15 +100,9 @@ export function Dashboard() {
     </nav>
 
 
-
-    
-
-
-
-
       {/* MAIN CONTENT */}
       <main
-        className="
+        className="db_main 
           flex-1 w-full
           px-4 pb-4
           md:px-0 md:pb-0

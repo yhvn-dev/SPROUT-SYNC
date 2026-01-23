@@ -4,6 +4,9 @@ import { User, LayoutPanelTop, ChartNoAxesCombined, LogOut ,FileText } from "luc
 import * as Logo from "../components/logo";
 
 
+
+
+
 export function Sidebar({ user, setLogoutOpen }) {
   const [isMobile, setIsMobile] = useState(false);
   
@@ -96,8 +99,7 @@ export function Sidebar({ user, setLogoutOpen }) {
           {!isMobile && <p className="text-sm mr-2 whitespace-nowrap">Batch History</p>}
         </NavLink>
 
-        
-
+      
         {/* Logout Button */}
         <button 
           className={`cursor-pointer flex justify-center md:justify-start items-center ${isMobile ? 'w-12 h-12' : 'gap-2 py-1 px-2'}  transition-all duration-300 rounded-[10px] my-2 w-full hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)]`}

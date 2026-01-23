@@ -34,7 +34,7 @@ export function Batch_History_Modal({isModalOpen,onClose,selectedBatch,reloadBat
             <div className="flex gap-2 w-full justify-end">
                 <button
                     onClick={onClose}
-                    className="cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors border-2 border-[#C4DED0] text-[#5A8F73] hover:bg-gray-50 text-sm">
+                    className="pbh_cancel_button cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors border-2 border-[#C4DED0] text-[#5A8F73] hover:bg-gray-50 text-sm">
                     Cancel
                 </button>
                 <button 

@@ -20,10 +20,11 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
             </tr>
           </thead>
 
+
+
           <tbody className="userTbody">
             {users.map((u) => (
-              <tr className="u_tr" key={u.user_id}>
-                
+              <tr className="u_tr" key={u.user_id}>             
                 <td className="u_td">
                   <div className="flex items-center">
                     <div
@@ -36,25 +37,17 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
                     <span className="truncate">{u.username}</span>
                   </div>
                 </td>
-
-                <td className="u_td">
-                  <div className="flex items-center">
-                    <img
-                      src={u.profile_picture || Pfp}
-                      alt="profile"
-                      className="h-10 w-10 object-cover rounded-full"
-                    />
-                    <p className="ml-3 truncate">{u.fullname}</p>
-                  </div>
+                <td className="u_td">                              
+                    <p className="ml-3 truncate">{u.fullname}</p>              
                 </td>
                 <td className="u_td">{u.email}</td>
                 <td className="u_td">{u.phone_number}</td>
-                <td className="text-sm text-center ">
+                <td className="u_td text-sm text-center ">
                   <p className={u.role === "admin" ? "admin_color" : "viewer_color"}>
                     {u.role}
                   </p>
                 </td>
-
+                
                 <td className="u_td">
                   <div className="flex items-center justify-center gap-2">
                     <button onClick={() => {
@@ -71,10 +64,11 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
                       text-white
                         shadow
                         hover:shadow-md
-                        transition"
-                      >
+                        transition">
                       UPDATE
                     </button>
+
+
 
                     <button
                       onClick={() => {
@@ -104,8 +98,14 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
         </table>
       </div>
 
+
+
+
       {/* ================= MOBILE CARD VIEW (SCROLLABLE) ================= */}
       <div className="conb md:hidden w-full">
+
+
+        
         {/* SCROLL CONTAINER */}
         <div className="conb max-h-[70vh]  pr-1">
           {users.map((u) => (

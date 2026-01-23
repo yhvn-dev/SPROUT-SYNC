@@ -60,6 +60,7 @@ export function InstallButton() {
 
 
 
+
 function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showLogo, setShowLogo] = useState(true);
@@ -91,7 +92,7 @@ function Home() {
               <>
                 <div className="hidden md:flex flex-row-reverse items-center gap-8">
                   <Link to="/login" className="px-6 py-1 bg-[var(--sancgb)] text-white rounded-full font-medium hover:shadow-lg transition-all">
-                    Get Started
+                    Login
                   </Link>
                   <a href="#features" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
                     Features
@@ -228,6 +229,9 @@ function Home() {
                 </div>
               </div>
             </div>
+
+
+            
           </section>
 
 

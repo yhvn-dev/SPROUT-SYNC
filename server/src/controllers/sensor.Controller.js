@@ -91,7 +91,7 @@ export const updateSensors = async (req, res) => {
     }
     const updated = await sensorModel.updateSensors(sensorData, sensor_id);
     res.status(200).json(updated);
-    console.log("SENSOR UPDATED:", updated);
+
   } catch (err) {
     console.error("CONTROLLER: Error updating sensor", err);
     res.status(500).json({ message: "Error updating sensor", err });

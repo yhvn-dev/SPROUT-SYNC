@@ -1,308 +1,242 @@
-import {motion} from "framer-motion";
-import { useEffect, useState } from 'react'
-import Pfp from "../../assets/Images/Default Profile Picture 2.jpg"
-import * as validate from "../../utils/userValidations"
-import {X,UserPen,UserPlus,Trash2} from "lucide-react"
+import { motion } from "framer-motion";
+import { useEffect, useState } from "react";
+import { validateUserEmptyFields } from "../../utils/userValidations"; 
+import { X, UserPen, UserPlus, Trash2 } from "lucide-react";
 
+export function Modal({
+  isOpen,
+  onClose,
+  mode,
+  handleSubmit,      // expects payload as JSON
+  userData,
+  backendError,
+  setBackendError
+}) {
+  if (!isOpen) return null;
 
+  const [errors, setErrors] = useState({});
+  const [username, setUsername] = useState("");
+  const [fullname, setFullname] = useState("");
+  const [email, setEmail] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
+  const [role, setRole] = useState("");
 
-export function Modal({isOpen,onClose,mode,handleSubmit,userData,backendError,setBackendError}) {    
-      if(!isOpen) return null
-
-      const [errors,setErrors] = useState({})
-      const [username, setUsername] = useState("");
-      const [fullname, setFullname] = useState("");
-      const [email, setEmail] = useState("");
-      const [phoneNumber, setPhoneNumber] = useState("");
-      const [password,setPassword] = useState("");
-      const [role, setRole] = useState("");
-      const [status, setStatus] = useState("") ;
-      const [profile_picture,setProfilePicture] = useState(null);
-      const [preview,setPreview] = useState(null)
-
-      useEffect(() => {
-        if(userData){
-          setUsername(userData.username)
-          setFullname(userData.fullname)
-          setEmail(userData.email)
-          setPhoneNumber(userData.phone_number || "")
-          setRole(userData.role)
-          setStatus(userData?.status || "active")
-          setPreview(userData.profile_picture || null)
-          setProfilePicture(null)
-        } 
-
-      },[userData])
-
-      const handleFileChanges = (e) => {
-        const file = e.target.files[0];
-        if(file){
-          setProfilePicture(file); 
-          setPreview(URL.createObjectURL(file)); 
-        }
-      }
-
-        const onFormSubmit = async (e) =>{
-        e.preventDefault()
-
-        const formData = new FormData();
-        // append the data on form data
-        formData.append("username", username);
-        formData.append("fullname", fullname);
-        formData.append("email", email);
-        formData.append("phone_number", phoneNumber);
-        formData.append("role", role);
-        formData.append("status", status);
-                
-        // Only include password if user typed one
-        if (mode === "insert" || password.trim() !== "") {
-            formData.append('password',password)  ;
-        }
-    
-        // 4. Append profile picture if uploaded
-        if (profile_picture) {
-          formData.append("profile_picture", profile_picture); // real file
-        }
-
-        // 5. Validate before sending
-        const payload = {username,fullname ,email,phone:phoneNumber,role,status};
-        const { errors } = validate.validateUserEmptyFields(payload,password,mode);
-        if (Object.keys(errors).length > 0) {
-          setErrors(errors);
-          return;
-        }
-
-        try{
-          await handleSubmit(formData)
-          setErrors({});
-          onClose()
-        }catch(err){
-          console.error("User Error",err)
-        }
-      }
-      
-      const handleClose = (e) =>{
-        e.preventDefault()
-        setErrors({});
-        setBackendError("")
-        onClose()
-      }
-
-      return (
-        <>
-
-        <motion.div className={`modal_backdrop flex items-center justify-center h-full w-full 
-        bg-transparent-[20%] backdrop-blur-[10px] top-0 left-0 absolute transition-opacity duration-300
-        ease-out ${isOpen ? "opacity-100" : "opacity-0"}`}>
-
-            <motion.div className={`user_modal conb p-4 ${mode === "delete" ? "w-[500px]" && "h-[200px]" : "w-[700px]"} flex flex-col items-center justify-center 
-            rounded-[10px] border-[var(-acc-darkc)] relative bg-white modals z-2 shadow-lg`} 
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ duration: 0.5 }}>
-
-              <button className='absolute top-[20px] right-[20px] transition-colors duration-300 hover:bg-[var(--pal2-whiteb)] rounded-[10px]' onClick={handleClose}>
-                <X/>
-              </button> 
-                        
-              {mode === "delete" ? (
-                <>  
-                  <div className="flex items-start justify-start h-[30px] w-full">
-                      <Trash2 className="mr-4 mt-[4px] " size={24}/>
-                      <p className="text-2xl" >Delete User</p>
-                  </div>
-                  <p className="mt-8 ">Are you sure you want to delete user "{fullname}" ?</p>
-
-                  <div className="flex down w-[100%]  h-full">                  
-                    <button onClick={() => handleSubmit(userData)} type="button"
-                      className="btn-p-delete">Delete User
-                    </button>
-                  </div>
-                </>
-              ):(
-                <>
-
-                <div className='w-full flex items-start justify-start '>
-                      {mode === "insert" ?
-                        <UserPlus className="mx-4 mt-[4px]" not-visited: size={24}/> :
-                        <UserPen className="mx-4 mt-[4px]" not-visited: size={24}/> }
-                    <p className='text-[1.5rem] '>{mode === "insert" ? "Add User" : "Update User"}</p>
-                </div>
-              
-
-
-                <form onSubmit={onFormSubmit} className="h-full flex flex-col justify-center items-centers
-                w-[100%] p-4"> 
-                  <div className="input_part_div left flex justify-center items-center">
-                      <section className='form_part left w-1/2  flex flex-col items-center 
-                      justify-evenly'>
-                      {/* username */}
-                      <ul className="input_box form_box relative my-4">
-                        <input 
-                          type="text" 
-                          placeholder="" 
-                          name='username'
-                          value={username}
-                          onChange={(e) => setUsername(e.target.value)} 
-                          className={`form-inp username w-full px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]`}
-                        />
-                        <label>Username</label>
-
-                        {errors.username && !username && (                     
-                          <p className='error-txt'>{errors.username}</p>
-                        )}
-                        {backendError && backendError.toLowerCase().includes("username") && (
-                          <p className='error-txt'>{backendError}</p>
-                        )}
-                      </ul>
-
-                      {/* fullname */}
-                      <ul className="input_box form_box relative my-4">
-                        <input 
-                          type="text" 
-                          placeholder='' 
-                          name='fullname'
-                          value={fullname}
-                          onChange={(e) => setFullname(e.target.value)} 
-                          className="form-inp fullname w-full px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"/>
-                         <label>Fullname</label>       
-
-                        {errors.fullname && !fullname && (
-                          <p className='error-txt'>{errors.fullname}</p>
-                        )}
-                        
-                      </ul>
-
-                      {/* email */}
-                      <ul className="input_box form_box relative my-4">
-                        <input 
-                          type="text" 
-                          placeholder='' 
-                          name='email'
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="form-inp email w-full px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
-                        />
-                        <label>Email</label> 
-
-                        {errors.email && (
-                          <p className="error-txt">{errors.email}</p>
-                        )}
-                        {backendError && backendError.toLowerCase().includes("email") && (
-                          <p className='error-txt'>{backendError}</p>
-                        )}
-                      </ul>
-                      
-
-                      {/* phone number */}
-                      <ul className="input_box form_box relative my-4">
-                        <input 
-                          type="text" 
-                          placeholder='' 
-                          name='phone_number'
-                          value={phoneNumber}
-                          onChange={(e) => setPhoneNumber(e.target.value)}
-                          className="form-inp phone_number w-full px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
-                        />
-                        <label>Phone Number</label>
-                      </ul>
-
-                      {/* password */}
-                      <ul className="input_box form_box relative my-4">
-                        <input 
-                          type="text" 
-                          placeholder='' 
-                          name='password'
-                          value={password}
-                          onChange={(e) => setPassword(e.target.value)}
-                          className="form-inp password w-full px-4 py-2 border-2 border-[var(--sage-light)] rounded-lg focus:outline-none focus:border-[var(--ptl-greenb)] transition-colors text-[0.9rem]"
-                        />
-                        <label>Password</label>
-                        
-                        {errors.password && (
-                            <p className="error-txt">{errors.password}</p>
-                        )}
-
-                      </ul>
-
-                    </section>
-
-                    <section className='form_part right w-1/2 flex flex-col items-center 
-                    justify-evenly h-full '>
-
-                      <ul className="input_box flex flex-col items-center justify-center 
-                        h-[70%] w-[80%] ">
-                  
-                        <img src={preview || Pfp} className='border-[3px]  
-                        border-[var(--pal2-whiteb)] rounded-full profile-img 
-                        max-w-[10rem] max-h-[10rem] h-[8rem] w-[8rem]' alt={Pfp} width={200}/>                             
-                          <input type="file" className="upload_profile_button cursor-pointer  shadow-lg bg-[var(--pal2-whiteb)] my-4 center px-10 py-1 text-sm" name="profile_picture"
-                          onChange={handleFileChanges}/>                                          
-                      </ul>
-                  
-                  
-                      {/* Role & Status */}
-                      <ul className="input_box w-full 
-                      flex justify-evenly items-center my-8 h-1/2 ">
-  
-                        <select 
-                          name="status" 
-                          className="status rounded-[10px] p-1 nav-com w-full mx-2 my-4 px-2 text-sm" 
-                          value={status} 
-                          onChange={(e) => setStatus(e.target.value)}>
-                          <option value="">Select Status</option>
-                          <option value="active">Active</option>
-                          <option value="inactive">Inactive</option>          
-                        </select>
-                              
-                        <select 
-                          name="roles" 
-                          className="roles rounded-[10px] p-1 nav-com w-full mx-2 my-4 px-2 text-sm" 
-                          value={role} 
-                          onChange={(e) => setRole(e.target.value)}>
-                          <option value="">Select Role</option>
-                          <option value="admin">Admin</option>
-                          <option value="viewer">Viewer</option>
-                        </select>
-                                            
-                      </ul>
-
-                        {/* FORM MSG BOX */}
-                        <div className="flex items-center justify-around h-[2rem]  w-full">
-                          {errors.status && !status && (
-                            <p className='.error-txt text-sm text-[var(--color-danger-a)]'>{errors.status}</p>
-                          )}
-                          {errors.role && !role && (
-                            <p className=".error-txt text-sm text-[var(--color-danger-a)]">{errors.role}</p>                             
-                          )}       
-                        </div>       
-                      </section>
-
-                  </div>
-                      
-                  {/* Button Div */}
-                  <div className="btn_div flex items-center justify-center col-start-1 col-end-3">
-                      <ul className="form_box">
-                        <button 
-                          type="submit"
-                          className={`${mode === "update" ? "btn-p-update" : "btn-p"}`}>
-                          {mode === "update" ? "Save Changes" : "Insert User"}
-                        </button>
-                      </ul>
-                  </div>
-
-
-                </form>    
-              </>  
-            )}     
-
-
-
-          </motion.div>
-        </motion.div>
-
-        </>
-      ) 
+  useEffect(() => {
+    if (userData) {
+      setUsername(userData.username || "");
+      setFullname(userData.fullname || "");
+      setEmail(userData.email || "");
+      setPhoneNumber(userData.phone_number || "");
+      setRole(userData.role || "");
     }
-      
+  }, [userData]);
+
+  const onFormSubmit = async (e) => {
+    e.preventDefault();
+
+    const payload = {
+      username: username.trim(),
+      fullname: fullname.trim(),
+      email: email.trim(),
+      phone_number: phoneNumber.trim(),
+      role: role.trim(),
+    };
+
+    // Include password if adding or updating with a new one
+    if (mode === "insert" || password.trim() !== "") {
+      payload.password = password.trim();
+    }
+
+    // Validate fields
+    const { errors: validationErrors } = validateUserEmptyFields(payload, password, mode);
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    try {
+      // Send JSON payload directly
+      await handleSubmit(payload);
+      setErrors({});
+      onClose();
+    } catch (err) {
+      console.error("User Error", err);
+      // Optionally set backend errors
+      setBackendError(err.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  const handleClose = (e) => {
+    e.preventDefault();
+    setErrors({});
+    setBackendError("");
+    onClose();
+  };
+
+  return (
+    <motion.div
+      className="fixed inset-0 flex items-center justify-center bg-black/20 backdrop-blur-sm z-50"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2 }}
+    >
+      <motion.div
+        className={`bg-white rounded-2xl shadow-2xl relative ${mode === "delete" ? "w-[520px]" : "w-[800px]"}`}
+        initial={{ scale: 0.95, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.95, opacity: 0 }}
+        transition={{ duration: 0.2 }}
+      >
+        {/* Close Button */}
+        <button
+          className="absolute top-6 right-6 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+          onClick={handleClose}
+        >
+          <X size={20} className="text-gray-600" />
+        </button>
+
+        {mode === "delete" ? (
+          <div className="p-8">
+            <div className="flex items-center gap-4 mb-6">
+              <div className="p-3 bg-red-50 rounded-xl">
+                <Trash2 size={24} className="text-red-600" />
+              </div>
+              <h2 className="text-2xl font-semibold text-gray-900">Delete User</h2>
+            </div>
+            <p className="text-gray-600 text-lg mb-8">
+              Are you sure you want to delete user <span className="font-semibold text-gray-900">{fullname}</span>?
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={handleClose}
+                className="px-6 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors duration-200 font-medium"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => handleSubmit(userData)}
+                className="px-6 py-2.5 bg-red-600 text-white rounded-xl hover:bg-red-700 transition-colors duration-200 font-medium"
+              >
+                Delete User
+              </button>
+            </div>
+          </div>
+        ) : (
+          <div className="p-8">
+            <div className="flex items-center gap-4 mb-8">
+              <div className="p-3 bg-blue-50 rounded-xl">
+                {mode === "insert" ? <UserPlus size={24} className="text-blue-600" /> : <UserPen size={24} className="text-blue-600" />}
+              </div>
+              <h2 className="text-2xl font-semibold text-gray-900">{mode === "insert" ? "Add User" : "Update User"}</h2>
+            </div>
+
+            <form onSubmit={onFormSubmit} className="space-y-6">
+              <div className="grid grid-cols-2 gap-6">
+                {/* Left Column */}
+                <div className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <input
+                      type="text"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200"
+                      placeholder="Enter username"
+                    />
+                    {errors.username && <p className="text-red-600 text-sm mt-1">{errors.username}</p>}
+                    {backendError && backendError.toLowerCase().includes("username") && <p className="text-red-600 text-sm mt-1">{backendError}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <input
+                      type="text"
+                      value={fullname}
+                      onChange={(e) => setFullname(e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200"
+                      placeholder="Enter full name"
+                    />
+                    {errors.fullname && <p className="text-red-600 text-sm mt-1">{errors.fullname}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input
+                      type="text"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200"
+                      placeholder="Enter email address"
+                    />
+                    {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
+                    {backendError && backendError.toLowerCase().includes("email") && <p className="text-red-600 text-sm mt-1">{backendError}</p>}
+                  </div>
+                </div>
+
+                {/* Right Column */}
+                <div className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <input
+                      type="text"
+                      value={phoneNumber}
+                      onChange={(e) => setPhoneNumber(e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200"
+                      placeholder="Enter phone number"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Password {mode === "update" && <span className="text-gray-400 text-xs">(leave blank to keep current)</span>}
+                    </label>
+                    <input
+                      type="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200"
+                      placeholder="Enter password"
+                    />
+                    {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                    <select
+                      value={role}
+                      onChange={(e) => setRole(e.target.value)}
+                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200 bg-white"
+                    >
+                      <option value="">Select Role</option>
+                      <option value="admin">Admin</option>
+                      <option value="viewer">Viewer</option>
+                    </select>
+                    {errors.role && <p className="text-red-600 text-sm mt-1">{errors.role}</p>}
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-4">
+                <button
+                  type="button"
+                  onClick={handleClose}
+                  className="px-6 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors duration-200 font-medium"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className={`px-6 py-2.5 text-white rounded-xl transition-colors duration-200 font-medium ${mode === "update" ? "bg-blue-600 hover:bg-blue-700" : "bg-green-600 hover:bg-green-700"}`}
+                >
+                  {mode === "update" ? "Save Changes" : "Add User"}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+      </motion.div>
+    </motion.div>
+  );
+}

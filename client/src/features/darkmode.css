@@ -115,11 +115,11 @@ body .dmode-btn {
 
 /* Scrollbar for dark mode */
 body.dark::-webkit-scrollbar-track {
-    background: var(--dark-variant); 
-}
+   @apply bg-[var(--metal-dark4)] border-2 rounded-2xl border-[var(--dark-variant)] cursor-pointer;
+} 
+
 body.dark::-webkit-scrollbar-thumb {
-    background: var(--metal-dark4);
-    @apply border-2 rounded-2xl border-[var(--dark-variant)] cursor-pointer;
+    @apply bg-[var(--metal-dark4)] border-2 rounded-2xl border-[var(--dark-variant)] cursor-pointer;
 }
 
 
@@ -192,6 +192,9 @@ body.dark .navs-btn {
 }
     body.dark .con_main{
             background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark5));
+        }   
+        body.dark .con_main::-webkit-scrollbar{
+            @apply bg-[var(--metal-dark2)];
         }
         /* DARK MODE – default (inactive tab) */
         body.dark .nursery_nav button {
@@ -225,6 +228,8 @@ body.dark .navs-btn {
         body.dark .nursery_data_div{
             background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
         }
+
+
     
 
 body.dark .tray_group_div:hover {
@@ -527,9 +532,10 @@ body.dark .batch_history_table tr:nth-child(even){
     body.dark .replanted_seedlings_data {
         @apply bg-transparent border-[1px] border-[var(--color-warning)];
     }
+    body.dark .bh_growth_stage{
+        @apply text-[var(--metal-dark5)];
+    }
     
-
-
 
 
 
@@ -585,6 +591,12 @@ body.dark .btn_box{
                      @apply bg-[var(--metal-dark3)]; 
                 }
 
+        body.dark  .pbh_cancel_button{
+            @apply  text-[var(--main-white)];                   
+        }
+        body.dark  .pbh_cancel_button:hover{
+            @apply bg-[var(--metal-dark2)] text-[var(--main-white)];                   
+        }
 
 
     /* tray modal */
@@ -808,9 +820,14 @@ body.dark .browser_window_main_container{
         }
 
     body.dark .floating_card_b{
-    @apply bg-[var(--metal-dark2)];
-    border:none;
+        @apply bg-[var(--metal-dark2)];
+        border:none;
     }
         body.dark .floating_card_b p{
             @apply  text-[var(--main-white--)];
         }
+
+
+    body.dark .menu_button{
+        @apply bg-[var(--metal-dark4)];
+    }

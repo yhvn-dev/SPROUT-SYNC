@@ -12,9 +12,6 @@ import { StatusChart,RoleChart} from "./charts"
 import * as userService from "../../data/userService"
 
 
-
-
-
 export function StatusChartLegend({statusCount,colors}){
   return(
     <>
@@ -99,9 +96,8 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
 
         console.log("NEW USER:",newUser)
         setOpen(false)
-
         setSucessMsg(`${newUser.fullname} is added`)
-        console.log(`${newUser.fullname} is added`)
+      
 
     } catch (err) {
       console.error("Error Inserting Users",err)
@@ -175,10 +171,8 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
       throw err
     }
   }
-
-    const newUsersThisMonth = 143;
+  
     const COLORS = ['#7BA591',"#6b7070"];
-
     // ================================================================================
     return (
         <main className="flex flex-col h-full w-full gap-4">  

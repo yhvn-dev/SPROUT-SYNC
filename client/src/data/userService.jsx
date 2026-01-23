@@ -60,6 +60,7 @@ export const getUsersCountByRole = async () =>{
 export const getUsersByStatus = async () => {
     try {
         const res = await api.get("/users/status")
+        console.log("USER DATA",res.data)
         return res.data
     } catch (error) {
         console.err("Error Fetching Users By Status",err);
@@ -110,11 +111,9 @@ export const insertUsers = async (data) =>{
 } 
 
 export const updateUsers = async (selectedUser,data,setAllUsers) =>{
-
     if(!selectedUser){console.error("No user selected for update"); }
 
-    try{
-         
+    try{         
         const isFormData = data instanceof FormData;
         const res = await api.put(`/users/${selectedUser}`,data,{
             headers: isFormData ? {"Content-Type":"multipart/form-data"} :{},
@@ -132,22 +131,54 @@ export const updateUsers = async (selectedUser,data,setAllUsers) =>{
 
 
 export const deleteUsers = async (selectedUser) => {
-
-    if (!selectedUser) { console.error("No user selected for delete"); return;
+    if (!selectedUser) { console.error("No user selected for delete"); 
+        return;
     }
 
     try{
-
         console.log("Deleting user:", selectedUser); 
         const res = await api.delete(`/users/${selectedUser}`);
         console.log("User Deleted Successfully");
-
         return res.data
-
     } catch (err) {
         console.error("Error Deleting Users:",
         err.response?.data || err.message
     );
+
     }
 };
+
+
+
+
+
+
+export const loginUser = async ({ loginInput, password }) => {
+  try {
+    const res = await api.post("/auth/login", { loginInput, password });    
+    return res.data;
+  } catch (err) {
+ 
+    // if (err.response?.data?.errors) {
+    //     const formatted = {};
+    //     err.response.data.errors.forEach(e => {
+    //     formatted[e.path] = e.msg;
+    //     });
+    //     throw formatted; 
+    // } else if (err.response) {
+    //     throw { server: err.response.data.message || "Invalid username or password" };
+    // } else if (err.request) {
+    //     throw { server: "Login failed or server is not reachable!" };
+    // } else {
+    //     throw { server: "An Unexpected Error Occurred" };
+    // }
+    
+    const error = err.response.data
+    throw error  
+  }
+       
+
+};
+
+
 

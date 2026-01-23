@@ -86,8 +86,8 @@ export function Notif_Modal({ isOpen, onClose}) {
   
   if (!isOpen) return null;
   return (
-    <aside className="absolute top-4 right-4">
-      <div className="notif_box bg-white rounded-2xl w-96 max-h-[80vh] shadow-lg overflow-y-auto flex flex-col">
+    <aside className="notif_modal absolute top-4 right-4">
+      <div className="notif_box bg-white rounded-2xl w-96 max-h-[80vh] shadow-lg flex flex-col">
 
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
