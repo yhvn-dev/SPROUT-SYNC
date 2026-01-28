@@ -1,5 +1,5 @@
 import Logo from "../assets/Images/GREENLINK LOGO.png"
-
+import Sprout from "../assets/Images/SPROUT-SYNC LOGO.png"
 
 export function Text_Logo() {
   return (
@@ -43,6 +43,15 @@ export function Img(){
       </>
     )
 }
+
+export function SproutImg(){
+  return (
+    <>
+      <img src={Sprout} className="w-5 h-auto mr-2"/>
+    </>
+  )
+}
+
 
 export function Img_Logo_BIG(){
     return (

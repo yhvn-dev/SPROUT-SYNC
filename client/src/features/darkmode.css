@@ -727,6 +727,10 @@ body.dark .login_form label{
     @apply bg-[var(--metal-dark1)];
 }
 
+    body.dark .message-text{
+        @apply text-[var(--metal-dark5)]
+    }
+
 
 
 

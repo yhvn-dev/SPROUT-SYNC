@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Droplets, Sun, Wind, Menu, X, Download , ArrowBigDown} from 'lucide-react';
+import { Droplets, Sun, Wind, Menu, X, Download, ArrowBigDown } from 'lucide-react';
 import { Load_Logo } from "../../components/logo";
 import { Link } from "react-router-dom";
 import { Header } from "../../components/header";
@@ -10,9 +10,10 @@ import { Farm_Info_Section } from './farm_info_section';
 import { Contact_Section } from './contact_section';
 import { Logo_Page } from "./logo_page";
 import { Footer } from "../../components/footer";
+import SproutImg from "../../assets/Images/SPROUT-SYNC LOGO.png"
 import "./home.css";
 
-
+import Plant_Bg_1 from "../../assets/Images/PLANT BG -1.jpg"
 
 export function InstallButton() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -51,15 +52,14 @@ export function InstallButton() {
   return (
     <button
       onClick={handleInstall}
-      className="cursor-pointer hover:bg-[var(--sancgd)] flex fixed bottom-6 right-6 z-50 px-6 py-4 rounded-full 
-      bg-[var(--sancgb)] text-white">
-     <ArrowBigDown className='mr-4'/> Install SproutSync
+      className="cursor-pointer hover:bg-[var(--sancgd)] flex items-center fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 
+      px-4 py-3 md:px-6 md:py-4 rounded-full bg-[var(--sancgb)] text-white shadow-lg hover:shadow-xl transition-all text-sm md:text-base">
+      <ArrowBigDown className='mr-2 md:mr-4 w-5 h-5 md:w-6 md:h-6'/> 
+      <span className="hidden sm:inline">Install SproutSync</span>
+      <span className="sm:hidden">Install</span>
     </button>
   );
 }
-
-
-
 
 function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -77,180 +77,276 @@ function Home() {
     }
   }, []);
 
+  // Close mobile menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (mobileMenuOpen && !e.target.closest('.mobile-menu-container')) {
+        setMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, [mobileMenuOpen]);
 
   
+
   return (
-    <div className="min-h-screen bg-white overflow-x-hidden">
+    <div className="min-h-screen  overflow-x-hidden">
       {showLogo ? (
-        <div className="fixed inset-0 bg-white flex items-center justify-center z-[9999]">
+        <div className="fixed inset-0  flex items-center justify-center z-[9999]">
           <Load_Logo />
         </div>
       ) : (
         <>
           <Header
             navChildren={
-              <>
-                <div className="hidden md:flex flex-row-reverse items-center gap-8">
-                  <Link to="/login" className="px-6 py-1 bg-[var(--sancgb)] text-white rounded-full font-medium hover:shadow-lg transition-all">
-                    Login
+              <div className="mobile-menu-container w-full ">
+                {/* Desktop Navigation */}
+                <div className="hidden md:flex flex-row-reverse items-center gap-6 lg:gap-8">
+                  <Link 
+                    to="/login" 
+                    className="border-2 rounded-2xl  px-4 lg:px-6 py-1 bg-[var(--sancgb)] text-white font-medium hover:shadow-lg transition-all whitespace-nowrap">
+                    Login 
                   </Link>
-                  <a href="#features" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
+                  <a 
+                    href="#features" 
+                    className="border-white border-1 px-4 lg:px-6 py-1 rounded-2xl text-[var(--main-white--)]  hover:text-[#027c68] transition-colors font-medium whitespace-nowrap">
                     Features
                   </a>
-                  <a href="#dashboard_mockup" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
+                  <a 
+                    href="#dashboard_mockup" 
+                    className="border-white border-1 px-4 lg:px-6 py-1  rounded-2xl text-[var(--main-white--)]  hover:text-[#027c68] transition-colors font-medium whitespace-nowrap">
                     Dashboard
                   </a>
-                  <a href="#farm" className="text-[#5A8F73] hover:text-[#027c68] transition-colors font-medium">
+                  <a 
+                    href="#farm" 
+                    className="border-white border-1 px-4 lg:px-6 py-1  rounded-2xl text-[var(--main-white--)]  hover:text-[#027c68] transition-colors font-medium whitespace-nowrap">
                     Our Farm
                   </a>
                 </div>
 
-                <div className="flex items-center justify-end w-full relative">
+                {/* Mobile Menu Button */}
+                <div className="flex items-center justify-end w-full md:hidden">
                   <button
-                    className="md:hidden text-[#003333] mx-4 rounded-2xl shadow-lg p-2"
-                    onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                  >
-                    {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                    className="border-white rounded-2xl text-[#003333] hadow-lg p-2 hover:bg-[var(--metal-dark4)] transition-colors"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setMobileMenuOpen(!mobileMenuOpen);
+                    }}
+                    aria-label="Toggle menu">
+                    {mobileMenuOpen ? <X size={24} /> : <Menu className='text-white' size={24} />}
                   </button>
                 </div>
 
+                {/* Mobile Navigation Menu */}
                 {mobileMenuOpen && (
-                  <div className="md:hidden space-y-3">
-                    <Link to="/login" className="block bg-[var(--sancgb)] text-[var(--sage-lighter)] rounded-2xl px-4 py-1 hover:text-[#027c68]">
+                  <div className="md:hidden absolute top-full left-0 right-0 bg-[var(--metal-dark5)] shadow-lg rounded-b-2xl mt-2 py-4 px-4 space-y-2 border-t border-gray-100">
+                    <Link 
+                      to="/login" 
+                      className="block text-[var(--main-white--)]  text-center rounded-2xl px-4 py-3 hover:opacity-90 transition-all font-medium"
+                      onClick={() => setMobileMenuOpen(false)}>
                       Login
                     </Link>
-                    <a href="#features" className="block text-[#5A8F73] rounded-2xl px-4 py-1 hover:text-[#027c68]">
+                    <a 
+                      href="#features" 
+                      className="block text-[var(--main-white--)]  rounded-2xl px-4 py-3 hover:bg-gray-50 transition-colors font-medium"
+                      onClick={() => setMobileMenuOpen(false)}>
                       Features
                     </a>
-                    <a href="#dashboard_mockup" className="block text-[#5A8F73] rounded-2xl px-4 py-1 hover:text-[#027c68]">
+                    <a 
+                      href="#dashboard_mockup" 
+                      className="block text-[var(--main-white--)]  rounded-2xl px-4 py-3 hover:bg-gray-50 transition-colors font-medium"
+                      onClick={() => setMobileMenuOpen(false)}>
                       Dashboard
                     </a>
-                    <a href="#farm" className="block text-[#5A8F73] rounded-2xl px-4 py-1 hover:text-[#027c68]">
+                    <a 
+                      href="#farm" 
+                      className="block text-[var(  --main-white--)] rounded-2xl px-4 py-3 hover:bg-gray-50 transition-colors font-medium"
+                      onClick={() => setMobileMenuOpen(false)}>
                       Our Farm
                     </a>
                   </div>
                 )}
-              </>
+              </div>
             }
           />
 
-        
-          {/* Hero Section */}
-          <section className="hero_section relative min-h-screen flex flex-col md:flex-row items-center pt-4 overflow-hidden bg-white">
-            <div className="absolute inset-0 overflow-hidden">
-              <div className="gd_a absolute top-20 -left-20 w-72 h-72 md:w-96 md:h-96 bg-[#E8F3ED] rounded-full blur-3xl opacity-60 animate-pulse"></div>
-              <div className="gd_b absolute top-40 right-10 w-60 h-60 md:w-80 md:h-80 bg-[#C4DED0] rounded-full blur-3xl opacity-50 animate-pulse" style={{ animationDelay: '1s' }}></div>
-              <div className="gd_c absolute bottom-20 left-1/4 w-60 h-60 md:w-72 md:h-72 bg-[#b0e892]/30 rounded-full blur-3xl opacity-40 animate-pulse" style={{ animationDelay: '2s' }}></div>
+
+
+          {/* Hero Section - Full Viewport */}
+          <section className="hero_section relative h-screen w-full overflow-hidden bg-white">
+            {/* Background Gradients */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+              <div className="gd_a absolute top-10 md:top-20 -left-10 md:-left-20 w-48 h-48 sm:w-64 sm:h-64 md:w-96 md:h-96 bg-[#E8F3ED] rounded-full blur-3xl opacity-60 animate-pulse"></div>
+              <div className="gd_b absolute top-32 md:top-40 right-5 md:right-10 w-40 h-40 sm:w-52 sm:h-52 md:w-80 md:h-80 bg-[#C4DED0] rounded-full blur-3xl opacity-50 animate-pulse" style={{ animationDelay: '1s' }}></div>
+              <div className="gd_c absolute bottom-10 md:bottom-20 left-1/4 w-40 h-40 sm:w-52 sm:h-52 md:w-72 md:h-72 bg-[#b0e892]/30 rounded-full blur-3xl opacity-40 animate-pulse" style={{ animationDelay: '2s' }}></div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-6 py-16 relative z-10 w-full">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            {/* Hero Content - Centered */}
+            <div className="relative z-10 h-full w-full flex items-center justify-center pl-4 py-4 pr-2 ">
+              <div className="relative w-full h-full flex items-center justify-center overflow-hidden">
+                {/* Background Image */}
+                <img 
+                  src={Plant_Bg_1} 
+                  alt="SproutSync Agricultural Technology"
+                  className="w-full h-full object-cover rounded-xl md:rounded-2xl"
+                />
+                
+                {/* Dark Overlay */}
+                <div className=" w-full h-full absolute inset-0 rounded-xl md:rounded-2xl bg-black/30"></div>
+                  <div className="flex flex-col items-center justify-center absolute inset-0 p-4 w-full">
 
-                {/* Text Content */}
-                <div className="space-y-6 md:space-y-8">
-                  <div className="smart_agriculture_solutions  inline-block px-3 py-1 bg-[#E8F3ED] rounded-full text-center">
-                    <span className="text-[#027c68] font-semibold text-sm md:text-base">Smart Agriculture Solution</span>
+                    <ul className='flex w-[95%]  flex-col sm:flex-row items-start gap-4 sm:gap-4 '>
+                      <li className="mx-10 text-2xl text-white">Nurtured by</li>
+                    </ul>
+        
+                    <ul className='flex w-[95%] center flex-col sm:flex-row items-center md:items-start gap-4 sm:gap-4'>
+                      
+                      <li className='sprout-sync-text
+                        font-bold
+                        text-[var(--main-white)]
+                        text-center
+                        text-[11.07rem]
+                        leading-[0.50]              
+                        mr-4
+                        md:text-[11.07rem]
+                        lg:text-[17.07rem]
+                        pointer-events-none
+                        drop-shadow-2xl'>SPROUT
+                      </li>
+
+                      <li 
+                      className='flex sprout-sync-text font-bold
+                        text-[var(--main-white)]                
+                        text-[11.07rem]
+                        leading-[0.50]
+                        ml-10
+                        md:text-[11.07rem]
+                        lg:text-[17.07rem]
+                        pointer-events-none
+                        drop-shadow-2xl'>S
+                        <img className="h-auto w-25 xs:w-24 sm:w-28 md:w-30 my-2 sm:my-4" 
+                        src={SproutImg}/>NC
+                      </li>
+
+                    </ul>
+                   
+                    <p className='my-4 sm:my-8 text-center  text-white text-xs sm:text-sm md:text-base px-4'>
+                        We take care of your plant’s needs with smart monitoring and gentle,<br/> 
+                        targeted watering—so it grows happy and healthy.
+                    </p>
                   </div>
 
-                  <h1 className="hook-txt-a text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-[#003333] leading-snug">
-                    Nurture <br/>
-                    <span className="text-[var(--sancgb)] font-bold">Growth</span> <br />
-                    Effortlessly
-                  </h1>
 
-                  <p className="text-base sm:text-lg text-[#5A8F73] leading-relaxed max-w-full md:max-w-lg">
-                    Revolutionize your farming with our intelligent automatic plant watering system. Monitor soil moisture, water levels and seedlings cycle in real-time.
-                  </p>
+                  <div className='left-2 sm:left-4 bottom-2 sm:bottom-4 absolute flex flex-col sm:flex-row gap-2 sm:gap-4 w-[calc(100%-1rem)] sm:w-auto max-w-[calc(100%-2rem)]'>
 
-                  <div className="flex flex-col sm:flex-row flex-wrap gap-3 sm:gap-4">
-                    <button className="cursor-pointer px-4 py-2 bg-gradient-to-r from-[#027c68] to-[#009983] text-white rounded-2xl font-semibold text-lg hover:shadow-lg transition-all transform hover:-translate-y-1">
-                      Explore Dashboard
-                    </button> 
-                    <button className="learn-more-button cursor-pointer px-4 py-2 border-2 border-[#7BA591] text-[#003333] rounded-2xl font-semibold text-lg hover:bg-[#E8F3ED] transition-all">
-                      Learn More
-                    </button>
+                      <ul
+                        className="flex
+                      
+                        w-full sm:w-[10rem] md:w-[12rem] h-auto sm:h-[6rem] md:h-[8rem] p-3 sm:p-4
+
+                        bg-white/20
+                        backdrop-blur-3xl
+                        border border-white/30
+                        rounded-xl sm:rounded-2xl
+                        shadow-lg 
+                        ">
+                        <div
+                          className="
+                            absolute inset-0
+                            bg-gray-200/20
+                            rounded-xl sm:rounded-2xl
+                          "
+                        />
+                    
+                        <div className="relative z-10">
+                          <h1 className="text-base sm:text-lg md:text-[2.617rem)] text-white font-semibold mb-1">
+                            100% Automated
+                          </h1>
+                            <p className="text-[0.55rem] sm:text-[0.6rem] md:text-[0.65rem] font-extralight text-gray-100">
+                              Smart monitoring, healthier plants.
+                              Automatic watering, effortless care
+                            </p>
+                        </div>       
+                            
+                    </ul>
+
+                    <div className='gap-2 sm:gap-4 w-full sm:w-[10rem] md:w-[12rem] h-auto sm:h-[6rem] md:h-[8rem] flex flex-row sm:flex-col'>
+
+                        <ul
+                            className="flex items-center justify-start p-2              
+                            flex-grow w-full
+                            bg-white/20
+                            backdrop-blur-3xl
+                            border border-white/30
+                            rounded-xl sm:rounded-2xl
+                            shadow-lg 
+                            ">                                                
+                            <p className='text-xs sm:text-sm text-white'>Real-time Notifications</p>
+                        </ul>
+
+                          <ul
+                          className="flex items-center justify-start p-2                                   
+                          flex-grow w-full
+                          bg-white/20
+                          backdrop-blur-3xl
+                          border border-white/30
+                          rounded-xl sm:rounded-2xl
+                          shadow-lg 
+                          ">                                          
+                            <p className='text-xs sm:text-sm text-white'>Plant Cycle Management</p>     
+                         </ul>
+
+                    </div>
+
+                    
+                    
                   </div>
 
-                  <div className="flex flex-wrap gap-4 pt-4 justify-start sm:justify-start">
-                    <div className="flex items-center gap-4">
-                      <div className="text-2xl sm:text-3xl font-bold text-[#027c68]">24/7</div>
-                      <div className="text-sm sm:text-base text-[#5A8F73]">Monitoring</div>
-                    </div>
-                    <div className="w-px h-12 bg-[#C4DED0] hidden sm:block"></div>
-                    <div className="flex items-center gap-4">
-                      <div className="text-2xl sm:text-3xl font-bold text-[#027c68]">100%</div>
-                      <div className="text-sm sm:text-base text-[#5A8F73]">Automated</div>
-                    </div>
-                    <div className="w-px h-12 bg-[#C4DED0] hidden sm:block"></div>
-                    <div className="flex items-center gap-4">
-                      <div className="text-2xl sm:text-3xl font-bold text-[#027c68]">Smart</div>
-                      <div className="text-sm sm:text-base text-[#5A8F73]">Analytics</div>
-                    </div>
-                  </div>
-                </div>
-
-
-
-
-
-                {/* Visual Section */}
-                <div className="relative flex justify-center md:justify-end mt-8 md:mt-0">
-                  <div className="conb sw-64 p-4 sm:w-80 md:w-96 lg:w-[24rem] h-auto bg-white rounded-3xl shadow-sm flex items-center justify-center relative">
-                    <div className="w-32 h-32 sm:w-36 sm:h-36 md:w-40 md:h-40 bg-gradient-to-br from-[#027c68] to-[#009983] rounded-full flex items-center justify-center">
-                      <Droplets className="w-12 h-12 sm:w-14 sm:h-14 text-white" />
-                    </div>
-
-                    {/* Floating Cards */}
-                    <div className="floating_card_a absolute -top-2 -right-2 bg-white rounded-2xl shadow-lg p-3 border border-[#E8F3ED] w-28 sm:w-32">
-                      <div className=" flex items-center gap-2">
-                        <div className="hero_icons_a w-8 h-8 sm:w-10 sm:h-10 my-4bg-[#E8F3ED] rounded-xl flex items-center justify-center">
-                          <Droplets className="w-4 h-4 sm:w-6 sm:h-6 text-[#027c68]" />
-                        </div>
-                        <div>
-                          <p className="text-xs sm:text-sm text-[#5A8F73]">Moisture</p>
-                          <p className="text-lg sm:text-xl font-bold text-[#003333]">40 %</p>
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="floating_card_b absolute -bottom-2 -left-2 bg-white rounded-2xl shadow-lg p-3 border border-[#E8F3ED] w-28 sm:w-32">
-                      <div className=" flex items-center gap-2">
-                        <div className="hero_icons_b w-8 h-8 sm:w-10 sm:h-10 bg-[#E8F3ED] rounded-xl flex items-center justify-center">
-                          <Droplets className="w-4 h-4 sm:w-6 sm:h-6 text-[#027c68]" />
-                        </div>
-                        <div>
-                          <p className="text-xs sm:text-sm text-[#5A8F73]">Water Level</p>
-                          <p className="text-lg sm:text-xl font-bold text-[#003333]">65%</p>
-                        </div>
-                      </div>
-                    </div>
-
-                  </div>
-                </div>
+           
               </div>
             </div>
 
 
-            
           </section>
 
+          {/* Install Button */}
+          <InstallButton />
 
-          {/* Fixed Install Button - Bottom Right Corner */}
-          <InstallButton/>
-          <FeatureSection />
-          <section className='center' id="dashboard_mockup">
-            <Dashboard_Mockup />   
+          {/* Features Section */}
+          <section id="features" className="w-full">
+            <FeatureSection />
           </section>
-          <Farm_Info_Section />
-          <BenefitSection />
-          <Logo_Page /> 
-          <Footer />     
+
+          {/* Dashboard Section */}
+          <section className='w-full flex justify-center py-8 md:py-12' id="dashboard_mockup">
+        
+              <Dashboard_Mockup />
+          
+          </section>
+
+          {/* Farm Info Section */}
+          <section id="farm" className="w-full">
+            <Farm_Info_Section />
+          </section>
+
+          {/* Benefits Section */}
+          <section className="w-full">
+            <BenefitSection />
+          </section>
+
+          {/* Logo Section */}
+          <section className="w-full">
+            <Logo_Page />
+          </section>
+
+          {/* Footer */}
+          <Footer />
         </>
       )}
     </div>
   );
-  
-  
 }
 
 export default Home;

@@ -39,7 +39,7 @@ export function Form({ handleSubmit, errorMsg, successMsg, loginInputRef, passwo
           <User size={16} className="mt-[1px]" color={colors.accDarkc} />
         </div>
         {errorMsg.loginInput && (
-          <p className="bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm mt-2">
+          <p className="message-text bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm mt-2">
             {errorMsg.loginInput}
           </p>
         )}
@@ -68,7 +68,7 @@ export function Form({ handleSubmit, errorMsg, successMsg, loginInputRef, passwo
           </button>
         </div>
         {errorMsg.password && (
-          <p className="bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm mt-2">
+          <p className="message-text bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm mt-2">
             {errorMsg.password}
           </p>
         )}
@@ -83,17 +83,17 @@ export function Form({ handleSubmit, errorMsg, successMsg, loginInputRef, passwo
         {/* Server errors & success */}
         <div className="successMsgBox mt-4 flex flex-col items-start gap-2">
           {errorMsg.server && (
-            <p className="bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm">
+            <p className="message-text bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm">
               {errorMsg.server}
             </p>
           )}
           {errorMsg.message && (
-            <p className="bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm">
+            <p className="message-text bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm">
               {errorMsg.message}
             </p>
           )}
           {successMsg && (
-            <p className="bg-green-50 border-1 border-green-200 px-4 py-1 rounded-lg text-sm">
+            <p className="message-text bg-green-50 border-1 border-green-200 px-4 py-1 rounded-lg text-sm">
               {successMsg}
             </p>
           )}

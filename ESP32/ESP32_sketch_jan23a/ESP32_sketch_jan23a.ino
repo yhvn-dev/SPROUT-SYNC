@@ -2,158 +2,193 @@
 #include <WebSocketsClient.h>
 #include <HTTPClient.h>
 
-// ===== WIFI CONFIG =====
+/************ WIFI CONFIG ************/
 const char* ssid = "bot";
 const char* password = "12345678";
 
-// ===== NODE.JS SERVER =====
-const char* wsHost = "10.179.117.67"; // WebSocket IP
+/************ NODE.JS SERVER ************/
+const char* wsHost = "10.92.69.67";
 const uint16_t wsPort = 5000;
 const char* wsPath = "/";
-const char* apiUrl = "http://10.179.117.67:5000/readings/post/readings";
+const char* apiUrl = "http://10.92.69.67:5000/readings/post/readings";
 
-// ===== OBJECTS =====
+/************ OBJECTS ************/
 WebSocketsClient webSocket;
 
-// ===== SENSOR STRUCT =====
+/************ PUMP & VALVES ************/
+#define PUMP_PIN 18
+int valvePins[3] = {23, 22, 21};
+
+/************ SENSOR STRUCT ************/
 struct PlantSensor {
-  int pin;        // pin or id in hardware
-  int id;         // sensor ID
+  int pin;
+  int id;
   const char* name;
-  int moistureMax; // maximum moisture value
-  int moistureMin; // minimum moisture value
-  int temp;        // temperature value
-  int moisture;    // current moisture value
-  int threshold;   // some threshold
+  int moistureMax; // dry value (raw HIGH)
+  int moistureMin; // wet value (raw LOW)
+  int moisture;
+  int threshold; // % threshold to trigger watering
+  bool connected;
 };
 
-// ===== SENSOR INSTANCES =====
+/************ SENSOR INSTANCES ************/
 PlantSensor sensors[3] = {
-  {32, 1, "Bokchoy", 3000, 1800, 21, 40, 70},
-  {33, 4, "Petchay", 2900, 1750, 22, 50, 75},
-  {34, 3, "Mustasa", 2800, 1700, 23, 45, 85}
+  {32, 1, "Bokchoy", 3000, 1800, 0, 40, true},
+  {33, 4, "Petchay", 2900, 1750, 0, 45, true},
+  {34, 3, "Mustasa", 2800, 1700, 0, 55, true}
 };
 
-// ===== FUNCTION: CONVERT TO PERCENTAGE =====
+/************ CONVERT RAW TO % (INVERTED) ************/
 int moistureToPercentage(PlantSensor sensor) {
+  // Flip: high raw = dry → low %
   int range = sensor.moistureMax - sensor.moistureMin;
-  if (range == 0) return 0; // avoid division by zero
-  int percentage = (sensor.moisture - sensor.moistureMin) * 100 / range;
-  if (percentage < 0) percentage = 0;
-  if (percentage > 100) percentage = 100;
-  return percentage;
+  if (range <= 0) return 0;
+
+  int percent = (sensor.moistureMax - sensor.moisture) * 100 / range;
+  return constrain(percent, 0, 100); // 0% = dry, 100% = wet
 }
 
-// ===== FUNCTION: SEND SENSOR VALUE TO API =====
-void sendSensorReading(PlantSensor sensor) {
-  if (WiFi.status() == WL_CONNECTED) {
-    HTTPClient http;
-    http.begin(apiUrl);
-    http.addHeader("Content-Type", "application/json");
-
-    int percentage = moistureToPercentage(sensor);
-
-    String payload = "{ \"sensor_id\": " + String(sensor.id) + 
-                     ", \"sensor_name\": \"" + String(sensor.name) + "\"" +
-                     ", \"value\": " + String(percentage) + " }";
-
-    int httpResponseCode = http.POST(payload);
-
-    if (httpResponseCode > 0) {
-      Serial.print("📡 API Response Code: ");
-      Serial.println(httpResponseCode);
-      Serial.println(http.getString());
-    } else {
-      Serial.print("❌ API Error: ");
-      Serial.println(httpResponseCode);
-    }
-    http.end();
-  } else {
-    Serial.println("❌ WiFi not connected (API)");
-  }
+/************ CHECK SENSOR CONNECTION ************/
+bool isSensorConnected(int reading, PlantSensor sensor) {
+    // Below 600 → disconnected, above max+100 → disconnected
+    if (reading < 600 || reading > sensor.moistureMax + 100) return false;
+    return true;
 }
 
-// ===== WEBSOCKET EVENT HANDLER =====
-bool firstHelloSent = false;
+/************ SEND TO API ************/
+void sendSensorReading(PlantSensor sensor, int percent) {
+  if (!sensor.connected || WiFi.status() != WL_CONNECTED) return;
 
+  HTTPClient http;
+  http.begin(apiUrl);
+  http.addHeader("Content-Type", "application/json");
+
+  String payload = "{ \"sensor_id\": " + String(sensor.id) +
+                   ", \"sensor_name\": \"" + String(sensor.name) + "\"" +
+                   ", \"value\": " + String(percent) + " }";
+
+  http.POST(payload);
+  http.end();
+}
+
+/************ WEBSOCKET EVENT ************/
 void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
-  switch (type) {
-    case WStype_CONNECTED:
-      Serial.println("[WS] ✅ Connected to server");
-      if (!firstHelloSent) {
-        webSocket.sendTXT("{\"message\":\"Hello from ESP32\"}");
-        firstHelloSent = true;
-      }
-      break;
-    case WStype_TEXT:
-      Serial.printf("[WS] 📩 Received: %s\n", payload);
-      break;
-    case WStype_DISCONNECTED:
-      Serial.println("[WS] ❌ Disconnected");
-      firstHelloSent = false;
-      break;
-    case WStype_ERROR:
-      Serial.println("[WS] ⚠️ Error occurred");
-      break;
-    default:
-      break;
+  if (type == WStype_CONNECTED) {
+    Serial.println("[WS] Connected");
+    webSocket.sendTXT("{\"message\":\"ESP32 Online\"}");
+  } else if (type == WStype_DISCONNECTED) {
+    Serial.println("[WS] Disconnected");
   }
 }
 
-// ===== SETUP =====
+/************ WIFI INIT ************/
+void initWiFi() {
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  Serial.println("📡 Trying to connect to WiFi...");
+}
+
+/************ RELAY HELPER ************/
+void setRelay(int pin, bool on) {
+  digitalWrite(pin, on ? LOW : HIGH); // active-low relay
+}
+
+/************ SETUP ************/
 void setup() {
   Serial.begin(115200);
-  delay(1000);
 
-  Serial.print("Connecting to WiFi: ");
-  Serial.println(ssid);
-  WiFi.begin(ssid, password);
+  pinMode(PUMP_PIN, OUTPUT);
+  digitalWrite(PUMP_PIN, LOW);
 
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+  for (int i = 0; i < 3; i++) {
+    pinMode(valvePins[i], OUTPUT);
+    digitalWrite(valvePins[i], LOW);
   }
-  Serial.println("\n✅ WiFi Connected");
-  Serial.print("ESP32 IP: ");
-  Serial.println(WiFi.localIP());
 
-  // WebSocket init
+  initWiFi();
+
   webSocket.begin(wsHost, wsPort, wsPath);
   webSocket.onEvent(webSocketEvent);
-  webSocket.setReconnectInterval(5000); // reconnect every 5s if disconnected
+  webSocket.setReconnectInterval(5000);
+
+  Serial.println("🌱 System Started (ONLINE / OFFLINE READY)");
 }
 
-// ===== LOOP =====
-unsigned long lastSend = 0;
-const unsigned long sendInterval = 5000; // 5 seconds
+/************ LOOP ************/
+unsigned long lastLogicRun = 0;
+unsigned long lastSendRun  = 0;
+const unsigned long logicInterval = 5000;
+const unsigned long sendInterval  = 1000;
 
 void loop() {
-  webSocket.loop(); // REQUIRED
+  if (WiFi.status() == WL_CONNECTED) {
+    webSocket.loop();
+  }
 
-  if (millis() - lastSend >= sendInterval) {
-    Serial.println("🌱 Sending sensor readings:");
+  // ===== SENSOR READ + RELAY LOGIC =====
+  if (millis() - lastLogicRun >= logicInterval) {
+    bool pumpNeeded = false;
+    Serial.println("🌱 Plant Sensor Readings:");
 
     for (int i = 0; i < 3; i++) {
-      // Update sensor reading (simulate)
-      sensors[i].moisture = random(sensors[i].moistureMin, sensors[i].moistureMax + 1);
+      sensors[i].moisture = analogRead(sensors[i].pin);
+      sensors[i].connected = isSensorConnected(sensors[i].moisture, sensors[i]);
 
-      // Convert to percentage
-      int moisturePercent = moistureToPercentage(sensors[i]);
+      bool valveOpen = false;
 
-      // Print to Serial
-      Serial.printf("%s: %d%%\n", sensors[i].name, moisturePercent);
+      if (!sensors[i].connected) {
+        setRelay(valvePins[i], false);
+      } else {
+        int percent = moistureToPercentage(sensors[i]);
+        if (percent < sensors[i].threshold) {
+          setRelay(valvePins[i], true); // open if dry
+          valveOpen = true;
+          pumpNeeded = true;
+        } else {
+          setRelay(valvePins[i], false); // close if wet enough
+        }
+      }
 
-      // Send to API
-      sendSensorReading(sensors[i]);
+      Serial.print(sensors[i].name);
+      if (sensors[i].connected) {
+        int percent = moistureToPercentage(sensors[i]);
+        Serial.print(" | ");
+        Serial.print(percent);
+        Serial.print("%");
+        Serial.print(" | RAW:");
+        Serial.print(sensors[i].moisture);
+        Serial.print(" | Valve:");
+        Serial.println(valveOpen ? "OPEN" : "CLOSED");
+      } else {
+        Serial.println(" | DISCONNECTED | Valve:OFF");
+      }
+    } 
 
-      // Send to WebSocket
-      if (webSocket.isConnected()) {
-        String wsPayload = "{ \"sensor_id\": " + String(sensors[i].id) +
-                           ", \"sensor_name\": \"" + String(sensors[i].name) + "\"" +
-                           ", \"value\": " + String(moisturePercent) + " }";
-        webSocket.sendTXT(wsPayload);
+    setRelay(PUMP_PIN, pumpNeeded);
+    Serial.print("🚿 Pump: ");
+    Serial.println(pumpNeeded ? "ON" : "OFF");
+
+    lastLogicRun = millis();
+    Serial.println("------------------------------------");
+  }
+
+  // ===== SEND DATA TO NODE.JS =====
+  if (millis() - lastSendRun >= sendInterval) {
+    if (WiFi.status() == WL_CONNECTED) {
+      for (int i = 0; i < 3; i++) {
+        if (sensors[i].connected) {
+          int percent = moistureToPercentage(sensors[i]);
+          sendSensorReading(sensors[i], percent);
+
+          if (webSocket.isConnected()) {
+            String wsPayload = "{ \"sensor_id\": " + String(sensors[i].id) +
+                               ", \"sensor_name\": \"" + String(sensors[i].name) + "\"" +
+                               ", \"value\": " + String(percent) + " }";
+            webSocket.sendTXT(wsPayload);
+          }
+        }
       }
     }
-    lastSend = millis();
+    lastSendRun = millis();
   }
 }

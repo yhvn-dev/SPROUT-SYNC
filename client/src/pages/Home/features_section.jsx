@@ -12,7 +12,7 @@ export function FeatureSection(){
               Intelligent Monitoring
             </h2>
             <p className="text-xl text-[#5A8F73] max-w-2xl mx-auto">
-              Our system tracks critical environmental factors to ensure optimal plant growth conditions
+             Our system continuously monitors soil moisture and environmental conditions to automate watering and ensure healthy nursery plant growth.
             </p>
           </div>
 

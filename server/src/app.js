@@ -8,6 +8,7 @@ import traysRoutes from "./routes/ProtectedRoutes/tray.Routes.js";
 import sensorRoutes from "./routes/ProtectedRoutes/sensor.Routes.js";
 import readingRoutes from "./routes/ProtectedRoutes/readings.Routes.js";
 import notifificationRoutes from "./routes/ProtectedRoutes/notification.Routes.js";
+import esp32Routes from "./routes/ProtectedRoutes/esp32.Routes.js"
 
 import express from "express";
 import cors from "cors";
@@ -40,10 +41,9 @@ app.use('/pb', plantBatchRoutes);
 app.use('/pbh', platBatchHistroyRoutes);
 app.use('/sensors', sensorRoutes);
 app.use('/readings', readingRoutes);
-app.use('/notif', notifificationRoutes);
+app.use('/notif', notifificationRoutes);    
 app.use('/auth', publicRoutes);
-app.use('/page', pageRoutes);
-
+app.use("/esp32",esp32Routes)
 
 
 
@@ -84,7 +84,7 @@ const wsServer = new WebSocketServer({
 
 
 // Store connected clients (optional)
-const clients = [];
+export const clients = [];
 wsServer.on("request", (request) => {
     const connection = request.accept(null, request.origin);
     console.log("🟢 WebSocket connected");
