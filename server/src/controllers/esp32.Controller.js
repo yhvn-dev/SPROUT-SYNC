@@ -12,7 +12,7 @@ const sendToESP32 = (command) => {
 
 
 // ===== OPEN BOKCHOY VALVE =====
-export const openBokchoyValve = async (req, res) => {
+export const waterBokchoyGroup = async (req, res) => {
   try {
     const action = req.body.action?.toUpperCase(); // "ON" or "OFF"
 
@@ -41,7 +41,7 @@ export const openBokchoyValve = async (req, res) => {
 
 
 // ===== OPEN PECHAY VALVE =====
-export const openPechayValve = async (req, res) => {
+export const waterPechayGroup = async (req, res) => {
   try {
     const action = req.body.action?.toUpperCase();
 
@@ -70,7 +70,7 @@ export const openPechayValve = async (req, res) => {
 
 
 // ===== OPEN MUSTASA VALVE =====
-export const openMustasaValve = async (req, res) => {
+export const waterMustasaGroup = async (req, res) => {
   try {
     const action = req.body.action?.toUpperCase();
 
@@ -102,7 +102,7 @@ export const openMustasaValve = async (req, res) => {
 
 
 // ===== OPEN ALL VALVES =====
-export const openAllValves = async (req, res) => {
+export const waterAllGroups = async (req, res) => {
   try {
     const action = req.body.action?.toUpperCase();
 

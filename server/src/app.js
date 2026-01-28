@@ -91,25 +91,35 @@ wsServer.on("request", (request) => {
 
     // Add to clients array
     clients.push(connection);
-
     connection.on("message", (message) => {
-        if (message.type === "utf8") {
-            console.log("WS Message received:", message.utf8Data);
+    if (message.type === "utf8") {
+        console.log("WS Message received:", message.utf8Data);
 
-            // Echo back (or broadcast to all clients)
-            clients.forEach(client => {
-                if (client.connected) {
-                    client.sendUTF(message.utf8Data);
-                }
-            });
+        if (message.utf8Data === "ESP32_CONNECTED") {
+            console.log("✅ ESP32 is connected");
         }
-    });
+
+        // Broadcast to other clients if needed
+        clients.forEach(client => {
+            if (client.connected) client.sendUTF(message.utf8Data);
+        });
+    }
+});
 
     connection.on("close", () => {
         console.log("🔴 WebSocket disconnected");
         // Remove from clients array
         const index = clients.indexOf(connection);
         if (index !== -1) clients.splice(index, 1);
+    });
+});
+
+
+app.get("/esp32/status", (req, res) => {
+    const esp32Connected = clients.some(client => client.connected);
+    res.json({
+        connected: esp32Connected,
+        message: esp32Connected ? "ESP32 is online ✅" : "ESP32 is offline ❌"
     });
 });
 

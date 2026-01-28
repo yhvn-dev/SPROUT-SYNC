@@ -3,9 +3,9 @@ import express from "express";
 
 const router = express.Router();
 
-    router.post("/post/openBokchoyValve",esp32Controller.openBokchoyValve)
-    router.post("/post/openPechayValve",esp32Controller.openPechayValve)
-    router.post("/post/openMustasaValve",esp32Controller.openMustasaValve)
-    router.post("/post/openAllValves",esp32Controller.openAllValves)
+    router.post("/post/waterBokchoyGroup",esp32Controller.waterBokchoyGroup)
+    router.post("/post/waterPechayGroup",esp32Controller.waterPechayGroup)
+    router.post("/post/waterMustasaGroup",esp32Controller.waterMustasaGroup)
+    router.post("/post/waterAllGroups",esp32Controller.waterAllGroups)
 
 export default router;

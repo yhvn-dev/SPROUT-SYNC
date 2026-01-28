@@ -9,6 +9,8 @@ export const fetchAllTrays = async () =>{
         throw error
     }
 }
+
+
 export const insertTray = async (trayData) =>{
     try {
         const data = await api.post("/trays/post/trays",trayData)

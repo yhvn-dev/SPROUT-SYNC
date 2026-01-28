@@ -7,6 +7,7 @@ import Dashboard from "./pages/Dashboard/dashboard.jsx";
 import Users from "./pages/Users/users.jsx"
 import Analytics from './pages/Analytics/analytics.jsx';
 import Batch_History from "./pages/Batch_History/batch_history.jsx";
+import Control_Panel from "./pages/Control_Panel/control_panel.jsx";
 
 
 import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";
@@ -49,6 +50,14 @@ function App() {
                   <Batch_History/>
                 </ProtectedRoute>
               }/>
+
+              <Route path='/control_panel' element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <Control_Panel/>
+              </ProtectedRoute>
+            }/>
+
+            
 
           </Routes>
         </BrowserRouter>

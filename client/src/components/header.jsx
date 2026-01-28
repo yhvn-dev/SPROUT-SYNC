@@ -1,24 +1,11 @@
 import * as Logos from "./logo"
-import { useState,useEffect} from "react";
 
-export function Header({navChildren}) {
-  const [isScrolled, setIsScrolled] = useState(false);
-
-
-   useEffect(() => {
-      const handleScroll = () => {
-        setIsScrolled(window.scrollY > 50);
-      };
-      window.addEventListener('scroll', handleScroll);
-      return () => window.removeEventListener('scroll', handleScroll);
-    }, []);
-  
-
+export function Header({isScrolled,navChildren}) {
   return (
 
     <nav
       className={`fixed top-0  w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'backdrop-blur-2xl' : 'bg-transparent'
+        isScrolled ? 'bg-white shadow-2xl' : 'bg-transparent'
       }`}>
       <div className="rounded-[10px h-full w-full max-w-full mx-auto px-6 py-2">
         <div className="flex items-center justify-between rounded-[10px] ">

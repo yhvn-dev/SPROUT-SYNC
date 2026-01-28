@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { User, LayoutPanelTop, ChartNoAxesCombined, LogOut ,FileText } from "lucide-react";
+import { User, LayoutPanelTop, ChartNoAxesCombined, LogOut ,FileText, Settings} from "lucide-react";
 import * as Logo from "../components/logo";
 
 
@@ -98,6 +98,24 @@ export function Sidebar({ user, setLogoutOpen }) {
           <FileText  className="mx-1" strokeWidth={1.5} size={isMobile ? 20 : 18} />
           {!isMobile && <p className="text-sm mr-2 whitespace-nowrap">Batch History</p>}
         </NavLink>
+
+
+        {/* CONTROL PANEL */}
+         <NavLink
+          to="/control_panel"
+          className={({ isActive }) =>
+            `flex justify-center md:justify-start items-center ${isMobile ? 'w-12 h-12' : 'gap-2 py-1 px-2'} transition-all duration-300 rounded-[10px] my-2 w-full
+            ${
+              isActive
+                ? "text-white bg-[var(--sancgb)] shadow-lg"
+                : "hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)]"
+            }`
+          }
+        >
+          <Settings  className="mx-1" strokeWidth={1.5} size={isMobile ? 20 : 18} />
+          {!isMobile && <p className="text-sm mr-2 whitespace-nowrap">Control Panel</p>}
+        </NavLink>
+        
 
       
         {/* Logout Button */}
