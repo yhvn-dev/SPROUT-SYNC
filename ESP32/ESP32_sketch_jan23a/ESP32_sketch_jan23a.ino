@@ -1,10 +1,3 @@
-/************ SENSOR INSTANCES ************/
-// PlantSensor sensors[3] = {
-//   {32, 1, "Bokchoy", 3000, 1800, 0, 10, true, false},
-//   {33, 4, "Petchay", 2900, 1750, 0, 15, true, false},
-//   {34, 3, "Mustasa", 2800, 1700, 0, 15, true, false}
-// };
-
 #include <WiFi.h>
 #include <WebSocketsClient.h>
 #include <HTTPClient.h>
@@ -41,10 +34,13 @@ struct PlantSensor {
 
 /************ SENSOR INSTANCES ************/
 PlantSensor sensors[3] = {
-  {32, 1, "Bokchoy", 3000, 1800, 0, 40, true, false},
-  {33, 4, "Petchay", 2900, 1750, 0, 45, true, false},
-  {34, 3, "Mustasa", 2800, 1700, 0, 55, true, false}
+  {32, 1, "BOKCHOY", 3000, 1800, 0, 10, true, false},
+  {33, 4, "PECHAY", 2900, 1750, 0, 15, true, false},
+  {34, 3, "MUSTASA", 2800, 1700, 0, 15, true, false}
 };
+
+/************ MANUAL OVERRIDE FLAG ************/
+bool manualON[3] = {false, false, false};  // true = forced ON
 
 /************ BOOT SAFETY FLAG ************/
 bool systemReady = false;   // prevents auto relay ON at boot
@@ -75,16 +71,13 @@ void sendSensorReading(PlantSensor sensor, int percent, bool forceSend = false) 
                    ", \"value\": " + String(percent) +
                    ", \"valve\": \"" + (sensor.valveState ? "OPEN" : "CLOSED") + "\" }";
 
-  // only send if valve state changed or forceSend
   if (forceSend || sensor.valveState != lastValveState[sensor.id % 3]) {
-    // send to HTTP API
     HTTPClient http;
     http.begin(apiUrl);
     http.addHeader("Content-Type", "application/json");
     http.POST(payload);
     http.end();
 
-    // send via WebSocket
     if (wsConnected) {
       webSocket.sendTXT(payload);
       Serial.println("📤 Sent to NodeJS server: " + payload);
@@ -106,6 +99,25 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
     case WStype_TEXT:
       Serial.println("📩 WS MESSAGE RECEIVED:");
       Serial.println((char*)payload);
+
+      // handle manual ON/OFF commands
+      for (int i = 0; i < 3; i++) {
+        String msg = String((char*)payload);
+        msg.toUpperCase();
+
+        // Manual force open
+        if (msg == String(sensors[i].name) + "_ON") {
+          manualON[i] = true;
+          setRelay(valvePins[i], true);
+          sensors[i].valveState = true;
+          Serial.println("🌐 Manual ON: " + String(sensors[i].name));
+        } 
+        // Manual OFF clears force override but does not turn off valve
+        else if (msg == String(sensors[i].name) + "_OFF") {
+          manualON[i] = false;
+          Serial.println("🌐 Manual OFF cleared: " + String(sensors[i].name));
+        }
+      }
       break;
 
     case WStype_DISCONNECTED:
@@ -164,8 +176,7 @@ const unsigned long logicInterval = 5000; // 5 seconds
 const unsigned long sendInterval  = 600000; // 10 minutes
 
 void loop() {
-  // keep WebSocket alive
-  webSocket.loop();
+  webSocket.loop(); // keep WebSocket alive
 
   if (millis() - lastLogicRun >= logicInterval) {
 
@@ -181,27 +192,34 @@ void loop() {
       sensors[i].connected = isSensorConnected(sensors[i].moisture, sensors[i]);
       sensorConnected[i] = sensors[i].connected;
       sensorPercent[i] = moistureToPercentage(sensors[i]);
-
       if (sensorConnected[i]) hasValidSensor = true;
     }
 
-    // process valves & pump
+    // process valves & pump with manual override
     for (int i = 0; i < 3; i++) {
       bool valveOpen = false;
 
-      if (!systemReady || !sensorConnected[i]) {
-        setRelay(valvePins[i], false);
-        sensors[i].valveState = false;
+      if (manualON[i]) {
+        valveOpen = true; // forced ON
+        setRelay(valvePins[i], true);
+        pumpNeeded = true;
       } else {
-        if (sensorPercent[i] < sensors[i].threshold) {
-          setRelay(valvePins[i], true);
-          valveOpen = true;
-          pumpNeeded = true;
-        } else {
+        if (!systemReady || !sensorConnected[i]) {
+          valveOpen = false;
           setRelay(valvePins[i], false);
+        } else {
+          if (sensorPercent[i] < sensors[i].threshold) {
+            valveOpen = true;
+            pumpNeeded = true;
+            setRelay(valvePins[i], true);
+          } else {
+            valveOpen = false;
+            setRelay(valvePins[i], false);
+          }
         }
-        sensors[i].valveState = valveOpen;
       }
+
+      sensors[i].valveState = valveOpen;
     }
 
     // print all sensor readings together
@@ -218,7 +236,6 @@ void loop() {
       sendSensorReading(sensors[i], sensorPercent[i]);
     }
 
-    // arm system after first valid sensor
     if (!systemReady && hasValidSensor) {
       systemReady = true;
       Serial.println("✅ System armed — automatic watering enabled");

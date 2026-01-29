@@ -6,6 +6,7 @@ import { Db_Header } from "../../components/db_header";
 import { Droplets, Wifi, WifiOff, Power, Activity, AlertCircle, CheckCircle, Camera, Maximize2, RotateCw, Sprout, Gauge
 } from 'lucide-react';
 import * as waterPlantService from "../../data/waterPlantsServices"
+import { Notif_Modal } from '../../components/notifModal';
 
 
 function Control_panel() {
@@ -14,6 +15,7 @@ function Control_panel() {
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [cameraView, setCameraView] = useState('grid'); // 'grid' or 'fullscreen'
   const [cameraStatus, setCameraStatus] = useState('streaming');
+   const [isNotifOpen, setNotifOpen] = useState(false);
   const [wateringMode, setWateringMode] = useState({
     all: false,
     bokchoy: false,
@@ -191,7 +193,7 @@ function Control_panel() {
 
       {/* Header - Column 2, Row 1 */}
       <header className="col-start-2 row-start-1">
-        <Db_Header/>    
+        <Db_Header setNotifOpen={setNotifOpen}/>    
       </header>
    
    
@@ -555,6 +557,16 @@ function Control_panel() {
           </div>
         </div>
       </main>
+
+
+
+
+      {/* MODALS */}
+      {isNotifOpen && (
+        <Notif_Modal isOpen={isNotifOpen} onClose={() => setNotifOpen(false)} />
+      )}
+
+
     </section>
   );
 }

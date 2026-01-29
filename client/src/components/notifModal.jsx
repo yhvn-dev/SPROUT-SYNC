@@ -131,9 +131,10 @@ export function Notif_Modal({ isOpen, onClose}) {
                   <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
                     <Clock size={12} className="clock_icon" /> {new Date(notif.created_at).toLocaleString()}
                   </div>
-                  
-
+                
                 </div>
+
+
 
                 <button type="submit" onClick={() => handleDelete(notif)}className="rounded-full p-2 h-5 w-5 cursor-pointer mx-2">
                   <Trash2 className="delete_notif text-[var(--acc-darkc)]" size={16}/>
