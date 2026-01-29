@@ -14,7 +14,7 @@ function Control_panel() {
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [cameraView, setCameraView] = useState('grid'); // 'grid' or 'fullscreen'
   const [cameraStatus, setCameraStatus] = useState('streaming');
-  const [pumpStates, setPumpStates] = useState({
+  const [wateringMode, setWateringMode] = useState({
     all: false,
     bokchoy: false,
     pechay: false,
@@ -40,69 +40,120 @@ function Control_panel() {
         ]
     };
 
-  const handlePumpToggle = (pumpType) => {
-    setPumpStates(prev => ({
-      ...prev,
-      [pumpType]: !prev[pumpType]
-    }));
-  };
 
-  const handleWaterAllGroups = async (e) =>{
-         e.preventDefault()
-    try {    
-        await waterPlantService.waterAllGroups()
-    } catch (error) {
-        console.error(error)
-    }
-  }
 
-    const handleWaterBokchoylGroups = async (e) =>{
-         e.preventDefault()
-    try {    
-        await waterPlantService.waterBokchoyGroup()
-    } catch (error) {
-        console.error(error)
-    }
-  }
+    const handleWaterAllGroups = async () => {
+      const nextState = !wateringMode.all;
 
-    const handleWaterPechayGroup = async (e) =>{
-         e.preventDefault()
-        try {    
-            await waterPlantService.waterPechayGroup()
+      setWateringMode({
+        all: nextState,
+        bokchoy: nextState,
+        pechay: nextState,
+        mustasa: nextState
+      });
+
+      try {
+        const command = !wateringMode.all ? "ON" : "OFF"; // send opposite of current
+        await waterPlantService.waterAllGroups(command );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    
+
+    
+
+    const handleWaterBokchoyGroup = async () => {
+      setWateringMode(prev => {
+        const updated = { ...prev, bokchoy: !prev.bokchoy };
+        updated.all = updated.bokchoy && updated.pechay && updated.mustasa;
+        return updated;
+      });
+
+      try {
+        const command = !wateringMode.bokchoy ? "ON" : "OFF"; // send opposite of current
+        await waterPlantService.waterBokchoyGroup(command);
+      } catch (error) {
+        console.error(error);
+        // rollback state if API fails
+        setWateringMode(prev => ({
+          ...prev,
+          bokchoy: false,
+          all: false
+        }));
+      }
+    };
+      
+    
+    const handleWaterPechayGroup = async () => {
+        // Optimistically update state
+        setWateringMode(prev => {
+          const updated = { ...prev, pechay: !prev.pechay }; 
+          updated.all = updated.bokchoy && updated.pechay && updated.mustasa;
+          return updated;
+        });
+
+        
+        try {
+          const command = !wateringMode.bokchoy ? "ON" : "OFF"; // send opposite of current
+          await waterPlantService.waterPechayGroup(command);
         } catch (error) {
-            console.error(error)
+          console.error(error);
+          setWateringMode(prev => ({
+            ...prev,
+            pechay: false,
+            all: false
+          }));
         }
-   }
-
-    const handleWaterMustasaGroup = async (e) =>{
-         e.preventDefault()
-    try {    
-        await waterPlantService.waterMustasaGroup()
-    } catch (error) {
-        console.error(error)
-    }
-  }
-  
+    };
 
 
-  const getMoistureColor = (moisture) => {
-    if (moisture >= 65) return 'bg-green-500';
-    if (moisture >= 45) return 'bg-yellow-500';
-    return 'bg-red-500';
+
+    
+    
+    const handleWaterMustasaGroup = async () => {
+        // Optimistically update state
+        setWateringMode(prev => {
+          const updated = { ...prev, mustasa: !prev.mustasa}; 
+          updated.all = updated.bokchoy && updated.pechay && updated.mustasa;
+          return updated;
+        });
+
+        try {
+          const command = !wateringMode.bokchoy ? "ON" : "OFF"; 
+          await waterPlantService.waterMustasaGroup(command)
+        } catch (error) {
+          console.error(error);
+          setWateringMode(prev => ({
+            ...prev,
+            mustasa: false,
+            all: false
+          }));
+        }
+    };
+
+    const getMoistureColor = (moisture) => {
+      if (moisture >= 65) return 'bar-ok';
+      if (moisture >= 45) return 'bar-moderate';
+      return 'bar-low';
   };
 
+
+  
   const getMoistureStatus = (status) => {
     switch(status) {
-      case 'healthy': 
-        return { colorClass: 'text-green-600 bg-green-50', text: 'Optimal' };
-      case 'moderate': 
-        return { colorClass: 'text-yellow-600 bg-yellow-50', text: 'Moderate' };
-      case 'low': 
-        return { colorClass: 'text-red-600 bg-red-50', text: 'Low' };
-      default: 
-        return { colorClass: 'text-gray-600 bg-gray-50', text: 'Unknown' };
+      case 'healthy':
+        return { colorClass: 'status-ok', text: 'Optimal' };
+      case 'moderate':
+        return { colorClass: 'status-moderate', text: 'Moderate' };
+      case 'low':
+        return { colorClass: 'status-low', text: 'Low' };
+      default:
+        return { colorClass: 'status-unknown', text: 'Unknown' };
     }
   };
+
 
 
     {/* MOBILE MENU BUTTON */}
@@ -121,11 +172,8 @@ function Control_panel() {
     )}
       
   return (
-   <section className="
-        h-screen
-        grid
-        gap-4
-        grid-cols-[auto_1fr]
+   <section className="control_panel
+        con_main h-screen grid gap-4 grid-cols-[auto_1fr]
         grid-rows-[auto_1fr]
         bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]
         font-sans
@@ -161,7 +209,7 @@ function Control_panel() {
               </p>
             </div>
             
-            <div className="flex items-center gap-4 bg-white p-4 px-6 rounded-2xl shadow-md border border-gray-50 relative">
+            <div className="conb flex items-center gap-4 bg-white p-4 px-6 rounded-2xl shadow-md border border-gray-50 relative">
               {esp32Connected ? (
                 <>
                   <Wifi size={24} className="text-green-500" />
@@ -195,13 +243,13 @@ function Control_panel() {
           {/* Bento Grid Layout */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-auto">
             
-            {/* Pump Controls - Large Card */}
-            <div className="bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl col-span-1 lg:col-span-2 min-h-[400px]">
+            {/* Valve Controls - Large Card */}
+            <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl col-span-1 lg:col-span-2 min-h-[400px]">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                   <Droplets size={24} className="text-[var(--ptl-greend)]" />
                   <h2 className="text-2xl font-bold text-[var(--color-dark-blue)] m-0">
-                    Pump Controls
+                    Valve Controls
                   </h2>
                 </div>
               </div>
@@ -209,82 +257,91 @@ function Control_panel() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
                 {/* All Pumps */}
                 <button
-                  className={`flex flex-col items-center justify-center p-8 px-6 rounded-2xl border-none cursor-pointer transition-all gap-3 shadow-md min-h-[160px] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 sm:col-span-2 ${
-                    pumpStates.all
+                  className={`cp_button flex flex-col items-center justify-center p-8 px-6 rounded-2xl border-none cursor-pointer transition-all gap-3 shadow-md min-h-[160px] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 sm:col-span-2 ${
+                    wateringMode.all
                       ? 'bg-gradient-to-br from-[var(--ptl-greend)] to-[var(--ptl-greene)]'
                       : 'bg-[var(--pal2-whitea)]'
                   }`}
-                  onClick={() => handlePumpToggle('all')}
-                >
-                  <Power size={28} className={pumpStates.all ? 'text-white' : 'text-[var(--ptl-greend)]'} />
-                  <span className={`text-lg font-semibold mt-2 ${pumpStates.all ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
-                    All Pumps
+                  onClick={handleWaterAllGroups}>
+
+                  <Power size={28} className={wateringMode.all ? 'text-white' : 'text-[var(--ptl-greend)]'} />
+                  <span className={`text-lg font-semibold mt-2 ${wateringMode.all ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
+                    All Plants
                   </span>
-                  <span className={`text-sm font-medium opacity-90 ${pumpStates.all ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
-                    {pumpStates.all ? 'Running' : 'Stopped'}
+                  <span className={`text-sm font-medium opacity-90 ${wateringMode.all ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
+                    {wateringMode.all ? 'Watering' : 'Closed'}
                   </span>
                 </button>
+
+
 
                 {/* Bokchoy Group */}
                 <button
-                  className={`flex flex-col items-center justify-center p-8 px-6 rounded-2xl border-none cursor-pointer transition-all gap-3 shadow-md min-h-[160px] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 ${
-                    pumpStates.bokchoy
+                  className={`cp_button bokchoy_button flex flex-col items-center justify-center p-8 px-6 rounded-2xl border-none cursor-pointer transition-all gap-3 shadow-md min-h-[160px] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 ${
+                    wateringMode.bokchoy
                       ? 'bg-gradient-to-br from-[var(--sancgd)] to-[var(--sancgb)]'
                       : 'bg-[var(--sage-lighter)]'
                   }`}
-                  onClick={() => handlePumpToggle('bokchoy')}
-                >
-                  <Sprout size={24} className={pumpStates.bokchoy ? 'text-white' : 'text-[var(--sage-dark)]'} />
-                  <span className={`text-lg font-semibold mt-2 ${pumpStates.bokchoy ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
+                  onClick={handleWaterBokchoyGroup}>
+                  <Sprout size={24} className={wateringMode.bokchoy ? 'text-white' : 'text-[var(--sage-dark)]'} />
+                  <span className={`text-lg font-semibold mt-2 ${wateringMode.bokchoy ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
                     Bokchoy
                   </span>
-                  <span className={`text-sm font-medium opacity-90 ${pumpStates.bokchoy ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
-                    {pumpStates.bokchoy ? 'Watering' : 'Idle'}
+                  <span className={`text-sm font-medium opacity-90 ${wateringMode.bokchoy ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
+                    {wateringMode.bokchoy ? 'Watering' : 'Idle'}
                   </span>
                 </button>
+
+
 
                 {/* Pechay Group */}
                 <button
-                  className={`flex flex-col items-center justify-center p-8 px-6 rounded-2xl border-none cursor-pointer transition-all gap-3 shadow-md min-h-[160px] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 ${
-                    pumpStates.pechay
+                  className={`cp_button pechay_button flex flex-col items-center justify-center p-8 px-6 rounded-2xl border-none cursor-pointer transition-all gap-3 shadow-md min-h-[160px] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 ${
+                    wateringMode.pechay
                       ? 'bg-gradient-to-br from-[var(--ptl-greenf)] to-[var(--ptl-greeng)]'
                       : 'bg-[var(--sage-lighter)]'
                   }`}
-                  onClick={() => handlePumpToggle('pechay')}
-                >
-                  <Sprout size={24} className={pumpStates.pechay ? 'text-white' : 'text-[var(--sage-dark)]'} />
-                  <span className={`text-lg font-semibold mt-2 ${pumpStates.pechay ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
+                  onClick={handleWaterPechayGroup}>
+                  <Sprout size={24} className={wateringMode.pechay ? 'text-white' : 'text-[var(--sage-dark)]'} />
+                  <span className={`text-lg font-semibold mt-2 ${wateringMode.pechay ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
                     Pechay
                   </span>
-                  <span className={`text-sm font-medium opacity-90 ${pumpStates.pechay ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
-                    {pumpStates.pechay ? 'Watering' : 'Idle'}
+                  <span className={`text-sm font-medium opacity-90 ${wateringMode.pechay ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
+                    {wateringMode.pechay ? 'Watering' : 'Idle'}
                   </span>
                 </button>
 
+
+
+
                 {/* Mustasa Group */}
                 <button
-                  className={`flex flex-col items-center justify-center p-8 px-6 rounded-2xl border-none cursor-pointer transition-all gap-3 shadow-md min-h-[160px] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 sm:col-span-2 lg:col-span-1 ${
-                    pumpStates.mustasa
+                  className={`cp_button mustasa_button flex flex-col items-center justify-center p-8 px-6 rounded-2xl border-none cursor-pointer transition-all gap-3 shadow-md min-h-[160px] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 sm:col-span-2 lg:col-span-1 ${
+                    wateringMode.mustasa
                       ? 'bg-gradient-to-br from-[var(--sage-dark)] to-[var(--sage)]'
                       : 'bg-[var(--sage-lighter)]'
                   }`}
-                  onClick={() => handlePumpToggle('mustasa')}
+                  onClick={handleWaterMustasaGroup}
                 >
-                  <Sprout size={24} className={pumpStates.mustasa ? 'text-white' : 'text-[var(--sage-dark)]'} />
-                  <span className={`text-lg font-semibold mt-2 ${pumpStates.mustasa ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
+                  <Sprout size={24} className={wateringMode.mustasa ? 'text-white' : 'text-[var(--sage-dark)]'} />
+                  <span className={`text-lg font-semibold mt-2 ${wateringMode.mustasa ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
                     Mustasa
                   </span>
-                  <span className={`text-sm font-medium opacity-90 ${pumpStates.mustasa ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
-                    {pumpStates.mustasa ? 'Watering' : 'Idle'}
+                  <span className={`text-sm font-medium opacity-90 ${wateringMode.mustasa ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
+                    {wateringMode.mustasa ? 'Watering' : 'Idle'}
                   </span>
                 </button>
+
+                
               </div>
             </div>
 
 
             
             {/* System Status Summary */}
-            <div className="bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl">
+            <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl">
+
+              
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                   <Activity size={20} className="text-[var(--ptl-greend)]" />
@@ -293,19 +350,23 @@ function Control_panel() {
                   </h3>
                 </div>
               </div>
+
+
               <div className="flex flex-col gap-5">
-                <div className="flex items-center gap-4 p-4 bg-[var(--sage-lighter)] rounded-xl">
+                <div className="cp_status_div  flex items-center gap-4 p-4 bg-[var(--sage-lighter)] rounded-xl">
                   <CheckCircle size={20} className="text-green-500 flex-shrink-0" />
-                  <div>
+                  <div >
                     <p className="text-sm text-[var(--gray_1--)] m-0 font-medium">
-                      Active Pumps
+                      Active Valves
                     </p>
                     <p className="text-lg font-bold text-[var(--color-dark-blue)] m-0 mt-1">
-                      {Object.values(pumpStates).filter(Boolean).length} / 4
+                  {['bokchoy', 'pechay', 'mustasa'].filter(p => wateringMode[p]).length} / 3
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 p-4 bg-[var(--sage-lighter)] rounded-xl">
+
+                
+                <div className="cp_status_div  flex items-center gap-4 p-4 bg-[var(--sage-lighter)] rounded-xl">
                   <AlertCircle size={20} className="text-yellow-500 flex-shrink-0" />
                   <div>
                     <p className="text-sm text-[var(--gray_1--)] m-0 font-medium">
@@ -316,9 +377,11 @@ function Control_panel() {
                     </p>
                   </div>
                 </div>
-                <div className="flex items-center gap-4 p-4 bg-[var(--sage-lighter)] rounded-xl">
+
+
+                <div className="cp_status_div flex items-center gap-4 p-4 bg-[var(--sage-lighter)] rounded-xl">
                   <Droplets size={20} className="text-[var(--color-success-c)] flex-shrink-0" />
-                  <div>
+                  <div > 
                     <p className="text-sm text-[var(--gray_1--)] m-0 font-medium">
                       Avg. Moisture
                     </p>
@@ -327,13 +390,13 @@ function Control_panel() {
                     </p>
                   </div>
                 </div>
-              </div>
+              </div>              
             </div>
 
 
 
             {/* Pechay Moisture Readings */}
-            <div className="bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl min-h-[320px]">
+            <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl min-h-[320px]">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                   <Gauge size={20} className="text-[var(--ptl-greenf)]" />
@@ -342,6 +405,7 @@ function Control_panel() {
                   </h3>
                 </div>
               </div>
+              
               <div className="flex flex-col gap-5">
                 {moistureData.pechay.map(plant => (
                   <div key={plant.id} className="flex flex-col gap-2">
@@ -368,7 +432,7 @@ function Control_panel() {
             </div>
 
             {/* Mustasa Moisture Readings */}
-            <div className="bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl min-h-[320px]">
+            <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl min-h-[320px]">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                   <Gauge size={20} className="text-[var(--sage-dark)]" />
@@ -404,7 +468,7 @@ function Control_panel() {
 
             
             {/* Bokchoy Moisture Readings */}
-            <div className="bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl min-h-[320px]">
+            <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl min-h-[320px]">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                   <Gauge size={20} className="text-[var(--sancgd)]" />
@@ -439,10 +503,12 @@ function Control_panel() {
             </div>
 
 
+
+
             
 
             {/* CCTV Camera Feed */}
-            <div className={`bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl min-h-[450px] ${
+            <div className={`conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl min-h-[450px] ${
               cameraView === 'fullscreen' ? 'col-span-1 lg:col-span-2 xl:col-span-3' : 'col-span-1 lg:col-span-2'
             }`}>
               <div className="flex justify-between items-center mb-6">
@@ -452,6 +518,8 @@ function Control_panel() {
                     Live Camera Feed
                   </h2>
                 </div>
+
+                
                 <div className="flex gap-2">
                   <button 
                     className="bg-[var(--sage-lighter)] border-none rounded-xl p-2.5 cursor-pointer flex items-center justify-center transition-all text-[var(--sage-dark)] hover:bg-[var(--sage-medium)]"

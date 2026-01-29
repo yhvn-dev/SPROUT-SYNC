@@ -65,9 +65,6 @@ app.get("/api/hello", (req, res) => {
 
 
 
-
-
-
 // ===== CREATE HTTP SERVER (for WebSocket) =====
 const port = process.env.PORT || 5000;
 const server = http.createServer(app);

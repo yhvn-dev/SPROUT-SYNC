@@ -16,8 +16,10 @@ import { useMemo } from "react";
 const StatCard = ({ label, value, gradient, color }) => (
   <div
     className={`stat_card w-full h-full rounded-xl shadow-lg hover:shadow-xl transition-shadow
-    flex flex-col items-center justify-center p-3 bg-gradient-to-tr ${gradient}`}>
-    <p className="text-xs text-gray-500">{label}</p>
+    flex flex-col items-center justify-center p-3 bg-gradient-to-tr ${gradient}
+    dark:from-gray-900 dark:to-gray-800`}
+  >
+    <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
     <h2 className="text-3xl font-bold" style={{ color }}>
       {value ?? 0}
     </h2>
@@ -27,10 +29,20 @@ const StatCard = ({ label, value, gradient, color }) => (
 // =====================
 // OVERVIEW
 // =====================
-export const Overview = ({ batchTotal, moistureReadingsLast24h, averageReadingsBySensor,
+export const Overview = ({
+  batchTotal,
+  moistureReadingsLast24h,
+  averageReadingsBySensor,
 }) => {
+  // =====================
+  // DARK MODE DETECTION
+  // =====================
+  const isDark =
+    typeof window !== "undefined" &&
+    document.documentElement.classList.contains("dark");
 
-  console.log("MOISTURE READINGS LAST 24HR",moistureReadingsLast24h)
+  const axisColor = isDark ? "#e5e7eb" : "#374151"; // gray-200 / gray-700
+  const gridColor = isDark ? "#374151" : "#e5e7eb";
 
   // =====================
   // MOISTURE CHART DATA
@@ -53,9 +65,6 @@ export const Overview = ({ batchTotal, moistureReadingsLast24h, averageReadingsB
         };
       });
   }, [moistureReadingsLast24h]);
-
-
-  
 
   // =====================
   // AVERAGES
@@ -112,24 +121,45 @@ export const Overview = ({ batchTotal, moistureReadingsLast24h, averageReadingsB
         />
       </div>
 
-
-
-
       {/* =====================
           MOISTURE LINE CHART
       ====================== */}
-      <div className="conb  col-span-7 row-span-9 bg-white rounded-xl shadow-lg p-4 flex flex-col">
-        <h3 className="text-sm font-semibold text-gray-800 mb-2">
+      <div className="conb col-span-7 row-span-9 bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 flex flex-col">
+        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">
           Soil Moisture Trend (Last 24h)
         </h3>
 
         <div className="flex-1 min-h-0">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={moistureData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="time" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} />
-              <Tooltip />
+              <CartesianGrid
+                stroke={gridColor}
+                strokeDasharray="3 3"
+              />
+
+              <XAxis
+                dataKey="time"
+                tick={{ fill: axisColor, fontSize: 11 }}
+                axisLine={{ stroke: axisColor }}
+                tickLine={{ stroke: axisColor }}
+              />
+
+              <YAxis
+                tick={{ fill: axisColor, fontSize: 11 }}
+                axisLine={{ stroke: axisColor }}
+                tickLine={{ stroke: axisColor }}
+              />
+
+              <Tooltip
+                contentStyle={{
+                  backgroundColor: isDark ? "#111827" : "#ffffff",
+                  borderColor: gridColor,
+                  color: axisColor,
+                }}
+                labelStyle={{ color: axisColor }}
+                itemStyle={{ color: axisColor }}
+              />
+
               <Line
                 type="monotone"
                 dataKey="value"
@@ -142,22 +172,22 @@ export const Overview = ({ batchTotal, moistureReadingsLast24h, averageReadingsB
         </div>
       </div>
 
-
       {/* =====================
           WATER LEVEL GAUGE
       ====================== */}
-      <div className="conb col-span-5 row-span-9 bg-white rounded-xl shadow-sm flex items-center justify-center p-6">
+      <div className="conb col-span-5 row-span-9 bg-white dark:bg-gray-900 rounded-xl shadow-sm flex items-center justify-center p-6">
         <div className="flex flex-col items-center">
           <div className="relative w-40 h-40">
             <svg
               className="w-full h-full transform -rotate-90"
-              viewBox="0 0 100 100">
+              viewBox="0 0 100 100"
+            >
               <circle
                 cx="50"
                 cy="50"
                 r="45"
                 fill="none"
-                stroke="#E8F3ED"
+                stroke={isDark ? "#1f2937" : "#E8F3ED"}
                 strokeWidth="8"
               />
               <circle
@@ -176,14 +206,16 @@ export const Overview = ({ batchTotal, moistureReadingsLast24h, averageReadingsB
 
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <Droplets className="w-10 h-10 mb-2 text-[#027c68]" />
-              <span className="text-4xl font-bold text-gray-800">
+              <span className="text-4xl font-bold text-gray-800 dark:text-gray-100">
                 {waterLevel}
               </span>
-              <span className="text-sm text-gray-600">%</span>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                %
+              </span>
             </div>
           </div>
 
-          <p className="text-base font-semibold text-gray-800 mt-4">
+          <p className="text-base font-semibold text-gray-800 dark:text-gray-100 mt-4">
             Water Level
           </p>
         </div>

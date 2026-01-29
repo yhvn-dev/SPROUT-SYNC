@@ -89,6 +89,30 @@
     --szd-6-8:6.84rem;
     --sz-8-96:8.96rem;
     --szd-11-08:11.08rem;
+
+
+
+
+
+
+    
+    --status-ok-bg: #ecfdf5;
+    --status-ok-text: #047857;
+
+    --status-moderate-bg: #fffbeb;
+    --status-moderate-text: #b45309;
+
+    --status-low-bg: #fef2f2;
+    --status-low-text: #b91c1c;
+
+    --status-unknown-bg: #f3f4f6;
+    --status-unknown-text: #4b5563;
+
+    /* PROGRESS BARS */
+    --bar-ok: #22c55e;
+    --bar-moderate: #eab308;
+    --bar-low: #ef4444;
+
 }
 
 body {
@@ -700,13 +724,22 @@ body.dark .hero{
     }
 
 
-    body.dark .notif_box{
-        @apply bg-[var(--metal-dark2)];
-    }
+
 
      body.dark .notif_box{
         @apply bg-[var(--metal-dark1)];
     }
+        body.dark .notifs_scroll_box::-webkit-scrollbar{
+            @apply bg-[var(--metal-dark1)];
+        }   
+        body.dark .notifs_scroll_box::-webkit-scrollbar-thumb{
+            @apply bg-[var(--metal-dark4)] border-4 rounded-2xl border-[var(--metal-dark1)] cursor-pointer;
+        }  
+        body.dark span{
+            @apply text-[var(--metal-dark4)];
+        }
+
+
 
       body.dark .notif_box .delete_notif{
         @apply stroke-[var(--color-danger-a)] border-[1px] border-gray-100 rounded-full;
@@ -835,3 +868,88 @@ body.dark .browser_window_main_container{
     body.dark .menu_button{
         @apply bg-[var(--metal-dark4)];
     }
+
+
+
+
+    /* CONTROL PANEL */
+    body.dark .control_panel h1{
+        @apply text-[var(--main-white)];
+    }
+        body.dark .control_panel main::-webkit-scrollbar{
+        @apply bg-[var(--metal-dark5)];
+    }
+
+          body.dark .control_panel main::-webkit-scrollbar-thumb{
+         @apply bg-[var(--metal-dark4)] border-4 rounded-2xl border-[var(--metal-dark5)] cursor-pointer;
+    }
+
+
+    body.dark .cp_button.bokchoy_button{
+        @apply bg-[var(--metal-dark1)];
+        box-shadow: 5px 5px 5px 1px rgba(0,0,0,0.5);
+    }   
+     body.dark .cp_button.bokchoy_button{
+        @apply bg-[var(--metal-dark1)];
+        box-shadow: 5px 5px 5px 1px rgba(0,0,0,0.5);
+    }
+       body.dark .cp_button{
+        @apply bg-[var(--metal-dark1)];
+        box-shadow: 5px 5px 5px 1px rgba(0,0,0,0.5);
+    }
+       body.dark .cp_button.pechay_button{
+        @apply bg-[var(--metal-dark1)];
+        box-shadow: 5px 5px 5px 1px rgba(0,0,0,0.5);
+    }
+
+
+    body.dark .cp_status_div{
+        @apply bg-[var(--metal-dark2)];
+    }
+   
+
+    .dark {
+        --status-ok-bg: #064e3b;
+        --status-ok-text: #6ee7b7;
+
+        --status-moderate-bg: #78350f;
+        --status-moderate-text: #fde68a;
+
+        --status-low-bg: #7f1d1d;
+        --status-low-text: #fca5a5;
+
+        --status-unknown-bg: #1f2937;
+        --status-unknown-text: #d1d5db;
+
+        --bar-ok: #4ade80;
+        --bar-moderate: #facc15;
+        --bar-low: #f87171;
+    }
+
+    /* STATUS BADGES */
+    .status-ok {
+    background-color: var(--status-ok-bg);
+    color: var(--status-ok-text);
+    }
+
+    .status-moderate {
+    background-color: var(--status-moderate-bg);
+    color: var(--status-moderate-text);
+    }
+
+    .status-low {
+    background-color: var(--status-low-bg);
+    color: var(--status-low-text);
+    }
+
+    .status-unknown {
+    background-color: var(--status-unknown-bg);
+    color: var(--status-unknown-text);
+    }
+
+    /* BARS */
+    .bar-ok { background-color: var(--bar-ok); }
+    .bar-moderate { background-color: var(--bar-moderate); }
+    .bar-low { background-color: var(--bar-low); }
+
+

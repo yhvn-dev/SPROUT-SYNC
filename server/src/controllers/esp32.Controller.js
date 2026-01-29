@@ -31,6 +31,7 @@ export const waterBokchoyGroup = async (req, res) => {
       success: true,
       message: `Bokchoy valve command "${command}" sent`
     });
+    console.log(command)
 
   } catch (err) {
     console.error(err);
@@ -61,6 +62,9 @@ export const waterPechayGroup = async (req, res) => {
       message: `Pechay valve command "${command}" sent`
     });
 
+    console.log(command)
+
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error sending command" });
@@ -89,7 +93,7 @@ export const waterMustasaGroup = async (req, res) => {
       success: true,
       message: `Mustasa valve command "${command}" sent`
     });
-
+    console.log(command)
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error sending command" });
@@ -124,8 +128,8 @@ export const waterAllGroups = async (req, res) => {
     res.status(200).json({
       success: true,
       message: `All valves "${action}" command sent`
-    });
-
+    });  
+    console.log(commands)
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error sending command to ESP32" });

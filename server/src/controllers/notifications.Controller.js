@@ -77,7 +77,6 @@ export const createNotification = async (req, res) => {
 
 
 
-
 export const notifyReplantDate = async () => {
   try {
     const batchData = await plantBatchModel.readPlantBatches();
@@ -132,7 +131,7 @@ export const notifyReplantDate = async () => {
           `Expected Harvest: ${harvestDate.toISOString().slice(0,10)}`
         });
         
-        console.log(`✅ Notification sent for Batch #${batch.batch_id}`);    
+        // console.log(`✅ Notification sent for Batch #${batch.batch_id}`);    
 
       } 
     }
