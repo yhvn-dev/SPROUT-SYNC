@@ -1,3 +1,10 @@
+/************ SENSOR INSTANCES ************/
+// PlantSensor sensors[3] = {
+//   {32, 1, "Bokchoy", 3000, 1800, 0, 10, true, false},
+//   {33, 4, "Petchay", 2900, 1750, 0, 15, true, false},
+//   {34, 3, "Mustasa", 2800, 1700, 0, 15, true, false}
+// };
+
 #include <WiFi.h>
 #include <WebSocketsClient.h>
 #include <HTTPClient.h>
@@ -39,6 +46,10 @@ PlantSensor sensors[3] = {
   {34, 3, "Mustasa", 2800, 1700, 0, 55, true, false}
 };
 
+/************ BOOT SAFETY FLAG ************/
+bool systemReady = false;   // prevents auto relay ON at boot
+bool wsConnected = false;   // WebSocket connection flag
+
 /************ CONVERT RAW TO % ************/
 int moistureToPercentage(PlantSensor sensor) {
   int range = sensor.moistureMax - sensor.moistureMin;
@@ -64,15 +75,19 @@ void sendSensorReading(PlantSensor sensor, int percent, bool forceSend = false) 
                    ", \"value\": " + String(percent) +
                    ", \"valve\": \"" + (sensor.valveState ? "OPEN" : "CLOSED") + "\" }";
 
+  // only send if valve state changed or forceSend
   if (forceSend || sensor.valveState != lastValveState[sensor.id % 3]) {
+    // send to HTTP API
     HTTPClient http;
     http.begin(apiUrl);
     http.addHeader("Content-Type", "application/json");
     http.POST(payload);
     http.end();
 
-    if (webSocket.isConnected()) {
+    // send via WebSocket
+    if (wsConnected) {
       webSocket.sendTXT(payload);
+      Serial.println("📤 Sent to NodeJS server: " + payload);
     }
 
     lastValveState[sensor.id % 3] = sensor.valveState;
@@ -81,23 +96,21 @@ void sendSensorReading(PlantSensor sensor, int percent, bool forceSend = false) 
 
 /************ WEBSOCKET EVENT ************/
 void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
-
   switch (type) {
-
     case WStype_CONNECTED:
-      Serial.println("[WS] Connected");
+      wsConnected = true;
+      Serial.println("[WS] Connected to NodeJS server ✅");
       webSocket.sendTXT("{\"message\":\"ESP32 Online\"}");
       break;
 
-    case WStype_TEXT: {
-      String msg = String((char*)payload);
+    case WStype_TEXT:
       Serial.println("📩 WS MESSAGE RECEIVED:");
-      Serial.println(msg);
+      Serial.println((char*)payload);
       break;
-    }
 
     case WStype_DISCONNECTED:
-      Serial.println("[WS] Disconnected");
+      wsConnected = false;
+      Serial.println("[WS] Disconnected from NodeJS server ❌");
       break;
   }
 }
@@ -107,9 +120,14 @@ void initWiFi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
   Serial.println("📡 Trying to connect to WiFi...");
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  Serial.println("\n✅ WiFi Connected, IP: " + WiFi.localIP().toString());
 }
 
-/************ RELAY HELPER ************/
+/************ RELAY HELPER (ACTIVE LOW) ************/
 void setRelay(int pin, bool on) {
   digitalWrite(pin, on ? LOW : HIGH);
 }
@@ -118,13 +136,16 @@ void setRelay(int pin, bool on) {
 void setup() {
   Serial.begin(115200);
 
+  // Force all relays OFF at boot
   pinMode(PUMP_PIN, OUTPUT);
-  digitalWrite(PUMP_PIN, LOW);
+  digitalWrite(PUMP_PIN, HIGH);
 
   for (int i = 0; i < 3; i++) {
     pinMode(valvePins[i], OUTPUT);
-    digitalWrite(valvePins[i], LOW);
+    digitalWrite(valvePins[i], HIGH);
   }
+
+  Serial.println("🔒 Relays forced OFF at boot");
 
   initWiFi();
 
@@ -132,38 +153,47 @@ void setup() {
   webSocket.onEvent(webSocketEvent);
   webSocket.setReconnectInterval(5000);
 
-  Serial.println("🌱 System Started (ONLINE / OFFLINE READY)");
+  Serial.println("🌱 System Started (WAITING FOR SENSOR READINGS)");
 }
 
 /************ LOOP ************/
 unsigned long lastLogicRun = 0;
 unsigned long lastSendRun  = 0;
 
-const unsigned long logicInterval = 5000;
-const unsigned long sendInterval  = 600000;
+const unsigned long logicInterval = 5000; // 5 seconds
+const unsigned long sendInterval  = 600000; // 10 minutes
 
 void loop() {
-  if (WiFi.status() == WL_CONNECTED) {
-    webSocket.loop();
-  }
+  // keep WebSocket alive
+  webSocket.loop();
 
-  // ===== SENSOR + RELAY LOGIC =====
   if (millis() - lastLogicRun >= logicInterval) {
-    bool pumpNeeded = false;
-    Serial.println("🌱 Plant Sensor Readings:");
 
+    bool pumpNeeded = false;
+    bool hasValidSensor = false;
+
+    int sensorPercent[3];
+    bool sensorConnected[3];
+
+    // read all sensors simultaneously
     for (int i = 0; i < 3; i++) {
       sensors[i].moisture = analogRead(sensors[i].pin);
       sensors[i].connected = isSensorConnected(sensors[i].moisture, sensors[i]);
+      sensorConnected[i] = sensors[i].connected;
+      sensorPercent[i] = moistureToPercentage(sensors[i]);
 
+      if (sensorConnected[i]) hasValidSensor = true;
+    }
+
+    // process valves & pump
+    for (int i = 0; i < 3; i++) {
       bool valveOpen = false;
 
-      if (!sensors[i].connected) {
+      if (!systemReady || !sensorConnected[i]) {
         setRelay(valvePins[i], false);
         sensors[i].valveState = false;
       } else {
-        int percent = moistureToPercentage(sensors[i]);
-        if (percent < sensors[i].threshold) {
+        if (sensorPercent[i] < sensors[i].threshold) {
           setRelay(valvePins[i], true);
           valveOpen = true;
           pumpNeeded = true;
@@ -172,30 +202,36 @@ void loop() {
         }
         sensors[i].valveState = valveOpen;
       }
-
-      Serial.print(sensors[i].name);
-      if (sensors[i].connected) {
-        Serial.print(" | ");
-        Serial.print(moistureToPercentage(sensors[i]));
-        Serial.print("% | RAW:");
-        Serial.print(sensors[i].moisture);
-        Serial.print(" | Valve:");
-        Serial.println(valveOpen ? "OPEN" : "CLOSED");
-      } else {
-        Serial.println(" | DISCONNECTED | Valve:OFF");
-      }
-
-      sendSensorReading(sensors[i], moistureToPercentage(sensors[i]));
     }
 
-    setRelay(PUMP_PIN, pumpNeeded);
-    Serial.println(pumpNeeded ? "🚿 Pump: ON" : "🚿 Pump: OFF");
+    // print all sensor readings together
+    Serial.println("🌱 Plant Sensor Readings:");
+    for (int i = 0; i < 3; i++) {
+      Serial.print(sensors[i].name);
+      Serial.print(" | ");
+      Serial.print(sensorPercent[i]);
+      Serial.print("% | RAW:");
+      Serial.print(sensors[i].moisture);
+      Serial.print(" | Valve:");
+      Serial.println(sensors[i].valveState ? "OPEN" : "CLOSED");
+
+      sendSensorReading(sensors[i], sensorPercent[i]);
+    }
+
+    // arm system after first valid sensor
+    if (!systemReady && hasValidSensor) {
+      systemReady = true;
+      Serial.println("✅ System armed — automatic watering enabled");
+    }
+
+    setRelay(PUMP_PIN, systemReady && pumpNeeded);
+    Serial.println((systemReady && pumpNeeded) ? "🚿 Pump: ON" : "🚿 Pump: OFF");
+    Serial.println("------------------------------------");
 
     lastLogicRun = millis();
-    Serial.println("------------------------------------");
   }
 
-  // ===== NORMAL DATA SEND =====
+  // send all sensor readings periodically
   if (millis() - lastSendRun >= sendInterval) {
     for (int i = 0; i < 3; i++) {
       if (sensors[i].connected) {
