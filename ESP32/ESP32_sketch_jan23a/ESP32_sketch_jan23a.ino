@@ -34,9 +34,9 @@ struct PlantSensor {
 
 /************ SENSOR INSTANCES ************/
 PlantSensor sensors[3] = {
-  {32, 1, "BOKCHOY", 3000, 1800, 0, 10, true, false},
-  {33, 4, "PECHAY", 2900, 1750, 0, 15, true, false},
-  {34, 3, "MUSTASA", 2800, 1700, 0, 15, true, false}
+  {32, 1, "BOKCHOY", 3000, 1800, 0, 40, true, false},
+  {33, 4, "PECHAY", 2900, 1750, 0, 45, true, false},
+  {34, 3, "MUSTASA", 2800, 1700, 0, 55, true, false}
 };
 
 /************ MANUAL OVERRIDE FLAG ************/
@@ -45,6 +45,10 @@ bool manualON[3] = {false, false, false};  // true = forced ON
 /************ BOOT SAFETY FLAG ************/
 bool systemReady = false;   // prevents auto relay ON at boot
 bool wsConnected = false;   // WebSocket connection flag
+
+/************ WIFI RECONNECT TIMING ************/
+unsigned long lastWiFiAttempt = 0;
+const unsigned long wifiReconnectInterval = 10000; // 10 seconds
 
 /************ CONVERT RAW TO % ************/
 int moistureToPercentage(PlantSensor sensor) {
@@ -105,15 +109,12 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
         String msg = String((char*)payload);
         msg.toUpperCase();
 
-        // Manual force open
         if (msg == String(sensors[i].name) + "_ON") {
           manualON[i] = true;
           setRelay(valvePins[i], true);
           sensors[i].valveState = true;
           Serial.println("🌐 Manual ON: " + String(sensors[i].name));
-        } 
-        // Manual OFF clears force override but does not turn off valve
-        else if (msg == String(sensors[i].name) + "_OFF") {
+        } else if (msg == String(sensors[i].name) + "_OFF") {
           manualON[i] = false;
           Serial.println("🌐 Manual OFF cleared: " + String(sensors[i].name));
         }
@@ -129,14 +130,11 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
 
 /************ WIFI INIT ************/
 void initWiFi() {
-  WiFi.mode(WIFI_STA);
-  WiFi.begin(ssid, password);
-  Serial.println("📡 Trying to connect to WiFi...");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
+  if (WiFi.status() != WL_CONNECTED) {
+    WiFi.mode(WIFI_STA);
+    WiFi.begin(ssid, password);
+    Serial.println("📡 Trying to connect to WiFi...");
   }
-  Serial.println("\n✅ WiFi Connected, IP: " + WiFi.localIP().toString());
 }
 
 /************ RELAY HELPER (ACTIVE LOW) ************/
@@ -176,8 +174,20 @@ const unsigned long logicInterval = 5000; // 5 seconds
 const unsigned long sendInterval  = 600000; // 10 minutes
 
 void loop() {
-  webSocket.loop(); // keep WebSocket alive
+  // Keep WebSocket alive
+  webSocket.loop();
 
+  // Periodic WiFi reconnect attempt every 10 seconds
+  if (millis() - lastWiFiAttempt >= wifiReconnectInterval) {
+    if (WiFi.status() != WL_CONNECTED) {
+      Serial.println("🔌 Attempting WiFi reconnect...");
+      WiFi.disconnect();
+      WiFi.begin(ssid, password);
+    }
+    lastWiFiAttempt = millis();
+  }
+
+  // Sensor logic every 5 seconds
   if (millis() - lastLogicRun >= logicInterval) {
 
     bool pumpNeeded = false;
