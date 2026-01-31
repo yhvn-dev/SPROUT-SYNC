@@ -12,11 +12,9 @@ const uint16_t wsPort = 5000;
 const char* wsPath = "/";
 const char* apiUrl = "http://10.25.99.67:5000/readings/post/readings";
 
-
-
-
 /************ OBJECTS ************/
 WebSocketsClient webSocket;
+
 /************ PUMP & VALVES ************/
 #define PUMP_PIN 18
 int valvePins[3] = {23, 22, 21};
@@ -43,9 +41,9 @@ struct PlantSensor {
 
 /************ SENSOR INSTANCES ************/
 PlantSensor sensors[3] = {
-  {32, 1, "BOKCHOY", 3000, 1800, 0, 40, false, false},
-  {33, 2, "PECHAY",  2900, 1750, 0, 45, false, false},
-  {34, 3, "MUSTASA", 2800, 1700, 0, 55, false, false}
+  {32, 1, "BOKCHOY", 3000, 1800, 0, 10, false, false},
+  {33, 2, "PECHAY",  2900, 1750, 0, 15, false, false},
+  {34, 3, "MUSTASA", 2800, 1700, 0, 15, false, false}
 };
 
 /************ STATE ************/
@@ -145,12 +143,11 @@ void loop() {
   }
 
   if ((millis() - lastDebounceTime) > debounceDelay) {
-    // switch changed
     if (currentSwitchState != systemEnabled) {
       systemEnabled = !systemEnabled;
       digitalWrite(SWITCH_LED, systemEnabled);
 
-      // Reset states when system toggled
+      // Reset valves and manual states
       for (int i = 0; i < 3; i++) {
         manualON[i] = false;
         sensors[i].valveState = false;
@@ -173,10 +170,16 @@ void loop() {
     return;
   }
 
-  /******** BUTTONS (ONLY WHEN ON) ********/
+  /******** MANUAL BUTTONS - REALTIME VALVE ********/
   int btns[3] = {BOKCHOY_BTN, PECHAY_BTN, MUSTASA_BTN};
   for (int i = 0; i < 3; i++) {
     manualON[i] = (digitalRead(btns[i]) == LOW);
+
+    // immediate manual valve control
+    if (manualON[i]) {
+      sensors[i].valveState = true;
+      setRelay(valvePins[i], true);
+    }
   }
 
   /******** SENSOR LOGIC EVERY 5s ********/
@@ -184,18 +187,22 @@ void loop() {
     lastLogicRun = millis();
     bool pumpNeeded = false;
 
-    // Read all sensors
+    // Read all sensors and update automatic valves
     for (int i = 0; i < 3; i++) {
       sensors[i].moisture = analogRead(sensors[i].pin);
       sensors[i].connected = isSensorConnected(sensors[i].moisture, sensors[i]);
       int percent = moistureToPercentage(sensors[i]);
 
-      // Decide valve
-      sensors[i].valveState = manualON[i] || (sensors[i].connected && percent < sensors[i].threshold);
-      if (sensors[i].valveState) pumpNeeded = true;
-
-      setRelay(valvePins[i], sensors[i].valveState);
+      // Only update valve automatically if manual is NOT pressed
+      if (!manualON[i]) {
+        sensors[i].valveState = (sensors[i].connected && percent < sensors[i].threshold);
+        if (sensors[i].valveState) pumpNeeded = true;
+        setRelay(valvePins[i], sensors[i].valveState);
+      } else {
+        pumpNeeded = true; // manual valve also triggers pump
+      }
     }
+
     // Pump control
     setRelay(PUMP_PIN, pumpNeeded);
 
@@ -216,12 +223,8 @@ void loop() {
     Serial.printf("WiFi: %s | WebSocket: %s\n",
                   WiFi.status() == WL_CONNECTED ? "CONNECTED" : "DISCONNECTED",
                   wsConnected ? "CONNECTED" : "DISCONNECTED");
-
-
-    Serial.println("");
     Serial.println("-----------------------------\n");
   }
 
-
-
+  
 }
