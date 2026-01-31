@@ -206,16 +206,19 @@ void loop() {
     // Pump control
     setRelay(PUMP_PIN, pumpNeeded);
 
-    // Print all readings together
+    // Print all readings together with Status
     Serial.println("-----------------");
     for (int i = 0; i < 3; i++) {
       int percent = moistureToPercentage(sensors[i]);
-      Serial.printf("%s | Moisture: %d | %d%% | Connected: %s | Valve: %s\n",
+      const char* status = manualON[i] ? "FORCED" : "AUTO";
+
+      Serial.printf("%s | Moisture: %d | %d%% | Connected: %s | Valve: %s | Status: %s\n",
                     sensors[i].name,
                     sensors[i].moisture,
                     percent,
                     sensors[i].connected ? "YES" : "NO",
-                    sensors[i].valveState ? "OPEN" : "CLOSED");
+                    sensors[i].valveState ? "OPEN" : "CLOSED",
+                    status);
 
       sendSensorReading(sensors[i], percent);
     }
@@ -225,6 +228,4 @@ void loop() {
                   wsConnected ? "CONNECTED" : "DISCONNECTED");
     Serial.println("-----------------------------\n");
   }
-
-  
 }
