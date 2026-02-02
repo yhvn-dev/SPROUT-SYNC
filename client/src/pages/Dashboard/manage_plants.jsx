@@ -35,6 +35,12 @@ const ManagePlants = ({ reloadTrayGroups, reloadTrays, reloadBatches }) => {
   const [batchModalMode, setBatchModalMode] = useState("");
   const [selectedBatch, setSelectedBatches] = useState([]);
 
+
+  const [isInfoModalOpen,setInfoModalOpen] = useState(false);
+  const [infoModalPurpose,setInfoModalPurpose] = useState("");
+
+  
+
   const clearMsg = useCallback(() => setSuccessMsg(""), []);
 
   useEffect(() => {
@@ -207,5 +213,7 @@ const ManagePlants = ({ reloadTrayGroups, reloadTrays, reloadBatches }) => {
     </>
   );
 };
+
+
 
 export default ManagePlants;

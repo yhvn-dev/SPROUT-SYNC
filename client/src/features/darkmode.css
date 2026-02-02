@@ -744,10 +744,14 @@ body.dark .hero{
       body.dark .notif_box .delete_notif{
         @apply stroke-[var(--color-danger-a)] border-[1px] border-gray-100 rounded-full;
     }
+        body.dark .trash_logo{
+            @apply stroke-[var(--metal-dark4)];
+        }
     
       body.dark .notif_box .clock_icon{
         @apply stroke-[var(--metal-dark5)] border-[1px] border-gray-100 rounded-full;
     }
+    
 
 
 
@@ -885,10 +889,13 @@ body.dark .browser_window_main_container{
     }
 
 
-    body.dark .cp_button.bokchoy_button{
-        @apply bg-[var(--metal-dark1)];
-        box-shadow: 5px 5px 5px 1px rgba(0,0,0,0.5);
+ 
+
+ 
+        body.dark .cp_button span{
+            @apply text-[var(--main-white)];
     }   
+
      body.dark .cp_button.bokchoy_button{
         @apply bg-[var(--metal-dark1)];
         box-shadow: 5px 5px 5px 1px rgba(0,0,0,0.5);
@@ -952,4 +959,6 @@ body.dark .browser_window_main_container{
     .bar-moderate { background-color: var(--bar-moderate); }
     .bar-low { background-color: var(--bar-low); }
 
-
+        body.dark .info_modal main li{
+            @apply text-[var(--main-white)];
+        }

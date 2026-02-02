@@ -10,6 +10,8 @@ router.get("/get/notif/:notification_id",notificationController.getNotificationB
 router.post("/post/notif",notificationController.createNotification);
 router.put("/put/notif/read",notificationController.markNotificationsAsRead)
 router.put("/put/notif/:notification_id",notificationController.updateNotification);
+router.delete("/delete/notif/all",notificationController.removeAllNotifications);
 router.delete("/delete/notif/:notification_id",notificationController.deleteNotification);
+
 
 export default router;

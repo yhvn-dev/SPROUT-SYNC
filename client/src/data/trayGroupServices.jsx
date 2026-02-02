@@ -11,6 +11,16 @@ export const fetchAllTrayGroups = async () =>{
 }
 
 
+export const fetchAllTrayGroupsById = async () =>{
+    try {
+        const data = await api.get("/tg/get/tg")
+        const trayGroups = data.data
+        return trayGroups        
+    } catch (error) {
+       throw error     
+    }
+}
+
 export const insertTrayGroup = async (trayGroupData) =>{
     console.log("PASSED TRAY GROUP DATA:",trayGroupData)
     try {

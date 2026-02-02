@@ -203,3 +203,19 @@ export const deleteNotification = async (req, res) => {
     res.status(500).json({ message: "Error deleting notification", err });
   }
 };
+
+
+
+
+
+
+
+export const removeAllNotifications = async (req, res) => {
+  try {
+    await notificationModel.deleteAllNotifs();
+    res.status(200).json({ message: "All notifications deleted successfully" });
+  } catch (err) {
+    console.error("CONTROLLER: Error deleting notification", err);
+    res.status(500).json({ message: "Error deleting notification", err });
+  }
+};

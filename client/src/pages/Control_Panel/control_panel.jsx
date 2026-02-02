@@ -1,205 +1,95 @@
-import  { useState,useContext } from 'react';
+import { useState, useContext } from 'react';
 import { Menu } from "lucide-react"
 import { UserContext } from '../../hooks/userContext';
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
-import { Droplets, Wifi, WifiOff, Power, Activity, AlertCircle, CheckCircle, Camera, Maximize2, RotateCw, Sprout, Gauge
-} from 'lucide-react';
-import * as waterPlantService from "../../data/waterPlantsServices"
+import { Droplets, Wifi, WifiOff, Power, Sprout } from 'lucide-react';
+import * as closeValveServices from "../../data/closeVavlveServices"
 import { Notif_Modal } from '../../components/notifModal';
-
+import { LogoutModal } from '../../components/logoutModal';
 
 function Control_panel() {
   const { user } = useContext(UserContext);
   const [esp32Connected, setEsp32Connected] = useState(true);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [cameraView, setCameraView] = useState('grid'); // 'grid' or 'fullscreen'
-  const [cameraStatus, setCameraStatus] = useState('streaming');
-   const [isNotifOpen, setNotifOpen] = useState(false);
-  const [wateringMode, setWateringMode] = useState({
-    all: false,
-    bokchoy: false,
-    pechay: false,
-    mustasa: false
-  });
-
+  const [isNotifOpen, setNotifOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-    // Mock moisture data
-    const moistureData = {
-        bokchoy: [
-        { id: 1, name: 'Bokchoy Group A', moisture: 68, status: 'healthy' },
-        { id: 2, name: 'Bokchoy Group B', moisture: 72, status: 'healthy' },
-        { id: 3, name: 'Bokchoy Group C', moisture: 45, status: 'low' }
-        ],
-        pechay: [
-        { id: 4, name: 'Pechay Group A', moisture: 75, status: 'healthy' },
-        { id: 5, name: 'Pechay Group B', moisture: 58, status: 'moderate' }
-        ],
-        mustasa: [
-        { id: 6, name: 'Mustasa Group A', moisture: 81, status: 'healthy' },
-        { id: 7, name: 'Mustasa Group B', moisture: 38, status: 'low' }
-        ]
-    };
+  // 🔁 AUTO / FORCE OFF states (for closing valves)
+  const [valveMode, setValveMode] = useState({
+    all: 'auto',
+    bokchoy: 'auto',
+    pechay: 'auto',
+    mustasa: 'auto'
+  });
 
+  // helpers
+  const isForceOff = (key) => valveMode[key] === 'forceOff';
 
+  // Toggle all valves
+  const handleCloseAllGroups = async () => {
+    const nextState = valveMode.all === 'auto' ? 'forceOff' : 'auto';
 
-    const handleWaterAllGroups = async () => {
-      const nextState = !wateringMode.all;
+    setValveMode({
+      all: nextState,
+      bokchoy: nextState,
+      pechay: nextState,
+      mustasa: nextState
+    });
 
-      setWateringMode({
-        all: nextState,
-        bokchoy: nextState,
-        pechay: nextState,
-        mustasa: nextState
-      });
-
-      try {
-        const command = !wateringMode.all ? "ON" : "OFF"; // send opposite of current
-        await waterPlantService.waterAllGroups(command );
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    
-
-    
-
-    const handleWaterBokchoyGroup = async () => {
-      setWateringMode(prev => {
-        const updated = { ...prev, bokchoy: !prev.bokchoy };
-        updated.all = updated.bokchoy && updated.pechay && updated.mustasa;
-        return updated;
-      });
-
-      try {
-        const command = !wateringMode.bokchoy ? "ON" : "OFF"; // send opposite of current
-        await waterPlantService.waterBokchoyGroup(command);
-      } catch (error) {
-        console.error(error);
-        // rollback state if API fails
-        setWateringMode(prev => ({
-          ...prev,
-          bokchoy: false,
-          all: false
-        }));
-      }
-    };
-      
-    
-    const handleWaterPechayGroup = async () => {
-        // Optimistically update state
-        setWateringMode(prev => {
-          const updated = { ...prev, pechay: !prev.pechay }; 
-          updated.all = updated.bokchoy && updated.pechay && updated.mustasa;
-          return updated;
-        });
-
-        
-        try {
-          const command = !wateringMode.bokchoy ? "ON" : "OFF"; // send opposite of current
-          await waterPlantService.waterPechayGroup(command);
-        } catch (error) {
-          console.error(error);
-          setWateringMode(prev => ({
-            ...prev,
-            pechay: false,
-            all: false
-          }));
-        }
-    };
-
-
-
-    
-    
-    const handleWaterMustasaGroup = async () => {
-        // Optimistically update state
-        setWateringMode(prev => {
-          const updated = { ...prev, mustasa: !prev.mustasa}; 
-          updated.all = updated.bokchoy && updated.pechay && updated.mustasa;
-          return updated;
-        });
-
-        try {
-          const command = !wateringMode.bokchoy ? "ON" : "OFF"; 
-          await waterPlantService.waterMustasaGroup(command)
-        } catch (error) {
-          console.error(error);
-          setWateringMode(prev => ({
-            ...prev,
-            mustasa: false,
-            all: false
-          }));
-        }
-    };
-
-    const getMoistureColor = (moisture) => {
-      if (moisture >= 65) return 'bar-ok';
-      if (moisture >= 45) return 'bar-moderate';
-      return 'bar-low';
-  };
-
-
-  
-  const getMoistureStatus = (status) => {
-    switch(status) {
-      case 'healthy':
-        return { colorClass: 'status-ok', text: 'Optimal' };
-      case 'moderate':
-        return { colorClass: 'status-moderate', text: 'Moderate' };
-      case 'low':
-        return { colorClass: 'status-low', text: 'Low' };
-      default:
-        return { colorClass: 'status-unknown', text: 'Unknown' };
+    try {
+      await closeValveServices.closeAllGroups(nextState === 'forceOff' ? "FORCE_OFF" : "AUTO");
+    } catch (error) {
+      console.error(error);
     }
   };
 
+  // Toggle individual groups
+  const toggleGroup = async (group, apiFn) => {
+    const nextState = valveMode[group] === 'auto' ? 'forceOff' : 'auto';
 
+    setValveMode(prev => {
+      const updated = { ...prev, [group]: nextState };
+      updated.all = updated.bokchoy === 'forceOff' && updated.pechay === 'forceOff' && updated.mustasa === 'forceOff'
+        ? 'forceOff'
+        : 'auto';
+      return updated;
+    });
 
-    {/* MOBILE MENU BUTTON */}
-    <button
-    onClick={() => setSidebarOpen(true)}
-    className="menu_button md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
-    <Menu size={22} className="text-[var(--acc-darkb)]" />
-    </button>
+    try {
+      await apiFn(nextState === 'forceOff' ? "FORCE_OFF" : "AUTO");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
-    {/* MOBILE OVERLAY */}
-    {sidebarOpen && (
-    <div
-        className="md:hidden fixed inset-0 bg-black/50 z-40"
-        onClick={() => setSidebarOpen(false)}
-    />
-    )}
-      
   return (
-   <section className="control_panel
-        con_main h-screen grid gap-4 grid-cols-[auto_1fr]
-        grid-rows-[auto_1fr]
-        bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]
-        font-sans
-        overflow-hidden
-        ">
+    <section className="control_panel
+      con_main h-screen grid gap-4 grid-cols-[auto_1fr]
+      grid-rows-[auto_1fr]
+      bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]
+      font-sans
+      overflow-hidden">
 
-      {/* Sidebar - Column 1, spans both rows (starts at row 1) */}
-      <aside className={`col-start-1 col-end-1 row-start-1 row-span-full -50`}>
+      {/* Sidebar */}
+      <aside className={`col-start-1 col-end-1 row-start-1 row-span-full`}>
         <Sidebar
-            user={user}
-            setLogoutOpen={setLogoutOpen}
-            setSidebarOpen={setSidebarOpen}
+          user={user}
+          setLogoutOpen={setLogoutOpen}
+          setSidebarOpen={setSidebarOpen}
         />     
       </aside>
 
-      {/* Header - Column 2, Row 1 */}
+      {/* Header */}
       <header className="col-start-2 row-start-1">
         <Db_Header setNotifOpen={setNotifOpen}/>    
       </header>
-   
-   
-      {/* Main Content - Column 2, Row 2 */}
+
+      {/* Main Content */}
       <main className="col-start-2 row-start-2 overflow-y-auto">
         <div className="max-w-[1400px] mx-auto w-full">
+
           {/* Header with ESP32 Status */}
           <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
             <div>
@@ -210,7 +100,7 @@ function Control_panel() {
                 Monitor and control your hydroponic system
               </p>
             </div>
-            
+
             <div className="conb flex items-center gap-4 bg-white p-4 px-6 rounded-2xl shadow-md border border-gray-50 relative">
               {esp32Connected ? (
                 <>
@@ -242,11 +132,11 @@ function Control_panel() {
             </div>
           </div>
 
-          {/* Bento Grid Layout */}
+          {/* Valve Controls */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-auto">
-            
-            {/* Valve Controls - Large Card */}
-            <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl col-span-1 lg:col-span-2 min-h-[400px]">
+
+            {/* Valve Controls Card */}
+            <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl col-span-full lg:col-span-full min-h-[400px]">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center gap-3">
                   <Droplets size={24} className="text-[var(--ptl-greend)]" />
@@ -254,318 +144,102 @@ function Control_panel() {
                     Valve Controls
                   </h2>
                 </div>
+
+                <div>
+                  <p className="text-sm text-[var(--gray_1--)] m-0 font-medium">
+                    Forced-OFF Valves
+                  </p>
+                  <p className="text-lg font-bold text-[var(--color-dark-blue)] m-0 mt-1">
+                    {['bokchoy', 'pechay', 'mustasa'].filter(p => isForceOff(p)).length} / 3
+                  </p>
+                </div>   
               </div>
-              
+
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
-                {/* All Pumps */}
+                {/* All Plants */}
                 <button
                   className={`cp_button flex flex-col items-center justify-center p-8 px-6 rounded-2xl border-none cursor-pointer transition-all gap-3 shadow-md min-h-[160px] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 sm:col-span-2 ${
-                    wateringMode.all
+                    isForceOff('all')
                       ? 'bg-gradient-to-br from-[var(--ptl-greend)] to-[var(--ptl-greene)]'
                       : 'bg-[var(--pal2-whitea)]'
                   }`}
-                  onClick={handleWaterAllGroups}>
-
-                  <Power size={28} className={wateringMode.all ? 'text-white' : 'text-[var(--ptl-greend)]'} />
-                  <span className={`text-lg font-semibold mt-2 ${wateringMode.all ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
+                  onClick={handleCloseAllGroups}>
+                  <Power size={28} className={isForceOff('all') ? 'text-white' : 'text-[var(--ptl-greend)]'} />
+                  <span className={`text-lg font-semibold mt-2 ${isForceOff('all') ? 'text-white' : 'text-[var(--metal-dark5)]'}`}>
                     All Plants
-                  </span>
-                  <span className={`text-sm font-medium opacity-90 ${wateringMode.all ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
-                    {wateringMode.all ? 'Watering' : 'Closed'}
+                </span>
+                  <span className={`text-sm font-medium opacity-90 ${isForceOff('all') ? 'text-white' : 'text-[var(--metal-dark4)]'}`}>
+                    {isForceOff('all') ? 'FORCE OFF' : 'AUTO'}
                   </span>
                 </button>
 
-
-
-                {/* Bokchoy Group */}
+                {/* Bokchoy */}
                 <button
                   className={`cp_button bokchoy_button flex flex-col items-center justify-center p-8 px-6 rounded-2xl border-none cursor-pointer transition-all gap-3 shadow-md min-h-[160px] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 ${
-                    wateringMode.bokchoy
+                    isForceOff('bokchoy')
                       ? 'bg-gradient-to-br from-[var(--sancgd)] to-[var(--sancgb)]'
                       : 'bg-[var(--sage-lighter)]'
                   }`}
-                  onClick={handleWaterBokchoyGroup}>
-                  <Sprout size={24} className={wateringMode.bokchoy ? 'text-white' : 'text-[var(--sage-dark)]'} />
-                  <span className={`text-lg font-semibold mt-2 ${wateringMode.bokchoy ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
+                  onClick={() => toggleGroup('bokchoy', closeValveServices.closeBokchoyGroup)}>
+                  <Sprout size={24} className={isForceOff('bokchoy') ? 'text-white' : 'text-[var(--sage-dark)]'} />
+                  <span className={`text-lg font-semibold mt-2 ${isForceOff('bokchoy') ? 'text-white' : 'text-[var(--metal-dark5)]'}`}>
                     Bokchoy
                   </span>
-                  <span className={`text-sm font-medium opacity-90 ${wateringMode.bokchoy ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
-                    {wateringMode.bokchoy ? 'Watering' : 'Idle'}
+                  <span className={`text-sm font-medium opacity-90 ${isForceOff('bokchoy') ? 'text-white' : 'text-[var(--metal-dark4)]'}`}>
+                    {isForceOff('bokchoy') ? 'FORCE OFF' : 'AUTO'}
                   </span>
                 </button>
 
-
-
-                {/* Pechay Group */}
+                {/* Pechay */}
                 <button
                   className={`cp_button pechay_button flex flex-col items-center justify-center p-8 px-6 rounded-2xl border-none cursor-pointer transition-all gap-3 shadow-md min-h-[160px] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 ${
-                    wateringMode.pechay
+                    isForceOff('pechay')
                       ? 'bg-gradient-to-br from-[var(--ptl-greenf)] to-[var(--ptl-greeng)]'
                       : 'bg-[var(--sage-lighter)]'
                   }`}
-                  onClick={handleWaterPechayGroup}>
-                  <Sprout size={24} className={wateringMode.pechay ? 'text-white' : 'text-[var(--sage-dark)]'} />
-                  <span className={`text-lg font-semibold mt-2 ${wateringMode.pechay ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
-                    Pechay
+                  onClick={() => toggleGroup('pechay', closeValveServices.closePechayGroup)}>
+                  <Sprout size={24} className={isForceOff('pechay') ? 'text-white' : 'text-[var(--sage-dark)]'} />
+                  <span className={`text-lg font-semibold mt-2 ${isForceOff('pechay') ? 'text-white' : 'text-[var(--metal-dark5)]'}`}>
+                    Pechay 
                   </span>
-                  <span className={`text-sm font-medium opacity-90 ${wateringMode.pechay ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
-                    {wateringMode.pechay ? 'Watering' : 'Idle'}
+                  <span className={`text-sm font-medium opacity-90 ${isForceOff('pechay') ? 'text-white' : 'ext-[var(--metal-dark4)]'}`}>
+                    {isForceOff('pechay') ? 'FORCE OFF' : 'AUTO'}
                   </span>
                 </button>
 
-
-
-
-                {/* Mustasa Group */}
+                {/* Mustasa */}
                 <button
                   className={`cp_button mustasa_button flex flex-col items-center justify-center p-8 px-6 rounded-2xl border-none cursor-pointer transition-all gap-3 shadow-md min-h-[160px] hover:-translate-y-0.5 hover:shadow-xl active:translate-y-0 sm:col-span-2 lg:col-span-1 ${
-                    wateringMode.mustasa
+                    isForceOff('mustasa')
                       ? 'bg-gradient-to-br from-[var(--sage-dark)] to-[var(--sage)]'
-                      : 'bg-[var(--sage-lighter)]'
+                      : 'bg-[var(--main-white)]'
                   }`}
-                  onClick={handleWaterMustasaGroup}
+                  onClick={() => toggleGroup('mustasa', closeValveServices.closeMustasaGroup)}
                 >
-                  <Sprout size={24} className={wateringMode.mustasa ? 'text-white' : 'text-[var(--sage-dark)]'} />
-                  <span className={`text-lg font-semibold mt-2 ${wateringMode.mustasa ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
+                  <Sprout size={24} className={isForceOff('mustasa') ? 'text-white' : 'text-[var(--sage-dark)]'} />
+                  <span className={`text-lg font-semibold mt-2 ${isForceOff('mustasa') ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
                     Mustasa
                   </span>
-                  <span className={`text-sm font-medium opacity-90 ${wateringMode.mustasa ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
-                    {wateringMode.mustasa ? 'Watering' : 'Idle'}
+                  <span className={`text-sm font-medium opacity-90 ${isForceOff('mustasa') ? 'text-white' : 'text-[var(--gray_1--)]'}`}>
+                    {isForceOff('mustasa') ? 'FORCE OFF' : 'AUTO'}
                   </span>
                 </button>
 
-                
               </div>
             </div>
-
-
-            
-            {/* System Status Summary */}
-            <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl">
-
-              
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-3">
-                  <Activity size={20} className="text-[var(--ptl-greend)]" />
-                  <h3 className="text-lg font-semibold text-[var(--color-dark-blue)] m-0">
-                    System Status
-                  </h3>
-                </div>
-              </div>
-
-
-              <div className="flex flex-col gap-5">
-                <div className="cp_status_div  flex items-center gap-4 p-4 bg-[var(--sage-lighter)] rounded-xl">
-                  <CheckCircle size={20} className="text-green-500 flex-shrink-0" />
-                  <div >
-                    <p className="text-sm text-[var(--gray_1--)] m-0 font-medium">
-                      Active Valves
-                    </p>
-                    <p className="text-lg font-bold text-[var(--color-dark-blue)] m-0 mt-1">
-                  {['bokchoy', 'pechay', 'mustasa'].filter(p => wateringMode[p]).length} / 3
-                    </p>
-                  </div>
-                </div>
-
-                
-                <div className="cp_status_div  flex items-center gap-4 p-4 bg-[var(--sage-lighter)] rounded-xl">
-                  <AlertCircle size={20} className="text-yellow-500 flex-shrink-0" />
-                  <div>
-                    <p className="text-sm text-[var(--gray_1--)] m-0 font-medium">
-                      Low Moisture
-                    </p>
-                    <p className="text-lg font-bold text-[var(--color-dark-blue)] m-0 mt-1">
-                      2 plants
-                    </p>
-                  </div>
-                </div>
-
-
-                <div className="cp_status_div flex items-center gap-4 p-4 bg-[var(--sage-lighter)] rounded-xl">
-                  <Droplets size={20} className="text-[var(--color-success-c)] flex-shrink-0" />
-                  <div > 
-                    <p className="text-sm text-[var(--gray_1--)] m-0 font-medium">
-                      Avg. Moisture
-                    </p>
-                    <p className="text-lg font-bold text-[var(--color-dark-blue)] m-0 mt-1">
-                      62.4%
-                    </p>
-                  </div>
-                </div>
-              </div>              
-            </div>
-
-
-
-            {/* Pechay Moisture Readings */}
-            <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl min-h-[320px]">
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-3">
-                  <Gauge size={20} className="text-[var(--ptl-greenf)]" />
-                  <h3 className="text-lg font-semibold text-[var(--color-dark-blue)] m-0">
-                    Pechay Moisture
-                  </h3>
-                </div>
-              </div>
-              
-              <div className="flex flex-col gap-5">
-                {moistureData.pechay.map(plant => (
-                  <div key={plant.id} className="flex flex-col gap-2">
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm font-medium text-[var(--color-dark-blue)]">
-                        {plant.name}
-                      </span>
-                      <span className={`text-xs font-semibold px-3 py-1 rounded-xl ${getMoistureStatus(plant.status).colorClass}`}>
-                        {getMoistureStatus(plant.status).text}
-                      </span>
-                    </div>
-                    <div className="w-full h-2.5 bg-[var(--sage-lighter)] rounded-full overflow-hidden relative">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 shadow-[0_0_8px_currentColor] ${getMoistureColor(plant.moisture)}`}
-                        style={{ width: `${plant.moisture}%` }}
-                      />
-                    </div>
-                    <span className="text-xl font-bold text-[var(--ptl-greend)] self-end">
-                      {plant.moisture}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Mustasa Moisture Readings */}
-            <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl min-h-[320px]">
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-3">
-                  <Gauge size={20} className="text-[var(--sage-dark)]" />
-                  <h3 className="text-lg font-semibold text-[var(--color-dark-blue)] m-0">
-                    Mustasa Moisture
-                  </h3>
-                </div>
-              </div>
-              <div className="flex flex-col gap-5">
-                {moistureData.mustasa.map(plant => (
-                  <div key={plant.id} className="flex flex-col gap-2">
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm font-medium text-[var(--color-dark-blue)]">
-                        {plant.name}
-                      </span>
-                      <span className={`text-xs font-semibold px-3 py-1 rounded-xl ${getMoistureStatus(plant.status).colorClass}`}>
-                        {getMoistureStatus(plant.status).text}
-                      </span>
-                    </div>
-                    <div className="w-full h-2.5 bg-[var(--sage-lighter)] rounded-full overflow-hidden relative">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 shadow-[0_0_8px_currentColor] ${getMoistureColor(plant.moisture)}`}
-                        style={{ width: `${plant.moisture}%` }}
-                      />
-                    </div>
-                    <span className="text-xl font-bold text-[var(--ptl-greend)] self-end">
-                      {plant.moisture}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            
-            {/* Bokchoy Moisture Readings */}
-            <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl min-h-[320px]">
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-3">
-                  <Gauge size={20} className="text-[var(--sancgd)]" />
-                  <h3 className="text-lg font-semibold text-[var(--color-dark-blue)] m-0">
-                    Bokchoy Moisture
-                  </h3>
-                </div>
-              </div>
-              <div className="flex flex-col gap-5">
-                {moistureData.bokchoy.map(plant => (
-                  <div key={plant.id} className="flex flex-col gap-2">
-                    <div className="flex justify-between items-center mb-1">
-                      <span className="text-sm font-medium text-[var(--color-dark-blue)]">
-                        {plant.name}
-                      </span>
-                      <span className={`text-xs font-semibold px-3 py-1 rounded-xl ${getMoistureStatus(plant.status).colorClass}`}>
-                        {getMoistureStatus(plant.status).text}
-                      </span>
-                    </div>
-                    <div className="w-full h-2.5 bg-[var(--sage-lighter)] rounded-full overflow-hidden relative">
-                      <div
-                        className={`h-full rounded-full transition-all duration-500 shadow-[0_0_8px_currentColor] ${getMoistureColor(plant.moisture)}`}
-                        style={{ width: `${plant.moisture}%` }}
-                      />
-                    </div>
-                    <span className="text-xl font-bold text-[var(--ptl-greend)] self-end">
-                      {plant.moisture}%
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-
-
-
-            
-
-            {/* CCTV Camera Feed */}
-            <div className={`conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl min-h-[450px] ${
-              cameraView === 'fullscreen' ? 'col-span-1 lg:col-span-2 xl:col-span-3' : 'col-span-1 lg:col-span-2'
-            }`}>
-              <div className="flex justify-between items-center mb-6">
-                <div className="flex items-center gap-3">
-                  <Camera size={24} className="text-[var(--ptl-greend)]" />
-                  <h2 className="text-2xl font-bold text-[var(--color-dark-blue)] m-0">
-                    Live Camera Feed
-                  </h2>
-                </div>
-
-                
-                <div className="flex gap-2">
-                  <button 
-                    className="bg-[var(--sage-lighter)] border-none rounded-xl p-2.5 cursor-pointer flex items-center justify-center transition-all text-[var(--sage-dark)] hover:bg-[var(--sage-medium)]"
-                    title="Refresh"
-                  >
-                    <RotateCw size={18} />
-                  </button>
-                  <button
-                    className="bg-[var(--sage-lighter)] border-none rounded-xl p-2.5 cursor-pointer flex items-center justify-center transition-all text-[var(--sage-dark)] hover:bg-[var(--sage-medium)]"
-                    onClick={() => setCameraView(cameraView === 'grid' ? 'fullscreen' : 'grid')}
-                    title={cameraView === 'grid' ? 'Fullscreen' : 'Exit Fullscreen'}
-                  >
-                    <Maximize2 size={18} />
-                  </button>
-                </div>
-              </div>
-              
-              <div className="w-full h-[500px] bg-[var(--metal-dark5)] rounded-xl overflow-hidden relative">
-                <div className="w-full h-full flex flex-col items-center justify-center gap-4">
-                  <Camera size={48} className="text-[var(--gray_1--)] opacity-30" />
-                  <p className="text-[var(--gray_1--)] text-lg font-medium">Camera Stream</p>
-                  <div className="flex items-center gap-2 bg-white/10 px-4 py-2 rounded-full backdrop-blur-sm">
-                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                    <span className="text-white text-sm font-semibold">Live</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-
-            
 
           </div>
         </div>
       </main>
-
-
-
 
       {/* MODALS */}
       {isNotifOpen && (
         <Notif_Modal isOpen={isNotifOpen} onClose={() => setNotifOpen(false)} />
       )}
 
+      {logoutOpen && (
+        <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)}  />
+      )}
 
     </section>
   );

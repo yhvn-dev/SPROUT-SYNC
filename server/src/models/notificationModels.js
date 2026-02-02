@@ -110,3 +110,18 @@ export const deleteNotif = async (notification_id) => {
 
 
 
+export const deleteAllNotifs = async () => {
+  try {
+    await query(`DELETE FROM notifications`)
+  } catch (error) {
+    console.error('Error deleting all notification:', error);
+    throw error;
+  }
+};
+
+
+
+
+
+
+

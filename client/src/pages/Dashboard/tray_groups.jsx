@@ -184,22 +184,32 @@ function Tray_groups({
                     UPDATE
                   </button>
 
-                  <button
-                    onClick={() => handleDelete(group)}
-                    className="
-                    cursor-pointer
-                    text-xs
-                    px-2.5 py-1
-                    rounded-md
-                    bg-[var(--color-danger-a)]
-                  text-white
-                    shadow
-                    hover:shadow-md
-                    transition
-                    "
-                  >
-                    DELETE
-                  </button>
+
+
+                      
+                    {Number(group.sensor_count) === 0 && (
+                    <button
+                      onClick={() => handleDelete(group)}
+                      className="
+                        cursor-pointer
+                        text-xs
+                        px-2.5 py-1
+                        rounded-md
+                        bg-[var(--color-danger-a)]
+                        text-white
+                        shadow
+                        hover:shadow-md
+                        transition
+                      ">
+                      DELETE
+                    </button>
+                    )}
+  
+
+
+                    
+        
+
                 </div>
 
               </div>

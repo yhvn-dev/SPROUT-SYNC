@@ -1,5 +1,4 @@
-import { clients } from "../app.js"; // Make sure this points to the shared clients array
-
+import { clients } from "../app.js";
 
 // Utility to send a command to all connected ESP32 clients
 const sendToESP32 = (command) => {
@@ -10,15 +9,14 @@ const sendToESP32 = (command) => {
   });
 };
 
-
-// ===== OPEN BOKCHOY VALVE =====
-export const waterBokchoyGroup = async (req, res) => {
+// ===== FORCE CLOSE / AUTO BOKCHOY VALVE =====
+export const closeBokchoyGroup = async (req, res) => {
   try {
-    const action = req.body.action?.toUpperCase(); // "ON" or "OFF"
+    const action = req.body.action?.toUpperCase(); // "FORCE_OFF" or "AUTO"
 
     const command =
-      action === "ON" ? "BOKCHOY_ON" :
-      action === "OFF" ? "BOKCHOY_OFF" :
+      action === "FORCE_OFF" ? "BOKCHOY_OFF" :
+      action === "AUTO" ? "BOKCHOY_AUTO" :
       null;
 
     if (!command) {
@@ -27,11 +25,12 @@ export const waterBokchoyGroup = async (req, res) => {
 
     sendToESP32(command);
 
+    console.log(command);
+
     res.status(200).json({
       success: true,
-      message: `Bokchoy valve command "${command}" sent`
+      message: `Bokchoy valve set to "${action}"`
     });
-    console.log(command)
 
   } catch (err) {
     console.error(err);
@@ -41,14 +40,14 @@ export const waterBokchoyGroup = async (req, res) => {
 
 
 
-// ===== OPEN PECHAY VALVE =====
-export const waterPechayGroup = async (req, res) => {
+// ===== FORCE CLOSE / AUTO PECHAY VALVE =====
+export const closePechayGroup = async (req, res) => {
   try {
     const action = req.body.action?.toUpperCase();
 
     const command =
-      action === "ON" ? "PECHAY_ON" :
-      action === "OFF" ? "PECHAY_OFF" :
+      action === "FORCE_OFF" ? "PECHAY_OFF" :
+      action === "AUTO" ? "PECHAY_AUTO" :
       null;
 
     if (!command) {
@@ -57,13 +56,12 @@ export const waterPechayGroup = async (req, res) => {
 
     sendToESP32(command);
 
+    console.log(command);
+
     res.status(200).json({
       success: true,
-      message: `Pechay valve command "${command}" sent`
+      message: `Pechay valve set to "${action}"`
     });
-
-    console.log(command)
-
 
   } catch (err) {
     console.error(err);
@@ -73,14 +71,14 @@ export const waterPechayGroup = async (req, res) => {
 
 
 
-// ===== OPEN MUSTASA VALVE =====
-export const waterMustasaGroup = async (req, res) => {
+// ===== FORCE CLOSE / AUTO MUSTASA VALVE =====
+export const closeMustasaGroup = async (req, res) => {
   try {
     const action = req.body.action?.toUpperCase();
 
     const command =
-      action === "ON" ? "MUSTASA_ON" :
-      action === "OFF" ? "MUSTASA_OFF" :
+      action === "FORCE_OFF" ? "MUSTASA_OFF" :
+      action === "AUTO" ? "MUSTASA_AUTO" :
       null;
 
     if (!command) {
@@ -89,11 +87,13 @@ export const waterMustasaGroup = async (req, res) => {
 
     sendToESP32(command);
 
+    console.log(command);
+
     res.status(200).json({
       success: true,
-      message: `Mustasa valve command "${command}" sent`
+      message: `Mustasa valve set to "${action}"`
     });
-    console.log(command)
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error sending command" });
@@ -105,31 +105,32 @@ export const waterMustasaGroup = async (req, res) => {
 
 
 
-// ===== OPEN ALL VALVES =====
-export const waterAllGroups = async (req, res) => {
+// ===== FORCE CLOSE / AUTO ALL VALVES =====
+export const closeAllGroups = async (req, res) => {
   try {
     const action = req.body.action?.toUpperCase();
 
-    // Validate action
-    if (action !== "ON" && action !== "OFF") {
+    if (action !== "FORCE_OFF" && action !== "AUTO") {
       return res.status(400).json({ message: "Invalid action" });
     }
 
-    // Build commands for all valves
+    const suffix = action === "FORCE_OFF" ? "OFF" : "ON";
+
     const commands = [
-      `BOKCHOY_${action}`,
-      `PECHAY_${action}`,
-      `MUSTASA_${action}`
+      `BOKCHOY_${suffix}`,
+      `PECHAY_${suffix}`,
+      `MUSTASA_${suffix}`
     ];
 
-    // Send each command to ESP32
     commands.forEach(command => sendToESP32(command));
+
+    console.log(commands);
 
     res.status(200).json({
       success: true,
-      message: `All valves "${action}" command sent`
-    });  
-    console.log(commands)
+      message: `All valves set to "${action}"`
+    });
+
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error sending command to ESP32" });

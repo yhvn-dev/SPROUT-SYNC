@@ -19,7 +19,7 @@ function App() {
   return(
       <>
       <PlantDataProvider>
-        <BrowserRouter>
+        <BrowserRouter> 
           <Routes>         
               <Route path='/' element={<Home/>}/>
               <Route path='/contacts' element={<Contact/>}/>

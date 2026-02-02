@@ -4,18 +4,10 @@ import { X, Trash2, Sprout } from "lucide-react";
 
 import * as trayGroupModels from "../../../data/trayGroupServices";
 
-export function TrayGroupModal({
-  isOpen,
-  onClose,
-  tgModalMode,
-  selectedTrayGroup,
-  setSuccessMsg,
-  loadTrayGroups,
-  reloadTrayGroups,
-}) {
-  if (!isOpen) return null;
+export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup, setSuccessMsg, loadTrayGroups, reloadTrayGroups,}) {
 
-  
+
+  if (!isOpen) return null;
   const plantOptions = [
     { name: "Bokchoy", min: 45, max: 70 },
     { name: "Pechay", min: 50, max: 75 },
@@ -37,8 +29,6 @@ export function TrayGroupModal({
     location: "",
     is_watering: false
   });
-
-
 
   const [formErrors, setFormErrors] = useState({});
   // Initialize modal values only when modal opens

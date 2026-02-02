@@ -125,6 +125,9 @@ export function Dashboard() {
       {logoutOpen && (
         <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
       )}
+      
+
+      
     </section>
   );
 }

@@ -3,9 +3,10 @@ import express from "express";
 
 const router = express.Router();
 
-    router.post("/post/waterBokchoyGroup",esp32Controller.waterBokchoyGroup)
-    router.post("/post/waterPechayGroup",esp32Controller.waterPechayGroup)
-    router.post("/post/waterMustasaGroup",esp32Controller.waterMustasaGroup)
-    router.post("/post/waterAllGroups",esp32Controller.waterAllGroups)
+    router.post("/post/closeBokchoyGroup",esp32Controller.closeBokchoyGroup)
+    router.post("/post/closePechayGroup",esp32Controller.closePechayGroup)
+    router.post("/post/closeMustasaGroup",esp32Controller.closeMustasaGroup)
+    router.post("/post/closeAllGroups",esp32Controller.closeAllGroups)
+
 
 export default router;

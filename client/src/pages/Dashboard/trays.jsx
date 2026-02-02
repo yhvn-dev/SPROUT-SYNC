@@ -169,21 +169,27 @@ function Trays({
                   UPDATE
                 </button>
 
-                <button
-                  onClick={() => handleDeleteTray(tray)}
-                  className="
-                    cursor-pointer
-                    text-xs
-                    px-2.5 py-1
-                    rounded-md
-                    bg-[var(--color-danger-a)]
-                    text-white
-                    shadow
-                    hover:shadow-md
-                    transition
-                  ">
-                  DELETE
-                </button>
+              
+                {tray.sensorCount === "0" && (
+                  <button
+                    onClick={() => handleDeleteTray(tray)}
+                    className="
+                      cursor-pointer
+                      text-xs
+                      px-2.5 py-1
+                      rounded-md
+                      bg-[var(--color-danger-a)]
+                      text-white
+                      shadow
+                      hover:shadow-md
+                      transition
+                    "
+                  >
+                    DELETE
+                  </button>
+                )}
+
+
               </div>
 
             </div>

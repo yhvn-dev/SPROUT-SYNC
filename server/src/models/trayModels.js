@@ -1,10 +1,19 @@
 // trays.model.js
 import { query } from "../config/db.js";
 
-// ===== READ all trays =====
+// ===== READ all trays with sensor count =====
 export const readTrays = async () => {
     try {
-        const sql = `SELECT * FROM trays ORDER BY tray_id ASC`;
+        const sql = `
+            SELECT 
+                t.*,
+                COUNT(s.sensor_id) AS "sensorCount"
+            FROM trays t
+            LEFT JOIN sensors s
+                ON s.tray_id = t.tray_id
+            GROUP BY t.tray_id
+            ORDER BY t.tray_id ASC
+        `;
         const result = await query(sql);
         return result.rows;
     } catch (error) {
@@ -22,6 +31,9 @@ export const readTrayById = async (tray_id) => {
         throw error;
     }
 };
+
+
+
 
 
 // ===== CREATE a new tray =====

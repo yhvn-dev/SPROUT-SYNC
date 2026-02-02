@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from 'react';
-import { Droplet, Plus, AlertCircle, ChevronDown, ChevronUp, Sprout, Calendar, TrendingUp } from 'lucide-react';
+import  { useEffect, useState } from 'react';
+import { Droplet, CircleQuestionMark, ChevronDown, ChevronUp, Sprout, Calendar, TrendingUp } from 'lucide-react';
 import { usePlantData } from '../../hooks/plantContext';
+import InfosModal from '../../components/infosModal';
 
 function NurseryDashboard() {
   const [expandedZones, setExpandedZones] = useState({});
+  const [isInfoModalOpen,setInfoModalOpen] = useState(false);
+  const [infoModalPurpose,setInfoModalPurpose] = useState("");
+
+  
   const {
     trayGroups,
     trays,
@@ -46,8 +51,21 @@ function NurseryDashboard() {
   };
 
 
-  
-  
+  const handleOpenInfosModalNursery = () =>{
+      setInfoModalPurpose("nursery")
+      setInfoModalOpen(true)
+  }
+  const handleOpenInfosModalTrayGroups = () =>{
+      setInfoModalPurpose("traygroups")
+      setInfoModalOpen(true)
+  }
+   const handleOpenInfosModalBatches = () =>{
+      setInfoModalPurpose("batch")
+      setInfoModalOpen(true)
+  }
+
+
+
   return (
     <main className="flex flex-col items-center justify-start h-full w-full col-start-2 col-end-4 row-start-3 row-end-3 rounded-[10px] ">
       <div className="nursery_data_div con_a bg-gradient-to-br from-[#E8F3ED] to-white w-full overflow-hidden">
@@ -64,6 +82,9 @@ function NurseryDashboard() {
               <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 mt-2 sm:mt-0">
                 <div className="w-2 h-2 rounded-full bg-[#25a244] animate-pulse"></div>
                 Live monitoring
+                  <button onClick={handleOpenInfosModalNursery}> 
+                    <CircleQuestionMark className='w-4 h-4 cursor-pointer'/>
+                  </button>
               </div>
             </div>
           </div>
@@ -100,9 +121,16 @@ function NurseryDashboard() {
                             <Sprout className="w-5 h-5 text-white" />
                           </div>
                           <div>
-                            <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
-                              [{group.group_number}]{group.tray_group_name} Group
-                            </h2>
+
+                            <div className='flex'>
+                               <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+                                [{group.group_number}]{group.tray_group_name} Group 
+                                </h2>
+                                <button onClick={handleOpenInfosModalTrayGroups } className='mx-2 stroke-var[--metal-dark4]'> 
+                                  <CircleQuestionMark className='w-4 h-4 cursor-pointer'/>
+                                </button>
+                            </div>
+                                            
                             <p className="text-xs sm:text-sm text-gray-500">{group.location}</p>
                           </div>
                         </div>
@@ -185,7 +213,13 @@ function NurseryDashboard() {
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#92e6a7] to-[#25a244] flex items-center justify-center">
                     <TrendingUp className="w-5 h-5 text-white" />
                   </div>
-                  <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Plant Batches</h2>
+                  <div className='flex w-full '>
+                     <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Plant Batches</h2>
+                     <button onClick={handleOpenInfosModalBatches} className='mx-2 stroke-var[--metal-dark4]'> 
+                            <CircleQuestionMark className='w-4 h-4 cursor-pointer'/>
+                      </button>
+                  </div>
+                 
                 </div>
 
                 <div className="batch_scroll_div space-y-3 max-h-[calc(100vh-350px)] overflow-y-auto w-full ">
@@ -201,7 +235,7 @@ function NurseryDashboard() {
                   {batches.length > 0 && batches.map(batch => (
                     <div key={batch.batch_id} className="conc batch_div bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-4 border border-gray-100 w-full">
                       <div className="flex items-start justify-between mb-3">
-                        <h3 className="text-base font-semibold text-gray-900">{batch.plant_name}</h3>
+                        <h3 className="text-base font-semibold text-gray-900">{batch.plant_name}</h3>                      
                       </div>
 
                       <div className="space-y-2">
@@ -247,11 +281,18 @@ function NurseryDashboard() {
           </div>
         </div>
       </div>
+
+        {isInfoModalOpen &&
+      <InfosModal
+        isInfosModalOpen={isInfoModalOpen}
+        onClose={() => setInfoModalOpen(false)}
+        purpose={infoModalPurpose}  
+      />
+    }
+           
     </main>    
   );
+
+
 }
-
-
-
-
 export default NurseryDashboard;

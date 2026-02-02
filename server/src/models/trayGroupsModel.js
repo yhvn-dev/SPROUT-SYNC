@@ -3,15 +3,23 @@ import { query } from "../config/db.js";
 
 
 
-// ===== READ all tray groups =====
 export const readTrayGroups = async () => {
-    try {  
-        const sql = `SELECT * FROM tray_groups ORDER BY tray_group_id ASC`;
-        const result = await query(sql);
-        return result.rows;       
-    } catch (error) {
-         throw error
-    }
+  try {
+    const sql = `
+      SELECT 
+        tg.*,
+        COUNT(s.sensor_id) AS sensor_count
+      FROM tray_groups tg
+      LEFT JOIN trays t ON t.tray_group_id = tg.tray_group_id
+      LEFT JOIN sensors s ON s.tray_id = t.tray_id
+      GROUP BY tg.tray_group_id
+      ORDER BY tg.tray_group_id ASC
+    `;
+    const result = await query(sql);
+    return result.rows;       
+  } catch (error) {
+    throw error;
+  }
 };
 
 
@@ -137,6 +145,9 @@ export const updateTrayGroups = async (trayGroupData, tray_group_id) => {
     throw error;
   }
 };
+
+
+
 
 
 

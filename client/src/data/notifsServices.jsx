@@ -50,3 +50,16 @@ export const deleteNotifs = async (notification_id) => {
     }
 }
 
+
+export const deleteAllNotifs = async () => {
+    try{
+        const res =  await api.delete(`/notif/delete/notif/all`);
+        return res
+    }catch(err){
+        console.error("Error deleting all notifications",err);
+        throw err
+    }
+}
+
+
+

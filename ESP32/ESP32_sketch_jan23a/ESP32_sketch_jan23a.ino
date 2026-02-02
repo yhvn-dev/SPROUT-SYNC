@@ -36,26 +36,23 @@ struct PlantSensor {
   int moisture;
   int threshold;
   bool connected;
-  bool valveState;
+  bool valveState;   // true = OPEN, false = CLOSED
+  bool forcedOFF;    // true = forced OFF (locked), false = automatic
 };
 
 /************ SENSOR INSTANCES ************/
 PlantSensor sensors[3] = {
-  {32, 1, "BOKCHOY", 3000, 1800, 0, 10, false, false},
-  {33, 2, "PECHAY",  2900, 1750, 0, 15, false, false},
-  {34, 3, "MUSTASA", 2800, 1700, 0, 15, false, false}
+  {32, 1, "BOKCHOY", 3000, 1800, 0, 50, false, false, false},
+  {33, 2, "PECHAY",  2900, 1750, 0, 50, false, false, false},
+  {34, 3, "MUSTASA", 2800, 1700, 0, 55, false, false, false}
 };
 
 /************ STATE ************/
 bool systemEnabled = false;
-bool manualON[3] = {false, false, false};
 bool wsConnected = false;
-unsigned long lastDebounceTime = 0;
-const unsigned long debounceDelay = 50; // ms
 
-/************ TIMING ************/
 unsigned long lastLogicRun = 0;
-const unsigned long logicInterval = 5000;
+const unsigned long logicInterval = 5000; // 5s
 
 /************ UTILS ************/
 int moistureToPercentage(PlantSensor s) {
@@ -69,10 +66,9 @@ bool isSensorConnected(int reading, PlantSensor s) {
 }
 
 void setRelay(int pin, bool on) {
-  digitalWrite(pin, on ? LOW : HIGH); // active LOW
+  digitalWrite(pin, on ? LOW : HIGH); // Active LOW
 }
 
-/************ API SEND ************/
 void sendSensorReading(PlantSensor sensor, int percent) {
   if (!sensor.connected || WiFi.status() != WL_CONNECTED) return;
 
@@ -87,21 +83,63 @@ void sendSensorReading(PlantSensor sensor, int percent) {
   http.POST(payload);
   http.end();
 
-  if (wsConnected) {
-    webSocket.sendTXT(payload);
-  }
+  if (wsConnected) webSocket.sendTXT(payload);
 }
 
-/************ WEBSOCKET ************/
 void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
   if (type == WStype_CONNECTED) wsConnected = true;
   if (type == WStype_DISCONNECTED) wsConnected = false;
 }
 
-/************ WIFI ************/
 void initWiFi() {
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
+}
+
+/************ PLANT LOCK TOGGLE SWITCH LOGIC ************/
+void handlePlantSwitches() {
+  int switches[3] = {BOKCHOY_BTN, PECHAY_BTN, MUSTASA_BTN};
+  static bool lastSwitchState[3] = {HIGH, HIGH, HIGH}; // remember previous state
+
+  for (int i = 0; i < 3; i++) {
+    bool switchState = digitalRead(switches[i]); // LOW = ON, HIGH = OFF
+
+    // Only act if state changed
+    if (switchState != lastSwitchState[i]) {
+      sensors[i].forcedOFF = !(switchState == LOW); // LOW -> automatic, HIGH -> locked OFF
+
+      if (sensors[i].forcedOFF) {
+        sensors[i].valveState = false;  // Close valve immediately if locked
+        setRelay(valvePins[i], false);
+        Serial.printf("%s SWITCH -> LOCKED OFF, valve CLOSED\n", sensors[i].name);
+      } else {
+        Serial.printf("%s SWITCH -> UNLOCKED, valve now automatic\n", sensors[i].name);
+      }
+
+      lastSwitchState[i] = switchState; // update last state
+    }
+  }
+}
+
+/************ MAIN SYSTEM SWITCH ************/
+void handleMainSwitch() {
+  static bool lastSwitchState = HIGH;
+  bool currentSwitchState = digitalRead(LOCK_SWITCH);
+
+  if (currentSwitchState != lastSwitchState) {
+    lastSwitchState = currentSwitchState;
+
+    if (currentSwitchState == LOW) { // Button pressed
+      systemEnabled = !systemEnabled;
+      digitalWrite(SWITCH_LED, systemEnabled ? HIGH : LOW);
+      Serial.println(systemEnabled ? "🟢 SYSTEM ON" : "🔴 SYSTEM OFF");
+
+      if (!systemEnabled) {
+        setRelay(PUMP_PIN, false);
+        for (int i = 0; i < 3; i++) setRelay(valvePins[i], false);
+      }
+    }
+  }
 }
 
 /************ SETUP ************/
@@ -118,68 +156,29 @@ void setup() {
 
   pinMode(LOCK_SWITCH, INPUT_PULLUP);
   pinMode(SWITCH_LED, OUTPUT);
+
   pinMode(BOKCHOY_BTN, INPUT_PULLUP);
   pinMode(PECHAY_BTN, INPUT_PULLUP);
   pinMode(MUSTASA_BTN, INPUT_PULLUP);
 
   initWiFi();
-
   webSocket.begin(wsHost, wsPort, wsPath);
   webSocket.onEvent(webSocketEvent);
 
   Serial.println("🚀 SYSTEM BOOTED");
 }
 
-/************ LOOP ************/
+/************ MAIN LOOP ************/
 void loop() {
   webSocket.loop();
 
-  /******** NON-BLOCKING SYSTEM TOGGLE ********/
-  static bool lastSwitchState = HIGH;
-  bool currentSwitchState = digitalRead(LOCK_SWITCH);
+  // Handle switches instantly
+  handleMainSwitch();
+  handlePlantSwitches();
 
-  if (currentSwitchState != lastSwitchState) {
-    lastDebounceTime = millis();
-  }
-
-  if ((millis() - lastDebounceTime) > debounceDelay) {
-    if (currentSwitchState != systemEnabled) {
-      systemEnabled = !systemEnabled;
-      digitalWrite(SWITCH_LED, systemEnabled);
-
-      // Reset valves and manual states
-      for (int i = 0; i < 3; i++) {
-        manualON[i] = false;
-        sensors[i].valveState = false;
-        sensors[i].connected = false;
-        setRelay(valvePins[i], false);
-      }
-      setRelay(PUMP_PIN, false);
-
-      Serial.println(systemEnabled ? "🟢 SYSTEM ON" : "🔴 SYSTEM OFF");
-
-      // Force immediate sensor read
-      lastLogicRun = millis() - logicInterval;
-    }
-  }
-  lastSwitchState = currentSwitchState;
-
-  /******** 🔴 SYSTEM OFF = STOP EVERYTHING ********/
   if (!systemEnabled) {
     delay(10);
     return;
-  }
-
-  /******** MANUAL BUTTONS - REALTIME VALVE ********/
-  int btns[3] = {BOKCHOY_BTN, PECHAY_BTN, MUSTASA_BTN};
-  for (int i = 0; i < 3; i++) {
-    manualON[i] = (digitalRead(btns[i]) == LOW);
-
-    // immediate manual valve control
-    if (manualON[i]) {
-      sensors[i].valveState = true;
-      setRelay(valvePins[i], true);
-    }
   }
 
   /******** SENSOR LOGIC EVERY 5s ********/
@@ -187,31 +186,26 @@ void loop() {
     lastLogicRun = millis();
     bool pumpNeeded = false;
 
-    // Read all sensors and update automatic valves
     for (int i = 0; i < 3; i++) {
       sensors[i].moisture = analogRead(sensors[i].pin);
       sensors[i].connected = isSensorConnected(sensors[i].moisture, sensors[i]);
       int percent = moistureToPercentage(sensors[i]);
 
-      // Only update valve automatically if manual is NOT pressed
-      if (!manualON[i]) {
-        sensors[i].valveState = (sensors[i].connected && percent < sensors[i].threshold);
-        if (sensors[i].valveState) pumpNeeded = true;
+      if (!sensors[i].forcedOFF) {
+        sensors[i].valveState = sensors[i].connected && (percent < sensors[i].threshold);
         setRelay(valvePins[i], sensors[i].valveState);
-      } else {
-        pumpNeeded = true; // manual valve also triggers pump
       }
+
+      if (sensors[i].valveState) pumpNeeded = true;
     }
 
-    // Pump control
     setRelay(PUMP_PIN, pumpNeeded);
 
-    // Print all readings together with Status
-    Serial.println("-----------------");
+    // Print status
+    Serial.println("-------- SENSOR STATUS --------");
     for (int i = 0; i < 3; i++) {
       int percent = moistureToPercentage(sensors[i]);
-      const char* status = manualON[i] ? "FORCED" : "AUTO";
-
+      const char* status = sensors[i].forcedOFF ? "LOCKED OFF" : "AUTO";
       Serial.printf("%s | Moisture: %d | %d%% | Connected: %s | Valve: %s | Status: %s\n",
                     sensors[i].name,
                     sensors[i].moisture,
@@ -219,13 +213,8 @@ void loop() {
                     sensors[i].connected ? "YES" : "NO",
                     sensors[i].valveState ? "OPEN" : "CLOSED",
                     status);
-
       sendSensorReading(sensors[i], percent);
     }
-
-    Serial.printf("WiFi: %s | WebSocket: %s\n",
-                  WiFi.status() == WL_CONNECTED ? "CONNECTED" : "DISCONNECTED",
-                  wsConnected ? "CONNECTED" : "DISCONNECTED");
-    Serial.println("-----------------------------\n");
+    Serial.println("-------------------------------\n");
   }
 }

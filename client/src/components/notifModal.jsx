@@ -73,6 +73,16 @@ export function Notif_Modal({ isOpen, onClose}) {
     }
   }
 
+  const removeAllNotifs = async () => {
+    try {
+        await notifService.deleteAllNotifs()
+        loadNotifs()
+    } catch (error) {
+      console.error("Error Deleting Notifications")
+    }
+  }
+  
+
   const handleSubmit = async (e) =>{
     e.preventDefault()
     try {
@@ -82,7 +92,7 @@ export function Notif_Modal({ isOpen, onClose}) {
       console.error("Error Deleting Notifications")
     }
   }
-  
+
   
   if (!isOpen) return null;
   return (
@@ -92,18 +102,34 @@ export function Notif_Modal({ isOpen, onClose}) {
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
           <h2 className="text-lg font-semibold text-gray-900">Notifications</h2>
-          <button onClick={onClose} className="text-gray-500 cursor-pointer hover:bg-[var(--main-white--)] rounded-lg p-2">
-            ✕
-          </button>
+
+          <div className="flex items-center flex-row-reverse">
+         
+            <button onClick={onClose} className="text-gray-500 cursor-pointer hover:bg-[var(--main-white--)] rounded-lg p-2">
+              ✕
+            </button>
+            <button onClick={removeAllNotifs} className="flex items-center gap-2 m-4 text-gray-500 cursor-pointer hover:bg-[var(--main-white--)] rounded-lg p-2">
+              <Trash2 
+                className="trash_logo w-4 h-4 stroke-var(--metal-dark4)" 
+               
+              
+              />
+
+              <span className="text-sm">Delete All</span>
+            </button> 
+          </div>
         </div>
      
+
+
+
 
         {/* Notification List */}
         <form onSubmit={handleSubmit} className="notifs_scroll_box flex-1 overflow-y-auto px-4 py-3 space-y-3">
          
           {notifs.length === 0 && (
             <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-              <Bell size={48} className="mb-3 opacity-50" />
+             
               <p className="text-lg font-medium">No notifications at the moment</p>
             </div>
           )}
