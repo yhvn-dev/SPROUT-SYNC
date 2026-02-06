@@ -40,7 +40,7 @@ struct PlantSensor {
   int moisture;
   int threshold;
   bool valveState;
-  bool forcedOFF;    // Node.js forced OFF
+  bool forcedOFF;    // Node.js or manual forced OFF
   bool autoEnabled;  // auto-mode enabled (false when Node.js OFF)
 };
 
@@ -122,6 +122,7 @@ void handleServerCommand(String cmd) {
   else if (cmd.startsWith("PECHAY")) index = 1;
   else if (cmd.startsWith("MUSTASA")) index = 2;
 
+  // Individual plant commands
   if (index != -1) {
     if (cmd.endsWith("_OFF")) {
       sensors[index].forcedOFF = true;
@@ -131,10 +132,10 @@ void handleServerCommand(String cmd) {
       Serial.printf("🚫 %s VALVE COMPLETELY OFF FROM SERVER\n", sensors[index].name);
       return;
     }
-    else if (cmd.endsWith("_ON")) {
+    else if (cmd.endsWith("_ON") || cmd.endsWith("_AUTO")) {
       sensors[index].forcedOFF = false;
       sensors[index].autoEnabled = true;     // resume auto-mode
-      Serial.printf("✅ %s FORCE OFF RELEASED → AUTO MODE RESUMES\n", sensors[index].name);
+      Serial.printf("✅ %s AUTO MODE RESUMES FROM SERVER\n", sensors[index].name);
       return;
     }
   }
@@ -188,7 +189,7 @@ void initWiFi() {
 void handlePlantSwitches() {
   int btns[3] = {BOKCHOY_BTN, PECHAY_BTN, MUSTASA_BTN};
   for (int i = 0; i < 3; i++) {
-    // pressing button re-enables auto-mode
+    // pressing button toggles back to auto mode
     if (digitalRead(btns[i]) == HIGH) {
       sensors[i].forcedOFF = false;
       sensors[i].autoEnabled = true;
@@ -268,11 +269,11 @@ void loop() {
       int raw = readMoistureRaw(sensors[i]);
       int percent = moistureToPercentage(sensors[i]);
 
-      // AUTO MODE: only if enabled and no forced OFF
+      // AUTO MODE: only if enabled and not forced OFF
       if (sensors[i].autoEnabled && !sensors[i].forcedOFF) {
         sensors[i].valveState = (percent < sensors[i].threshold);
       } else {
-        sensors[i].valveState = false; // keep valve OFF
+        sensors[i].valveState = false;
       }
 
       setRelay(valvePins[i], sensors[i].valveState);
