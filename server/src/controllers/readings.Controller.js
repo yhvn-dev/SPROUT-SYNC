@@ -320,7 +320,6 @@ export const deleteReadings = async (req, res) => {
     const deletedReading = await readingModel.deleteReadings(reading_id);
     res.status(200).json({ message: "Reading deleted successfully", deletedReading });
     console.log("READING DELETED:", deletedReading);
-
     
   } catch (err) {
     console.error("CONTROLLER: Error deleting reading", err);
@@ -329,10 +328,16 @@ export const deleteReadings = async (req, res) => {
 };
 
 
-// type	Categorizes the general kind of notification
-// 'info', 'warning', 'alert', 'success'	This is usually used for UI purposes: icons, colors, grouping. It answers “what kind of notification is this?”
 
-//  status	Represents the specific condition or severity that triggered the notification	
-// 'LOW', 'HIGH', 'NORMAL', 'CRITICAL'	
-// This is usually used for logic or filtering, 
-//  i.e., to know what the notification is telling you about the system state.
+
+
+// ===== DELETE a reading =====
+export const deleteAllReadings = async (req, res) => {
+  try {
+    await readingModel.deleteReadings(reading_id);
+    res.status(200).json({ message: "All reading deleted successfully" });    
+  } catch (err) {
+    console.error("CONTROLLER: Error deleting readings", err);
+    res.status(500).json({ message: "Error deleting readings", err });
+  }
+};

@@ -123,7 +123,7 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
                 </div>
               </div>
 
-
+            
               <ul className="grid grid-cols-5 gap-3">
                 <li className="total_seedlings_div bg-white rounded-xl p-3 text-center shadow-lg">
                   <p className="pb_data_label pb_data_label text-xs text-gray-500 mb-1">Total Planted</p>

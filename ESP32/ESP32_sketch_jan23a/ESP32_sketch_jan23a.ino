@@ -7,10 +7,10 @@ const char* ssid = "bot";
 const char* password = "12345678";
 
 /************ SERVER ************/
-const char* wsHost = "10.25.99.67";
+const char* wsHost = "10.88.243.67";
 const uint16_t wsPort = 5000;
 const char* wsPath = "/";
-const char* apiUrl = "http://10.25.99.67:5000/readings/post/readings";
+const char* apiUrl = "http://10.88.243.67:5000/readings/post/readings";
 
 WebSocketsClient webSocket;
 
@@ -26,9 +26,8 @@ int valvePins[3] = {23, 22, 21};
 #define MUSTASA_BTN 27
 
 /************ ULTRASONIC ************/
-#define US_RX_PIN 16
-#define US_TX_PIN 17
-HardwareSerial ultrasonic(2);
+#define US_TRIG_PIN 16
+#define US_ECHO_PIN 17
 #define US_STATUS_LED 4
 
 /************ SENSOR STRUCT ************/
@@ -55,12 +54,20 @@ PlantSensor sensors[3] = {
 bool systemEnabled = false;
 bool prevSystemEnabled = false;
 bool wsConnected = false;
+
 unsigned long lastLogicRun = 0;
-const unsigned long logicInterval = 5000;
+const unsigned long logicInterval = 5000; // 5 seconds
+float lastUltrasonicMM = -1;
 
 /************ UTILS ************/
 void setRelay(int pin, bool on) {
   digitalWrite(pin, on ? LOW : HIGH);
+}
+
+int readMoistureRaw(PlantSensor &s) {
+  int reading = analogRead(s.pin);
+  s.moisture = reading;
+  return reading;
 }
 
 int moistureToPercentage(PlantSensor s) {
@@ -69,30 +76,31 @@ int moistureToPercentage(PlantSensor s) {
   return constrain((s.moistureMax - s.moisture) * 100 / range, 0, 100);
 }
 
-bool isSensorConnected(int reading, PlantSensor s) {
-  return !(reading < 600 || reading > s.moistureMax + 100);
-}
-
-/************ ULTRASONIC ************/
+/************ ULTRASONIC READ ************/
 float readUltrasonicMM() {
-  if (ultrasonic.available() >= 4) {
-    uint8_t data[4];
-    ultrasonic.readBytes(data, 4);
-    if (data[0] == 0xFF) {
-      digitalWrite(US_STATUS_LED, HIGH);
-      return (data[1] << 8) | data[2];
-    }
+  digitalWrite(US_TRIG_PIN, LOW);
+  delayMicroseconds(2);
+  digitalWrite(US_TRIG_PIN, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(US_TRIG_PIN, LOW);
+
+  long duration = pulseIn(US_ECHO_PIN, HIGH, 30000); // 30ms timeout
+
+  if (duration == 0) {
+    digitalWrite(US_STATUS_LED, LOW);
+    return -1;
   }
-  digitalWrite(US_STATUS_LED, LOW);
-  return -1;
+
+  digitalWrite(US_STATUS_LED, HIGH);
+  return (duration * 0.343) / 2.0; // distance in mm
 }
 
-/************ COMM ************/
+/************ COMMUNICATION ************/
 void sendSensorReading(PlantSensor sensor, int percent) {
   if (!wsConnected || WiFi.status() != WL_CONNECTED) return;
 
   String payload = "{ \"sensor_id\": " + String(sensor.id) +
-                   ", \"sensor_name\": \"" + String(sensor.name) + "\"" +
+                   ", \"sensor_name\": \"" + sensor.name + "\"" +
                    ", \"value\": " + String(percent) +
                    ", \"valve\": \"" + (sensor.valveState ? "OPEN" : "CLOSED") + "\" }";
 
@@ -114,13 +122,12 @@ void initWiFi() {
   WiFi.begin(ssid, password);
 }
 
-/************ PLANT SWITCHES ************/
+/************ SWITCH HANDLERS ************/
 void handlePlantSwitches() {
   int btns[3] = {BOKCHOY_BTN, PECHAY_BTN, MUSTASA_BTN};
 
   for (int i = 0; i < 3; i++) {
     sensors[i].forcedOFF = (digitalRead(btns[i]) == HIGH);
-
     if (sensors[i].forcedOFF) {
       sensors[i].valveState = false;
       setRelay(valvePins[i], false);
@@ -128,14 +135,10 @@ void handlePlantSwitches() {
   }
 }
 
-/************ MAIN SWITCH ************/
 void handleMainSwitch() {
   systemEnabled = (digitalRead(LOCK_SWITCH) == LOW);
 
   if (systemEnabled != prevSystemEnabled) {
-    Serial.println();
-    Serial.println(systemEnabled ? "SYSTEM ON" : "SYSTEM OFF");
-
     digitalWrite(SWITCH_LED, systemEnabled ? HIGH : LOW);
 
     if (!systemEnabled) {
@@ -146,8 +149,6 @@ void handleMainSwitch() {
         sensors[i].forcedOFF = false;
       }
     }
-
-    lastLogicRun = 0;
     prevSystemEnabled = systemEnabled;
   }
 }
@@ -172,11 +173,14 @@ void setup() {
   pinMode(MUSTASA_BTN, INPUT_PULLUP);
 
   pinMode(US_STATUS_LED, OUTPUT);
-  ultrasonic.begin(9600, SERIAL_8N1, US_RX_PIN, US_TX_PIN);
+  pinMode(US_TRIG_PIN, OUTPUT);
+  pinMode(US_ECHO_PIN, INPUT);
 
   initWiFi();
   webSocket.begin(wsHost, wsPort, wsPath);
   webSocket.onEvent(webSocketEvent);
+
+  Serial.println("SYSTEM READY — MOISTURE + ULTRASONIC EVERY 5 SECONDS");
 }
 
 /************ LOOP ************/
@@ -187,42 +191,49 @@ void loop() {
   webSocket.loop();
   handlePlantSwitches();
 
-  if (millis() - lastLogicRun < logicInterval) return;
-  lastLogicRun = millis();
+  // ---- Run logic every 5 seconds ----
+  if (millis() - lastLogicRun >= logicInterval) {
+    lastLogicRun = millis();
 
-  Serial.println();
-  Serial.println("PLANT | RAW | % | VALVE | MODE");
-  Serial.println("---------------------------------------------");
+    // 1️⃣ Read Ultrasonic
+    lastUltrasonicMM = readUltrasonicMM();
+    float cm = lastUltrasonicMM / 10.0;
+    float inches = lastUltrasonicMM / 25.4;
 
-  bool pumpNeeded = false;
+    // 2️⃣ Read Moisture sensors
+    Serial.println("===============================================");
+    Serial.println("ULTRASONIC & MOISTURE SENSOR READINGS (5s)");
 
-  for (int i = 0; i < 3; i++) {
-    sensors[i].moisture = analogRead(sensors[i].pin);
-    sensors[i].connected = isSensorConnected(sensors[i].moisture, sensors[i]);
-    int percent = moistureToPercentage(sensors[i]);
-
-    if (!sensors[i].forcedOFF) {
-      sensors[i].valveState =
-        sensors[i].connected && percent < sensors[i].threshold;
-      setRelay(valvePins[i], sensors[i].valveState);
+    if (lastUltrasonicMM > 0) {
+      Serial.printf("ULTRASONIC → %.1f mm | %.1f cm | %.2f inches\n",
+                    lastUltrasonicMM, cm, inches);
+    } else {
+      Serial.println("ULTRASONIC → NO VALID DATA");
     }
 
-    if (sensors[i].valveState) pumpNeeded = true;
+    for (int i = 0; i < 3; i++) {
+      int raw = readMoistureRaw(sensors[i]);
+      int percent = moistureToPercentage(sensors[i]);
+      sensors[i].valveState = (!sensors[i].forcedOFF) && (percent < sensors[i].threshold);
 
-    Serial.printf(
-      "%-8s | %4d | %3d | %-6s | %s\n",
-      sensors[i].name,
-      sensors[i].moisture,
-      percent,
-      sensors[i].valveState ? "OPEN" : "CLOSE",
-      sensors[i].forcedOFF ? "FORCED" : "AUTO"
-    );
+      Serial.printf("%-8s → RAW: %4d | %3d%% | Valve: %s | ForcedOFF: %s\n",
+                    sensors[i].name,
+                    raw,
+                    percent,
+                    sensors[i].valveState ? "OPEN" : "CLOSED",
+                    sensors[i].forcedOFF ? "YES" : "NO");
 
-    sendSensorReading(sensors[i], percent);
+      setRelay(valvePins[i], sensors[i].valveState);
+      sendSensorReading(sensors[i], percent);
+    }
+
+    // 3️⃣ Pump logic
+    bool pumpNeeded = false;
+    for (int i = 0; i < 3; i++) {
+      if (sensors[i].valveState) pumpNeeded = true;
+    }
+    setRelay(PUMP_PIN, pumpNeeded);
+    Serial.printf("PUMP STATUS → %s\n", pumpNeeded ? "ON" : "OFF");
+    Serial.println("===============================================");
   }
-
-  setRelay(PUMP_PIN, pumpNeeded);
-
-  Serial.println("---------------------------------------------");
-  Serial.printf("PUMP: %s\n", pumpNeeded ? "ON" : "OFF");
 }
