@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { Menu, Trash2, Calendar, Sprout, TrendingUp, AlertCircle,FileText } from "lucide-react";
+import { Menu, Trash2, Calendar, Sprout, TrendingUp, AlertCircle,FileText,CircleQuestionMark  } from "lucide-react";
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
 import { Notif_Modal } from '../../components/notifModal';
@@ -8,7 +8,7 @@ import { LogoutModal } from '../../components/logoutModal';
 import { UserContext } from '../../hooks/userContext';
 import { usePlantData } from '../../hooks/plantContext';
 
-
+import InfosModal from '../../components/infosModal';
 
 // Stats Card Component
 const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
@@ -38,6 +38,9 @@ function Batch_History() {
   const [selectedStage,setSelectedStage] = useState("All")
   const [selectedBatch, setSelectedBatch] = useState([]);
   const [isModalOpen,setModalOpen] = useState(false)
+  const [isInfoModalOpen,setInfoModalOpen] = useState(false);
+  const [infoModalPurpose,setInfoModalPurpose] = useState("");
+  
 
   const token = localStorage.getItem("accessToken");
   
@@ -106,6 +109,12 @@ function Batch_History() {
 };
 
 
+  const handleOpenInfosModalBatchHistory = () =>{
+      setInfoModalPurpose("batch_history")
+      setInfoModalOpen(true)
+  }
+  
+
 
 
   return (
@@ -118,7 +127,7 @@ function Batch_History() {
       {/* MOBILE MENU BUTTON */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-50 bg-white p-2.5 rounded-lg shadow-lg">
+        className="menu_button md:hidden fixed top-4 left-4 z-50 bg-white p-2.5 rounded-lg shadow-lg">
         <Menu size={22} className="text-[#027c68]" />
       </button>
 
@@ -191,6 +200,11 @@ function Batch_History() {
           <nav className='center w-full py-4 '>
             <div className='flex items-center justify-start w-1/2'>
               <FileText className='ml-4' size={20}/> <p className='text-xl mx-4'>Batch History</p>
+
+                <button className="mx-4">    
+                  <CircleQuestionMark onClick={handleOpenInfosModalBatchHistory} 
+                  className='mr-4 w-4 h-4 cursor-pointer'/> 
+              </button>
             </div>
             <div className='flex items-center justify-start flex-row-reverse w-1/2'>                     
                 <select
@@ -377,6 +391,15 @@ function Batch_History() {
          reloadBatchHistory={loadBatchHistory()}
          onClose={() => setModalOpen(false)}/>
       )}
+
+      {isInfoModalOpen &&
+        <InfosModal
+          isInfosModalOpen={isInfoModalOpen}
+          onClose={() => setInfoModalOpen(false)}
+          purpose={infoModalPurpose}  
+        />
+      }      
+      
     </section>
   );
   

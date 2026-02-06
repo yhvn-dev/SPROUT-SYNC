@@ -13,8 +13,8 @@ export function SucessMsgs({txt,clearMsg}) {
   if(!txt) return null;
 
   return (
-      <div className={`center w-[100%] succes_msg_pro p-4`}>
-        <p className="full centers">{txt}</p>
+      <div className={`success_msg center w-[100%] succes_msg_pro p-4`}>
+        <p className="full center">{txt}</p>
       </div>
   )
   

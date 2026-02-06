@@ -93,6 +93,9 @@ function Home() {
     }
   }, []);
 
+
+
+  
   // Close mobile menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -128,27 +131,27 @@ function Home() {
                 <div className="hidden md:flex flex-row-reverse items-center gap-6 lg:gap-8">
                   <Link 
                     to="/login" 
-                    className="border-2 rounded-2xl px-4 lg:px-6 py-[1px] bg-[var(--sancgb)] text-white font-medium hover:shadow-lg transition-all whitespace-nowrap">
+                    className="header-button border-2 rounded-2xl px-4 lg:px-6 py-[1px] bg-[var(--sancgb)] text-white font-medium hover:shadow-lg transition-all whitespace-nowrap">
                     Login 
                   </Link>
                   <a 
                     href="#features" 
-                    className={`border-white border-1 px-4 lg:px-6 py-[1px] rounded-2xl font-medium whitespace-nowrap transition-colors ${
-                      isScrolled ? "text-black hover:text-[#027c68]" : "text-white hover:text-[#027c68]"
+                    className={`header-button border-white border-1 px-4 lg:px-6 py-[1px] rounded-2xl font-medium whitespace-nowrap transition-colors ${
+                      isScrolled ? " text-black hover:text-[#027c68]" : "text-white hover:text-[#027c68]"
                     }`}>
                     Features
                   </a>
                   <a 
                     href="#dashboard_mockup" 
-                    className={`border-white border-1 px-4 lg:px-6 py-[1px] rounded-2xl font-medium whitespace-nowrap transition-colors ${
-                      isScrolled ? "text-black hover:text-[#027c68]" : "text-white hover:text-[#027c68]"
+                    className={`header-button border-white border-1 px-4 lg:px-6 py-[1px] rounded-2xl font-medium whitespace-nowrap transition-colors ${
+                      isScrolled ? " text-black hover:text-[#027c68]" : "text-white hover:text-[#027c68]"
                     }`}>
                     Dashboard
                   </a>
                   <a 
                     href="#farm" 
-                    className={`border-white border-1 px-4 lg:px-6 py-[1px] rounded-2xl font-medium whitespace-nowrap transition-colors ${
-                      isScrolled ? "text-black hover:text-[#027c68]" : "text-white hover:text-[#027c68]"
+                    className={`header-button border-white border-1 px-4 lg:px-6 py-[1px] rounded-2xl font-medium whitespace-nowrap transition-colors ${
+                      isScrolled ? " text-black hover:text-[#027c68]" : "text-white hover:text-[#027c68]"
                     }`}>
                     Our Farm
                   </a>
@@ -157,7 +160,7 @@ function Home() {
                 {/* Mobile Menu Button */}
                 <div className="flex items-center justify-end w-full md:hidden">
                   <button
-                    className="border-white rounded-2xl text-[#003333] hadow-lg p-2 hover:bg-[var(--metal-dark4)] transition-colors"
+                    className="header-button border-white rounded-2xl text-[#003333] hadow-lg p-2 hover:bg-[var(--metal-dark4)] transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
                       setMobileMenuOpen(!mobileMenuOpen);
@@ -172,25 +175,25 @@ function Home() {
                   <div className="md:hidden absolute top-full left-0 right-0 bg-[var(--metal-dark5)] shadow-lg rounded-b-2xl mt-2 py-2 px-4 space-y-2 border-t border-gray-100">
                     <Link 
                       to="/login" 
-                      className="block text-[var(--main-white--)]  text-center rounded-2xl px-4 py-2 hover:opacity-90 transition-all font-medium"
+                      className="header-button block text-[var(--main-white--)]  text-center rounded-2xl px-4 py-2 hover:opacity-90 transition-all font-medium"
                       onClick={() => setMobileMenuOpen(false)}>
                       Login
                     </Link>
                     <a 
                       href="#features" 
-                      className="block text-[var(--main-white--)]  rounded-2xl px-4 py-[1px] hover:bg-gray-50 transition-colors font-medium"
+                      className="header-button block text-[var(--main-white--)]  rounded-2xl px-4 py-[1px] hover:bg-gray-50 transition-colors font-medium"
                       onClick={() => setMobileMenuOpen(false)}>
                       Features
                     </a>
                     <a 
                       href="#dashboard_mockup" 
-                      className="block text-[var(--main-white--)]  rounded-2xl px-4 py-[1px] hover:bg-gray-50 transition-colors font-medium"
+                      className="header-button block text-[var(--main-white--)]  rounded-2xl px-4 py-[1px] hover:bg-gray-50 transition-colors font-medium"
                       onClick={() => setMobileMenuOpen(false)}>
                       Dashboard
                     </a>
                     <a 
                       href="#farm" 
-                      className="block text-[var(  --main-white--)] rounded-2xl px-4 py-[1px] hover:bg-gray-50 transition-colors font-medium"
+                      className="header-button block text-[var(  --main-white--)] rounded-2xl px-4 py-[1px] hover:bg-gray-50 transition-colors font-medium"
                       onClick={() => setMobileMenuOpen(false)}>
                       Our Farm
                     </a>

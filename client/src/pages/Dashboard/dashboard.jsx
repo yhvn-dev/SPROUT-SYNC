@@ -8,7 +8,6 @@ import { Db_Header } from "../../components/db_header";
 import { Notif_Modal } from "../../components/notifModal.jsx";
 import { LogoutModal } from "../../components/logoutModal.jsx";
 import { usePlantData } from "../../hooks/plantContext.jsx";
-
 import Nursery_Dashboard from "./nursery.jsx";
 import ManagePlants from "./manage_plants.jsx";
 
@@ -21,8 +20,9 @@ export function Dashboard() {
   const { loadTrayGroups } = usePlantData();
 
 
-
   return (
+
+
     <section
       className="con_main 
         w-full min-h-screen bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] flex flex-col
@@ -83,6 +83,8 @@ export function Dashboard() {
       >
         Overview
       </button>
+
+
 
       <button
         onClick={() => setActiveTab("Manage Plants")}

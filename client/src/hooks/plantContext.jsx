@@ -23,6 +23,8 @@ export const PlantDataProvider = ({ children }) => {
   const [sensors, setSensors] = useState([]);
   
   const [readings, setReadings] = useState([]);
+  const [latestReadings, setLatestReadings] = useState([]);
+  
   const [moistureReadingsLast24h, setMoistureReadingsLast24h] = useState([]);
   const [averageReadingsBySensor, setAverageReadingsBySensor] = useState({});
 
@@ -121,6 +123,17 @@ export const PlantDataProvider = ({ children }) => {
     }
   }, []);
 
+
+    const loadLatestReadings = useCallback(async () => {
+    try {
+      const data = await readingsService.fetchAllLatestReadings()
+      setLatestReadings(data);
+    } catch (error) {
+      console.error("Error loading readings", error);
+    }
+  }, []);
+
+  
   
   const loadMoistureReadingsLast24h = useCallback(async () => {
     try {
@@ -188,6 +201,7 @@ export const PlantDataProvider = ({ children }) => {
     loadGrowthOvertime();
     loadSensors();
     loadReadings();
+    loadLatestReadings();
     loadMoistureReadingsLast24h();
     loadAverageReadingsBySensor("moisture");
     loadAverageReadingsBySensor("ultra_sonic");
@@ -204,6 +218,7 @@ export const PlantDataProvider = ({ children }) => {
     loadGrowthOvertime,
     loadSensors,
     loadReadings,
+    loadLatestReadings,
     loadMoistureReadingsLast24h,
     loadAverageReadingsBySensor,
     loadNotifs,
@@ -215,20 +230,23 @@ export const PlantDataProvider = ({ children }) => {
   // ------------------- INTERVAL UPDATES -------------------
   useEffect(() => {
     const interval = setInterval(() => {
-      loadReadings(); 
+      loadReadings();
+      loadLatestReadings(); 
       loadMoistureReadingsLast24h(); 
       loadAverageReadingsBySensor("moisture");
       loadAverageReadingsBySensor("ultra_sonic");
     }, 5000); 
     return () => clearInterval(interval);
-  }, [loadReadings,loadMoistureReadingsLast24h,loadAverageReadingsBySensor]);
+  }, [loadReadings,loadLatestReadings,loadMoistureReadingsLast24h,loadAverageReadingsBySensor]);
   
   // RENDER NOTIFICATION WHEN READINGS CHANGE
   useEffect(() => {
    loadNotifsCount()
    loadNotifs()
-  }, [readings]); 
+  }, [readings,latestReadings]); 
 
+
+  
   return (
     <PlantDataContext.Provider
       value={{
@@ -241,6 +259,7 @@ export const PlantDataProvider = ({ children }) => {
         growthOvertime,
         sensors,
         readings,
+        latestReadings,
         moistureReadingsLast24h,
         averageReadingsBySensor,
         notifs,
@@ -255,6 +274,7 @@ export const PlantDataProvider = ({ children }) => {
         loadGrowthOvertime,
         loadSensors,
         loadReadings,
+        loadLatestReadings,
         loadMoistureReadingsLast24h,
         loadAverageReadingsBySensor,
         loadNotifs,
@@ -266,6 +286,8 @@ export const PlantDataProvider = ({ children }) => {
   );
   
 };
+
+
 
 export const usePlantData = () => {
   const context = useContext(PlantDataContext);

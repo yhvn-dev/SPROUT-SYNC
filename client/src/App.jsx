@@ -10,8 +10,10 @@ import Batch_History from "./pages/Batch_History/batch_history.jsx";
 import Control_Panel from "./pages/Control_Panel/control_panel.jsx";
 
 
+
 import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";
 import { PlantDataProvider } from "./hooks/plantContext.jsx";
+import { ESP32Provider } from "./hooks/esp32Hooks.jsx"
 
 import './styles.css'
 function App() {
@@ -28,9 +30,11 @@ function App() {
         
 
               <Route path='/dashboard' element={
-                <ProtectedRoute allowedRoles={['admin','viewer']}>
-                  <Dashboard/>
-                </ProtectedRoute>
+                <ESP32Provider>
+                  <ProtectedRoute allowedRoles={['admin','viewer']}>
+                    <Dashboard/>
+                  </ProtectedRoute>
+                </ESP32Provider>
               }/>
 
               <Route path='/users' element={
@@ -50,15 +54,17 @@ function App() {
                   <Batch_History/>
                 </ProtectedRoute>
               }/>
-
+        
               <Route path='/control_panel' element={
-              <ProtectedRoute allowedRoles={['admin']}>
-                <Control_Panel/>
-              </ProtectedRoute>
+                <ESP32Provider>
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <Control_Panel/>
+                  </ProtectedRoute>
+                </ESP32Provider>
+            
             }/>
 
-            
-
+          
           </Routes>
         </BrowserRouter>
     </PlantDataProvider>

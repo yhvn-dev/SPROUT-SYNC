@@ -322,6 +322,14 @@ button{
     absolute left-[40%] bottom-[-30%] text-[var(--color-danger-a)];
     padding: 0rem var(--dis-0-6); 
 }
+body.dark .error-txt{
+    @apply text-red-500;
+}
+
+
+
+
+
 .error-nav-txt{
       @apply text-[0.8rem] pointer-events-none z-10 bg-white 
       bottom-0 text-[var(--color-danger-a)];
@@ -349,8 +357,6 @@ button{
 .succes_msg_pro{
     @apply bg-green-100  flex items-center justify-center rounded-[10px] p-4 border-2 border-[var(--sancgb)];
 }
-
-
 .succes_msg_pro_b{
     @apply opacity-[90%] flex items-center justify-center rounded-[10px] p-4 border-2 border-[var(--sancgb)];
 }

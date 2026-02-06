@@ -70,26 +70,22 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
 
 
 
-                    <button
-                      onClick={() => {
-                        setSelectedUser(u);
-                        setOpen(true);
-                        setMode("delete");
-                      }}
-                      className="
-                        cursor-pointer
-                        text-xs
-                        px-2.5 py-1
-                        rounded-md
-                        bg-[var(--color-danger-a)]
-                      text-white
-                        shadow
-                        hover:shadow-md
-                        transition                       
-                      "
-                    >
-                      DELETE
-                    </button>
+
+
+                      {u.role.toLowerCase() === "viewer" && (
+                        <button
+                          onClick={() => {
+                            setSelectedUser(u);
+                            setOpen(true);
+                            setMode("delete");
+                          }}
+                          className="cursor-pointer text-xs px-2.5 py-1 rounded-md bg-[var(--color-danger-a)] text-white shadow hover:shadow-md transition"
+                        >
+                          DELETE
+                        </button>
+                      )}
+
+
                   </div>
                 </td>
               </tr>
@@ -191,19 +187,25 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
                     transition"
                 >
                   UPDATE
-                </button>
+                </button> 
 
-                <button
-                  onClick={() => {
-                    setSelectedUser(u);
-                    setOpen(true);
-                    setMode("delete");
-                  }}
-                  className="cursor-pointer text-xs px-2.5 py-1 rounded-md bg-[var(--color-danger-a)] text-white shadow hover:shadow-md transition"
-                >
-                  DELETE
-                </button>
+                {u.role.toLowerCase() === "viewer" && (
+                  <button
+                    onClick={() => {
+                      setSelectedUser(u);
+                      setOpen(true);
+                      setMode("delete");
+                    }}
+                    className="cursor-pointer text-xs px-2.5 py-1 rounded-md bg-[var(--color-danger-a)] text-white shadow hover:shadow-md transition"
+                  >
+                    DELETE
+                  </button>
+                )}
+
+      
               </div>
+
+
             </div>
           ))}
         </div>

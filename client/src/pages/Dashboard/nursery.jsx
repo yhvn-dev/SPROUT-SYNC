@@ -1,27 +1,31 @@
-import  { useEffect, useState } from 'react';
-import { Droplet, CircleQuestionMark, ChevronDown, ChevronUp, Sprout, Calendar, TrendingUp } from 'lucide-react';
-import { usePlantData } from '../../hooks/plantContext';
+import { useEffect, useState, useContext } from 'react';
+import { Droplet, CircleQuestionMark, ChevronDown, ChevronUp, Sprout, Calendar, Wifi,WifiOff, TrendingUp } from 'lucide-react';
 import InfosModal from '../../components/infosModal';
+import { ESP32Context } from "../../hooks/esp32Hooks.jsx";
+import { usePlantData } from '../../hooks/plantContext';
 
 function NurseryDashboard() {
   const [expandedZones, setExpandedZones] = useState({});
-  const [isInfoModalOpen,setInfoModalOpen] = useState(false);
-  const [infoModalPurpose,setInfoModalPurpose] = useState("");
+  const [isInfoModalOpen, setInfoModalOpen] = useState(false);
+  const [infoModalPurpose, setInfoModalPurpose] = useState("");
+  const { ESP32Status } = useContext(ESP32Context);
 
-  
   const {
     trayGroups,
     trays,
     batches,
     sensors,
-    readings,
+    latestReadings,
     loadTrayGroups,
     loadTrays,
     loadBatches,
     loadSensors,
-    loadReadings
+    loadLatestReadings
   } = usePlantData();
 
+
+  
+  // Load static data on mount
   useEffect(() => {
     loadTrayGroups();
     loadTrays();
@@ -29,13 +33,21 @@ function NurseryDashboard() {
     loadSensors();
   }, [loadTrayGroups, loadTrays, loadBatches, loadSensors]);
 
+
+
+
+  // Poll for latest readings every 5s
   useEffect(() => {
     const interval = setInterval(() => {
-      loadReadings();
+      loadLatestReadings();
     }, 5000);
     return () => clearInterval(interval);
-  }, [loadBatches, loadReadings]);
+  }, [loadLatestReadings]);
 
+
+
+
+  // Helper to get moisture status
   const getMoistureStatus = (value, min, max) => {
     if (value === 0) return { status: 'inactive', color: '#94a3b8', label: 'Inactive' };
     if (value < min) return { status: 'low', color: '#dc2626', label: 'Low' };
@@ -50,44 +62,78 @@ function NurseryDashboard() {
     }));
   };
 
-
-  const handleOpenInfosModalNursery = () =>{
-      setInfoModalPurpose("nursery")
-      setInfoModalOpen(true)
-  }
-  const handleOpenInfosModalTrayGroups = () =>{
-      setInfoModalPurpose("traygroups")
-      setInfoModalOpen(true)
-  }
-   const handleOpenInfosModalBatches = () =>{
-      setInfoModalPurpose("batch")
-      setInfoModalOpen(true)
-  }
-
+  const handleOpenInfosModalNursery = () => {
+    setInfoModalPurpose("nursery");
+    setInfoModalOpen(true);
+  };
+  const handleOpenInfosModalTrayGroups = () => {
+    setInfoModalPurpose("traygroups");
+    setInfoModalOpen(true);
+  };
+  const handleOpenInfosModalBatches = () => {
+    setInfoModalPurpose("batch");
+    setInfoModalOpen(true);
+  };
 
 
+
+  
   return (
     <main className="flex flex-col items-center justify-start h-full w-full col-start-2 col-end-4 row-start-3 row-end-3 rounded-[10px] ">
       <div className="nursery_data_div con_a bg-gradient-to-br from-[#E8F3ED] to-white w-full overflow-hidden">
-        {/* Main container: full width on mobile, max-width on desktop */}
         <div className="w-full max-w-full sm:max-w-7xl mx-auto space-y-4">
 
           {/* Header */}
           <div className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm ">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
               <div>
-                <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">Nursery Dashboard</h1>
+                <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
+                  Nursery Dashboard
+                  <button className='mx-4' onClick={handleOpenInfosModalNursery}>
+                    <CircleQuestionMark className='w-4 h-4 cursor-pointer' />
+                  </button>
+                </h1>
                 <p className="text-xs sm:text-sm text-gray-500 mt-1">Monitor and manage your plant cultivation</p>
               </div>
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600 mt-2 sm:mt-0">
-                <div className="w-2 h-2 rounded-full bg-[#25a244] animate-pulse"></div>
-                Live monitoring
-                  <button onClick={handleOpenInfosModalNursery}> 
-                    <CircleQuestionMark className='w-4 h-4 cursor-pointer'/>
-                  </button>
+                
+
+
+
+              <div className="conb flex items-center gap-4 bg-white p-4 px-6 rounded-2xl shadow-md border border-gray-50 relative">
+                {ESP32Status === true ? (
+                  <>
+                    <Wifi size={24} className="text-green-500" />
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--color-dark-blue)] m-0">
+                        ESP32 Connected
+                      </p>
+                      <p className="text-xs text-[var(--gray_1--)] m-0 mt-1">
+                        Last updated: Just now
+                      </p>
+                    </div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_currentColor]" />
+                  </>
+                ) : (
+                  <>
+                    <WifiOff size={24} className="text-red-500" />
+                    <div>
+                      <p className="text-sm font-semibold text-[var(--color-dark-blue)] m-0">
+                        ESP32 Disconnected
+                      </p>
+                      <p className="text-xs text-[var(--gray_1--)] m-0 mt-1">
+                        Trying to reconnect...
+                      </p>
+                    </div>
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_currentColor]" />
+                  </>
+                )}
               </div>
             </div>
+
+
           </div>
+
+
 
 
           {/* Grid layout */}
@@ -102,17 +148,16 @@ function NurseryDashboard() {
                 </div>
               )}
 
-
               {trayGroups.length > 0 && trayGroups.map((group) => {
                 const isExpanded = expandedZones[group.tray_group_id];
                 const groupTrays = trays.filter(t => t.tray_group_id === group.tray_group_id);
 
                 return (
                   <div key={group.tray_group_id} className="main_tray_group_div conb bg-white rounded-3xl shadow-lg overflow-hidden w-full">
+
                     {/* Zone Header */}
                     <div
-                      className="tray_group_div p-4 sm:p-6 cursor-pointer 
-                       hover:bg-gray-200  transition-colors"
+                      className="tray_group_div p-4 sm:p-6 cursor-pointer hover:bg-gray-200 transition-colors"
                       onClick={() => toggleZone(group.tray_group_id)}
                     >
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -121,16 +166,14 @@ function NurseryDashboard() {
                             <Sprout className="w-5 h-5 text-white" />
                           </div>
                           <div>
-
                             <div className='flex'>
-                               <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
-                                [{group.group_number}]{group.tray_group_name} Group 
-                                </h2>
-                                <button onClick={handleOpenInfosModalTrayGroups } className='mx-2 stroke-var[--metal-dark4]'> 
-                                  <CircleQuestionMark className='w-4 h-4 cursor-pointer'/>
-                                </button>
+                              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">
+                                [{group.group_number}]{group.tray_group_name} Group
+                              </h2>
+                              <button onClick={handleOpenInfosModalTrayGroups} className='mx-2'>
+                                <CircleQuestionMark className='w-4 h-4 cursor-pointer' />
+                              </button>
                             </div>
-                                            
                             <p className="text-xs sm:text-sm text-gray-500">{group.location}</p>
                           </div>
                         </div>
@@ -147,18 +190,18 @@ function NurseryDashboard() {
                       </div>
                     </div>
 
-                    
-
                     {/* Tray List */}
                     {isExpanded && (
-                      <div className="px-4 sm:px-6 pb-4 sm:pb-6 ">
+                      <div className="px-4 sm:px-6 pb-4 sm:pb-6">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full">
                           {groupTrays.map(tray => {
-                            const sensor = sensors.find(s => s.tray_id === tray.tray_id && s.sensor_type === "moisture");
-                            const reading = sensor ? readings.find(r => r.sensor_id === sensor.sensor_id) : null;
-                            const moistureValue = reading ? reading.value : 0;
-                            const moistureStatus = getMoistureStatus(moistureValue, group.min_moisture, group.max_moisture);
-
+                              const sensor = sensors.find(s => s.tray_id === tray.tray_id && s.sensor_type === "moisture");
+                              // Ensure latestReadings is always an array
+                              const readingsArray = Array.isArray(latestReadings) ? latestReadings : [];
+                              const latestMoistureReading = sensor ? readingsArray.find(r => r.sensor_id === sensor.sensor_id) : null;
+                              const moistureValue = latestMoistureReading ? Number(latestMoistureReading.value) : 0;
+                              const moistureStatus = getMoistureStatus(moistureValue, group.min_moisture, group.max_moisture);
+   
                             return (
                               <div key={tray.tray_id} className="con_c tray_list_div bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] rounded-2xl p-4 hover:shadow-md transition-shadow w-full">
                                 {/* Tray Header */}
@@ -170,7 +213,7 @@ function NurseryDashboard() {
                                 </div>
 
                                 {/* Moisture */}
-                                {sensor?.sensor_type === "moisture" && (
+                                {sensor && (
                                   <div className="sensor_div bg-white rounded-xl p-4 shadow-sm w-full">
                                     <div className="flex items-center justify-between">
                                       <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${moistureStatus.color}15` }}>
@@ -190,7 +233,6 @@ function NurseryDashboard() {
                                     </div>
                                   </div>
                                 )}
-
                               </div>
                             );
                           })}
@@ -202,28 +244,22 @@ function NurseryDashboard() {
               })}
             </div>
 
-
-
-
-            
-            {/* BATCHES */}
+            {/* Batches */}
             <div className="space-y-4 w-full ">
-              <div className="conb  bg-white rounded-3xl p-4 sm:p-6 shadow-sm  sticky top-4 w-full">
+              <div className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm sticky top-4 w-full">
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#92e6a7] to-[#25a244] flex items-center justify-center">
                     <TrendingUp className="w-5 h-5 text-white" />
                   </div>
                   <div className='flex w-full '>
-                     <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Plant Batches</h2>
-                     <button onClick={handleOpenInfosModalBatches} className='mx-2 stroke-var[--metal-dark4]'> 
-                            <CircleQuestionMark className='w-4 h-4 cursor-pointer'/>
-                      </button>
+                    <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Plant Batches</h2>
+                    <button onClick={handleOpenInfosModalBatches} className='mx-2'>
+                      <CircleQuestionMark className='w-4 h-4 cursor-pointer' />
+                    </button>
                   </div>
-                 
                 </div>
 
                 <div className="batch_scroll_div space-y-3 max-h-[calc(100vh-350px)] overflow-y-auto w-full ">
-
                   {batches.length === 0 && (
                     <div className="flex flex-col items-center justify-center py-10 text-gray-400">
                       <Sprout size={48} className="mb-3 opacity-50" />
@@ -235,7 +271,7 @@ function NurseryDashboard() {
                   {batches.length > 0 && batches.map(batch => (
                     <div key={batch.batch_id} className="conc batch_div bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-4 border border-gray-100 w-full">
                       <div className="flex items-start justify-between mb-3">
-                        <h3 className="text-base font-semibold text-gray-900">{batch.plant_name}</h3>                      
+                        <h3 className="text-base font-semibold text-gray-900">{batch.plant_name}</h3>
                       </div>
 
                       <div className="space-y-2">
@@ -244,12 +280,10 @@ function NurseryDashboard() {
                           <span className="text-gray-600">Planted: {new Date(batch.date_planted).toLocaleDateString()}</span>
                         </div>
                         <div className="flex items-center gap-2 text-xs">
-                          <Calendar className="w-3.5 h-3.5 text-gray-400"/>
-
+                          <Calendar className="w-3.5 h-3.5 text-gray-400" />
                           <span className="text-gray-600">
                             Harvest at: {batch.expected_harvest_days} {batch.expected_harvest_days === 1 ? "day" : "days"}
                           </span>
-                          
                         </div>
                       </div>
 
@@ -262,7 +296,6 @@ function NurseryDashboard() {
                           <p className="text-xs text-gray-500">Grown</p>
                           <p className="text-lg font-bold text-[#208b3a]">{batch.fully_grown_seedlings}</p>
                         </div>
-                       
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Dead</p>
                           <p className="text-lg font-bold text-[var(--color-danger-b)]">{batch.dead_seedlings}</p>
@@ -273,7 +306,7 @@ function NurseryDashboard() {
                         </div>
                       </div>
                     </div>
-                  ))}        
+                  ))}
                 </div>
               </div>
             </div>
@@ -282,17 +315,15 @@ function NurseryDashboard() {
         </div>
       </div>
 
-        {isInfoModalOpen &&
-      <InfosModal
-        isInfosModalOpen={isInfoModalOpen}
-        onClose={() => setInfoModalOpen(false)}
-        purpose={infoModalPurpose}  
-      />
-    }
-           
-    </main>    
+      {isInfoModalOpen &&
+        <InfosModal
+          isInfosModalOpen={isInfoModalOpen}
+          onClose={() => setInfoModalOpen(false)}
+          purpose={infoModalPurpose}
+        />
+      }
+    </main>
   );
-
-
 }
+
 export default NurseryDashboard;

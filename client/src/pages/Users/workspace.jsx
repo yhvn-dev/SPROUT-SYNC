@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import { Modal } from "./modal"
 import { User} from "react-feather"
 import { SucessMsgs} from "../../components/sucessMsgs"
-import { Users} from 'lucide-react'
+import { Users, UserRoundCheck } from 'lucide-react'
 
 import { StatusChart,RoleChart} from "./charts"
 
@@ -181,7 +181,10 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
           <div className="grid row-span-full grid-rows-1 flex-col md:grid-cols-[1fr_1fr] h-[50%] md:h-[30%]  w-full gap-4 ">                  
             <div className="conb center rounded-2xl shadow-lg 
             w-full h-full p-4 pointer-events-none relative bg-white con_b  ">     
-              <p className="absolute top-4 left-4 text-[var(--acc-darkc)] text-sm">User status</p>
+              <p className="flex flex-row-reverse absolute top-4 left-4 text-[var(--acc-darkc)] text-sm">
+                User status 
+              <UserRoundCheck className="mr-4 w-5 h-5"/>
+              </p>
               {<StatusChart statusData={statusData} COLORS={COLORS}/>}   
            </div>
 
@@ -195,7 +198,7 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
                   <h2 className="text-4xl font-bold text-gray-900">{userCount}</h2>
                 </div>
               
-                  <Users className="w-6 h-6 text-[var(--acc-darkb)]" />
+                  <Users className="w-5 h-5 text-[var(--acc-darkb)]" />
                 
               </div>
 

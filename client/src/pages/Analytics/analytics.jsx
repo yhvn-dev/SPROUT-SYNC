@@ -6,10 +6,13 @@ import { UserContext } from "../../hooks/userContext";
 import { usePlantData } from "../../hooks/plantContext";
 import { Notif_Modal } from "../../components/notifModal";
 import { LogoutModal } from "../../components/logoutModal";
-import { Menu } from "lucide-react";
+import { Menu, CircleQuestionMark} from "lucide-react";
 
 import { Overview } from "./overview";
 import { SeedlingStats } from "./seedlingStats";
+import InfosModal from "../../components/infosModal";
+
+
 
 export default function Analytics() {
   const { user } = useContext(UserContext);
@@ -28,11 +31,16 @@ export default function Analytics() {
     loadAverageReadingsBySensor,
   } = usePlantData();
 
+
+  
   const [isNotifOpen, setNotifOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isInfoModalOpen,setInfoModalOpen] = useState(false);
+  const [infoModalPurpose,setInfoModalPurpose] = useState("");
 
+  
   useEffect(() => {
     loadBatchTotal();
     loadBatchTotalHistory();
@@ -50,10 +58,14 @@ export default function Analytics() {
     loadAverageReadingsBySensor,
   ]);
 
+  const handleOpenInfosModalAnalytics = () =>{
+      setInfoModalPurpose("analytics")
+      setInfoModalOpen(true)
+  }
+  
   return (
     <section
       className="
-
       con_main  w-full min-h-[120vh] md:min-h-screen    
       bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]
       grid
@@ -70,7 +82,7 @@ export default function Analytics() {
     {/* MOBILE MENU BUTTON */}
     <button
         onClick={() => setSidebarOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
+        className="menu_button md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
         <Menu size={22} className="text-[var(--acc-darkb)]" />
     </button>
 
@@ -96,6 +108,7 @@ export default function Analytics() {
             setSidebarOpen={setSidebarOpen}
           />
         </div>
+        
         {/* Desktop Sidebar */}
         <div className="hidden md:block">
           <Sidebar user={user} setLogoutOpen={setLogoutOpen} setSidebarOpen={() => {}} />
@@ -110,36 +123,39 @@ export default function Analytics() {
 
 
       {/* NAVIGATION TABS */}
-      <nav className="analytics_nav row-start-2 row-end-2 col-start-1 col-end-3 md:col-start-2 border-b border-gray-200 py-3 flex flex-wrap items-center gap-2 px-4 md:px-0">
-          
+      <nav className="analytics_nav row-start-2 row-end-2 col-start-1 col-span-full md:col-start-2 py-3 flex items-center justify-between gap-2 px-4 md:px-0">
+        
+        {/* LEFT: Tabs */}
+        <div className="flex gap-4 items-center">
+          <button
+            onClick={() => setActiveTab("Overview")}
+            className={`
+              cursor-pointer px-4 py-1 rounded-lg transition-all
+              ${activeTab === "Overview" 
+                ? "active bg-white text-[#027c68] shadow-md dark:bg-[var(--metal-dark3)] dark:text-[#00ffe0] dark:shadow-md"
+                : "bg-white/50 text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark1)]"
+              }
+            `}>
+            Overview
+          </button>
 
-        <button
-          onClick={() => setActiveTab("Overview")}
-          className={`
-            cursor-pointer px-4 py-1 rounded-lg transition-all
-            ${activeTab === "Overview" 
-              ? "active bg-white text-[#027c68] shadow-md dark:bg-[var(--metal-dark3)] dark:text-[#00ffe0] dark:shadow-md"
-              : " bg-white/50 text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark1)]"
-            }
-          `}
-        >
-          Overview
-        </button>
+          <button
+            onClick={() => setActiveTab("Seedling Stats")}
+            className={`cursor-pointer px-4 py-1 rounded-lg transition-all ${
+              activeTab === "Seedling Stats"
+                ? "active bg-white text-[#027c68] shadow-md"
+                : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
+            }`}>
+            Seedling Stats
+          </button>
+        </div>
 
-
-
-
-        <button
-          onClick={() => setActiveTab("Seedling Stats")}
-          className={`cursor-pointer px-4 md:px-6 py-1 md:py-2 text-xs md:text-sm font-medium rounded-lg transition-all ${
-            activeTab === "Seedling Stats"
-              ? "active bg-white text-[#027c68] shadow-md"
-              : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
-          }`}
-        >
-          Seedling Stats
+        {/* RIGHT: Info Icon */}
+        <button onClick={handleOpenInfosModalAnalytics} className="flex items-center mx-4">
+          <CircleQuestionMark className="w-4 h-4 cursor-pointer" />
         </button>
       </nav>
+
 
       {/* MAIN CONTENT */}
       <main className="col-start-1 col-end-3 md:col-span-full md:col-start-2 row-start-3 row-span-full overflow-y-auto px-0  ">
@@ -169,6 +185,19 @@ export default function Analytics() {
       {isNotifOpen && (
         <Notif_Modal isOpen={isNotifOpen} onClose={() => setNotifOpen(false)} />
       )}
+
+      {isInfoModalOpen &&
+        <InfosModal
+          isInfosModalOpen={isInfoModalOpen}
+          onClose={() => setInfoModalOpen(false)}
+          purpose={infoModalPurpose}  
+        />
+      }
+
+
+      
     </section>
+
+
   );
 }

@@ -1,20 +1,28 @@
 import { useState, useContext } from 'react';
-import { Menu } from "lucide-react"
 import { UserContext } from '../../hooks/userContext';
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
-import { Droplets, Wifi, WifiOff, Power, Sprout } from 'lucide-react';
-import * as closeValveServices from "../../data/closeVavlveServices"
+import { Droplets, Wifi, WifiOff, Power, Sprout, CircleQuestionMark} from 'lucide-react';
 import { Notif_Modal } from '../../components/notifModal';
 import { LogoutModal } from '../../components/logoutModal';
+import InfosModal from '../../components/infosModal';
+
+import * as closeValveServices from "../../data/closeValveServices"
+import { ESP32Context } from "../../hooks/esp32Hooks"
+
+
 
 function Control_panel() {
   const { user } = useContext(UserContext);
-  const [esp32Connected, setEsp32Connected] = useState(true);
+  const {ESP32Status,setESP32Status} = useContext(ESP32Context)
   const [logoutOpen, setLogoutOpen] = useState(false);
-  const [cameraView, setCameraView] = useState('grid'); // 'grid' or 'fullscreen'
+
+  const [isInfoModalOpen,setInfoModalOpen] = useState(false);
+  const [infoModalPurpose,setInfoModalPurpose] = useState("");
+  const [cameraView, setCameraView] = useState('grid'); 
   const [isNotifOpen, setNotifOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  
 
   // 🔁 AUTO / FORCE OFF states (for closing valves)
   const [valveMode, setValveMode] = useState({
@@ -23,10 +31,10 @@ function Control_panel() {
     pechay: 'auto',
     mustasa: 'auto'
   });
-
+  
+    
   // helpers
   const isForceOff = (key) => valveMode[key] === 'forceOff';
-
   // Toggle all valves
   const handleCloseAllGroups = async () => {
     const nextState = valveMode.all === 'auto' ? 'forceOff' : 'auto';
@@ -64,6 +72,12 @@ function Control_panel() {
     }
   };
 
+   const handleOpenInfosModalControlPanel = () =>{
+      setInfoModalPurpose("control_panel")
+      setInfoModalOpen(true)
+  }
+
+  
   return (
     <section className="control_panel
       con_main h-screen grid gap-4 grid-cols-[auto_1fr]
@@ -102,7 +116,7 @@ function Control_panel() {
             </div>
 
             <div className="conb flex items-center gap-4 bg-white p-4 px-6 rounded-2xl shadow-md border border-gray-50 relative">
-              {esp32Connected ? (
+              {ESP32Status === true ? (
                 <>
                   <Wifi size={24} className="text-green-500" />
                   <div>
@@ -130,7 +144,11 @@ function Control_panel() {
                 </>
               )}
             </div>
+
+
+            
           </div>
+
 
           {/* Valve Controls */}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-auto">
@@ -141,7 +159,11 @@ function Control_panel() {
                 <div className="flex items-center gap-3">
                   <Droplets size={24} className="text-[var(--ptl-greend)]" />
                   <h2 className="text-2xl font-bold text-[var(--color-dark-blue)] m-0">
-                    Valve Controls
+                    Valve Controls 
+
+                    <button className='mx-4' onClick={handleOpenInfosModalControlPanel}> 
+                    <CircleQuestionMark className='w-4 h-4 cursor-pointer'/>
+                  </button> 
                   </h2>
                 </div>
 
@@ -154,6 +176,7 @@ function Control_panel() {
                   </p>
                 </div>   
               </div>
+
 
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-4">
                 {/* All Plants */}
@@ -214,8 +237,7 @@ function Control_panel() {
                       ? 'bg-gradient-to-br from-[var(--sage-dark)] to-[var(--sage)]'
                       : 'bg-[var(--main-white)]'
                   }`}
-                  onClick={() => toggleGroup('mustasa', closeValveServices.closeMustasaGroup)}
-                >
+                  onClick={() => toggleGroup('mustasa', closeValveServices.closeMustasaGroup)}>
                   <Sprout size={24} className={isForceOff('mustasa') ? 'text-white' : 'text-[var(--sage-dark)]'} />
                   <span className={`text-lg font-semibold mt-2 ${isForceOff('mustasa') ? 'text-white' : 'text-[var(--color-dark-blue)]'}`}>
                     Mustasa
@@ -237,9 +259,19 @@ function Control_panel() {
         <Notif_Modal isOpen={isNotifOpen} onClose={() => setNotifOpen(false)} />
       )}
 
+      
+
       {logoutOpen && (
         <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)}  />
       )}
+
+      {isInfoModalOpen &&
+      <InfosModal
+        isInfosModalOpen={isInfoModalOpen}
+        onClose={() => setInfoModalOpen(false)}
+        purpose={infoModalPurpose}  
+      />
+    }
 
     </section>
   );

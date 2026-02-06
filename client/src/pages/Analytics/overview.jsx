@@ -1,15 +1,9 @@
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
-import { Droplets } from "lucide-react";
-import { useMemo } from "react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { Droplets,CircleQuestionMark,  Trash2 } from "lucide-react";
+import { useMemo,useState} from "react";
 
+
+import InfosModal from "../../components/infosModal";
 // =====================
 // STAT CARD
 // =====================
@@ -26,14 +20,15 @@ const StatCard = ({ label, value, gradient, color }) => (
   </div>
 );
 
+
 // =====================
 // OVERVIEW
 // =====================
-export const Overview = ({
-  batchTotal,
-  moistureReadingsLast24h,
-  averageReadingsBySensor,
-}) => {
+export const Overview = ({ batchTotal, moistureReadingsLast24h, averageReadingsBySensor}) => {
+  const [isInfoModalOpen,setInfoModalOpen] = useState(false);
+  const [infoModalPurpose,setInfoModalPurpose] = useState("");
+  const [isModalOpen,setModalOpen] = useState(false);
+
   // =====================
   // DARK MODE DETECTION
   // =====================
@@ -66,15 +61,32 @@ export const Overview = ({
       });
   }, [moistureReadingsLast24h]);
 
+
+  
   // =====================
   // AVERAGES
   // =====================
   const avgMoisture =
     averageReadingsBySensor?.moisture?.average ?? "--";
-
   const waterLevel =
     averageReadingsBySensor?.ultra_sonic?.average ?? "--";
 
+
+  const handleOpenInfosModalSoilMoisutreAnalytics = () =>{
+      setInfoModalPurpose("soilmoistureanalytics")
+      setInfoModalOpen(true)
+  }
+  const handleOpenInfosModalWaterLevel = () =>{
+      setInfoModalPurpose("water_level")
+      setInfoModalOpen(true)
+  }
+
+
+  const handleModalOpen = () =>{
+
+  }
+  
+  
   return (
     <div className="h-full grid md:grid-cols-12 md:grid-rows-12 gap-4">
 
@@ -121,35 +133,41 @@ export const Overview = ({
         />
       </div>
 
+
+
+
       {/* =====================
           MOISTURE LINE CHART
       ====================== */}
-      <div className="conb col-span-7 row-span-9 bg-white dark:bg-gray-900 rounded-xl shadow-lg p-4 flex flex-col">
-        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">
-          Soil Moisture Trend (Last 24h)
-        </h3>
+      <div className="conb col-span-7 py-2 row-span-9 
+      bg-white dark:bg-gray-900 rounded-xl shadow-lg px-6 
+      flex flex-col items-center justify-start gap-4">
+        <div className="flex justify-between w-full h-auto  items-center ">
+          <h3 className="flex items-center text-sm font-semibold text-gray-800 dark:text-gray-100">
+            Soil Moisture Trend (Last 24h)
+            <button className="ml-2">
+              <CircleQuestionMark
+                onClick={handleOpenInfosModalSoilMoisutreAnalytics}
+                className="w-4 h-4 cursor-pointer"
+              />
+            </button>
+          </h3>
 
-        <div className="flex-1 min-h-0">
+          <button className="flex items-center gap-2 text-gray-500 cursor-pointer hover:bg-[var(--main-white--)] rounded-lg p-2">
+            <Trash2 className="trash_logo w-4 h-4 stroke-var(--metal-dark4)" />
+            <span className="text-sm">Delete All</span>
+          </button>
+        </div>
+        
+
+        
+        {/* Chart */}
+        <div className="center w-full h-full">
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={moistureData}>
-              <CartesianGrid
-                stroke={gridColor}
-                strokeDasharray="3 3"
-              />
-
-              <XAxis
-                dataKey="time"
-                tick={{ fill: axisColor, fontSize: 11 }}
-                axisLine={{ stroke: axisColor }}
-                tickLine={{ stroke: axisColor }}
-              />
-
-              <YAxis
-                tick={{ fill: axisColor, fontSize: 11 }}
-                axisLine={{ stroke: axisColor }}
-                tickLine={{ stroke: axisColor }}
-              />
-
+              <CartesianGrid stroke={gridColor} strokeDasharray="3 3" />
+              <XAxis dataKey="time" tick={{ fill: axisColor, fontSize: 11 }} axisLine={{ stroke: axisColor }} tickLine={{ stroke: axisColor }} />
+              <YAxis tick={{ fill: axisColor, fontSize: 11 }} axisLine={{ stroke: axisColor }} tickLine={{ stroke: axisColor }} />
               <Tooltip
                 contentStyle={{
                   backgroundColor: isDark ? "#111827" : "#ffffff",
@@ -159,23 +177,24 @@ export const Overview = ({
                 labelStyle={{ color: axisColor }}
                 itemStyle={{ color: axisColor }}
               />
-
-              <Line
-                type="monotone"
-                dataKey="value"
-                stroke="#027c68"
-                strokeWidth={3}
-                dot={{ r: 3 }}
-              />
+              <Line type="monotone" dataKey="value" stroke="#027c68" strokeWidth={3} dot={{ r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
       </div>
 
+
+
       {/* =====================
           WATER LEVEL GAUGE
       ====================== */}
-      <div className="conb col-span-5 row-span-9 bg-white dark:bg-gray-900 rounded-xl shadow-sm flex items-center justify-center p-6">
+      <div className="relative conb col-span-5 row-span-9 bg-white dark:bg-gray-900 rounded-xl shadow-sm flex items-center justify-center p-6">
+
+        <button className="mx-4">    
+          <CircleQuestionMark onClick={handleOpenInfosModalWaterLevel} 
+          className='absolute top-4 left-4 mr-4 w-4 h-4 cursor-pointer'/> 
+        </button>
+
         <div className="flex flex-col items-center">
           <div className="relative w-40 h-40">
             <svg
@@ -218,8 +237,18 @@ export const Overview = ({
           <p className="text-base font-semibold text-gray-800 dark:text-gray-100 mt-4">
             Water Level
           </p>
+
         </div>
       </div>
+
+        {isInfoModalOpen &&
+          <InfosModal
+            isInfosModalOpen={isInfoModalOpen}
+            onClose={() => setInfoModalOpen(false)}
+            purpose={infoModalPurpose}  
+          />
+        }      
     </div>
   );
+
 };

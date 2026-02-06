@@ -1,28 +1,20 @@
-import {
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  PieChart,
-  Pie,
-  Cell,
-} from "recharts";
-import { Droplets, TrendingUp, Sprout, X } from "lucide-react";
+import { XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell, } from "recharts";
+import { Droplets, TrendingUp, Sprout, X ,CircleQuestionMark} from "lucide-react";
+import { useState } from "react";
 
-// =====================
-// SEEDLING STATS
-// =====================
+
+import InfosModal from "../../components/infosModal";
+
 export const SeedlingStats = ({
   growthOvertime,
   batchHistoryTotal,
 }) => {
+  
+  const [isInfoModalOpen,setInfoModalOpen] = useState(false);
+  const [infoModalPurpose,setInfoModalPurpose] = useState("");
 
   /* ================= SOURCE OF TRUTH ================= */
   const totals = batchHistoryTotal ?? {};
-
   const total_grown = totals?.total_grown ?? 0;
   const total_dead = totals?.total_dead ?? 0;
   const total_replanted = totals?.total_replanted ?? 0;
@@ -46,21 +38,38 @@ export const SeedlingStats = ({
     },
   ];
 
+
+   const handleOpenInfosModalseedlingGrowthOvertime = () =>{
+      setInfoModalPurpose("seedling_growth_overtime")
+      setInfoModalOpen(true)
+  }
+  const handleOpenInfosModalStatusDistribution = () =>{
+      setInfoModalPurpose("status_distribution")
+      setInfoModalOpen(true)
+  }
+
+  
+
   /* ================= DARK MODE ================= */
   const isDark =
     typeof window !== "undefined" &&
     document.documentElement.classList.contains("dark");
-
   const axisColor = isDark ? "#e5e7eb" : "#374151";
   const gridColor = isDark ? "#374151" : "#e5e7eb";
 
+
+  
+
   return (
     <div className="w-full h-full grid gap-4 md:grid-cols-[6fr_4fr] md:grid-rows-[2fr_1fr] overflow-x-hidden">
-
       {/* ================= GROWTH OVER TIME ================= */}
       <div className="conb col-span-full md:col-span-1 bg-white dark:bg-gray-900 rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col">
         <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">
           Seedling Growth Over Time
+          <button className="mx-4">    
+            <CircleQuestionMark onClick={handleOpenInfosModalseedlingGrowthOvertime} 
+            className='mr-4 w-4 h-4 cursor-pointer'/> 
+          </button>
         </h3>
 
         <div className="flex-1 min-h-0">
@@ -101,8 +110,12 @@ export const SeedlingStats = ({
 
       {/* ================= STATUS DISTRIBUTION ================= */}
       <div className="conb col-span-full md:col-span-1 bg-white dark:bg-gray-900 rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col">
-        <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">
+        <h3 className="flex text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2">
           Status Distribution
+           <button className="mx-4">    
+            <CircleQuestionMark onClick={handleOpenInfosModalStatusDistribution} 
+            className='mr-4 w-4 h-4 cursor-pointer'/> 
+           </button>
         </h3>
 
         <div className="relative flex-1 min-h-0 flex items-center justify-center">
@@ -187,9 +200,19 @@ export const SeedlingStats = ({
           iconColor="text-amber-500"
         />
       </div>
+
+      {isInfoModalOpen &&
+        <InfosModal
+          isInfosModalOpen={isInfoModalOpen}
+          onClose={() => setInfoModalOpen(false)}
+          purpose={infoModalPurpose}  
+        />
+      }      
     </div>
   );
 };
+
+
 
 /* ================= STAT CARD ================= */
 const StatCard = ({

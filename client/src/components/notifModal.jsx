@@ -161,7 +161,6 @@ export function Notif_Modal({ isOpen, onClose}) {
                 </div>
 
 
-
                 <button type="submit" onClick={() => handleDelete(notif)}className="rounded-full p-2 h-5 w-5 cursor-pointer mx-2">
                   <Trash2 className="delete_notif text-[var(--acc-darkc)]" size={16}/>
                   </button>

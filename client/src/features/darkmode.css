@@ -190,7 +190,6 @@ body.dark .hero-main-box {
     box-shadow: 5px 5px 10px 1px rgba(0,0,0,0.6);
 }
 
-body.dark p,
 body.dark a,
 body.dark h2,
 body.dark h3,
@@ -198,6 +197,7 @@ body.dark span,
 body.dark .hook-txt {
     @apply text-[var(--main-white)];
 }
+
 
 
 body.dark .moonstar {
@@ -240,9 +240,6 @@ body.dark .navs-btn {
             @apply bg-[var(--metal-dark3)];
             box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
         }
-
-    
-        
         body.dark .conb p{
             @apply text-[var(--main-white)];
         }
@@ -250,7 +247,7 @@ body.dark .navs-btn {
             @apply text-[var(--main-white)];
         }
         body.dark .nursery_data_div{
-            background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
+                background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
         }
 
 
@@ -475,12 +472,12 @@ body.dark .user_table_div::-webkit-scrollbar{
 
 
 
+        
 
 
+
+    
 /* ANALYTICS PAGE */
-
-
-
     /* DARK MODE – default (inactive tab) */
     body.dark .analytics_nav button {
         @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
@@ -498,6 +495,10 @@ body.dark .user_table_div::-webkit-scrollbar{
             to-[var(--metal-dark3)];
             box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
         }
+
+
+
+
 
 
 
@@ -568,10 +569,41 @@ body.dark .batch_history_table tr:nth-child(even){
 body.dark .btn_box{
      @apply text-[var(--metal-dark5)];
 }
-    body.dark .user_modal label{
-         @apply bg-[var(--metal-dark1)];
+ 
+    body.dark .user_modal {
+        @apply bg-[var(--metal-dark1)];
+    }
+    body.dark .user_modal .trash_icon{
+        @apply text-[var(--main-white)];
+    }
+    body.dark .user_modal .cancel_button{
+        @apply text-[var(--metal-dark4)];
+    }
+    
+ 
+     
+    body.dark .user_modal .icon_box{ 
+        @apply bg-[var(--metal-dark1)];
+    }
+    body.dark .user_modal .add_icon {
+        @apply text-[var(--sancgb)]; 
+    }
+    body.dark .user_modal .update_icon { 
+        @apply text-[var(--sancgb)];
     }
 
+
+
+
+
+
+    body.dark .user_modal label{
+        @apply bg-[var(--metal-dark1)] text-[var(--main-white)];
+    }
+    
+       body.dark .user_modal .cancel_button{
+        @apply  text-[var(--metal-dark4)];
+    }
 
     body.dark .user_modal select{
         @apply bg-[var(--metal-dark1)];
@@ -644,6 +676,11 @@ body.dark .btn_box{
 body.dark .succMsg{
     @apply bg-transparent border-[1px] border-[var(--sancgb)]; 
 }
+body.dark .success_msg p{
+    @apply text-[var(--metal-dark5)];    
+}
+
+
 /* FRONT PAGE */
 
 body.dark .hero{
@@ -773,13 +810,19 @@ body.dark .login_form label{
 
 
 
+body.dark .scrolling.header-button{
+    @apply text-[var(--metal-dark1)];
+}
+
+body.dark .scrolling.header_nav{
+    @apply bg-[var(--metal-dark2)];
+}
 
 
 body.dark .browser_window_main_container{
   @apply bg-[var(--metal-dark3)];
    box-shadow:5px 5px 5px 1px var(--shad-dark); 
 }
-
 
     body.dark .mockup_traygroup_div{
           @apply bg-[var(--metal-dark3)];
@@ -814,6 +857,12 @@ body.dark .browser_window_main_container{
           @apply bg-[var(--metal-dark1)];
           box-shadow:5px 5px 5px 1px var(--shad-dark); 
     }
+        body.dark .pb_data_text {
+            @apply text-[var(--metal-dark4)];
+        }
+        body.dark .pb_data_label{
+            @apply text-[var(--main-white--)];
+        }
 
 
 

@@ -13,16 +13,15 @@ export function Darkmode(){
             document.body.classList.add("dark")
             document.body.classList.remove("light")
             localStorage.setItem("theme","dark")
-            const state = localStorage.getItem("theme")
-            console.log(state)
+            localStorage.getItem("theme")
         }else{
             document.body.classList.add("light")
             document.body.classList.remove("dark")
             localStorage.setItem("theme","light")
-            const state = localStorage.getItem("theme")
-            console.log(state)
+            localStorage.getItem("theme")
         }
     },[dark])
+    
     
     return(<>
 

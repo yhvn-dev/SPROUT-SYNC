@@ -83,7 +83,7 @@ export function Modal({
       transition={{ duration: 0.2 }}
     >
       <motion.div
-        className={`bg-white rounded-2xl shadow-2xl relative ${mode === "delete" ? "w-[520px]" : "w-[800px]"}`}
+        className={`user_modal bg-white rounded-2xl shadow-2xl relative ${mode === "delete" ? "w-[520px]" : "w-[800px]"}`}
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
@@ -100,8 +100,8 @@ export function Modal({
         {mode === "delete" ? (
           <div className="p-8">
             <div className="flex items-center gap-4 mb-6">
-              <div className="p-3 bg-red-50 rounded-xl">
-                <Trash2 size={24} className="text-red-600" />
+              <div className="icon_box p-3 bg-red-50 rounded-xl">
+                <Trash2 size={24} className="trash_icon text-red-600" />
               </div>
               <h2 className="text-2xl font-semibold text-gray-900">Delete User</h2>
             </div>
@@ -111,7 +111,7 @@ export function Modal({
             <div className="flex justify-end gap-3">
               <button
                 onClick={handleClose}
-                className="px-6 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors duration-200 font-medium"
+                className="cancel_button px-6 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors duration-200 font-medium"
               >
                 Cancel
               </button>
@@ -126,8 +126,8 @@ export function Modal({
         ) : (
           <div className="p-8">
             <div className="flex items-center gap-4 mb-8">
-              <div className="p-3 bg-blue-50 rounded-xl">
-                {mode === "insert" ? <UserPlus size={24} className="text-blue-600" /> : <UserPen size={24} className="text-blue-600" />}
+              <div className="icon_box p-3 bg-blue-50 rounded-xl">
+                {mode === "insert" ? <UserPlus size={24} className="add_icon text-blue-600" /> : <UserPen size={24} className="update_icon text-blue-600" />}
               </div>
               <h2 className="text-2xl font-semibold text-gray-900">{mode === "insert" ? "Add User" : "Update User"}</h2>
             </div>
@@ -145,7 +145,7 @@ export function Modal({
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200"
                       placeholder="Enter username"
                     />
-                    {errors.username && <p className="text-red-600 text-sm mt-1">{errors.username}</p>}
+                    {errors.username && <h6 className="text-red-600 text-sm mt-1">{errors.username}</h6>}
                     {backendError && backendError.toLowerCase().includes("username") && <p className="text-red-600 text-sm mt-1">{backendError}</p>}
                   </div>
 
@@ -158,7 +158,7 @@ export function Modal({
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200"
                       placeholder="Enter full name"
                     />
-                    {errors.fullname && <p className="text-red-600 text-sm mt-1">{errors.fullname}</p>}
+                    {errors.fullname && <h6 className=" text-red-600 text-sm mt-1">{errors.fullname}</h6>}
                   </div>
 
                   <div>
@@ -170,10 +170,12 @@ export function Modal({
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200"
                       placeholder="Enter email address"
                     />
-                    {errors.email && <p className="text-red-600 text-sm mt-1">{errors.email}</p>}
-                    {backendError && backendError.toLowerCase().includes("email") && <p className="text-red-600 text-sm mt-1">{backendError}</p>}
+                    {errors.email && <h6 className="text-red-600 text-sm mt-1">{errors.email}</h6>}
+                    {backendError && backendError.toLowerCase().includes("email") && <h6 className="text-red-600 text-sm mt-1">{backendError}</h6>}
                   </div>
                 </div>
+
+
 
                 {/* Right Column */}
                 <div className="space-y-5">
@@ -190,7 +192,7 @@ export function Modal({
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Password {mode === "update" && <span className="text-gray-400 text-xs">(leave blank to keep current)</span>}
+                      Password {mode === "update" && <p className="text-gray-400 text-xs">(leave blank to keep current)</p>}
                     </label>
                     <input
                       type="password"
@@ -199,8 +201,10 @@ export function Modal({
                       className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200"
                       placeholder="Enter password"
                     />
-                    {errors.password && <p className="text-red-600 text-sm mt-1">{errors.password}</p>}
+                    {errors.password && <h6 className=" text-red-600 text-sm mt-1">{errors.password}</h6>}
                   </div>
+
+
 
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
@@ -213,7 +217,7 @@ export function Modal({
                       <option value="admin">Admin</option>
                       <option value="viewer">Viewer</option>
                     </select>
-                    {errors.role && <p className="text-red-600 text-sm mt-1">{errors.role}</p>}
+                    {errors.role && <h6 className=" text-red-600 text-sm mt-1">{errors.role}</h6>}
                   </div>
                 </div>
               </div>
@@ -222,20 +226,21 @@ export function Modal({
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="px-6 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors duration-200 font-medium"
-                >
+                  className="cursor-pointer cancel_button px-6 py-2.5 rounded-xl text-gray-700 hover:bg-gray-100 transition-colors duration-200 font-medium">
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className={`px-6 py-2.5 text-white rounded-xl transition-colors duration-200 font-medium ${mode === "update" ? "bg-blue-600 hover:bg-blue-700" : "bg-green-600 hover:bg-green-700"}`}
-                >
+                  className={`cursor-pointer px-6 py-2.5 text-white rounded-xl transition-colors duration-200 font-medium 
+                    ${mode === "update" ? "bg-[var(--white-blple--)] hover:bg-[var(--bluis--)]" : "bg-green-600 hover:bg-green-700"}`}>
                   {mode === "update" ? "Save Changes" : "Add User"}
                 </button>
               </div>
             </form>
           </div>
         )}
+
+
       </motion.div>
     </motion.div>
   );

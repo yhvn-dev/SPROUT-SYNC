@@ -114,39 +114,39 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
 
               <div className="grid grid-cols-2 gap-4 mb-4">
                 <div className=" rounded-xl p-3">
-                  <p className="text-xs text-gray-500 mb-1">Date Planted</p>
-                   <p className="text-sm font-semibold text-gray-900">{formatDateOnly(pb.date_planted)}</p>
+                  <p className="pb_data_label text-xs text-gray-500 mb-1">Date Planted</p>
+                   <p className="pb_data_text pb_date_planted text-sm font-semibold text-gray-900">{formatDateOnly(pb.date_planted)}</p>
                 </div>
                 <div className="rounded-xl p-3">
-                  <p className="text-xs text-gray-500 mb-1">Expected Harvest Days</p>
-                  <p className="text-sm font-semibold text-gray-900">{pb.expected_harvest_days}</p>
+                  <p className="pb_data_label text-xs text-gray-500 mb-1">Expected Harvest Days</p>
+                  <p className="pb_data_text pb_harvest_date  text-sm font-semibold text-gray-900">{pb.expected_harvest_days}</p>
                 </div>
               </div>
 
 
               <ul className="grid grid-cols-5 gap-3">
                 <li className="total_seedlings_div bg-white rounded-xl p-3 text-center shadow-lg">
-                  <p className="text-xs text-gray-500 mb-1">Total Planted</p>
-                  <p className="text-xl font-bold text-gray-900">{pb.total_seedlings}</p>
+                  <p className="pb_data_label pb_data_label text-xs text-gray-500 mb-1">Total Planted</p>
+                  <p className="pb_data_text pb_harvest_date text-xl font-bold text-gray-900">{pb.total_seedlings}</p>
                 </li>
 
                 <li className="alive_seeedlings_div bg-white rounded-xl p-3 text-center shadow-lg">
-                  <p className="text-xs text-gray-500 mb-1">Alive Seedlings</p>
+                  <p className="pb_data_label text-xs text-gray-500 mb-1">Alive Seedlings</p>
                   <p className="text-xl font-bold text-[#92e6a7]">{pb.alive_seedlings}</p>
                 </li>
 
                 <li className="fully_grown_seeedlings_div bg-white rounded-xl p-3 text-center shadow-lg">
-                  <p className="text-xs text-gray-500 mb-1">Fully Grown</p>
+                  <p className="pb_data_label text-xs text-gray-500 mb-1">Fully Grown</p>
                   <p className="text-xl font-bold text-[#25a244]">{pb.fully_grown_seedlings}</p>
                 </li>
 
                 <li className="dead_seeedlings_div bg-white rounded-xl p-3 text-center shadow-lg">
-                  <p className="text-xs text-gray-500 mb-1">Dead</p>
+                  <p className="pb_data_label text-xs text-gray-500 mb-1">Dead</p>
                   <p className="text-xl font-bold text-red-500">{pb.dead_seedlings}</p>
                 </li>
 
                 <li className="replanted_seeedlings_div bg-white rounded-xl p-3 text-center shadow-lg">
-                  <p className="text-xs text-gray-500 mb-1">Replants</p>
+                  <p className="pb_data_label text-xs text-gray-500 mb-1">Replants</p>
                   <p className="text-xl font-bold text-orange-500">{pb.replanted_seedlings}</p>
                 </li>
                 
