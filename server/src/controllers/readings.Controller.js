@@ -51,6 +51,27 @@ export const getReadingsLast24h = async (req, res) => {
 
 
 
+
+// ===== GET latest reading per sensor =====
+export const getLatestReadingsPerSensor = async (req, res) => {
+  try {
+    const readings = await readingModel.readLatestReadingsPerSensor();
+
+    res.status(200).json({
+      success: true,
+      count: readings.length,
+      data: readings
+    });
+  } catch (error) {
+    console.error("Error fetching latest readings per sensor:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch latest sensor readings"
+    });
+  }
+};
+
+
 export const getAverageReadings = async (req, res) => {
   try {
     const readings = await readingModel.readAverageMoisture()

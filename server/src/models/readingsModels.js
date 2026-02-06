@@ -13,6 +13,33 @@ export const readReadings = async () => {
 };
 
 
+
+
+// ===== READ latest reading per sensor =====
+export const readLatestReadingsPerSensor = async () => {
+  try {
+    const sql = `
+      SELECT DISTINCT ON (r.sensor_id)
+        r.reading_id,
+        r.sensor_id,
+        r.value,
+        r.recorded_at
+      FROM sensor_readings r
+      JOIN sensors s ON r.sensor_id = s.sensor_id
+      ORDER BY r.sensor_id, r.recorded_at DESC
+    `;
+    
+    const result = await query(sql);
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
+};
+
+
+
+
+
 // ===== READ single reading by ID =====
 export const readReadingById = async (reading_id) => {
   try {

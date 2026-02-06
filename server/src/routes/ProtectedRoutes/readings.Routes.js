@@ -4,6 +4,7 @@ import express from "express";
 const router = express.Router();
     router.get("/get/readings", readingController.getReadings);
     router.get("/get/readings/last24h",readingController.getReadingsLast24h)
+    router.get("/get/readings/latest",readingController.getLatestReadingsPerSensor) 
     router.get("/get/readings/average/:sensor_type",readingController.getAverageBySensorType)
     router.get("/get/readings/average",readingController.getAverageReadings)
     router.get("/get/readings/:reading_id", readingController.getReadingById);
