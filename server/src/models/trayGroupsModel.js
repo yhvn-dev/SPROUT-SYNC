@@ -26,7 +26,6 @@ export const readTrayGroups = async () => {
 // ===== READ single tray group by ID =====
 export const readTrayGroupById = async (tray_group_id) => {
     try {
-
         const sql = `SELECT * FROM tray_groups WHERE tray_group_id = $1`;
         const result = await query(sql, [tray_group_id]);
         return result.rows[0];       
@@ -34,7 +33,6 @@ export const readTrayGroupById = async (tray_group_id) => {
     } catch (error) {
         throw error
     }
- 
 };
 
 
@@ -77,6 +75,8 @@ export const createTrayGroups = async (trayGroupData) => {
     throw error;
   }
 };
+
+
 
 
 

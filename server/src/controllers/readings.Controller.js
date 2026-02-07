@@ -329,15 +329,16 @@ export const deleteReadings = async (req, res) => {
 
 
 
-
-
 // ===== DELETE a reading =====
 export const deleteAllReadings = async (req, res) => {
   try {
-    await readingModel.deleteReadings(reading_id);
-    res.status(200).json({ message: "All reading deleted successfully" });    
+    const result = await readingModel.deleteAllReadings();
+    res.status(200).json({
+      message: "All readings deleted successfully",
+      deleted: result.deletedCount
+    });
   } catch (err) {
-    console.error("CONTROLLER: Error deleting readings", err);
-    res.status(500).json({ message: "Error deleting readings", err });
+    console.error("CONTROLLER ERROR:", err);
+    res.status(500).json({ message: "Error deleting readings" });
   }
 };

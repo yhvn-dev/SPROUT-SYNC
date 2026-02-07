@@ -47,26 +47,6 @@ CREATE TABLE trays (
 );
 
 
-CREATE TABLE plant_batches (
-    batch_id SERIAL PRIMARY KEY,
-    tray_id INT NOT NULL,
-    plant_name VARCHAR(100) NOT NULL,
-    total_seedlings INT DEFAULT NULL,     
-    dead_seedlings INT DEFAULT NULL,    
-    replanted_seedlings INT DEFAULT NULL, 
-    fully_grown_seedlings INT DEFAULT NULL,
-    growth_stage VARCHAR(50) DEFAULT 'Seedling',
-    date_planted DATE NOT NULL,
-    expected_harvest_days INT NOT NULL,
-    status VARCHAR(20) DEFAULT 'Growing', 
-    created_at TIMESTAMP DEFAULT NOW(),
-    CONSTRAINT fk_tray
-        FOREIGN KEY (tray_id)
-        REFERENCES trays(tray_id)
-        ON DELETE CASCADE
-);
-
-
 
 CREATE TABLE plant_batches (
     batch_id SERIAL PRIMARY KEY,
@@ -89,25 +69,6 @@ CREATE TABLE plant_batches (
 
 
 
-CREATE TABLE plant_batch_history (
-    history_id SERIAL PRIMARY KEY,
-    batch_id INT,                           -- Reference to the main batch, nullable
-    tray_id INT,                            -- Reference to the tray
-    plant_name VARCHAR(100) NOT NULL,       -- Snapshot of the plant name
-    date_recorded DATE NOT NULL,            -- The date this record was taken
-    total_seedlings INT DEFAULT 0,          -- Total seedlings at this time
-    dead_seedlings INT DEFAULT 0,           -- Dead seedlings recorded today
-    replanted_seedlings INT DEFAULT 0,      -- Seedlings replanted today
-    fully_grown_seedlings INT DEFAULT 0,    -- Fully grown seedlings recorded today
-    growth_stage VARCHAR(50) DEFAULT 'Seedling', -- Current stage
-    expected_harvest_days INT NOT NULL,     -- Expected harvest duration
-    notes TEXT,                             -- Optional notes about the batch
-    created_at TIMESTAMP DEFAULT NOW(),
-    CONSTRAINT fk_batch
-        FOREIGN KEY (batch_id)
-        REFERENCES plant_batches(batch_id)
-        ON DELETE SET NULL
-);
 
 CREATE TABLE sensors(   
     sensor_id SERIAL PRIMARY KEY,

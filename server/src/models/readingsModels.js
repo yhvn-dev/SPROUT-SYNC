@@ -149,13 +149,10 @@ export const deleteReadings = async (reading_id) => {
 
 
 
-// ===== DELETE all readings =====
 export const deleteAllReadings = async () => {
-  try {
-    const sql = `DELETE FROM sensor_readings`;
-    const result = await query(sql);
-    return result.rows[0];        
-  } catch (error) {
-    throw error;
-  }
+  const sql = `DELETE FROM sensor_readings`;
+  const result = await query(sql);
+  return {
+    deletedCount: result.rowCount
+  };
 };

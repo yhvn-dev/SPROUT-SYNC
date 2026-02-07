@@ -16,6 +16,5 @@ const router = express.Router();
     router.delete("/delete/readings/all", readingController.deleteAllReadings);
     router.delete("/delete/readings/:reading_id", readingController.deleteReadings);
 
-
 export default router;
     

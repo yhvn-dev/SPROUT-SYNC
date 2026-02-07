@@ -84,39 +84,37 @@ export const createPlantBatch = async (batchData) => {
     fully_grown_seedlings = 0,
     growth_stage = "Seedling",
     date_planted,
-    expected_harvest_days
+    expected_harvest_days,
+    batch_number
   } = batchData;
+
 
   // ✅ AUTO-ADJUST: Never exceed total_seedlings
   const safeReplanted = Math.min(replanted_seedlings, total_seedlings);
   const safeFullyGrown = Math.min(fully_grown_seedlings, total_seedlings);
-  const totalGrowth = safeReplanted + safeFullyGrown;
   const totalAlive = total_seedlings - dead_seedlings;
-  
-  // Cap growth to alive plants only
   const finalReplanted = Math.min(safeReplanted, totalAlive);
   const finalFullyGrown = Math.min(safeFullyGrown, totalAlive - finalReplanted);
   
-  console.log(`Adjusted: total=${total_seedlings}, dead=${dead_seedlings}, replanted=${finalReplanted}, grown=${finalFullyGrown}`);
-
   const sql = `
     INSERT INTO plant_batches (
       tray_id, plant_name, total_seedlings, dead_seedlings,
       replanted_seedlings, fully_grown_seedlings, growth_stage,
-      date_planted, expected_harvest_days
+      date_planted, expected_harvest_days,batch_number
     )
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
     RETURNING *
   `;
 
   const values = [
     tray_id, plant_name, total_seedlings, dead_seedlings,
     finalReplanted, finalFullyGrown, growth_stage,
-    date_planted, expected_harvest_days
+    date_planted, expected_harvest_days,batch_number
   ];
 
   const result = await query(sql, values);
   return result.rows[0];
+
 };
 
 
@@ -175,6 +173,9 @@ export const updatePlantBatch = async (batchData, batch_id) => {
   }
 };
   
+
+
+
 // ===== DELETE a plant batch =====
 export const deletePlantBatch = async (batch_id) => {
   try {

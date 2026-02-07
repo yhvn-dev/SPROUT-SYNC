@@ -111,34 +111,35 @@ export const readSeedlingGrowthByWeekAll = async () => {
 };
 
 
-
-// ===== CREATE a history record =====
-export const createHistoryRecord = async (historyData) => {
+export const createHistoryRecord = async (batchData) => {
   const {
-    batch_id = null,
+    batch_number,  
     tray_id = null,
     plant_name,
-    date_recorded = new Date(),           // default to today
+    date_recorded = new Date(),
     total_seedlings = 0,
     dead_seedlings = 0,
     replanted_seedlings = 0,
     fully_grown_seedlings = 0,
     growth_stage = "Seedling",
-    expected_harvest_days,
+    expected_harvest_days = null,
     notes = null
-  } = historyData;
+  } = batchData;
 
   const sql = `
     INSERT INTO plant_batch_history (
-      batch_id, tray_id, plant_name, date_recorded,
+      batch_number, 
+      tray_id, plant_name, date_recorded,
       total_seedlings, dead_seedlings, replanted_seedlings, fully_grown_seedlings,
       growth_stage, expected_harvest_days, notes
     )
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
     RETURNING *
   `;
+
   const values = [
-    batch_id, tray_id, plant_name, date_recorded,
+    batch_number,
+    tray_id, plant_name, date_recorded,
     total_seedlings, dead_seedlings, replanted_seedlings, fully_grown_seedlings,
     growth_stage, expected_harvest_days, notes
   ];
@@ -149,7 +150,16 @@ export const createHistoryRecord = async (historyData) => {
   } catch (error) {
     throw error;
   }
+
+  
 };
+
+
+
+
+
+
+
 
 // ===== DELETE a history record (optional) =====
 export const deleteHistoryRecord = async (history_id) => {
