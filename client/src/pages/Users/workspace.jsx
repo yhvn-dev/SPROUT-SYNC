@@ -1,16 +1,15 @@
 
 import { UserTable } from "./userTable"
-import { useEffect, useState } from "react"
+import { useEffect, useState,useContext} from "react"
 import { Modal } from "./modal"
 import { User} from "react-feather"
 import { SucessMsgs} from "../../components/sucessMsgs"
 import { Users, UserRoundCheck } from 'lucide-react'
 
-import { StatusChart,RoleChart} from "./charts"
-
-
+import { StatusChart} from "./charts"
 import * as userService from "../../data/userService"
 
+import { UserContext } from "../../hooks/userContext"
 
 export function StatusChartLegend({statusCount,colors}){
   return(
@@ -39,18 +38,17 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
   const [sucessMsg,setSucessMsg] = useState("");
   const [backendError,setBackendError] = useState("");
   const [selectedUser,setSelectedUser] = useState(null)
-  const [allUsers,setAllUsers] = useState([]) 
-  const [filtered,setFiltered] = useState([])
+  const {allUsers,setAllUsers} = useContext(UserContext);
+  const [filtered,setFiltered] = useState([]) 
+ 
 
   const clearMsg = () => setSucessMsg("");
 
   useEffect(() =>{
     renderUsers();
-    console.log("CHART DATA",chartData)
   },[])
   
   const renderUsers = async () =>{
-
     try{
         const users = await userService.fetchAllUsers();
         setAllUsers(users)
@@ -59,9 +57,6 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
       console.error("Error Rendering Users",err)
     }
   }
-
-
-
 
   // SEARCH USER
   useEffect(() =>{
@@ -177,41 +172,10 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
     return (
         <main className="flex flex-col h-full w-full gap-4">  
         
-        {/* USER CHART ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
-          <div className="grid row-span-full grid-rows-1 flex-col md:grid-cols-[1fr_1fr] h-[50%] md:h-[30%]  w-full gap-4 ">                  
-            <div className="conb center rounded-2xl shadow-lg 
-            w-full h-full p-4 pointer-events-none relative bg-white con_b  ">     
-              <p className="flex flex-row-reverse absolute top-4 left-4 text-[var(--acc-darkc)] text-sm">
-                User status 
-              <UserRoundCheck className="mr-4 w-5 h-5"/>
-              </p>
-              {<StatusChart statusData={statusData} COLORS={COLORS}/>}   
-           </div>
-
-        
-
-             {/* CARD C USER COUNT */}
-            <div className="conb  bg-white rounded-2xl shadow-lg w-full h-full p-6 flex flex-col justify-between">
-              <div className="flex items-start justify-between">
-                <div>
-                  <p className="text-sm font-medium text-gray-500 mb-1">Total Users</p>
-                  <h2 className="text-4xl font-bold text-gray-900">{userCount}</h2>
-                </div>
-              
-                  <Users className="w-5 h-5 text-[var(--acc-darkb)]" />
-                
-              </div>
-
-            </div>
-
-
-        </div>
-            
-            
           {/* USER TABLE ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
           <div className="conb bg-white workspace flex flex-col w-full flex-1 row-start-4 row-span-full
           col-start-2 col-end-4 overflow-y-auto  rounded-[10px] my-4">    
-            <div className="wp_header flex w-full h-[20%] md:h-[20%] ">
+            <div className="wp_header flex w-full h-[10%] md:h-[10%] ">
                 <ol className='h_part left flex items-center justify-start w-1/2 '>
                     <User className="mx-4" size={24}/>
                     <span className='text-2xl'>Users</span>
@@ -234,11 +198,11 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
                 </ol>
           </div>
 
-          
 
-            <SucessMsgs txt={sucessMsg} clearMsg={clearMsg}/>
+
+          <SucessMsgs txt={sucessMsg} clearMsg={clearMsg}/>
             
-            <div className="user_table_div bg-white table_holder flex flex-col items-center justify-start flex-1 w-full  overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] rounded-[10px]">
+            <div className="user_table_div table_holder flex flex-col items-center justify-start flex-1 w-full  overflow-y-auto shadow-[5px_5px_20px_1px_rgba(53,53,53,0.2)] rounded-[10px]">
                 <UserTable
                   users={filtered.length > 0 ? filtered : allUsers}
                   setOpen={() => setOpen(true)}
@@ -259,12 +223,10 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
                 setBackendError={setBackendError}
             />)}       
           </div>
-
-
-
-
-
     </main>
+
+
+
 
     )
 

@@ -11,6 +11,8 @@ import { usePlantData } from "../../hooks/plantContext.jsx";
 import Nursery_Dashboard from "./nursery.jsx";
 import ManagePlants from "./manage_plants.jsx";
 
+
+
 export function Dashboard() {
   const { user } = useContext(UserContext);
   const [activeTab, setActiveTab] = useState("Overview");
@@ -21,8 +23,7 @@ export function Dashboard() {
 
 
   return (
-
-
+    
     <section
       className="con_main 
         w-full min-h-screen bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] flex flex-col
@@ -52,7 +53,7 @@ export function Dashboard() {
         className={`
           ${sidebarOpen ? "fixed inset-y-0 left-0 w-64 z-50" : "hidden"}
           md:static md:block
-          md:row-span-full
+          md:row-span-full md:h-full
         `}
       >
         <Sidebar
@@ -79,8 +80,7 @@ export function Dashboard() {
             ? "bg-white text-[#027c68] shadow-md active"
             : "bg-white/50 text-[#5A8F73]"
           }
-        `}
-      >
+        `}>
         Overview
       </button>
 
@@ -135,3 +135,5 @@ export function Dashboard() {
 }
 
 export default Dashboard;
+
+

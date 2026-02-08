@@ -133,9 +133,8 @@
               setNotifOpen={setNotifOpen}
             />
           </div>
-      
-
-      
+            
+            
           {/* ================= TAB NAVIGATION ================= */}
           <nav className='users_nav flex col-start-1 col-span-full md:col-start-2  row-start-2 row-end-2 my-4'>
             <div className='w-full'>
@@ -147,11 +146,10 @@
                   mr-2
                   ${
                     activeTab === "Overview"
-                      ? "bg-white text-[#027c68] shadow-md active"  // ← add active class here
+                      ? "bg-white text-[#027c68] shadow-md active"  
                       : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
                   }
-                `}>
-                  
+                `}>            
                 Overview
               </button>
 
@@ -191,7 +189,7 @@
                   userCount={chartData.count.total_users}
                   statusData={statusData}
                 />
-              : <UserInsights chartData={chartData} />
+              : <UserInsights chartData={chartData} statusData={statusData} />
             }
           </main>
 

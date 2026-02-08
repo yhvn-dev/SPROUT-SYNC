@@ -80,7 +80,7 @@ function NurseryDashboard() {
   
   return (
     <main className="flex flex-col items-center justify-start h-full w-full col-start-2 col-end-4 row-start-3 row-end-3 rounded-[10px] ">
-      <div className="nursery_data_div con_a bg-gradient-to-br from-[#E8F3ED] to-white w-full overflow-hidden">
+      <div className="nursery_data_div  w-full overflow-hidden">
         <div className="w-full max-w-full sm:max-w-7xl mx-auto space-y-4">
 
           {/* Header */}
@@ -244,9 +244,11 @@ function NurseryDashboard() {
               })}
             </div>
 
+
+
             {/* Batches */}
-            <div className="space-y-4 w-full ">
-              <div className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm sticky top-4 w-full">
+      
+              <div className="conb bg-[var(--main-whiteb)] rounded-3xl p-4 sm:p-6 shadow-sm  w-full">
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#92e6a7] to-[#25a244] flex items-center justify-center">
                     <TrendingUp className="w-5 h-5 text-white" />
@@ -271,7 +273,7 @@ function NurseryDashboard() {
                   {batches.length > 0 && batches.map(batch => (
                     <div key={batch.batch_id} className="conc batch_div bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-4 border border-gray-100 w-full">
                       <div className="flex items-start justify-between mb-3">
-                        <h3 className="text-base font-semibold text-gray-900">{batch.plant_name}</h3>
+                        <h3 className="text-base font-semibold text-gray-900">[{batch.batch_number}]{batch.plant_name}</h3>
                       </div>
 
                       <div className="space-y-2">
@@ -286,6 +288,8 @@ function NurseryDashboard() {
                           </span>
                         </div>
                       </div>
+
+
 
                       <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-200">
                         <div className="text-center">
@@ -305,15 +309,21 @@ function NurseryDashboard() {
                           <p className="text-lg font-bold text-[var(--color-warning)]">{batch.replanted_seedlings}</p>
                         </div>
                       </div>
+
+
+
+
+                      
                     </div>
                   ))}
                 </div>
               </div>
             </div>
 
+
           </div>
         </div>
-      </div>
+
 
       {isInfoModalOpen &&
         <InfosModal

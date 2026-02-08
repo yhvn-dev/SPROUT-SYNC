@@ -1,19 +1,24 @@
 import { AlertCircle } from 'lucide-react'
 import * as plantBatchHistory from "../../data/plantBatchesHistory"
 
-export function Batch_History_Modal({isModalOpen,onClose,selectedBatch,reloadBatchHistory}) {
+export function Batch_History_Modal({isModalOpen,onClose,selectedBatch,reloadBatchHistory,setSuccessMsg}) {
   if(!isModalOpen) return null
 
-  const handleSubmit = async (e) =>{
-    e.preventDefault()
-    try {
-        await plantBatchHistory.deleteBatchHistory(selectedBatch.history_id)
-        onClose()
-        reloadBatchHistory()
-    } catch (error) {
-        console.error("Error Deleting Batch History")
-    }
-  }
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            await plantBatchHistory.deleteBatchHistory(selectedBatch.history_id);
+
+            setSuccessMsg(`${selectedBatch.plant_name} deleted successfully`);
+            reloadBatchHistory();
+            onClose();
+
+        } catch (error) {
+            console.error("Error Deleting Batch History", error);
+        }
+    };
 
 
   return (

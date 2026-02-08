@@ -1,5 +1,5 @@
 
-export function BenefitSection(){
+export default function BenefitSection(){
     
     return(    
         <>     

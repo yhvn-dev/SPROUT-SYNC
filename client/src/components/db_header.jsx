@@ -28,10 +28,10 @@ export function Db_Header({ input, setNotifOpen }) {
         {/* Notification Button */}
         <button 
           onClick={() => setNotifOpen(true)} 
-          className="relative  cursor-pointer px-3 py-2 rounded-lg hover:bg-[var(--main-white--)] transition-colors"
-          aria-label="Notifications"
-          >
-            <Bell size={18} />
+          className="notif_button relative cursor-pointer px-3 py-2 rounded-lg hover:bg-[var(--main-white--)] transition-colors"
+          aria-label="Notifications">
+            
+            <Bell className="bell_icon" size={18} />
           {notifsCount > 0 && ( 
             <span className="absolute rounded-full min-w-[1rem] h-4 text-xs text-[var(--main-white--)] bg-[var(--sancgb)] flex items-center justify-center px-1 top-0 right-0">
               {notifsCount}

@@ -1,20 +1,21 @@
-import { useState, useEffect } from 'react';
-import { Droplets, Sun, Wind, Menu, X, Download, ArrowBigDown } from 'lucide-react';
+import { useState, useEffect,Suspense, lazy } from 'react';
+import { Menu, X, ArrowBigDown } from 'lucide-react';
 import { Load_Logo } from "../../components/logo";
 import { Link } from "react-router-dom";
 import { Header } from "../../components/header";
-import { Dashboard_Mockup } from "./dashboard_mockup";
-import { FeatureSection } from './features_section';
-import { BenefitSection } from './benifits_section';
-import { Farm_Info_Section } from './farm_info_section';
-import { Contact_Section } from './contact_section';
-import { Logo_Page } from "./logo_page";
-import { Footer } from "../../components/footer";
+
+const Dashboard_Mockup = lazy(() => import('./dashboard_mockup'));
+const FeatureSection = lazy(() => import('./features_section'));
+const BenefitSection = lazy(() => import('./benifits_section'));
+const Farm_Info_Section = lazy(() => import('./farm_info_section'));
+const Logo_Page = lazy(() => import('./logo_page'));
+const Footer = lazy(() => import('../../components/footer'))
+
 import SproutImg from "../../assets/Images/SPROUT-SYNC LOGO.png"
-import "./home.css";
-
 import Plant_Bg_1 from "../../assets/Images/PLANT BG -1.jpg"
+import { Features_Skeleton,Dashboard_Mockup_Skeleton} from '../../components/skeletons';
 
+import "./home.css";
 
 
 export function InstallButton() {
@@ -79,8 +80,6 @@ function Home() {
   }, []);
 
 
-  
-
   useEffect(() => {
     const hasVisited = sessionStorage.getItem("hasVisitedHome");
     if (!hasVisited) {
@@ -119,15 +118,12 @@ function Home() {
       ) : (
         <>
 
-
-        
           <Header
             isScrolled={isScrolled}
             navChildren={
               <div className="mobile-menu-container w-full ">
                 {/* Desktop Navigation */}
             
-
                 <div className="hidden md:flex flex-row-reverse items-center gap-6 lg:gap-8">
                   <Link 
                     to="/login" 
@@ -345,35 +341,51 @@ function Home() {
           {/* Install Button */}
           <InstallButton />
 
-          {/* Features Section */}
-          <section id="features" className="w-full">
+         
+
+         {/* Features Section */}
+        <section id="features" className="w-full">
+          <Suspense fallback={<div className="text-center py-8">
+            <Features_Skeleton/>
+          </div>}>
             <FeatureSection />
-          </section>
+          </Suspense>
+        </section>
 
-          {/* Dashboard Section */}
-          <section className='w-full flex justify-center py-8 md:py-12' id="dashboard_mockup">
-        
-              <Dashboard_Mockup />
-          
-          </section>
+        {/* Dashboard Section */}
+        <section className='w-full flex justify-center' id="dashboard_mockup">
+          <Suspense fallback={
+            <Dashboard_Mockup_Skeleton/>
+          }>
+            <Dashboard_Mockup />
+          </Suspense>
+        </section>
 
-          {/* Farm Info Section */}
-          <section id="farm" className="w-full">
+        {/* Farm Info Section */}
+        <section id="farm" className="w-full">
+          <Suspense fallback={<div className="text-center py-8">Loading</div>}>
             <Farm_Info_Section />
-          </section>
+          </Suspense>
+        </section>
 
-          {/* Benefits Section */}
-          <section className="w-full">
+        {/* Benefits Section */}
+        <section className="w-full">
+          <Suspense fallback={<div className="text-center py-8 ">Loading</div>}>
             <BenefitSection />
-          </section>
+          </Suspense>
+        </section>
 
-          {/* Logo Section */}
-          <section className="w-full">
+        {/* Logo Section */}
+        <section className="w-full">
+          <Suspense fallback={<div className="text-center py-8">Loading</div>}>
             <Logo_Page />
-          </section>
+          </Suspense>
+        </section>
 
-          {/* Footer */}
-          <Footer />
+        <Suspense fallback={<div className="text-center py-8">Loading</div>}>
+            <Footer />
+        </Suspense>
+
         </>
       )}
     </div>

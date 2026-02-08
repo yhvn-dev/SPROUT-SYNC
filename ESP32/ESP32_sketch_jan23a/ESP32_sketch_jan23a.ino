@@ -40,28 +40,33 @@ struct PlantSensor {
   int moisture;
   int threshold;
   bool valveState;
-  bool forcedOFF;    // Node.js or manual forced OFF
-  bool autoEnabled;  // auto-mode enabled (false when Node.js OFF)
+  bool forcedOFF;    
+  bool autoEnabled;  
+  bool lastButtonState; 
+  unsigned long lastDebounceTime;
 };
 
 PlantSensor sensors[3] = {
-  {32, 1, "BOKCHOY", 3000, 1800, 0, 50, false, false, true},
-  {33, 2, "PECHAY",  2900, 1750, 0, 50, false, false, true},
-  {34, 3, "MUSTASA", 2800, 1700, 0, 55, false, false, true}
+  {32, 1, "BOKCHOY", 3000, 1800, 0, 50, false, false, true, HIGH, 0},
+  {33, 2, "PECHAY",  2900, 1750, 0, 50, false, false, true, HIGH, 0},
+  {34, 3, "MUSTASA", 2800, 1700, 0, 55, false, false, true, HIGH, 0}
 };
 
 /************ STATE ************/
 bool systemEnabled = false;
 bool prevSystemEnabled = false;
 bool wsConnected = false;
+bool wsDisconnectedPrinted = false;
 
 unsigned long lastLogicRun = 0;
 const unsigned long logicInterval = 5000;
 float lastUltrasonicMM = -1;
+float lastUltrasonicIN = -1;
+const unsigned long debounceDelay = 200;
 
 /************ UTILS ************/
 void setRelay(int pin, bool on) {
-  digitalWrite(pin, on ? LOW : HIGH);
+  digitalWrite(pin, on ? LOW : HIGH); // Active LOW relay
 }
 
 int readMoistureRaw(PlantSensor &s) {
@@ -94,15 +99,21 @@ float readUltrasonicMM() {
   return (duration * 0.343) / 2.0;
 }
 
+float mmToInches(float mm) {
+  if (mm < 0) return -1;
+  return mm / 25.4;
+}
+
 /************ COMMUNICATION ************/
-void sendSensorReading(PlantSensor sensor, int percent, float ultrasonicMM) {
+void sendSensorReading(PlantSensor sensor, int percent, float ultrasonicMM, float ultrasonicIN) {
   if (!wsConnected || WiFi.status() != WL_CONNECTED) return;
 
   String payload = "{ \"sensor_id\": " + String(sensor.id) +
                    ", \"sensor_name\": \"" + sensor.name + "\"" +
                    ", \"value\": " + String(percent) +
                    ", \"valve\": \"" + (sensor.valveState ? "OPEN" : "CLOSED") + "\"" +
-                   ", \"ultrasonic_mm\": " + String(ultrasonicMM) + " }";
+                   ", \"ultrasonic_mm\": " + String(ultrasonicMM) +
+                   ", \"ultrasonic_in\": " + String(ultrasonicIN) + " }";
 
   HTTPClient http;
   http.begin(apiUrl);
@@ -122,25 +133,22 @@ void handleServerCommand(String cmd) {
   else if (cmd.startsWith("PECHAY")) index = 1;
   else if (cmd.startsWith("MUSTASA")) index = 2;
 
-  // Individual plant commands
   if (index != -1) {
     if (cmd.endsWith("_OFF")) {
       sensors[index].forcedOFF = true;
-      sensors[index].autoEnabled = false;    // disable auto-mode
+      sensors[index].autoEnabled = false;
       sensors[index].valveState = false;
       setRelay(valvePins[index], false);
       Serial.printf("🚫 %s VALVE COMPLETELY OFF FROM SERVER\n", sensors[index].name);
       return;
-    }
-    else if (cmd.endsWith("_ON") || cmd.endsWith("_AUTO")) {
+    } else if (cmd.endsWith("_ON") || cmd.endsWith("_AUTO")) {
       sensors[index].forcedOFF = false;
-      sensors[index].autoEnabled = true;     // resume auto-mode
+      sensors[index].autoEnabled = true;
       Serial.printf("✅ %s AUTO MODE RESUMES FROM SERVER\n", sensors[index].name);
       return;
     }
   }
 
-  // Full system commands
   if (cmd == "SYSTEM_OFF") {
     for (int i = 0; i < 3; i++) {
       sensors[i].forcedOFF = true;
@@ -150,8 +158,7 @@ void handleServerCommand(String cmd) {
     }
     setRelay(PUMP_PIN, false);
     Serial.println("🚫 FULL SYSTEM OFF FROM SERVER");
-  }
-  else if (cmd == "SYSTEM_ON") {
+  } else if (cmd == "SYSTEM_ON") {
     for (int i = 0; i < 3; i++) {
       sensors[i].forcedOFF = false;
       sensors[i].autoEnabled = true;
@@ -165,11 +172,15 @@ void webSocketEvent(WStype_t type, uint8_t * payload, size_t length) {
   switch (type) {
     case WStype_CONNECTED:
       wsConnected = true;
+      wsDisconnectedPrinted = false;
       Serial.println("✅ WebSocket Connected");
       break;
     case WStype_DISCONNECTED:
       wsConnected = false;
-      Serial.println("❌ WebSocket Disconnected");
+      if (!wsDisconnectedPrinted) {
+        Serial.println("❌ WebSocket Disconnected");
+        wsDisconnectedPrinted = true;
+      }
       break;
     case WStype_TEXT: {
       String cmd = String((char*)payload);
@@ -185,16 +196,51 @@ void initWiFi() {
   WiFi.begin(ssid, password);
 }
 
-/************ SWITCH HANDLERS ************/
+/************ BUTTON HANDLERS ************/
 void handlePlantSwitches() {
   int btns[3] = {BOKCHOY_BTN, PECHAY_BTN, MUSTASA_BTN};
+
   for (int i = 0; i < 3; i++) {
-    // pressing button toggles back to auto mode
-    if (digitalRead(btns[i]) == HIGH) {
-      sensors[i].forcedOFF = false;
-      sensors[i].autoEnabled = true;
-      Serial.printf("🔄 %s AUTO MODE ENABLED BY LOCAL BUTTON\n", sensors[i].name);
+    int reading = digitalRead(btns[i]);
+
+    // debounce
+    if (reading != sensors[i].lastButtonState) sensors[i].lastDebounceTime = millis();
+
+    if ((millis() - sensors[i].lastDebounceTime) > debounceDelay) {
+      if (reading == LOW && sensors[i].lastButtonState == HIGH) {
+        // TRUE TOGGLE FORCE OFF / AUTO
+        sensors[i].forcedOFF = !sensors[i].forcedOFF;
+        sensors[i].autoEnabled = !sensors[i].forcedOFF;
+
+        // FORCEFULLY CLOSE valve immediately if forcedOFF
+        if (sensors[i].forcedOFF) {
+          sensors[i].valveState = false;
+          setRelay(valvePins[i], false);
+        } else {
+          // resume automatic calculation
+          sensors[i].valveState = (moistureToPercentage(sensors[i]) < sensors[i].threshold);
+          setRelay(valvePins[i], sensors[i].valveState);
+        }
+
+        // Update pump immediately
+        bool pumpNeeded = false;
+        for (int j = 0; j < 3; j++) {
+          if (sensors[j].valveState) pumpNeeded = true;
+        }
+        setRelay(PUMP_PIN, systemEnabled ? pumpNeeded : false);
+
+        Serial.printf("🔄 %s BUTTON → ForcedOFF: %s | Auto: %s | Valve: %s | Pump: %s\n",
+                      sensors[i].name,
+                      sensors[i].forcedOFF ? "YES" : "NO",
+                      sensors[i].autoEnabled ? "YES" : "NO",
+                      sensors[i].valveState ? "OPEN" : "CLOSED",
+                      systemEnabled ? (pumpNeeded ? "ON" : "OFF") : "SYSTEM OFF");
+
+        // Send network update immediately
+        sendSensorReading(sensors[i], moistureToPercentage(sensors[i]), lastUltrasonicMM, lastUltrasonicIN);
+      }
     }
+    sensors[i].lastButtonState = reading;
   }
 }
 
@@ -202,12 +248,17 @@ void handleMainSwitch() {
   systemEnabled = (digitalRead(LOCK_SWITCH) == LOW);
   if (systemEnabled != prevSystemEnabled) {
     digitalWrite(SWITCH_LED, systemEnabled ? HIGH : LOW);
+
     if (!systemEnabled) {
+      // SYSTEM OFF → CLOSE EVERYTHING
       for (int i = 0; i < 3; i++) {
         sensors[i].valveState = false;
         setRelay(valvePins[i], false);
       }
       setRelay(PUMP_PIN, false);
+      Serial.println("🔴 SYSTEM DISABLED → All valves and pump OFF");
+    } else {
+      Serial.println("✅ SYSTEM ENABLED → Automatic functions resumed");
     }
     prevSystemEnabled = systemEnabled;
   }
@@ -237,11 +288,10 @@ void setup() {
   pinMode(US_ECHO_PIN, INPUT);
 
   initWiFi();
-
   webSocket.begin(wsHost, wsPort, wsPath);
   webSocket.onEvent(webSocketEvent);
 
-  Serial.println("✅ SYSTEM READY — AUTO + NODE.JS CONTROL ENABLED");
+  Serial.println("✅ SYSTEM READY — Plant buttons TRUE FORCE OFF / AUTO TOGGLE");
 }
 
 /************ LOOP ************/
@@ -250,17 +300,14 @@ void loop() {
   handleMainSwitch();
   handlePlantSwitches();
 
-  if (!systemEnabled) {
-    setRelay(PUMP_PIN, false);
-    for (int i = 0; i < 3; i++) setRelay(valvePins[i], false);
-    return;
-  }
+  if (!systemEnabled) return; // skip automatic logic when system OFF
 
   if (millis() - lastLogicRun >= logicInterval) {
     lastLogicRun = millis();
     lastUltrasonicMM = readUltrasonicMM();
+    lastUltrasonicIN = mmToInches(lastUltrasonicMM);
 
-    Serial.printf("📏 ULTRASONIC DISTANCE: %.1f mm\n", lastUltrasonicMM);
+    Serial.printf("📏 ULTRASONIC DISTANCE: %.1f mm | %.2f in\n", lastUltrasonicMM, lastUltrasonicIN);
     Serial.println("===============================================");
 
     bool pumpNeeded = false;
@@ -269,15 +316,15 @@ void loop() {
       int raw = readMoistureRaw(sensors[i]);
       int percent = moistureToPercentage(sensors[i]);
 
-      // AUTO MODE: only if enabled and not forced OFF
+      // auto update only if not forced OFF
       if (sensors[i].autoEnabled && !sensors[i].forcedOFF) {
         sensors[i].valveState = (percent < sensors[i].threshold);
-      } else {
-        sensors[i].valveState = false;
       }
 
       setRelay(valvePins[i], sensors[i].valveState);
-      sendSensorReading(sensors[i], percent, lastUltrasonicMM);
+      sendSensorReading(sensors[i], percent, lastUltrasonicMM, lastUltrasonicIN);
+
+      if (sensors[i].valveState) pumpNeeded = true;
 
       Serial.printf("%s → %d%% | Valve: %s | ForcedOFF: %s | Auto: %s\n",
                     sensors[i].name,
@@ -285,8 +332,6 @@ void loop() {
                     sensors[i].valveState ? "OPEN" : "CLOSED",
                     sensors[i].forcedOFF ? "YES" : "NO",
                     sensors[i].autoEnabled ? "YES" : "NO");
-
-      if (sensors[i].valveState) pumpNeeded = true;
     }
 
     setRelay(PUMP_PIN, pumpNeeded);

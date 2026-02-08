@@ -1,6 +1,6 @@
 import { Droplets,TrendingUp, Bell } from 'lucide-react';
 
-export function FeatureSection(){
+export default function FeatureSection(){
     return(
      <>
      

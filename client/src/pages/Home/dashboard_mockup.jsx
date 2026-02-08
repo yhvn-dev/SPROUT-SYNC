@@ -13,7 +13,7 @@ import {
   LogOut,
 } from 'lucide-react';
 
-export function Dashboard_Mockup() {
+export default function Dashboard_Mockup() {
   const [expandedZones, setExpandedZones] = useState({});
   const [sidebarOpen, setSidebarOpen] = useState(false);
 

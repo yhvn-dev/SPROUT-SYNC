@@ -9,6 +9,8 @@ import { UserContext } from '../../hooks/userContext';
 import { usePlantData } from '../../hooks/plantContext';
 
 import InfosModal from '../../components/infosModal';
+import {FloatSuccessMsg} from "../../components/sucessMsgs"
+import { SucessMsgs } from '../../components/sucessMsgs';
 
 // Stats Card Component
 const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
@@ -40,14 +42,15 @@ function Batch_History() {
   const [isModalOpen,setModalOpen] = useState(false)
   const [isInfoModalOpen,setInfoModalOpen] = useState(false);
   const [infoModalPurpose,setInfoModalPurpose] = useState("");
+  const [successMsg,setSuccessMsg] = useState(null);
   
+  const clearMsg = () => setSuccessMsg("");
 
-  const token = localStorage.getItem("accessToken");
   
   useEffect(() =>{
     loadBatchHistory()
   },[])
-
+  
   // Calculate statistics
   const stats = {
     totalRecords: batchHistory.length,
@@ -80,7 +83,6 @@ function Batch_History() {
   const handleDelete = (historyData) => {
     setSelectedBatch(historyData)
     setModalOpen(true)
-    console.log("DELETE")
   };
 
   const handleSearchChange = (e) => {
@@ -89,7 +91,6 @@ function Batch_History() {
 
   const growthStages = ["All", "Seedling", "Vegetative", "Mature", "Harvest"];
 
-  
 
   const getStageColor = (stage, isDark = false) => {
   const lightColors = {
@@ -105,9 +106,8 @@ function Batch_History() {
     'Mature': '#025047',
     'Harvest': '#1a6b38'
   };
-  return isDark ? darkColors[stage] || '#5A8F73' : lightColors[stage] || '#5A8F73';
-};
-
+    return isDark ? darkColors[stage] || '#5A8F73' : lightColors[stage] || '#5A8F73';
+  };
 
   const handleOpenInfosModalBatchHistory = () =>{
       setInfoModalPurpose("batch_history")
@@ -161,6 +161,10 @@ function Batch_History() {
           setNotifOpen={setNotifOpen}
         />
       </div>
+
+
+
+
 
       {/* MAIN CONTENT */}
       <main className='w-full h-full col-start-1 md:col-start-2 col-span-full row-start-2 row-span-full rounded-lg  my-4'>
@@ -224,7 +228,8 @@ function Batch_History() {
           <div className="batch_history_table  rounded-2xl shadow-lg 
                     h-[55vh] md:h-[57vh] 
                     overflow-y-auto">
-              
+
+
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto overflow-y-auto">
               <table className="w-full f overflow-y-auto">
@@ -249,7 +254,7 @@ function Batch_History() {
                       className={`hover:bg-[#E8F3ED] transition-colors ${
                         index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                       }`}>
-                      <td className="px-4 py-3 text-sm font-medium text-[#027c68]">{record.plant_name}</td>
+                      <td className="px-4 py-3 text-sm font-medium text-[#027c68] flex"><p>[{record.batch_number}]</p>{record.plant_name}</td>
                       <td className="date_planted_data px-4 py-3 text-sm text-gray-600 whitespace-nowrap">{new Date(record.date_recorded).toLocaleDateString()}</td>
                       <td className="px-4 py-3 text-sm text-center font-semibold">{record.total_seedlings}</td>
                     
@@ -259,8 +264,6 @@ function Batch_History() {
                           {record.fully_grown_seedlings}
                         </span>
                       </td> 
-
-
 
                       <td className="px-4 py-3 text-sm text-center">
                         <span className="replanted_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
@@ -313,7 +316,7 @@ function Batch_History() {
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <p className="text-xs text-gray-600">Batch #{record.batch_id}</p>
-                      <h3 className="text-base font-bold text-[#027c68]">{record.plant_name}</h3>
+                      <h3 className="text-base font-bold text-[#027c68]">[{record.batch_number}]{record.plant_name}</h3>
 
                       <p className="text-xs text-gray-500">{new Date(record.date_recorded).toLocaleDateString()}</p>
                     </div>
@@ -388,8 +391,10 @@ function Batch_History() {
         <Batch_History_Modal 
          isModalOpen={isModalOpen}
          selectedBatch={selectedBatch} 
-         reloadBatchHistory={loadBatchHistory()}
-         onClose={() => setModalOpen(false)}/>
+         reloadBatchHistory={loadBatchHistory}
+         onClose={() => setModalOpen(false)}
+         setSuccessMsg={setSuccessMsg}
+         />
       )}
 
       {isInfoModalOpen &&
@@ -398,8 +403,15 @@ function Batch_History() {
           onClose={() => setInfoModalOpen(false)}
           purpose={infoModalPurpose}  
         />
-      }      
-      
+      }   
+
+
+
+        
+      {successMsg && 
+        <FloatSuccessMsg txt={successMsg} clearMsg={clearMsg}/>
+      }
+              
     </section>
   );
   

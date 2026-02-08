@@ -2,15 +2,13 @@ import { useState, useContext } from 'react';
 import { UserContext } from '../../hooks/userContext';
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
-import { Droplets, Wifi, WifiOff, Power, Sprout, CircleQuestionMark} from 'lucide-react';
+import { Droplets, Wifi, WifiOff, Power, Sprout, CircleQuestionMark,Menu} from 'lucide-react';
 import { Notif_Modal } from '../../components/notifModal';
 import { LogoutModal } from '../../components/logoutModal';
 import InfosModal from '../../components/infosModal';
 
 import * as closeValveServices from "../../data/closeValveServices"
 import { ESP32Context } from "../../hooks/esp32Hooks"
-
-
 
 function Control_panel() {
   const { user } = useContext(UserContext);
@@ -33,9 +31,9 @@ function Control_panel() {
   });
   
     
+  
   // helpers
   const isForceOff = (key) => valveMode[key] === 'forceOff';
-  // Toggle all valves
   const handleCloseAllGroups = async () => {
     const nextState = valveMode.all === 'auto' ? 'forceOff' : 'auto';
 
@@ -80,25 +78,50 @@ function Control_panel() {
   
   return (
     <section className="control_panel
-      con_main h-screen grid gap-4 grid-cols-[auto_1fr]
+      con_main h-screen grid gap-4 grid-cols-[15fr_85fr]
       grid-rows-[auto_1fr]
       bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]
       font-sans
       overflow-hidden">
+      
+      <button
+        onClick={() => setSidebarOpen(true)}
+        className="md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
+        <Menu size={22} />
+      </button>
 
-      {/* Sidebar */}
-      <aside className={`col-start-1 col-end-1 row-start-1 row-span-full`}>
+
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          className="fixed inset-0 bg-black/40 z-40 md:hidden"
+        />
+      )}
+      
+      
+      {/* SIDEBAR */}
+      <aside
+        className={`
+          ${sidebarOpen ? "fixed inset-y-0 left-0 w-64 z-50" : "hidden"}
+          md:static md:block
+          md:row-span-full
+        `}>
+
         <Sidebar
           user={user}
           setLogoutOpen={setLogoutOpen}
           setSidebarOpen={setSidebarOpen}
-        />     
+        />
       </aside>
+
+
 
       {/* Header */}
       <header className="col-start-2 row-start-1">
         <Db_Header setNotifOpen={setNotifOpen}/>    
       </header>
+
+
 
       {/* Main Content */}
       <main className="col-start-2 row-start-2 overflow-y-auto">
@@ -106,14 +129,18 @@ function Control_panel() {
 
           {/* Header with ESP32 Status */}
           <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
+
+
+
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-dark-blue)] mb-1">
-                Irrigation Control Panel
+              <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-dark-blue)] ">
+               Control Panel
               </h1>
               <p className="text-base text-[var(--gray_1--)]">
-                Monitor and control your hydroponic system
+                Monitor and Control your automatic plant watering system
               </p>
             </div>
+            
 
             <div className="conb flex items-center gap-4 bg-white p-4 px-6 rounded-2xl shadow-md border border-gray-50 relative">
               {ESP32Status === true ? (
@@ -145,9 +172,30 @@ function Control_panel() {
               )}
             </div>
 
-
             
           </div>
+          
+            <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl mb-6 min-h-[400px]">
+              <div className="flex justify-between items-center mb-6">
+                <div className="flex items-center gap-3">
+                  <Wifi size={24} className="text-[var(--ptl-greend)]" />
+                  <h2 className="text-2xl font-bold text-[var(--color-dark-blue)] m-0">
+                    Live Camera Feed
+                  </h2>
+                </div>
+              </div>
+
+            <div className="w-full h-[350px] bg-gray-200 rounded-2xl flex items-center justify-center overflow-hidden">
+              {/* Replace the src with your camera streaming URL */}
+              <iframe
+                src="http://YOUR_CAMERA_STREAM_URL_HERE"
+                title="Live Camera Feed"
+                className="w-full h-full rounded-2xl border-none"
+                allowFullScreen
+              />
+            </div>
+          </div>
+
 
 
           {/* Valve Controls */}

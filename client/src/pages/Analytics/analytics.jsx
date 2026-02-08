@@ -1,5 +1,4 @@
 import { useState, useContext, useEffect } from "react";
-import { Welcome_box } from "../../components/welcome_box";
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
 import { UserContext } from "../../hooks/userContext";
@@ -10,8 +9,10 @@ import { Menu, CircleQuestionMark} from "lucide-react";
 
 import { Overview } from "./overview";
 import { SeedlingStats } from "./seedlingStats";
-import InfosModal from "../../components/infosModal";
 
+
+import InfosModal from "../../components/infosModal";
+import AnalyticsModal from "./modal/analyticsModal";
 
 
 export default function Analytics() {
@@ -32,12 +33,12 @@ export default function Analytics() {
   } = usePlantData();
 
 
-  
   const [isNotifOpen, setNotifOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Overview");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isInfoModalOpen,setInfoModalOpen] = useState(false);
+  const [isModalOpen,setModalOpen] = useState(false);
   const [infoModalPurpose,setInfoModalPurpose] = useState("");
 
   
@@ -62,6 +63,7 @@ export default function Analytics() {
       setInfoModalPurpose("analytics")
       setInfoModalOpen(true)
   }
+
   
   return (
     <section
@@ -125,12 +127,16 @@ export default function Analytics() {
       {/* NAVIGATION TABS */}
       <nav className="analytics_nav row-start-2 row-end-2 col-start-1 col-span-full md:col-start-2 py-3 flex items-center justify-between gap-2 px-4 md:px-0">
         
+
+
+        
         {/* LEFT: Tabs */}
         <div className="flex gap-4 items-center">
           <button
             onClick={() => setActiveTab("Overview")}
-            className={`
-              cursor-pointer px-4 py-1 rounded-lg transition-all
+            className={`            
+                cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
+                text-xs md:text-sm rounded-lg transition
               ${activeTab === "Overview" 
                 ? "active bg-white text-[#027c68] shadow-md dark:bg-[var(--metal-dark3)] dark:text-[#00ffe0] dark:shadow-md"
                 : "bg-white/50 text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark1)]"
@@ -139,9 +145,12 @@ export default function Analytics() {
             Overview
           </button>
 
+
+
           <button
             onClick={() => setActiveTab("Seedling Stats")}
-            className={`cursor-pointer px-4 py-1 rounded-lg transition-all ${
+            className={`cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
+          text-xs md:text-sm rounded-lg transition${
               activeTab === "Seedling Stats"
                 ? "active bg-white text-[#027c68] shadow-md"
                 : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
@@ -163,6 +172,7 @@ export default function Analytics() {
           <Overview
             batchTotal={batchTotal}
             readings={readings}
+            setModalOpen={setModalOpen}
             moistureReadingsLast24h={moistureReadingsLast24h}
             averageReadingsBySensor={averageReadingsBySensor}
           />
@@ -195,7 +205,17 @@ export default function Analytics() {
       }
 
 
-      
+      {isModalOpen && 
+        <AnalyticsModal
+          isModalOpen={isModalOpen}
+          onClose={() => setModalOpen(false)}
+          reloadReadings={loadReadings}
+        />          
+      }
+
+
+
+
     </section>
 
 

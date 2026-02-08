@@ -77,7 +77,7 @@ export const createNotification = async (req, res) => {
 
 
 
-export const notifyReplantDate = async () => {
+export const notifyReplantDate = async (req,res) => {
   try {
     const batchData = await plantBatchModel.readPlantBatches();
     console.log("🌱 Checking batches:", batchData.length);
@@ -110,39 +110,36 @@ export const notifyReplantDate = async () => {
 
       if (daysRemaining === 1) {
 
-
         // 1️⃣ Get tray info
         const tray = await trayModel.readTrayById(batch.tray_id);
         const tray_group_id = tray?.tray_group_id;
-
-        // 2️⃣ Get tray group info
         const trayGroup = await trayGroupModel.readTrayGroupById(tray_group_id);
         const location = trayGroup?.location || "Unknown";
 
         await notificationModel.createNotif({
           type: "Info",
-          status: "HIGH",
+          status: "",
           message: 
-          `🌱 HARVEST REMINDER\n` +
-          `1 DAY REMAINING BEFORE HARVEST\n\n` +
+          `🌱 Harvest Reminder\n` +
+          `1 Day Remaining before harvest \n\n` +
           `Plant:    ${batch.plant_name}\n` +
           `Location: ${location}\n` +
           `Planted:  ${planted.toISOString().slice(0,10)}\n` +
           `Expected Harvest: ${harvestDate.toISOString().slice(0,10)}`
-        });
-        
-        // console.log(`✅ Notification sent for Batch #${batch.batch_id}`);    
-
-      } 
+        });    
+      }     
     }
+    
+    res.status(200).json({
+      success:true,
+      message:  `Batch ${batchData.plant_name} is notified`
+    })
+
   } catch (error) {
     console.error("❌ Harvest notification error:", error);
   }
+  
 };
-
-
-
-
 
 
 export const testHarvestNotification = async (req, res) => {

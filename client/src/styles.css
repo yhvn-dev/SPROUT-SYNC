@@ -8,7 +8,7 @@
     --white-blple--: lab(76.54% 1.57 -14.3);
     --purpluish--: #8f9bbc;
     --bluis--: hsl(220, 74%, 62%);
-    --mainblue--: hsl(225, 46%, 44%);
+    --mainblue--: #3d56a4;
     --gainsbro: hsl(0, 0%, 96%);
     --blue-white: hsl(195, 44%, 86%);
     --color-dark--blue: hsl(225, 15%, 25%);
@@ -357,11 +357,13 @@ body.dark .error-txt{
 .succes_msg_pro{
     @apply bg-green-100  flex items-center justify-center rounded-[10px] p-4 border-2 border-[var(--sancgb)];
 }
+body.dark .succes_msg_pro{
+    @apply bg-green-100  text-[var(--metal-dark5)] flex items-center justify-center rounded-[10px] p-4 border-2 border-[var(--sancgb)];
+}
+
 .succes_msg_pro_b{
     @apply opacity-[90%] flex items-center justify-center rounded-[10px] p-4 border-2 border-[var(--sancgb)];
 }
-
-
 select{
     @apply rounded-[10px] cursor-pointer;
 }                                                                                                                                                   

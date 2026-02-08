@@ -1,16 +1,23 @@
 import cron from "node-cron";
-import * as notifyController  from "../controllers/notifications.Controller.js";
+import * as notifyController from "../controllers/notifications.Controller.js";
 
-// Runs EVERY DAY at 4:00 PM (server time)
-cron.schedule("0 16 * * *", async () => {
+
+
+
+// Production: run every day at 7 AM
+cron.schedule("0 7 * * *", async () => {
   console.log("⏰ Running daily harvest check:", new Date().toISOString());
-  await notifyController.notifyReplantDate();
+  try {
+    await notifyController.notifyReplantDate();
+  } catch (error) {
+    console.error("❌ Error running daily harvest check:", error);
+  }
 });
 
+// Helper function
 export const toDateOnlyUTC = (date) =>
   new Date(Date.UTC(
     date.getUTCFullYear(),
     date.getUTCMonth(),
     date.getUTCDate()
   ));
-

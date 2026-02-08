@@ -332,6 +332,8 @@ body.dark .manage_plants_nav button{
             @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
          }
 
+         
+
         
          
         
@@ -472,12 +474,8 @@ body.dark .user_table_div::-webkit-scrollbar{
 
 
 
-        
-
-
-
     
-/* ANALYTICS PAGE */
+    /* ANALYTICS PAGE */
     /* DARK MODE – default (inactive tab) */
     body.dark .analytics_nav button {
         @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
@@ -496,7 +494,10 @@ body.dark .user_table_div::-webkit-scrollbar{
             box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
         }
 
-
+        body.dark .moisture_div{
+            @apply bg-[var(--metal-dark1)];
+            box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
+        }
 
 
 
@@ -681,8 +682,11 @@ body.dark .success_msg p{
 }
 
 
-/* FRONT PAGE */
 
+
+
+
+/* FRONT PAGE */
 body.dark .hero{
     @apply bg-[var(--metal-dark1)];
 }
@@ -763,9 +767,20 @@ body.dark .hero{
 
 
 
-     body.dark .notif_box{
+     body.dark .notif_button:hover{
+        @apply bg-[var(--main-white--)];
+    }
+
+    body.dark .notif_button:hover .bell_icon {
+        @apply stroke-[var(--metal-dark4)]; 
+    }
+
+
+
+    body.dark .notif_box {
         @apply bg-[var(--metal-dark1)];
     }
+
         body.dark .notifs_scroll_box::-webkit-scrollbar{
             @apply bg-[var(--metal-dark1)];
         }   

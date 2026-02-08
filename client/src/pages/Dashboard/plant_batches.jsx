@@ -69,7 +69,7 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
                     <TrendingUp className="w-5 h-5 text-white" />
                   </div>
                   <div >
-                    <h3 className="text-lg font-semibold text-gray-900">{pb.plant_name} Tray's Batch</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">[{pb.batch_number}]{pb.plant_name} Tray's Batch</h3>
                     <p className="text-sm text-gray-500">Batch: {formatBatchDisplay(pb)}</p>
                   </div>  
                 </div>

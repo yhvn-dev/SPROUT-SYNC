@@ -112,7 +112,7 @@ export function Notif_Modal({ isOpen, onClose}) {
               <Trash2 
                 className="trash_logo w-4 h-4 stroke-var(--metal-dark4)" 
                
-              
+            
               />
 
               <span className="text-sm">Delete All</span>

@@ -63,3 +63,16 @@ export const fetchAverageReadingsBySensor = async (sensor_type) =>{
         throw error;
     }
 }
+
+
+
+export const deleteAllReadings = async () =>{
+      try {
+        const res = await api.delete(`/readings/delete/readings/all`);
+        return res
+    } catch (error) {
+        console.error("Error Deleting All Readings",error);
+        throw error;
+    }
+    
+}

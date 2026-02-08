@@ -1,7 +1,7 @@
 
 import {Leaf, TrendingUp, MapPin} from 'lucide-react';
 
-export function Farm_Info_Section(){
+export default function Farm_Info_Section(){
     return(
         <>    
         {/* Farm Information Section */}
@@ -13,7 +13,7 @@ export function Farm_Info_Section(){
                 <span className=" text-[#027c68] font-semibold text-sm">Our Implementation</span>
                 </div>
                 <h2 className="text-5xl md:text-6xl font-bold text-[#003333] mb-6">
-                FLOR and Daisy's Farm
+                Flor and Daisy's Farm
                 </h2>
                 <p className="text-xl text-[#5A8F73] leading-relaxed mb-8">
                 Located in the heart of sustainable agriculture, FLOR and Daisy's Farm serves as the testing ground for our innovative automatic plant watering system. Our technology helps maintain optimal growing conditions across multiple cultivation beds.

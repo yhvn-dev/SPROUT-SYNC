@@ -1,5 +1,5 @@
 import { MapPin, Mail, Phone} from 'lucide-react';
-export function Contact_Section(){
+export default function Contact_Section(){
     
     
     return(

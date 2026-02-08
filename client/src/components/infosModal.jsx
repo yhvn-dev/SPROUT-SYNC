@@ -67,13 +67,12 @@ function InfosModal({ isInfosModalOpen, onClose, purpose }) {
         case "analytics":
           return (
           <ul className="list-disc pl-5 space-y-2">
-              <li>Monitor total seedlings, including active, grown, dead, and replanted seedlings</li>
+              <li>Monitor the current batch ofseedlings, including grown, dead, and replanted seedlings</li>
               <li>Track average soil moisture levels across all seedling trays</li>
-              <li>View soil moisture trends within the last 24 hours</li>
               <li>Check water levels in the system in real-time</li>
               <li>Analyze seedling growth over time with historical data</li>
               <li>Review seedling status distribution for better management</li>
-              <li>Access cumulative totals for seedlings, grown, dead, and replanted seedlings</li>
+              <li>Access existing totals for seedlings, grown, dead, and replanted data of seedlings currently in a nursery.</li>
           </ul>
         
         );

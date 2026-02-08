@@ -5,6 +5,7 @@ const router = express.Router();
 
 router.get("/get/notif",notificationController.getNotifications);
 router.get("/get/notif/count",notificationController.getUnreadNotificationCount)
+router.get("/get/notif/notify",notificationController.notifyReplantDate)
 router.get("/get/notif/test-harvest",notificationController.testHarvestNotification)
 router.get("/get/notif/:notification_id",notificationController.getNotificationById);
 router.post("/post/notif",notificationController.createNotification);

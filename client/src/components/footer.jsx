@@ -1,7 +1,7 @@
-import { Leaf, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Linkedin, ArrowRight } from 'lucide-react';
+import { Leaf, Phone, MapPin, ArrowRight,Facebook} from 'lucide-react';
 
 
-export function Footer() {
+export default function Footer() {
   
   
   return (
@@ -26,15 +26,7 @@ export function Footer() {
               <a href="#" className="w-9 h-9 rounded-full bg-[#027c68] hover:bg-[#009983] flex items-center justify-center transition-colors">
                 <Facebook className="w-4 h-4" />
               </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-[#027c68] hover:bg-[#009983] flex items-center justify-center transition-colors">
-                <Twitter className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-[#027c68] hover:bg-[#009983] flex items-center justify-center transition-colors">
-                <Instagram className="w-4 h-4" />
-              </a>
-              <a href="#" className="w-9 h-9 rounded-full bg-[#027c68] hover:bg-[#009983] flex items-center justify-center transition-colors">
-                <Linkedin className="w-4 h-4" />
-              </a>
+  
             </div>
           </div>
 

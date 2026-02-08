@@ -13,7 +13,8 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
     fully_grown_seedlings: "", 
     growth_stage: "Seedling",
     date_planted: "",
-    expected_harvest_days: ""
+    expected_harvest_days: "",
+    batch_number: selectedTray?.tray_number || ""
   });
   
   const [formErrors, setFormErrors] = useState({});
@@ -46,7 +47,8 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
         fully_grown_seedlings: selectedBatch.fully_grown_seedlings ?? 0,
         growth_stage: selectedBatch.growth_stage ?? "Seedling",
         date_planted: formatDate(selectedBatch.date_planted),
-        expected_harvest_days: selectedBatch.expected_harvest_days ?? 0
+        expected_harvest_days: selectedBatch.expected_harvest_days ?? 0,
+        batch_number: selectedBatch.batch_number ?? selectedTray.tray_number
       });
       
     } else if (batchModalMode === "insert") {
@@ -59,7 +61,8 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
         fully_grown_seedlings: "",
         growth_stage: "Seedling",
         date_planted: "",
-        expected_harvest_days: ""
+        expected_harvest_days: "",
+        batch_number: selectedTray.tray_number
       });
       
     } else if (batchModalMode === "delete") {
@@ -72,7 +75,8 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
         fully_grown_seedlings: selectedBatch.fully_grown_seedlings ?? 0,
         growth_stage: selectedBatch.growth_stage ?? "Seedling",
         date_planted: selectedBatch.date_planted,
-        expected_harvest_days: selectedBatch.expected_harvest_days ?? 0
+        expected_harvest_days: selectedBatch.expected_harvest_days ?? 0,
+        batch_number: selectedBatch.batch_number ?? selectedTray.tray_number
       });
     }
 
@@ -133,7 +137,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
 
       <div
         onClick={(e) => e.stopPropagation()}
-        className="conb  bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        className="conb bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
         {/* HEADER */}
         <header className="pb_modal_header px-6 py-4 border-b border-gray-200 bg-[#E8F3ED]">
@@ -166,8 +170,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
             </div>
             <button
               onClick={onClose}
-              className="cursor-pointer p-2 hover:bg-white/80 rounded-lg transition-colors text-[#5A8F73]"
-            >
+              className="cursor-pointer p-2 hover:bg-white/80 rounded-lg transition-colors text-[#5A8F73]">
               <X className="w-4 h-4" />
             </button>
           </div>
@@ -177,7 +180,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
         <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {batchModalMode === "delete" ? (
             <>
-              <div className="pb_delete_modal flex items-center gap-3 p-3  rounded-lg mb-4 bg-red-50">
+              <div className="pb_delete_modal flex items-center gap-3 p-3 rounded-lg mb-4 bg-red-50">
                 <AlertCircle className="w-4 h-4 text-red-600 flex-shrink-0" />
                 <p className="text-sm text-red-800">
                   Are you sure you want to delete the batch for <strong>{selectedBatch.plant_name}</strong>? This action cannot be undone.
@@ -186,23 +189,21 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
               <div className="flex gap-2 justify-end">
                 <button
                   onClick={onClose}
-                  className="cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors border-2 border-[#C4DED0] text-[#5A8F73] hover:bg-gray-50 text-sm"
-                >
+                  className="cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors border-2 border-[#C4DED0] text-[#5A8F73] hover:bg-gray-50 text-sm">
                   Cancel
                 </button>
                 <button
                   onClick={handleSubmit}
-                  className="cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors text-white bg-red-500 hover:bg-red-600 text-sm"
-                >
+                  className="cursor-pointer px-4 py-2 rounded-lg font-medium transition-colors text-white bg-red-500 hover:bg-red-600 text-sm">
                   Delete
                 </button>
               </div>
             </>
           ) : (
-            <div className="space-y-4">
 
-              {/* Bento Grid Layout */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4"> 
+            
+            <div className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
                 <input
                   disabled
@@ -218,16 +219,28 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     <Sprout className="w-3 h-3 inline mr-1" /> 
                     Plant Name *
                   </label>
-                  <input
-                    disabled
-                    type="text"
-                    name="plant_name"
-                    value={formData.plant_name}  
-                    className="py-2 rounded-lg text-sm"
-                  />
-                  {formErrors.plant_name && (
-                      <p className="text-red-600 text-xs mt-1">{formErrors.plant_name}</p>
-                  )}               
+                  <div className='flex gap-4'>
+                    <input
+                      disabled
+                      type="text"
+                      name="plant_name"
+                      value={formData.plant_name}  
+                      className="py-2 rounded-lg text-sm w-full"
+                    />  
+                    {/* BATCH NUMBER */}
+                    <div>
+                      <label className="block text-xs font-semibold mb-1.5 text-[#155d27]"> 
+                        Batch Number
+                      </label>
+                      <input
+                        disabled
+                        type="number"
+                        name="batch_number"
+                        value={formData.batch_number}
+                        className="py-2 rounded-lg text-sm w-full border-2 border-[#C4DED0]"
+                      />
+                    </div>
+                  </div>
                 </div>
 
                 {/* TOTAL SEEDLINGS */}
@@ -266,6 +279,8 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     min="0"
                   />
                 </div>
+
+
 
                 {/* REPLANTED SEEDLINGS */}
                 <div>
@@ -319,8 +334,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                   </select>
                 </div>
 
-              
-
                 {/* DATE PLANTED */}
                 <div>
                   <label className="block text-xs font-semibold mb-1.5 text-[#155d27]">
@@ -364,6 +377,10 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
 
               </div>
 
+
+
+
+
               {/* FOOTER */}
               <div className="flex items-center justify-between pt-4 border-t border-[#C4DED0]">
                 {batchModalMode !== "delete" && (
@@ -374,7 +391,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                 <div className="flex gap-2 ml-auto">
                   <button
                     onClick={onClose}
-                    type='submit'
+                    type='button'
                     className="cursor-pointer px-4 py-2 text-sm rounded-lg font-medium transition-colors border-2 border-[#C4DED0] text-[#5A8F73] hover:bg-gray-50"
                   >
                     Cancel
@@ -388,10 +405,14 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                   </button>
                 </div>
               </div>
+
             </div>
           )}
         </div>
       </div>
     </div>
   );
+
+
+
 }

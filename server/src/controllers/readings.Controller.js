@@ -149,83 +149,53 @@ export const createReadings = async (req, res) => {
 
 
 
-// Extracted helper functions (cleaner)
+
+
 const handleMoistureNotifications = async (existingSensor, value) => {
   const { tray_id } = existingSensor;
   if (!tray_id) return;
 
   const selectedTray = await trayModels.readTrayById(tray_id);
-  const { tray_group_id } = selectedTray;
-  const selectedTrayGroup = await trayGroupModels.readTrayGroupById(tray_group_id);
-  const { min_moisture, max_moisture, tray_group_name,group_number} = selectedTrayGroup;
+  if (!selectedTray) return;
+
+  const selectedTrayGroup = await trayGroupModels.readTrayGroupById(
+    selectedTray.tray_group_id
+  );
+  if (!selectedTrayGroup) return;
+
+  const { min_moisture, max_moisture, tray_group_name, group_number } =
+    selectedTrayGroup;
 
   const moisture = Number(value);
   const min = Number(min_moisture);
   const max = Number(max_moisture);
 
-  // TOO LOW - 10% or more below minimum
+  // TOO DRY → NEED WATERING
   if (moisture < min) {
-    const percentageBelow = ((min - moisture) / min) * 100;
-    
-    if (percentageBelow >= 15) {
-      // CRITICAL
-      await notificationModels.createNotif({
-        type: "Alert",
-        message: `[${group_number}] ${tray_group_name}'s soil is Critically Dry`,
-        related_sensor: existingSensor.sensor_id,
-        status: "LOW"
-      });
-    } else {
-      // APPROACHING DRYNESS
-      await notificationModels.createNotif({
-        type: "Warning",
-        message: `${tray_group_name}'s soil is approaching dryness`,
-        related_sensor: existingSensor.sensor_id,
-        status: "LOW"
-      });
-    }
-  } 
-  // 10% APPROACHING MINIMUM (NEW!)
-  else if (moisture <= (min * 1.10)) { 
     await notificationModels.createNotif({
-      type: "Info",
-      message: `${tray_group_name}'s soil is approaching minimum threshold (${moisture.toFixed(1)}%)`,
+      type: "Alert",
+      status: "HIGH",
       related_sensor: existingSensor.sensor_id,
-      status: "LOW"
+      message: `[${group_number}] ${tray_group_name} soil is TOO DRY! Needs watering (${moisture.toFixed(
+        1
+      )}%)`
     });
   }
-  // TOO HIGH - 10% or more above maximum
+  // TOO WET → DO NOT WATER
   else if (moisture > max) {
-    const percentageAbove = ((moisture - max) / max) * 100;
-    
-    if (percentageAbove >= 15) {
-      // TOO WET
-      await notificationModels.createNotif({
-        type: "Alert",
-        message: `${tray_group_name}'s soil is too wet`,
-        related_sensor: existingSensor.sensor_id,
-        status: "HIGH"
-      });
-    } else {
-      // GETTING WET
-      await notificationModels.createNotif({
-        type: "Warning",
-        message: `${tray_group_name}'s soil is getting wet`,
-        related_sensor: existingSensor.sensor_id,
-        status: "HIGH"
-      });
-    }
-  }
-  // 10% APPROACHING MAXIMUM (NEW!)
-  else if (moisture >= (max * 0.90)) {
     await notificationModels.createNotif({
-      type: "Info",
-      message: `${tray_group_name}'s soil is approaching maximum threshold (${moisture.toFixed(1)}%)`,
+      type: "Alert",
+      status: "HIGH",
       related_sensor: existingSensor.sensor_id,
-      status: "HIGH"
+      message: `[${group_number}] ${tray_group_name} soil is TOO WET! Do not water (${moisture.toFixed(
+        1
+      )}%)`
     });
   }
 };
+
+
+
 
 
 
@@ -342,3 +312,12 @@ export const deleteAllReadings = async (req, res) => {
     res.status(500).json({ message: "Error deleting readings" });
   }
 };
+
+
+
+
+
+// MOISTURE STATUS
+// 1. HIGH
+// 2. MEDIUM
+// 3. LOW
