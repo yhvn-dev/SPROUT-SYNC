@@ -357,8 +357,10 @@ function Home() {
           <Suspense fallback={
             <Dashboard_Mockup_Skeleton/>
           }>
-            <Dashboard_Mockup />
+           
           </Suspense>
+
+           <Dashboard_Mockup />
         </section>
 
         {/* Farm Info Section */}

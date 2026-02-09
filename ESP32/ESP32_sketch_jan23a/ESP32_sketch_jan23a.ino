@@ -7,10 +7,10 @@ const char* ssid = "bot";
 const char* password = "12345678";
 
 /************ SERVER ************/
-const char* wsHost = "10.88.243.67";
+const char* wsHost = "10.137.107.67";
 const uint16_t wsPort = 5000;
 const char* wsPath = "/";
-const char* apiUrl = "http://10.88.243.67:5000/readings/post/readings";
+const char* apiUrl = "http://10.137.107.67:5000/readings/post/readings";
 
 WebSocketsClient webSocket;
 
@@ -135,11 +135,16 @@ void handleServerCommand(String cmd) {
 
   if (index != -1) {
     if (cmd.endsWith("_OFF")) {
+      // 1️⃣ Turn off the pump first
+      setRelay(PUMP_PIN, false);
+
+      // 2️⃣ Then close the specific valve
       sensors[index].forcedOFF = true;
       sensors[index].autoEnabled = false;
       sensors[index].valveState = false;
       setRelay(valvePins[index], false);
-      Serial.printf("🚫 %s VALVE COMPLETELY OFF FROM SERVER\n", sensors[index].name);
+
+      Serial.printf("🚫 %s VALVE COMPLETELY OFF FROM SERVER (Pump turned off first)\n", sensors[index].name);
       return;
     } else if (cmd.endsWith("_ON") || cmd.endsWith("_AUTO")) {
       sensors[index].forcedOFF = false;
@@ -150,13 +155,13 @@ void handleServerCommand(String cmd) {
   }
 
   if (cmd == "SYSTEM_OFF") {
+    setRelay(PUMP_PIN, false); // Turn off pump first
     for (int i = 0; i < 3; i++) {
       sensors[i].forcedOFF = true;
       sensors[i].autoEnabled = false;
       sensors[i].valveState = false;
       setRelay(valvePins[i], false);
     }
-    setRelay(PUMP_PIN, false);
     Serial.println("🚫 FULL SYSTEM OFF FROM SERVER");
   } else if (cmd == "SYSTEM_ON") {
     for (int i = 0; i < 3; i++) {
@@ -208,16 +213,15 @@ void handlePlantSwitches() {
 
     if ((millis() - sensors[i].lastDebounceTime) > debounceDelay) {
       if (reading == LOW && sensors[i].lastButtonState == HIGH) {
-        // TRUE TOGGLE FORCE OFF / AUTO
+        // Toggle FORCE OFF / AUTO on each press
         sensors[i].forcedOFF = !sensors[i].forcedOFF;
         sensors[i].autoEnabled = !sensors[i].forcedOFF;
 
-        // FORCEFULLY CLOSE valve immediately if forcedOFF
+        // Update valve immediately
         if (sensors[i].forcedOFF) {
           sensors[i].valveState = false;
           setRelay(valvePins[i], false);
         } else {
-          // resume automatic calculation
           sensors[i].valveState = (moistureToPercentage(sensors[i]) < sensors[i].threshold);
           setRelay(valvePins[i], sensors[i].valveState);
         }
@@ -236,7 +240,6 @@ void handlePlantSwitches() {
                       sensors[i].valveState ? "OPEN" : "CLOSED",
                       systemEnabled ? (pumpNeeded ? "ON" : "OFF") : "SYSTEM OFF");
 
-        // Send network update immediately
         sendSensorReading(sensors[i], moistureToPercentage(sensors[i]), lastUltrasonicMM, lastUltrasonicIN);
       }
     }
@@ -250,7 +253,6 @@ void handleMainSwitch() {
     digitalWrite(SWITCH_LED, systemEnabled ? HIGH : LOW);
 
     if (!systemEnabled) {
-      // SYSTEM OFF → CLOSE EVERYTHING
       for (int i = 0; i < 3; i++) {
         sensors[i].valveState = false;
         setRelay(valvePins[i], false);
@@ -316,7 +318,6 @@ void loop() {
       int raw = readMoistureRaw(sensors[i]);
       int percent = moistureToPercentage(sensors[i]);
 
-      // auto update only if not forced OFF
       if (sensors[i].autoEnabled && !sensors[i].forcedOFF) {
         sensors[i].valveState = (percent < sensors[i].threshold);
       }
