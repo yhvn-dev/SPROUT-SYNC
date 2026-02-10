@@ -10,7 +10,6 @@ export function UserProvider({ children }) {
 
     useEffect(() => {
         loadUser();
-        loadAllUser();
     }, []);
 
     async function loadUser() {
@@ -22,16 +21,7 @@ export function UserProvider({ children }) {
         }
     }
 
-    async function loadAllUser() {
-        try {
-       const users = await userService.fetchAllUsers();
-       console.log("ALL USERS",users)
-        setAllUsers(users);
-        } catch (err) {
-        console.error(err);
-        }
-    }
-
+ 
 
     
   return (

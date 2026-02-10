@@ -352,15 +352,15 @@ function Home() {
           </Suspense>
         </section>
 
+        
+
         {/* Dashboard Section */}
         <section className='w-full flex justify-center' id="dashboard_mockup">
-          <Suspense fallback={
+           <Suspense fallback={
             <Dashboard_Mockup_Skeleton/>
-          }>
-           
-          </Suspense>
-
-           <Dashboard_Mockup />
+          }>       
+          </Suspense> 
+          <Dashboard_Mockup />   
         </section>
 
         {/* Farm Info Section */}
