@@ -114,7 +114,7 @@ export const closeAllGroups = async (req, res) => {
       return res.status(400).json({ message: "Invalid action" });
     }
 
-    const suffix = action === "FORCE_OFF" ? "OFF" : "ON";
+    const suffix = action === "FORCE_OFF" ? "OFF" : "AUTO";
 
     const commands = [
       `BOKCHOY_${suffix}`,

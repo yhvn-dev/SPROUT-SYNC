@@ -19,8 +19,8 @@ export default function Farm_Info_Section() {
               </div>
 
               <h2 className="text-5xl md:text-6xl font-bold text-[#003333] mb-6">
-                F&D Agriculture and Livelihood Training Center OPC
-              </h2>
+                Flor & Daisy's Agricultural Farm
+            </h2>
 
               <p className="text-xl text-[#5A8F73] leading-relaxed mb-8">
                 Located along Quezon Avenue Extension, Brgy. Mamala 2, Sariaya,

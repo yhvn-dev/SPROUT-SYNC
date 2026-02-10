@@ -7,10 +7,10 @@ const char* ssid = "bot";
 const char* password = "12345678";
 
 /************ NODE.JS SERVER ************/
-const char* wsHost = "10.25.99.67";
+const char* wsHost = "10.41.119.67";
 const uint16_t wsPort = 5000;
 const char* wsPath = "/";
-const char* apiUrl = "http://10.25.99.67:5000/readings/post/readings";
+const char* apiUrl = "http://10.41.119.67:5000/readings/post/readings";
 
 /************ OBJECTS ************/
 WebSocketsClient webSocket;
@@ -41,8 +41,8 @@ struct PlantSensor {
   int threshold;
   bool connected;
   bool valveState;   // true = OPEN, false = CLOSED
-  bool forcedOFF;    // true = forced OFF (locked), false = automatic
-  bool nodeForceOFF; // true if forced off by Node.js message
+  bool forcedOFF;    // true = forced OFF (manual button)
+  bool nodeForceOFF; // true = forced OFF by Node.js
 };
 
 /************ SENSOR INSTANCES ************/
@@ -100,14 +100,28 @@ void handleNodeMessage(String msg) {
       sensors[i].valveState = false;
       setRelay(valvePins[i], false);
       Serial.printf("%s NODE -> FORCED OFF\n", sensors[i].name);
-    } else if (msg == String(sensors[i].name) + "_ON") {
-      sensors[i].nodeForceOFF = false;
+    } else if (msg == String(sensors[i].name) + "_AUTO") {
+      sensors[i].nodeForceOFF = false; // back to AUTO
       Serial.printf("%s NODE -> AUTO MODE\n", sensors[i].name);
     }
   }
-}
+
+  // ALL plants control
+  if (msg == "ALL_OFF") {
+    for (int i = 0; i < 3; i++) {
+      sensors[i].nodeForceOFF = true;
+      sensors[i].valveState = false;
+      setRelay(valvePins[i], false);
+    }
+    Serial.println("ALL NODE -> FORCED OFF");
+  } else if (msg == "ALL_ON") {
+    for (int i = 0; i < 3; i++) sensors[i].nodeForceOFF = false;
+    Serial.println("ALL NODE -> AUTO MODE");
+  }
+} 
 
 void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
+  if (!systemEnabled) return; // Ignore WS if system OFF
   if (type == WStype_CONNECTED) wsConnected = true;
   if (type == WStype_DISCONNECTED) wsConnected = false;
   if (type == WStype_TEXT) handleNodeMessage(String((char*)payload));
@@ -121,24 +135,23 @@ void initWiFi() {
 /************ PLANT LOCK TOGGLE SWITCH LOGIC ************/
 void handlePlantSwitches() {
   int switches[3] = {BOKCHOY_BTN, PECHAY_BTN, MUSTASA_BTN};
-  static bool lastSwitchState[3] = {HIGH, HIGH, HIGH}; // remember previous state
+  static bool lastSwitchState[3] = {HIGH, HIGH, HIGH};
 
   for (int i = 0; i < 3; i++) {
     bool switchState = digitalRead(switches[i]); // LOW = ON, HIGH = OFF
 
-    // Only act if state changed
     if (switchState != lastSwitchState[i]) {
-      sensors[i].forcedOFF = !(switchState == LOW); // LOW -> automatic, HIGH -> locked OFF
+      sensors[i].forcedOFF = !(switchState == LOW); // LOW = AUTO, HIGH = LOCKED
 
       if (sensors[i].forcedOFF) {
-        sensors[i].valveState = false;  // Close valve immediately if locked
+        sensors[i].valveState = false;
         setRelay(valvePins[i], false);
-        Serial.printf("%s SWITCH -> LOCKED OFF, valve CLOSED\n", sensors[i].name);
+        Serial.printf("%s SWITCH -> LOCKED OFF\n", sensors[i].name);
       } else {
-        Serial.printf("%s SWITCH -> UNLOCKED, valve now automatic\n", sensors[i].name);
+        Serial.printf("%s SWITCH -> UNLOCKED, AUTO MODE\n", sensors[i].name);
       }
 
-      lastSwitchState[i] = switchState; // update last state
+      lastSwitchState[i] = switchState;
     }
   }
 }
@@ -151,14 +164,30 @@ void handleMainSwitch() {
   if (currentSwitchState != lastSwitchState) {
     lastSwitchState = currentSwitchState;
 
-    if (currentSwitchState == LOW) { // Button pressed
+    if (currentSwitchState == LOW) {
       systemEnabled = !systemEnabled;
       digitalWrite(SWITCH_LED, systemEnabled ? HIGH : LOW);
       Serial.println(systemEnabled ? "🟢 SYSTEM ON" : "🔴 SYSTEM OFF");
 
       if (!systemEnabled) {
+        // Shut down system: pump first, then valves
         setRelay(PUMP_PIN, false);
         for (int i = 0; i < 3; i++) setRelay(valvePins[i], false);
+
+        // Clear all forced states
+        for (int i = 0; i < 3; i++) {
+          sensors[i].forcedOFF = false;
+          sensors[i].nodeForceOFF = false;
+          sensors[i].valveState = false;
+        }
+
+        // Disconnect WebSocket
+        webSocket.disconnect();
+      } else {
+        // Reconnect WS
+        initWiFi();
+        webSocket.begin(wsHost, wsPort, wsPath);
+        webSocket.onEvent(webSocketEvent);
       }
     }
   }
@@ -205,18 +234,21 @@ void setup() {
   Serial.println("🚀 SYSTEM BOOTED");
 }
 
-/************ MAIN LOOP ************/
-void loop() {
-  webSocket.loop();
 
-  // Handle switches instantly
-  handleMainSwitch();
-  handlePlantSwitches();
+
+
+
+
+void loop() {
+  handleMainSwitch();      // ALWAYS check main power button
+  handlePlantSwitches();   // optional: can run only if system is ON
 
   if (!systemEnabled) {
     delay(10);
-    return;
+    return; // Skip sensor logic and WS if system OFF
   }
+
+  webSocket.loop();
 
   /******** SENSOR LOGIC EVERY 5s ********/
   if (millis() - lastLogicRun >= logicInterval) {
@@ -228,13 +260,10 @@ void loop() {
       sensors[i].connected = isSensorConnected(sensors[i].moisture, sensors[i]);
       int percent = moistureToPercentage(sensors[i]);
 
-      // Decide valve state: button lock > node lock > auto
       if (sensors[i].forcedOFF || sensors[i].nodeForceOFF) {
         sensors[i].valveState = false;
-        setRelay(valvePins[i], false);
       } else {
         sensors[i].valveState = sensors[i].connected && (percent < sensors[i].threshold);
-        setRelay(valvePins[i], sensors[i].valveState);
       }
 
       if (sensors[i].valveState) pumpNeeded = true;
@@ -242,7 +271,8 @@ void loop() {
 
     setRelay(PUMP_PIN, pumpNeeded);
 
-    // Print status
+    for (int i = 0; i < 3; i++) setRelay(valvePins[i], sensors[i].valveState);
+
     Serial.println("-------- SENSOR STATUS --------");
     for (int i = 0; i < 3; i++) {
       int percent = moistureToPercentage(sensors[i]);
@@ -257,7 +287,6 @@ void loop() {
       sendSensorReading(sensors[i], percent);
     }
 
-    // Read and display ultrasonic distance
     float cm = readUltrasonicCM();
     float inch = cm / 2.54;
     Serial.printf("Ultrasonic Distance -> %.2f cm | %.2f inches\n", cm, inch);
@@ -265,5 +294,7 @@ void loop() {
   }
 
 
-  
 }
+
+
+
