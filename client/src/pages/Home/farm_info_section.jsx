@@ -65,7 +65,7 @@ export default function Farm_Info_Section() {
                   </div>
                 </div>
 
-                {/*TECH INNOVATION */}
+                {/*TECH INNOVATION */}  
                 <div className="flex items-start gap-4">
                   <div className="farm_info_icons w-12 h-12 rounded-xl bg-white shadow-lg flex items-center justify-center flex-shrink-0">
                     <TrendingUp className="w-6 h-6 text-[#027c68]" />
