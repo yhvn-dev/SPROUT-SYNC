@@ -12,7 +12,7 @@ const uint16_t wsPort = 5000;
 const char* wsPath = "/";
 const char* apiUrl = "http://192.168.100.231:5000/readings/post/readings";
 
-/************ OBJECT ************/
+/************ OBJECTS ************/
 WebSocketsClient webSocket;
 
 /************ PUMP & VALVES ************/
@@ -99,7 +99,7 @@ void sendReadings(const char* reason) {
   http.addHeader("Content-Type", "application/json");
 
   String payload = "{";
-  payload += "\"reason\":\"" + String(reason) + "\",";
+  payload += "\"reason\":\"" + String(reason) + "\","; 
   payload += "\"water_level\":" + String(getWaterLevelInch()) + ",";
   payload += "\"sensors\":[";
 
@@ -158,20 +158,29 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
   }
 }
 
-/************ WIFI ************/
+/************ WIFI (NON-BLOCKING) ************/
 void handleWiFi() {
+  static unsigned long lastAttempt = 0;
+  unsigned long now = millis();
+
   if (WiFi.status() == WL_CONNECTED) {
     if (!wifiPrinted) {
       wifiPrinted = true;
-      Serial.println("🟢 WiFi CONNECTED");
-      Serial.println(WiFi.localIP());
+      Serial.println("🟢 WiFi CONNECTED: " + WiFi.localIP().toString());
       webSocket.begin(wsHost, wsPort, wsPath);
       webSocket.onEvent(webSocketEvent);
     }
     return;
   }
+
   wifiPrinted = false;
-  WiFi.begin(ssid, password);
+
+  // Only attempt WiFi connection every 5 seconds
+  if (now - lastAttempt > 5000) {
+    lastAttempt = now;
+    Serial.println("🔄 WiFi connecting...");
+    WiFi.begin(ssid, password);
+  }
 }
 
 /************ MANUAL BUTTONS ************/
@@ -240,6 +249,7 @@ void loop() {
   webSocket.loop();
   handleManualButtons();
 
+  // Main irrigation logic
   if (millis() - lastLogicRun >= logicInterval) {
     lastLogicRun = millis();
 
@@ -283,6 +293,7 @@ void loop() {
     }
   }
 
+  // Send periodic data every 10 min
   if (millis() - lastSend10Min >= sendInterval10Min) {
     lastSend10Min = millis();
     sendReadings("PERIODIC");
@@ -290,5 +301,8 @@ void loop() {
   }
 
 
+
   
 }
+
+

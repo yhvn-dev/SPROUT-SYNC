@@ -8,7 +8,7 @@ function AnalyticsModal({ isModalOpen, onClose,reloadReadings}) {
     try {
         await readingsServices.deleteAllReadings()      
         reloadReadings()
-        console.log("READINGS PRINTED");
+        onClose()
     } catch (error) {
       console.error(error)
     }
