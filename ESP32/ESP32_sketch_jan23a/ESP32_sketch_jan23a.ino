@@ -678,4 +678,5 @@ void loop() {
 
   // Final button check before loop repeats
   handlePlantButtons();
+  // works well at the moment
 }
