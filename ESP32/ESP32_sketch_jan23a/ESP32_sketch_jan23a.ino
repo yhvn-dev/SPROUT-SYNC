@@ -54,11 +54,10 @@ volatile bool systemEnabled = false;
 volatile bool systemSwitchPressed = false;
 volatile bool plantBtnPressed[3] = {false, false, false};
 
-bool buttonOverride[3] = {false, false, false};
-bool buttonState[3] = {false, false, false};
+bool buttonForceOff[3] = {false, false, false};  // NEW: Simple force off state
 bool wateringState[3] = {false, false, false};
 
-// NEW: Node.js remote control override
+// Node.js remote control override
 bool nodeJsOverride[3] = {false, false, false};
 bool nodeJsForceOff[3] = {false, false, false};
 
@@ -69,7 +68,7 @@ bool wifiConnected = false;
 unsigned long lastReadTime = 0;
 unsigned long lastWiFiCheck = 0;
 const unsigned long readInterval = 5000;
-const unsigned long wifiCheckInterval = 100; // Check WiFi every 100ms
+const unsigned long wifiCheckInterval = 100;
 
 /************ INTERRUPT SERVICE ROUTINES ************/
 void IRAM_ATTR systemSwitchISR() {
@@ -114,19 +113,13 @@ void IRAM_ATTR mustasaISR() {
 
 /************ ULTRASONIC SENSOR FUNCTIONS ************/
 float getDistanceInches() {
-  // Send trigger pulse
   digitalWrite(TRIG_PIN, LOW);
   delayMicroseconds(2);
   digitalWrite(TRIG_PIN, HIGH);
   delayMicroseconds(10);
   digitalWrite(TRIG_PIN, LOW);
   
-  // Read echo pulse
-  long duration = pulseIn(ECHO_PIN, HIGH, 30000); // 30ms timeout
-  
-  // Calculate distance in inches
-  // Speed of sound = 343 m/s = 13503.94 inches/s
-  // Distance = (duration / 2) / 74 (in microseconds per inch)
+  long duration = pulseIn(ECHO_PIN, HIGH, 30000);
   float inches = duration / 74.0 / 2.0;
   
   return inches;
@@ -135,16 +128,10 @@ float getDistanceInches() {
 int getWaterLevelPercentage() {
   float distance = getDistanceInches();
   
-  // Constrain distance to valid range
   if (distance > MAX_DISTANCE_INCHES) distance = MAX_DISTANCE_INCHES;
   if (distance < 0) distance = 0;
   
-  // Calculate percentage (inverse relationship)
-  // Max distance (36") = 0% water level
-  // Min distance (0") = 100% water level
   int percentage = (int)((MAX_DISTANCE_INCHES - distance) / MAX_DISTANCE_INCHES * 100.0);
-  
-  // Constrain to 0-100%
   percentage = constrain(percentage, 0, 100);
   
   return percentage;
@@ -157,14 +144,40 @@ void setRelay(int pin, bool on) {
 
 void turnOffAllValvesAndPump() {
   for (int i = 0; i < 3; i++) {
-    buttonOverride[i] = false;
-    buttonState[i] = false;
+    buttonForceOff[i] = false;
     wateringState[i] = false;
     nodeJsOverride[i] = false;
     nodeJsForceOff[i] = false;
     setRelay(sensors[i].valvePin, false);
   }
   setRelay(pumpPin, false);
+}
+
+/************ UPDATE PUMP STATE - INSTANT ************/
+void updatePumpState() {
+  bool pumpNeeded = false;
+  
+  for (int i = 0; i < 3; i++) {
+    bool valveOpen = false;
+    
+    // Priority: Node.js override > Button force off > Auto
+    if (nodeJsOverride[i]) {
+      valveOpen = !nodeJsForceOff[i];
+    } else if (buttonForceOff[i]) {
+      valveOpen = false;  // Button forces valve OFF
+    } else {
+      valveOpen = wateringState[i];  // Auto mode
+    }
+    
+    // Apply valve state IMMEDIATELY
+    setRelay(sensors[i].valvePin, valveOpen);
+    
+    if (valveOpen) {
+      pumpNeeded = true;
+    }
+  }
+  
+  setRelay(pumpPin, pumpNeeded);
 }
 
 /************ NODE.JS COMMAND HANDLER - REAL-TIME ************/
@@ -176,73 +189,45 @@ void handleNodeJsCommand(String command) {
   if (command == "BOKCHOY_OFF") {
     nodeJsOverride[0] = true;
     nodeJsForceOff[0] = true;
-    setRelay(sensors[0].valvePin, false);
-    Serial.println("🔴 NODE.JS → Bokchoy FORCED OFF ⚡");
+    buttonForceOff[0] = false;  // Clear button override
+    Serial.println("🔴 NODE.JS → BOKCHOY FORCED OFF ⚡");
     
   } else if (command == "BOKCHOY_AUTO") {
     nodeJsOverride[0] = false;
     nodeJsForceOff[0] = false;
-    buttonOverride[0] = false;
-    Serial.println("🟢 NODE.JS → Bokchoy AUTO MODE ⚡");
+    buttonForceOff[0] = false;
+    Serial.println("🟢 NODE.JS → BOKCHOY AUTO MODE ⚡");
   }
   
-  // PETCHAY COMMANDS
+  // PECHAY COMMANDS
   else if (command == "PECHAY_OFF") {
     nodeJsOverride[1] = true;
     nodeJsForceOff[1] = true;
-    setRelay(sensors[1].valvePin, false);
-    Serial.println("🔴 NODE.JS → Petchay FORCED OFF ⚡");
+    buttonForceOff[1] = false;
+    Serial.println("🔴 NODE.JS → PECHAY FORCED OFF ⚡");
     
   } else if (command == "PECHAY_AUTO") {
     nodeJsOverride[1] = false;
     nodeJsForceOff[1] = false;
-    buttonOverride[1] = false;
-    Serial.println("🟢 NODE.JS → Petchay AUTO MODE ⚡");
+    buttonForceOff[1] = false;
+    Serial.println("🟢 NODE.JS → PECHAY AUTO MODE ⚡");
   }
   
   // MUSTASA COMMANDS
   else if (command == "MUSTASA_OFF") {
     nodeJsOverride[2] = true;
     nodeJsForceOff[2] = true;
-    setRelay(sensors[2].valvePin, false);
-    Serial.println("🔴 NODE.JS → Mustasa FORCED OFF ⚡");
+    buttonForceOff[2] = false;
+    Serial.println("🔴 NODE.JS → MUSTASA FORCED OFF ⚡");
     
   } else if (command == "MUSTASA_AUTO") {
     nodeJsOverride[2] = false;
     nodeJsForceOff[2] = false;
-    buttonOverride[2] = false;
-    Serial.println("🟢 NODE.JS → Mustasa AUTO MODE ⚡");
+    buttonForceOff[2] = false;
+    Serial.println("🟢 NODE.JS → MUSTASA AUTO MODE ⚡");
   }
   
-  // Update pump state immediately after command
   updatePumpState();
-}
-
-
-
-/************ UPDATE PUMP STATE ************/
-void updatePumpState() {
-  bool pumpNeeded = false;
-  
-  for (int i = 0; i < 3; i++) {
-    bool valveOpen = false;
-    
-    // Priority: Node.js override > Button override > Auto
-    if (nodeJsOverride[i]) {
-      valveOpen = !nodeJsForceOff[i]; // If force off, valve is closed
-    } else if (buttonOverride[i]) {
-      valveOpen = buttonState[i];
-    } else {
-      valveOpen = wateringState[i];
-    }
-    
-    if (valveOpen) {
-      pumpNeeded = true;
-    }
-  }
-  
-  setRelay(pumpPin, pumpNeeded);
-  Serial.println("💧 PUMP: " + String(pumpNeeded ? "ON ⚡" : "OFF ⚡"));
 }
 
 /************ SEND READINGS - NON-BLOCKING ************/
@@ -250,14 +235,13 @@ void sendReadings(const char* reason) {
   if (!wifiConnected) return;
 
   HTTPClient http;
-  http.setTimeout(500); // Very short timeout
+  http.setTimeout(500);
   http.begin(apiUrl);
   http.addHeader("Content-Type", "application/json");
 
   String payload = "{";
   payload += "\"reason\":\"" + String(reason) + "\",";
   
-  // Add water level data
   float distance = getDistanceInches();
   int waterLevel = getWaterLevelPercentage();
   payload += "\"waterLevel\":{";
@@ -272,12 +256,11 @@ void sendReadings(const char* reason) {
     int percent = map(raw, sensors[i].dryValue, sensors[i].wetValue, 0, 100);
     percent = constrain(percent, 0, 100);
 
-    // Determine actual valve state based on priority
     bool actualValveState = false;
     if (nodeJsOverride[i]) {
       actualValveState = !nodeJsForceOff[i];
-    } else if (buttonOverride[i]) {
-      actualValveState = buttonState[i];
+    } else if (buttonForceOff[i]) {
+      actualValveState = false;
     } else {
       actualValveState = wateringState[i];
     }
@@ -309,8 +292,6 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
     String msg = String((char*)payload);
     msg.trim();
     Serial.println("📥 WS MESSAGE: " + msg);
-    
-    // ⚡⚡⚡ PROCESS NODE.JS COMMAND IMMEDIATELY ⚡⚡⚡
     handleNodeJsCommand(msg);
   }
 }
@@ -319,7 +300,6 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
 void handleWiFi() {
   unsigned long now = millis();
   
-  // Only check WiFi status occasionally to reduce overhead
   if (now - lastWiFiCheck < wifiCheckInterval) {
     return;
   }
@@ -327,7 +307,6 @@ void handleWiFi() {
   
   static unsigned long lastAttempt = 0;
 
-  // If system wants WiFi ON
   if (wifiShouldBeConnected) {
     if (WiFi.status() == WL_CONNECTED) {
       if (!wifiConnected) {
@@ -344,9 +323,7 @@ void handleWiFi() {
         Serial.println("🔄 Connecting WiFi...");
       }
     }
-  }
-  // If system wants WiFi OFF
-  else {
+  } else {
     if (wifiConnected || WiFi.status() == WL_CONNECTED) {
       Serial.println("🔴 WiFi DISCONNECTING...");
       webSocket.disconnect();
@@ -361,30 +338,24 @@ void handleWiFi() {
 void handleSystemSwitch() {
   if (systemSwitchPressed) {
     systemSwitchPressed = false;
-    
     systemEnabled = !systemEnabled;
     
     if (systemEnabled) {
       Serial.println("\n🟢🟢🟢 SYSTEM ON - INSTANT 🟢🟢🟢\n");
       digitalWrite(SWITCH_LED, HIGH);
       lastReadTime = 0;
-      
-      // START WiFi connection
       WiFi.mode(WIFI_STA);
       wifiShouldBeConnected = true;
-      
     } else {
       Serial.println("\n🔴🔴🔴 SYSTEM OFF - INSTANT 🔴🔴🔴\n");
       digitalWrite(SWITCH_LED, LOW);
       turnOffAllValvesAndPump();
-      
-      // STOP WiFi connection
       wifiShouldBeConnected = false;
     }
   }
 }
 
-/************ HANDLE PLANT BUTTONS - INSTANT ************/
+/************ HANDLE PLANT BUTTONS - INSTANT TOGGLE ************/
 void handlePlantButtons() {
   for (int i = 0; i < 3; i++) {
     if (plantBtnPressed[i]) {
@@ -394,21 +365,19 @@ void handlePlantButtons() {
       nodeJsOverride[i] = false;
       nodeJsForceOff[i] = false;
       
-      if (!buttonOverride[i]) {
-        buttonOverride[i] = true;
-        buttonState[i] = true;
-        setRelay(sensors[i].valvePin, true);
-        Serial.println("🟡 " + sensors[i].name + " → BUTTON ON ⚡INSTANT⚡");
-      } else if (buttonState[i]) {
-        buttonState[i] = false;
+      // TOGGLE: OFF ↔ AUTO
+      buttonForceOff[i] = !buttonForceOff[i];
+      
+      if (buttonForceOff[i]) {
+        // Button pressed → FORCE OFF
         setRelay(sensors[i].valvePin, false);
-        Serial.println("🔴 " + sensors[i].name + " → BUTTON OFF ⚡INSTANT⚡");
+        Serial.println("🔴 " + sensors[i].name + " → FORCED OFF ⚡INSTANT⚡");
       } else {
-        buttonOverride[i] = false;
+        // Button pressed again → AUTO MODE
         Serial.println("🟢 " + sensors[i].name + " → AUTO MODE ⚡INSTANT⚡");
       }
       
-      // Update pump immediately
+      // Update pump IMMEDIATELY
       updatePumpState();
     }
   }
@@ -419,12 +388,10 @@ void setup() {
   Serial.begin(115200);
   delay(100);
 
-  // Initialize ultrasonic sensor
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
   digitalWrite(TRIG_PIN, LOW);
 
-  // Initialize sensors and valves
   for (int i = 0; i < 3; i++) {
     pinMode(sensors[i].pin, INPUT);
     pinMode(sensors[i].valvePin, OUTPUT);
@@ -434,28 +401,26 @@ void setup() {
   pinMode(pumpPin, OUTPUT);
   setRelay(pumpPin, false);
 
-  // System switch
   pinMode(LOCK_SWITCH, INPUT_PULLUP);
   pinMode(SWITCH_LED, OUTPUT);
   digitalWrite(SWITCH_LED, LOW);
 
-  // Plant buttons
   pinMode(bokchoyBtn, INPUT_PULLUP);
   pinMode(petchayBtn, INPUT_PULLUP);
   pinMode(mustasaBtn, INPUT_PULLUP);
 
-  // Attach interrupts for INSTANT response
   attachInterrupt(digitalPinToInterrupt(LOCK_SWITCH), systemSwitchISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(bokchoyBtn), bokchoyISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(petchayBtn), petchayISR, FALLING);
   attachInterrupt(digitalPinToInterrupt(mustasaBtn), mustasaISR, FALLING);
 
-  // WiFi OFF initially
   WiFi.mode(WIFI_OFF);
 
   Serial.println("\n========================================");
   Serial.println("🚀 ESP32 READY - INSTANT MODE");
-  Serial.println("⚡ ALL BUTTONS: INSTANT (0ms)");
+  Serial.println("⚡ PLANT BUTTONS: 1-CLICK TOGGLE");
+  Serial.println("   • Press = FORCE OFF");
+  Serial.println("   • Press Again = AUTO MODE");
   Serial.println("📡 WiFi: ONLY WHEN SYSTEM ON");
   Serial.println("🤖 SENSORS: AUTO (5s cycle)");
   Serial.println("💧 ULTRASONIC: TRIG=16, ECHO=17");
@@ -465,38 +430,31 @@ void setup() {
 
 /************ LOOP - OPTIMIZED FOR INSTANT RESPONSE ************/
 void loop() {
-  // ⚡⚡⚡ ABSOLUTE HIGHEST PRIORITY - PROCESS IMMEDIATELY ⚡⚡⚡
+  // ⚡⚡⚡ ABSOLUTE PRIORITY - INSTANT RESPONSE ⚡⚡⚡
   handleSystemSwitch();
   handlePlantButtons();
 
-  // If system OFF, minimal operations
   if (!systemEnabled) {
     turnOffAllValvesAndPump();
-    handleWiFi(); // Will disconnect WiFi
+    handleWiFi();
     delay(10);
     return;
   }
 
   // === SYSTEM IS ON ===
-
-  // Lightweight WiFi check (only every 100ms)
   handleWiFi();
   
-  // WebSocket (very lightweight) - PROCESSES NODE.JS COMMANDS
   if (wifiConnected) {
     webSocket.loop();
   }
 
-  // === SENSOR READING & STATUS DISPLAY - ONLY EVERY 5s ===
+  // === SENSOR READING - EVERY 5s ===
   if (millis() - lastReadTime >= readInterval) {
     lastReadTime = millis();
-
-    bool pumpNeeded = false;
 
     Serial.println("\n📊 SENSOR READING (5s update):");
     Serial.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
-    // Read and display water level
     float distance = getDistanceInches();
     int waterLevel = getWaterLevelPercentage();
     
@@ -509,12 +467,11 @@ void loop() {
 
     for (int i = 0; i < 3; i++) {
       int raw = analogRead(sensors[i].pin);
-      
       int percent = map(raw, sensors[i].dryValue, sensors[i].wetValue, 0, 100);
       percent = constrain(percent, 0, 100);
 
-      // AUTO MODE LOGIC (only if NO overrides active)
-      if (!nodeJsOverride[i] && !buttonOverride[i]) {
+      // AUTO MODE LOGIC (only if NO overrides)
+      if (!nodeJsOverride[i] && !buttonForceOff[i]) {
         if (percent < sensors[i].minMoisture) {
           wateringState[i] = true;
         }
@@ -522,32 +479,21 @@ void loop() {
         if (wateringState[i] && percent >= sensors[i].maxMoisture) {
           wateringState[i] = false;
         }
-
-        setRelay(sensors[i].valvePin, wateringState[i]);
       }
 
-      // Determine actual valve state based on priority:
-      // 1. Node.js override (highest)
-      // 2. Button override
-      // 3. Auto mode (lowest)
+      // Determine actual state
       bool actualValveState = false;
       String mode = "AUTO";
       
       if (nodeJsOverride[i]) {
         actualValveState = !nodeJsForceOff[i];
         mode = nodeJsForceOff[i] ? "NODE.JS-OFF" : "NODE.JS";
-        setRelay(sensors[i].valvePin, actualValveState);
-      } else if (buttonOverride[i]) {
-        actualValveState = buttonState[i];
-        mode = "BUTTON";
-        setRelay(sensors[i].valvePin, actualValveState);
+      } else if (buttonForceOff[i]) {
+        actualValveState = false;
+        mode = "BUTTON-OFF";
       } else {
         actualValveState = wateringState[i];
         mode = "AUTO";
-      }
-
-      if (actualValveState) {
-        pumpNeeded = true;
       }
 
       // Print status
@@ -563,15 +509,20 @@ void loop() {
       Serial.println(actualValveState ? "OPEN ✅" : "CLOSED ❌");
     }
 
-    // Pump control
-    setRelay(pumpPin, pumpNeeded);
-    Serial.print("💧 PUMP: ");
-    Serial.println(pumpNeeded ? "ON ✅" : "OFF ❌");
+    // Update all valve states based on current logic
+    updatePumpState();
 
-    // Send data (only if WiFi connected)
+    Serial.print("💧 PUMP: ");
+    bool pumpOn = digitalRead(pumpPin) == LOW;
+    Serial.println(pumpOn ? "ON ✅" : "OFF ❌");
+
     if (wifiConnected) {
       sendReadings("PERIODIC");
     }
+    
     Serial.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-  }
+    
+  }  
 }
+
+
