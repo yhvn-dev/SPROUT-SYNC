@@ -12,85 +12,54 @@ const uint16_t wsPort = 5000;
 const char* wsPath = "/";
 const char* apiUrl = "http://192.168.100.231:5000/readings/post/readings";
 
-/************ OBJECTS ************/
+/************ WEBSOCKET OBJECT ************/
 WebSocketsClient webSocket;
 
-/************ PUMP & VALVES ************/
-#define PUMP_PIN 18
-int valvePins[3] = {23, 22, 21};
-
-/************ BUTTONS ************/
-#define LOCK_SWITCH 19
-#define SWITCH_LED  2
-#define BTN_BOKCHOY 25
-#define BTN_PECHAY  26
-#define BTN_MUSTASA 27
-
-/************ ULTRASONIC ************/
-#define TRIG_PIN 16
-#define ECHO_PIN 17
-#define DRUM_HEIGHT_INCH 36.0
-#define MIN_WATER_INCH 5.0
-
-/************ SENSOR STRUCT ************/
+/************ SENSORS / VALVES ************/
 struct PlantSensor {
   int pin;
-  int id;
-  const char* name;
-  int moistureMax;
-  int moistureMin;
-  int moisture;
-  int threshold;
-  bool valveState;
-  bool forcedOFF;
+  String name;
+  int dryValue;
+  int wetValue;
+  int valvePin;
+  int minMoisture;
+  int maxMoisture;
 };
 
 PlantSensor sensors[3] = {
-  {32, 1, "BOKCHOY", 3000, 1800, 0, 50, false, false},
-  {33, 4, "PECHAY",  2900, 1750, 0, 50, false, false},
-  {34, 3, "MUSTASA", 2800, 1700, 0, 55, false, false}
+  {32, "Bokchoy",  3000, 1800, 21, 50, 75},
+  {33, "Petchay",  2900, 1750, 22, 50, 75},
+  {34, "Mustasa",  2800, 1700, 23, 55, 75}
 };
+
+/************ OUTPUT ************/
+const int pumpPin = 18;
+
+/************ SYSTEM SWITCH ************/
+const int LOCK_SWITCH = 19;   // LOW = SYSTEM ON
+const int SWITCH_LED  = 2;
+
+/************ PLANT BUTTONS ************/
+const int bokchoyBtn  = 25;
+const int petchayBtn  = 26;
+const int mustasaBtn  = 27;
 
 /************ STATE ************/
 bool systemEnabled = false;
-bool wifiPrinted = false;
-bool pumpArmed = false;
+bool prevSystemEnabled = false;
+bool forceMode[3] = {false, false, false};
+bool wateringState[3] = {false, false, false};
 
-/************ TIMERS ************/
-unsigned long lastLogicRun = 0;
-unsigned long lastSend10Min = 0;
-
-const unsigned long logicInterval = 5000;
-const unsigned long sendInterval10Min = 600000;
+/************ TIMING ************/
+unsigned long lastReadTime = 0;
+const unsigned long readInterval = 5000;
 
 /************ UTILS ************/
 void setRelay(int pin, bool on) {
   digitalWrite(pin, on ? LOW : HIGH);
 }
 
-int moistureToPercentage(PlantSensor s) {
-  int range = s.moistureMax - s.moistureMin;
-  return range > 0
-    ? constrain((s.moistureMax - s.moisture) * 100 / range, 0, 100)
-    : 0;
-}
-
-/************ ULTRASONIC ************/
-float getWaterLevelInch() {
-  digitalWrite(TRIG_PIN, LOW);
-  delayMicroseconds(2);
-  digitalWrite(TRIG_PIN, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
-
-  long duration = pulseIn(ECHO_PIN, HIGH, 30000);
-  float distance = duration * 0.0133 / 2;
-  float level = DRUM_HEIGHT_INCH - distance;
-
-  return constrain(level, 0, DRUM_HEIGHT_INCH);
-}
-
-/************ SEND DATA ************/
+/************ SEND READINGS TO SERVER ************/
 void sendReadings(const char* reason) {
   if (WiFi.status() != WL_CONNECTED) return;
 
@@ -99,18 +68,22 @@ void sendReadings(const char* reason) {
   http.addHeader("Content-Type", "application/json");
 
   String payload = "{";
-  payload += "\"reason\":\"" + String(reason) + "\","; 
-  payload += "\"water_level\":" + String(getWaterLevelInch()) + ",";
+  payload += "\"reason\":\"" + String(reason) + "\",";
   payload += "\"sensors\":[";
 
   for (int i = 0; i < 3; i++) {
+    int raw = analogRead(sensors[i].pin);
+    int percent = map(raw, sensors[i].dryValue, sensors[i].wetValue, 0, 100);
+    percent = constrain(percent, 0, 100);
+
     payload += "{";
-    payload += "\"id\":" + String(sensors[i].id) + ",";
-    payload += "\"name\":\"" + String(sensors[i].name) + "\",";
-    payload += "\"raw\":" + String(sensors[i].moisture) + ",";
-    payload += "\"percent\":" + String(moistureToPercentage(sensors[i])) + ",";
-    payload += "\"valve\":" + String(sensors[i].valveState ? "1" : "0");
+    payload += "\"id\":" + String(i+1) + ",";
+    payload += "\"name\":\"" + sensors[i].name + "\",";
+    payload += "\"raw\":" + String(raw) + ",";
+    payload += "\"percent\":" + String(percent) + ",";
+    payload += "\"valve\":" + String(wateringState[i] ? "1" : "0");
     payload += "}";
+
     if (i < 2) payload += ",";
   }
 
@@ -119,203 +92,153 @@ void sendReadings(const char* reason) {
   http.end();
 }
 
-/************ HANDLE NODE COMMAND ************/
-void handleNodeMessage(String msg) {
-  msg.trim();
-
-  if (msg.indexOf("BOKCHOY_OFF") != -1 &&
-      msg.indexOf("PECHAY_OFF") != -1 &&
-      msg.indexOf("MUSTASA_OFF") != -1) {
-    for (int i = 0; i < 3; i++) sensors[i].forcedOFF = true;
-    Serial.println("🔴 NODE: ALL PLANTS FORCED OFF");
-    return;
-  }
-
-  if (msg.indexOf("BOKCHOY_AUTO") != -1 &&
-      msg.indexOf("PECHAY_AUTO") != -1 &&
-      msg.indexOf("MUSTASA_AUTO") != -1) {
-    for (int i = 0; i < 3; i++) sensors[i].forcedOFF = false;
-    Serial.println("🟢 NODE: ALL PLANTS AUTO");
-    return;
-  }
-
-  for (int i = 0; i < 3; i++) {
-    if (msg == String(sensors[i].name) + "_OFF") {
-      sensors[i].forcedOFF = true;
-      Serial.printf("🔴 NODE: %s OFF\n", sensors[i].name);
-    }
-    if (msg == String(sensors[i].name) + "_AUTO") {
-      sensors[i].forcedOFF = false;
-      Serial.printf("🟢 NODE: %s AUTO\n", sensors[i].name);
-    }
-  }
-}
-
-/************ WEBSOCKET ************/
+/************ WEBSOCKET EVENT ************/
 void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
   if (type == WStype_TEXT) {
-    handleNodeMessage(String((char*)payload));
+    String msg = String((char*)payload);
+    msg.trim();
+
+    for (int i = 0; i < 3; i++) {
+      if (msg == sensors[i].name + "_OFF") {
+        forceMode[i] = true;
+        wateringState[i] = true;
+        setRelay(sensors[i].valvePin, true);
+      }
+      if (msg == sensors[i].name + "_AUTO") {
+        forceMode[i] = false;
+      }
+    }
   }
 }
 
-/************ WIFI (NON-BLOCKING) ************/
+/************ WIFI HANDLER ************/
 void handleWiFi() {
   static unsigned long lastAttempt = 0;
   unsigned long now = millis();
 
-  if (WiFi.status() == WL_CONNECTED) {
-    if (!wifiPrinted) {
-      wifiPrinted = true;
-      Serial.println("🟢 WiFi CONNECTED: " + WiFi.localIP().toString());
-      webSocket.begin(wsHost, wsPort, wsPath);
-      webSocket.onEvent(webSocketEvent);
-    }
-    return;
-  }
-
-  wifiPrinted = false;
+  if (WiFi.status() == WL_CONNECTED) return;
 
   if (now - lastAttempt > 5000) {
     lastAttempt = now;
-    Serial.println("🔄 WiFi connecting...");
     WiFi.begin(ssid, password);
+    Serial.println("🔄 Connecting WiFi...");
   }
-}
-
-/************ MANUAL BUTTONS ************/
-void handleManualButtons() {
-  static bool last[3] = {HIGH, HIGH, HIGH};
-  int btns[3] = {BTN_BOKCHOY, BTN_PECHAY, BTN_MUSTASA};
-
-  for (int i = 0; i < 3; i++) {
-    bool now = digitalRead(btns[i]);
-    if (now == LOW && last[i] == HIGH) {
-      sensors[i].forcedOFF = !sensors[i].forcedOFF;
-      Serial.printf("🟡 BUTTON: %s %s\n",
-        sensors[i].name,
-        sensors[i].forcedOFF ? "FORCED OFF" : "AUTO");
-    }
-    last[i] = now;
-  }
-}
-
-/************ SYSTEM SWITCH (DEBOUNCED NON-BLOCKING) ************/
-void handleMainSwitch() {
-  static bool lastState = HIGH;
-  static unsigned long lastDebounce = 0;
-  const unsigned long debounceDelay = 50;
-
-  bool reading = digitalRead(LOCK_SWITCH);
-
-  if (reading != lastState) {
-    lastDebounce = millis();
-  }
-
-  if ((millis() - lastDebounce) > debounceDelay) {
-    static bool lastSystemState = false;
-    if (reading == LOW && systemEnabled == lastSystemState) {
-      systemEnabled = !systemEnabled;
-      digitalWrite(SWITCH_LED, systemEnabled ? HIGH : LOW);
-
-      // Immediately close/open pump & valves
-      if (!systemEnabled) {
-        setRelay(PUMP_PIN, false);
-        for (int i = 0; i < 3; i++) setRelay(valvePins[i], false);
-        pumpArmed = false;
-      }
-
-      Serial.println(systemEnabled ? "🟢 SYSTEM ON" : "🔴 SYSTEM OFF");
-
-      lastSystemState = systemEnabled;
-    }
-  }
-
-  lastState = reading;
 }
 
 /************ SETUP ************/
 void setup() {
   Serial.begin(115200);
+  delay(100);
 
-  pinMode(PUMP_PIN, OUTPUT);
-  pinMode(SWITCH_LED, OUTPUT);
-  pinMode(LOCK_SWITCH, INPUT_PULLUP);
-
-  pinMode(BTN_BOKCHOY, INPUT_PULLUP);
-  pinMode(BTN_PECHAY, INPUT_PULLUP);
-  pinMode(BTN_MUSTASA, INPUT_PULLUP);
-
-  pinMode(TRIG_PIN, OUTPUT);
-  pinMode(ECHO_PIN, INPUT);
-
+  // Initialize sensors and valves
   for (int i = 0; i < 3; i++) {
-    pinMode(valvePins[i], OUTPUT);
-    setRelay(valvePins[i], false);
+    pinMode(sensors[i].pin, INPUT);
+    pinMode(sensors[i].valvePin, OUTPUT);
+    digitalWrite(sensors[i].valvePin, HIGH); // valves OFF
   }
 
+  pinMode(pumpPin, OUTPUT);
+  digitalWrite(pumpPin, HIGH);
+
+  // System switch
+  pinMode(LOCK_SWITCH, INPUT_PULLUP);
+  pinMode(SWITCH_LED, OUTPUT);
+
+  // Plant buttons
+  pinMode(bokchoyBtn, INPUT_PULLUP);
+  pinMode(petchayBtn, INPUT_PULLUP);
+  pinMode(mustasaBtn, INPUT_PULLUP);
+
+  // WiFi
   WiFi.mode(WIFI_STA);
-  Serial.println("🚀 READY (SYSTEM OFF)");
+
+  Serial.println("\n🚀 ESP32 READY — NETWORK ACTIVE | BUTTONS FORCE VALVES | AUTO SENSOR MODE");
 }
 
 /************ LOOP ************/
 void loop() {
-  handleMainSwitch();      // always top
-  handleWiFi();
-  webSocket.loop();
-  handleManualButtons();
 
-  if (!systemEnabled) {
-    delay(10);
-    return; // skip irrigation logic
+  /***** SYSTEM SWITCH (NON-BLOCKING) *****/
+  systemEnabled = (digitalRead(LOCK_SWITCH) == LOW);
+
+  if (systemEnabled != prevSystemEnabled) {
+    if (systemEnabled) {
+      Serial.println("\n🟢 SYSTEM ON");
+      digitalWrite(SWITCH_LED, HIGH);
+      lastReadTime = 0;
+    } else {
+      Serial.println("\n🔴 SYSTEM OFF");
+      digitalWrite(SWITCH_LED, LOW);
+
+      // Turn off all valves & pump
+      for (int i = 0; i < 3; i++) {
+        forceMode[i] = false;
+        wateringState[i] = false;
+        digitalWrite(sensors[i].valvePin, HIGH);
+      }
+      digitalWrite(pumpPin, HIGH);
+    }
+    prevSystemEnabled = systemEnabled;
   }
 
-  if (millis() - lastLogicRun >= logicInterval) {
-    lastLogicRun = millis();
+  if (!systemEnabled) return;
 
-    bool pumpRequest = false;
-    float waterLevel = getWaterLevelInch();
+  /***** PLANT BUTTONS (FORCE MODE, INSTANT) *****/
+  int plantPins[3] = {bokchoyBtn, petchayBtn, mustasaBtn};
+  for (int i = 0; i < 3; i++) {
+    if (digitalRead(plantPins[i]) == LOW) {
+      forceMode[i] = true;
+      wateringState[i] = true;
+      setRelay(sensors[i].valvePin, true);
+    } else if (!forceMode[i]) {
+      wateringState[i] = false;
+      setRelay(sensors[i].valvePin, false);
+    }
+  }
 
-    Serial.printf("\n🌊 WATER LEVEL: %.2f / %.0f inches\n",
-      waterLevel, DRUM_HEIGHT_INCH);
+  /***** READ & CONTROL SENSORS EVERY 5s *****/
+  if (millis() - lastReadTime >= readInterval) {
+    lastReadTime = millis();
+
+    bool pumpNeeded = false;
 
     for (int i = 0; i < 3; i++) {
-      sensors[i].moisture = analogRead(sensors[i].pin);
-      int percent = moistureToPercentage(sensors[i]);
+      int raw = 0;
+      for (int j = 0; j < 10; j++) raw += analogRead(sensors[i].pin);
+      raw /= 10;
 
-      if (!sensors[i].forcedOFF &&
-          percent < sensors[i].threshold &&
-          waterLevel > MIN_WATER_INCH) {
-        sensors[i].valveState = true;
-        pumpRequest = true;
-        sendReadings("THRESHOLD");
-      } else {
-        sensors[i].valveState = false;
+      int percent = map(raw, sensors[i].dryValue, sensors[i].wetValue, 0, 100);
+      percent = constrain(percent, 0, 100);
+
+      // AUTO MODE
+      if (!forceMode[i]) {
+        if (percent < sensors[i].minMoisture)
+          wateringState[i] = true;
+        if (wateringState[i] && percent >= sensors[i].maxMoisture)
+          wateringState[i] = false;
+
+        setRelay(sensors[i].valvePin, wateringState[i]);
       }
 
-      setRelay(valvePins[i], sensors[i].valveState);
+      if (wateringState[i]) pumpNeeded = true;
 
-      Serial.printf("[%s] RAW:%d %%:%d MODE:%s VALVE:%s\n",
-        sensors[i].name,
-        sensors[i].moisture,
-        percent,
-        sensors[i].forcedOFF ? "FORCED" : "AUTO",
-        sensors[i].valveState ? "OPEN" : "CLOSED");
+      Serial.print(sensors[i].name);
+      Serial.print(" | Raw: "); Serial.print(raw);
+      Serial.print(" | Moisture: "); Serial.print(percent);
+      Serial.print("% | "); Serial.print(forceMode[i] ? "FORCE" : "AUTO");
+      Serial.print(" | Valve: "); Serial.println(wateringState[i] ? "OPEN" : "CLOSED");
     }
 
-    if (!pumpArmed) {
-      pumpArmed = true;
-      setRelay(PUMP_PIN, false);
-      Serial.println("⏳ PUMP ARMED (NEXT CYCLE)");
-    } else {
-      setRelay(PUMP_PIN, pumpRequest);
-      Serial.printf("🚰 PUMP: %s\n", pumpRequest ? "ON" : "OFF");
-    }
-  }
+    // Pump control
+    setRelay(pumpPin, pumpNeeded);
 
-  if (millis() - lastSend10Min >= sendInterval10Min) {
-    lastSend10Min = millis();
+    // Send data to server
     sendReadings("PERIODIC");
-    Serial.println("📤 DATA SENT (10 MIN)");
+
+    Serial.println("-------------------------");
   }
 
+  /***** NETWORK HANDLING (NON-BLOCKING) *****/
+  handleWiFi();
+  webSocket.loop();
 }
