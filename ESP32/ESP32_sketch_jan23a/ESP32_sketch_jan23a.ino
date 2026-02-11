@@ -175,7 +175,6 @@ void handleWiFi() {
 
   wifiPrinted = false;
 
-  // Only attempt WiFi connection every 5 seconds
   if (now - lastAttempt > 5000) {
     lastAttempt = now;
     Serial.println("🔄 WiFi connecting...");
@@ -200,20 +199,38 @@ void handleManualButtons() {
   }
 }
 
-/************ SYSTEM SWITCH ************/
+/************ SYSTEM SWITCH (DEBOUNCED NON-BLOCKING) ************/
 void handleMainSwitch() {
-  static bool last = HIGH;
-  bool now = digitalRead(LOCK_SWITCH);
+  static bool lastState = HIGH;
+  static unsigned long lastDebounce = 0;
+  const unsigned long debounceDelay = 50;
 
-  if (now == LOW && last == HIGH) {
-    systemEnabled = !systemEnabled;
-    digitalWrite(SWITCH_LED, systemEnabled);
-    setRelay(PUMP_PIN, false);
-    for (int i = 0; i < 3; i++) setRelay(valvePins[i], false);
-    pumpArmed = false;
-    Serial.println(systemEnabled ? "🟢 SYSTEM ON" : "🔴 SYSTEM OFF");
+  bool reading = digitalRead(LOCK_SWITCH);
+
+  if (reading != lastState) {
+    lastDebounce = millis();
   }
-  last = now;
+
+  if ((millis() - lastDebounce) > debounceDelay) {
+    static bool lastSystemState = false;
+    if (reading == LOW && systemEnabled == lastSystemState) {
+      systemEnabled = !systemEnabled;
+      digitalWrite(SWITCH_LED, systemEnabled ? HIGH : LOW);
+
+      // Immediately close/open pump & valves
+      if (!systemEnabled) {
+        setRelay(PUMP_PIN, false);
+        for (int i = 0; i < 3; i++) setRelay(valvePins[i], false);
+        pumpArmed = false;
+      }
+
+      Serial.println(systemEnabled ? "🟢 SYSTEM ON" : "🔴 SYSTEM OFF");
+
+      lastSystemState = systemEnabled;
+    }
+  }
+
+  lastState = reading;
 }
 
 /************ SETUP ************/
@@ -242,14 +259,16 @@ void setup() {
 
 /************ LOOP ************/
 void loop() {
-  handleMainSwitch();
-  if (!systemEnabled) return;
-
+  handleMainSwitch();      // always top
   handleWiFi();
   webSocket.loop();
   handleManualButtons();
 
-  // Main irrigation logic
+  if (!systemEnabled) {
+    delay(10);
+    return; // skip irrigation logic
+  }
+
   if (millis() - lastLogicRun >= logicInterval) {
     lastLogicRun = millis();
 
@@ -293,16 +312,10 @@ void loop() {
     }
   }
 
-  // Send periodic data every 10 min
   if (millis() - lastSend10Min >= sendInterval10Min) {
     lastSend10Min = millis();
     sendReadings("PERIODIC");
     Serial.println("📤 DATA SENT (10 MIN)");
   }
 
-
-
-  
 }
-
-
