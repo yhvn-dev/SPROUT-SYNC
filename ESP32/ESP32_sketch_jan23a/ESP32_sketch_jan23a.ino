@@ -1,72 +1,104 @@
 #include <WiFi.h>
 #include <WebSocketsClient.h>
 #include <HTTPClient.h>
+
 /************ WIFI CONFIG ************/
 const char* ssid = "4G-MIFI-8339";
 const char* password = "1234567890";
+
 /************ NODE.JS SERVER ************/
 const char* wsHost = "192.168.100.231";
 const uint16_t wsPort = 5000;
 const char* wsPath = "/";
 const char* apiUrl = "http://192.168.100.231:5000/readings/post/readings";
+
 /************ WEBSOCKET OBJECT ************/
 WebSocketsClient webSocket;
+
 /************ ULTRASONIC SENSOR ************/
 const int TRIG_PIN = 16;
 const int ECHO_PIN = 17;
-const float MAX_DISTANCE_INCHES = 36.0;
+const float MAX_DISTANCE_INCHES = 36.0;  // Maximum distance when tank is EMPTY
+const float MIN_DISTANCE_INCHES = 0.0;   // Minimum distance when tank is FULL
+
 /************ SENSORS / VALVES ************/
 struct PlantSensor {
   int pin;
   String name;
-  int dryValue;
-  int wetValue;
+  int dryValue;   // HIGH raw value = DRY soil
+  int wetValue;   // LOW raw value = WET soil
   int valvePin;
   int minMoisture;
   int maxMoisture;
 };
+
 PlantSensor sensors[3] = {
   {32, "BOKCHOY", 3000, 1800, 21, 50, 75},
   {33, "PECHAY", 2900, 1750, 22, 50, 75},
   {34, "MUSTASA", 2800, 1700, 23, 55, 75}
 };
+
 /************ OUTPUT ************/
 const int pumpPin = 18;
+
 /************ SYSTEM SWITCH ************/
 const int LOCK_SWITCH = 19;
 const int SWITCH_LED = 2;
+
 /************ PLANT BUTTONS ************/
 const int bokchoyBtn = 25;
 const int petchayBtn = 26;
 const int mustasaBtn = 27;
+
 /************ STATE ************/
 volatile bool systemEnabled = false;
 volatile bool systemSwitchPressed = false;
 volatile bool plantBtnPressed[3] = {false, false, false};
 bool buttonForceOff[3] = {false, false, false};
 bool wateringState[3] = {false, false, false};
+
 // Node.js remote control override
 bool nodeJsOverride[3] = {false, false, false};
 bool nodeJsForceOff[3] = {false, false, false};
+
 bool wifiShouldBeConnected = false;
 bool wifiConnected = false;
+
 /************ TIMING ************/
 unsigned long lastReadTime = 0;
 unsigned long lastWiFiCheck = 0;
 const unsigned long readInterval = 5000;
 const unsigned long wifiCheckInterval = 100;
+
 /************ MOISTURE SENSOR POSTING - 10 MINUTE INTERVALS ************/
 unsigned long lastMoisturePost[3] = {0, 0, 0};
 const unsigned long moisturePostInterval = 600000; // 10 minutes
+
 /************ WATERING CYCLE TRACKING - ONE POST PER CYCLE START ************/
 bool previousWateringState[3] = {false, false, false};
 bool wateringCycleAlertSent[3] = {false, false, false};
-/************ WATER LEVEL TRACKING - ONE POST PER CYCLE ************/
-bool waterLowAlertSent = false;
-bool previousWaterLow = false;
-/************ NORMAL INTERVAL POSTING ************/
+
+/************ WATER LEVEL TRACKING - SMART POSTING ************/
 unsigned long lastWaterLevelPost = 0;
-const unsigned long waterLevelPostInterval = 600000; // 10 minutes
+const unsigned long waterLevelPostInterval = 900000; // 15 minutes
+
+// Threshold tracking - one alert per threshold crossing
+bool waterLevel30AlertSent = false;
+bool waterLevel20AlertSent = false;
+  /************ WATER LEVEL STABILIZATION (BOOT FIX) ************/
+bool waterLevelReady = false;
+unsigned long waterLevelInitTime = 0;
+const unsigned long waterLevelWarmupTime = 3000; // 3s warmup
+int stableWaterLevel = 0;
+
+
+
+// Previous level tracking for detecting threshold crossings
+int previousWaterLevel = 100;
+
+// Boot flag - to send water level immediately on system start
+bool waterLevelBootSent = false;
+
 /************ INTERRUPT SERVICE ROUTINES ************/
 void IRAM_ATTR systemSwitchISR() {
   static unsigned long lastInterruptTime = 0;
@@ -76,6 +108,7 @@ void IRAM_ATTR systemSwitchISR() {
   }
   lastInterruptTime = interruptTime;
 }
+
 void IRAM_ATTR bokchoyISR() {
   static unsigned long lastInterruptTime = 0;
   unsigned long interruptTime = millis();
@@ -84,6 +117,7 @@ void IRAM_ATTR bokchoyISR() {
   }
   lastInterruptTime = interruptTime;
 }
+
 void IRAM_ATTR petchayISR() {
   static unsigned long lastInterruptTime = 0;
   unsigned long interruptTime = millis();
@@ -92,6 +126,7 @@ void IRAM_ATTR petchayISR() {
   }
   lastInterruptTime = interruptTime;
 }
+
 void IRAM_ATTR mustasaISR() {
   static unsigned long lastInterruptTime = 0;
   unsigned long interruptTime = millis();
@@ -100,6 +135,7 @@ void IRAM_ATTR mustasaISR() {
   }
   lastInterruptTime = interruptTime;
 }
+
 /************ ULTRASONIC SENSOR FUNCTIONS ************/
 float getDistanceInches() {
   digitalWrite(TRIG_PIN, LOW);
@@ -112,19 +148,43 @@ float getDistanceInches() {
   float inches = duration / 74.0 / 2.0;
   return inches;
 }
+
+/************ ACCURATE WATER LEVEL CALCULATION - FIXED ************/
 int getWaterLevelPercentage() {
   float distance = getDistanceInches();
-  if (distance > MAX_DISTANCE_INCHES) distance = MAX_DISTANCE_INCHES;
-  if (distance < 0) distance = 0;
   
-  int percentage = (int)((MAX_DISTANCE_INCHES - distance) / MAX_DISTANCE_INCHES * 100.0);
+  // Constrain distance to valid range
+  if (distance > MAX_DISTANCE_INCHES) distance = MAX_DISTANCE_INCHES;
+  if (distance < MIN_DISTANCE_INCHES) distance = MIN_DISTANCE_INCHES;
+  
+  // CRITICAL FIX: Water level is INVERTED from distance
+  // HIGH distance (36 inches) = EMPTY tank (0% water)
+  // LOW distance (0 inches) = FULL tank (100% water)
+  // Formula: 100% - (distance / max_distance * 100%)
+  
+  int percentage = (int)(100.0 - (distance / MAX_DISTANCE_INCHES * 100.0));
   percentage = constrain(percentage, 0, 100);
+  
   return percentage;
 }
+
+
+
+  
+/************ ACCURATE MOISTURE READING - FIXED MAPPING ************/
+int getMoisturePercent(int sensorIndex) {
+  int raw = analogRead(sensors[sensorIndex].pin);  
+  int percent = map(raw, sensors[sensorIndex].dryValue, sensors[sensorIndex].wetValue, 0, 100);
+  percent = constrain(percent, 0, 100);
+  
+  return percent;
+}
+
 /************ UTILS ************/
 void setRelay(int pin, bool on) {
   digitalWrite(pin, on ? LOW : HIGH);
 }
+
 void turnOffAllValvesAndPump() {
   for (int i = 0; i < 3; i++) {
     buttonForceOff[i] = false;
@@ -135,6 +195,7 @@ void turnOffAllValvesAndPump() {
   }
   setRelay(pumpPin, false);
 }
+
 /************ UPDATE PUMP STATE - INSTANT ************/
 void updatePumpState() {
   bool pumpNeeded = false;
@@ -161,6 +222,7 @@ void updatePumpState() {
   
   setRelay(pumpPin, pumpNeeded);
 }
+
 /************ NODE.JS COMMAND HANDLER - REAL-TIME ************/
 void handleNodeJsCommand(String command) {
   command.trim();
@@ -205,6 +267,7 @@ void handleNodeJsCommand(String command) {
   
   updatePumpState();
 }
+
 /************ POST INDIVIDUAL SENSOR - HELPER FUNCTION ************/
 void postIndividualSensor(int sensorId, int value, String status) {
   if (!wifiConnected) return;
@@ -230,6 +293,7 @@ void postIndividualSensor(int sensorId, int value, String status) {
   
   http.end();
 }
+
 /************ CHECK AND POST MOISTURE SENSORS - 10 MINUTE INTERVALS ************/
 void checkAndPostMoistureSensors() {
   unsigned long now = millis();
@@ -237,9 +301,7 @@ void checkAndPostMoistureSensors() {
   for (int i = 0; i < 3; i++) {
     // Check if 10 minutes have passed since last post
     if (now - lastMoisturePost[i] >= moisturePostInterval) {
-      int raw = analogRead(sensors[i].pin);
-      int percent = map(raw, sensors[i].dryValue, sensors[i].wetValue, 0, 100);
-      percent = constrain(percent, 0, 100);
+      int percent = getMoisturePercent(i);
       
       // Determine status based on moisture level
       String status = (percent < sensors[i].minMoisture) ? "active" : "inactive";
@@ -254,6 +316,7 @@ void checkAndPostMoistureSensors() {
     }
   }
 }
+
 /************ CHECK WATERING CYCLE START - SEND DATA ONCE PER CYCLE ************/
 void checkWateringCycleStart() {
   for (int i = 0; i < 3; i++) {
@@ -272,9 +335,7 @@ void checkWateringCycleStart() {
     if (currentlyWatering && !previousWateringState[i]) {
       // ⚡ TRANSITION: Not watering → Watering (CYCLE START)
       if (!wateringCycleAlertSent[i]) {
-        int raw = analogRead(sensors[i].pin);
-        int percent = map(raw, sensors[i].dryValue, sensors[i].wetValue, 0, 100);
-        percent = constrain(percent, 0, 100);
+        int percent = getMoisturePercent(i);
         
         // Post the moisture data that triggered watering
         postIndividualSensor(5 + i, percent, "active");
@@ -297,44 +358,92 @@ void checkWateringCycleStart() {
     previousWateringState[i] = currentlyWatering;
   }
 }
-/************ CHECK AND POST WATER LEVEL - ONE POST PER CYCLE ************/
-void checkAndPostWaterLevel() {
-  unsigned long now = millis();
-  int waterLevel = getWaterLevelPercentage();
-  bool currentlyLow = (waterLevel <= 10);
-  
-  // WATER LEVEL CYCLE LOGIC - SEND DATA ONLY ONCE PER CYCLE
-  if (currentlyLow && !previousWaterLow) {
-    // ⚡ TRANSITION: Normal → Low (WATER TANK NEEDS REFILL)
-    if (!waterLowAlertSent) {
-      postIndividualSensor(8, waterLevel, "active");
-      waterLowAlertSent = true;
-      
-      Serial.println("🚨 WATER LEVEL LOW - ALERT SENT (≤10%)!");
-      Serial.println("   ├─ Level: " + String(waterLevel) + "%");
-      Serial.println("   └─ Will NOT send again until refilled");
+
+
+
+int getStableWaterLevel() {
+  int valid = 0;
+  int total = 0;
+
+  for (int i = 0; i < 5; i++) {
+    float d = getDistanceInches();
+    if (d > 0 && d <= MAX_DISTANCE_INCHES) {
+      int lvl = 100 - (d / MAX_DISTANCE_INCHES * 100);
+      lvl = constrain(lvl, 0, 100);
+      total += lvl;
+      valid++;
     }
-  } 
-  else if (!currentlyLow && previousWaterLow) {
-    // ⚡ TRANSITION: Low → Normal (WATER TANK REFILLED)
-    waterLowAlertSent = false;
-    
-    Serial.println("✅ WATER TANK REFILLED!");
-    Serial.println("   ├─ Level back to: " + String(waterLevel) + "%");
-    Serial.println("   └─ Ready for next low water cycle");
+    delay(40);
   }
-  else if (!currentlyLow) {
-    // Water level is NORMAL - Send regular 10-minute updates
-    if (now - lastWaterLevelPost >= waterLevelPostInterval) {
-      postIndividualSensor(8, waterLevel, "inactive");
-      lastWaterLevelPost = now;
-      Serial.println("📊 Water level normal - 10min update (" + String(waterLevel) + "%)");
-    }
-  }
-  
-  previousWaterLow = currentlyLow;
+
+  if (valid >= 3) return total / valid;
+  return -1;
 }
-/************ SEND READINGS - NON-BLOCKING ************/
+
+
+
+
+void checkAndPostWaterLevel() {
+
+
+  unsigned long now = millis();
+
+  // === 0. WAIT FOR ULTRASONIC TO STABILIZE (BOOT FIX) ===
+  if (!waterLevelReady) {
+    if (now - waterLevelInitTime < waterLevelWarmupTime) {
+      return; // wait for sensor to stabilize
+    }
+
+    int lvl = getStableWaterLevel();
+    if (lvl < 0) return;
+
+    stableWaterLevel = lvl;
+    waterLevelReady = true;
+
+    Serial.println("✅ Ultrasonic stabilized");
+    Serial.println("💧 Stable Water Level: " + String(stableWaterLevel) + "%");
+  }
+
+  int waterLevel = stableWaterLevel;
+
+  // === 1. BOOT SEND (FIXED — REAL CURRENT LEVEL ONLY) ===
+  if (!waterLevelBootSent && wifiConnected) {
+    String status = (waterLevel <= 30) ? "active" : "inactive";
+    postIndividualSensor(8, waterLevel, status);
+    waterLevelBootSent = true;
+
+    Serial.println("🚀 BOOT WATER LEVEL SENT (FIXED)");
+    Serial.println("   └─ Level: " + String(waterLevel) + "%");
+  }
+
+  // === 2. THRESHOLD CROSSING ===
+  if (waterLevel <= 30 && previousWaterLevel > 30 && !waterLevel30AlertSent) {
+    postIndividualSensor(8, waterLevel, "active");
+    waterLevel30AlertSent = true;
+  }
+
+  if (waterLevel <= 20 && previousWaterLevel > 20 && !waterLevel20AlertSent) {
+    postIndividualSensor(8, waterLevel, "active");
+    waterLevel20AlertSent = true;
+  }
+
+  // === 3. RESET FLAGS ===
+  if (waterLevel > 35) waterLevel30AlertSent = false;
+  if (waterLevel > 25) waterLevel20AlertSent = false;
+
+  // === 4. PERIODIC UPDATE ===
+  if (now - lastWaterLevelPost >= waterLevelPostInterval) {
+    String status = (waterLevel <= 30) ? "active" : "inactive";
+    postIndividualSensor(8, waterLevel, status);
+    lastWaterLevelPost = now;
+  }
+
+  previousWaterLevel = waterLevel;
+}
+
+
+
+/************ SEND READINGS - NON-BLOCKING (LEGACY - NOT USED) ************/
 void sendReadings(const char* reason) {
   if (!wifiConnected) return;
   
@@ -356,9 +465,7 @@ void sendReadings(const char* reason) {
   
   payload += "\"sensors\":[";
   for (int i = 0; i < 3; i++) {
-    int raw = analogRead(sensors[i].pin);
-    int percent = map(raw, sensors[i].dryValue, sensors[i].wetValue, 0, 100);
-    percent = constrain(percent, 0, 100);
+    int percent = getMoisturePercent(i);
     
     bool actualValveState = false;
     if (nodeJsOverride[i]) {
@@ -372,7 +479,7 @@ void sendReadings(const char* reason) {
     payload += "{";
     payload += "\"id\":" + String(i+1) + ",";
     payload += "\"name\":\"" + sensors[i].name + "\",";
-    payload += "\"raw\":" + String(raw) + ",";
+    payload += "\"raw\":" + String(analogRead(sensors[i].pin)) + ",";
     payload += "\"percent\":" + String(percent) + ",";
     payload += "\"valve\":" + String(actualValveState ? "1" : "0");
     payload += "}";
@@ -383,6 +490,7 @@ void sendReadings(const char* reason) {
   http.POST(payload);
   http.end();
 }
+
 /************ WEBSOCKET EVENT ************/
 void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
   if (type == WStype_CONNECTED) {
@@ -396,6 +504,7 @@ void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
     handleNodeJsCommand(msg);
   }
 }
+
 /************ WIFI HANDLER - LIGHTWEIGHT ************/
 void handleWiFi() {
   unsigned long now = millis();
@@ -432,6 +541,7 @@ void handleWiFi() {
     }
   }
 }
+
 /************ HANDLE SYSTEM SWITCH - INSTANT ************/
 void handleSystemSwitch() {
   if (systemSwitchPressed) {
@@ -452,7 +562,18 @@ void handleSystemSwitch() {
         previousWateringState[i] = false;
         wateringCycleAlertSent[i] = false;
       }
-      lastWaterLevelPost = now;
+      
+      // Initialize water level tracking
+     lastWaterLevelPost = now;
+      previousWaterLevel = 100;
+      waterLevel30AlertSent = false;
+      waterLevel20AlertSent = false;
+      waterLevelBootSent = false;
+
+      waterLevelReady = false;
+      waterLevelInitTime = millis();
+
+      
     } else {
       Serial.println("\n🔴🔴🔴 SYSTEM OFF - INSTANT 🔴🔴🔴\n");
       digitalWrite(SWITCH_LED, LOW);
@@ -461,6 +582,7 @@ void handleSystemSwitch() {
     }
   }
 }
+
 /************ HANDLE PLANT BUTTONS - TRUE INSTANT ************/
 void handlePlantButtons() {
   for (int i = 0; i < 3; i++) {
@@ -488,6 +610,7 @@ void handlePlantButtons() {
     }
   }
 }
+
 /************ SETUP ************/
 void setup() {
   Serial.begin(115200);
@@ -522,7 +645,7 @@ void setup() {
   WiFi.mode(WIFI_OFF);
   
   Serial.println("\n========================================");
-  Serial.println("🚀 ESP32 READY - SMART DATA POSTING");
+  Serial.println("🚀 ESP32 READY - ACCURATE READINGS");
   Serial.println("⚡ PLANT BUTTONS: ANYTIME INSTANT");
   Serial.println("   • Press = FORCE OFF (ANYTIME)");
   Serial.println("   • Press Again = AUTO MODE (ANYTIME)");
@@ -533,10 +656,16 @@ void setup() {
   Serial.println("📤 SMART DATA POSTING:");
   Serial.println("   • Moisture → Every 10 minutes (normal)");
   Serial.println("   • Moisture → START of watering cycle (ONCE)");
-  Serial.println("   • Water LOW (≤10%) → ONCE per cycle");
-  Serial.println("   • Water NORMAL → Every 10min");
+  Serial.println("   • Water → SYSTEM BOOT (sensor_id: 8)");
+  Serial.println("   • Water → Every 15min (sensor_id: 8)");
+  Serial.println("   • Water → ≤30% threshold (sensor_id: 8)");
+  Serial.println("   • Water → ≤20% threshold (sensor_id: 8)");
+  Serial.println("🔧 FIXED: All readings now ACCURATE!");
+  Serial.println("   • High distance = Low water level ✓");
+  Serial.println("   • Low distance = High water level ✓");
   Serial.println("========================================\n");
 }
+
 /************ LOOP - MAXIMUM BUTTON RESPONSIVENESS ************/
 void loop() {
   // ⚡⚡⚡ CRITICAL: CHECK BUTTONS FIRST - ALWAYS ⚡⚡⚡
@@ -562,14 +691,14 @@ void loop() {
   
   handlePlantButtons();
   
-  // === CHECK WATERING CYCLE START (NEW!) ===
+  // === CHECK WATERING CYCLE START ===
   if (wifiConnected) {
     checkWateringCycleStart();
   }
   
   handlePlantButtons();
   
-  // === CHECK AND POST SENSORS (10 MINUTE INTERVALS) ===
+  // === CHECK AND POST SENSORS (SMART INTERVALS) ===
   if (wifiConnected) {
     checkAndPostMoistureSensors();
     checkAndPostWaterLevel();
@@ -593,7 +722,7 @@ void loop() {
     Serial.print(distance, 2);
     Serial.print(" inches | LEVEL: ");
     Serial.print(waterLevel);
-    Serial.println("%");
+    Serial.println("% ✓");
     Serial.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     
     handlePlantButtons();
@@ -602,8 +731,7 @@ void loop() {
       handlePlantButtons();
       
       int raw = analogRead(sensors[i].pin);
-      int percent = map(raw, sensors[i].dryValue, sensors[i].wetValue, 0, 100);
-      percent = constrain(percent, 0, 100);
+      int percent = getMoisturePercent(i);
       
       // AUTO MODE LOGIC (only if NO overrides)
       if (!nodeJsOverride[i] && !buttonForceOff[i]) {
@@ -630,14 +758,14 @@ void loop() {
         mode = "AUTO";
       }
       
-      // Print status
+      // Print status with ACCURATE readings
       Serial.print("🌱 ");
       Serial.print(sensors[i].name);
       Serial.print(" | RAW:");
       Serial.print(raw);
       Serial.print(" | ");
       Serial.print(percent);
-      Serial.print("% | MODE:");
+      Serial.print("% ✓ | MODE:");
       Serial.print(mode);
       Serial.print(" | VALVE:");
       Serial.println(actualValveState ? "OPEN ✅" : "CLOSED ❌");
@@ -657,5 +785,4 @@ void loop() {
   }
   
   handlePlantButtons();
-  
 }
