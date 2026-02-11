@@ -54,7 +54,7 @@ volatile bool systemEnabled = false;
 volatile bool systemSwitchPressed = false;
 volatile bool plantBtnPressed[3] = {false, false, false};
 
-bool buttonForceOff[3] = {false, false, false};  // NEW: Simple force off state
+bool buttonForceOff[3] = {false, false, false};
 bool wateringState[3] = {false, false, false};
 
 // Node.js remote control override
@@ -69,6 +69,18 @@ unsigned long lastReadTime = 0;
 unsigned long lastWiFiCheck = 0;
 const unsigned long readInterval = 5000;
 const unsigned long wifiCheckInterval = 100;
+
+/************ INDIVIDUAL SENSOR POST TIMING ************/
+unsigned long lastMoisturePost[3] = {0, 0, 0};
+unsigned long lastWaterLevelPost = 0;
+const unsigned long moisturePostInterval = 600000; // 10 minutes
+const unsigned long waterLevelPostInterval = 600000; // 10 minutes
+
+bool lastMoistureLowState[3] = {false, false, false};
+bool lowMoistureAlertSent[3] = {false, false, false};
+
+bool lastWaterLevelLowState = false;
+bool lowWaterLevelAlertSent = false;
 
 /************ INTERRUPT SERVICE ROUTINES ************/
 void IRAM_ATTR systemSwitchISR() {
@@ -164,9 +176,9 @@ void updatePumpState() {
     if (nodeJsOverride[i]) {
       valveOpen = !nodeJsForceOff[i];
     } else if (buttonForceOff[i]) {
-      valveOpen = false;  // Button forces valve OFF
+      valveOpen = false;
     } else {
-      valveOpen = wateringState[i];  // Auto mode
+      valveOpen = wateringState[i];
     }
     
     // Apply valve state IMMEDIATELY
@@ -189,7 +201,7 @@ void handleNodeJsCommand(String command) {
   if (command == "BOKCHOY_OFF") {
     nodeJsOverride[0] = true;
     nodeJsForceOff[0] = true;
-    buttonForceOff[0] = false;  // Clear button override
+    buttonForceOff[0] = false;
     Serial.println("🔴 NODE.JS → BOKCHOY FORCED OFF ⚡");
     
   } else if (command == "BOKCHOY_AUTO") {
@@ -228,6 +240,117 @@ void handleNodeJsCommand(String command) {
   }
   
   updatePumpState();
+}
+
+/************ INDIVIDUAL SENSOR POST FUNCTIONS ************/
+void postIndividualSensor(int sensorId, int value, String status) {
+  if (!wifiConnected) return;
+
+  HTTPClient http;
+  http.setTimeout(500);
+  http.begin(apiUrl);
+  http.addHeader("Content-Type", "application/json");
+
+  String payload = "{";
+  payload += "\"sensor_id\":" + String(sensorId) + ",";
+  payload += "\"value\":" + String(value) + ",";
+  payload += "\"status\":\"" + status + "\"";
+  payload += "}";
+
+  int httpCode = http.POST(payload);
+  
+  if (httpCode > 0) {
+    Serial.println("✅ Posted sensor_id " + String(sensorId) + " | Value: " + String(value) + " | Status: " + status);
+  } else {
+    Serial.println("❌ Failed to post sensor_id " + String(sensorId));
+  }
+  
+  http.end();
+}
+
+void checkAndPostMoistureSensors() {
+  unsigned long now = millis();
+  
+  for (int i = 0; i < 3; i++) {
+    int raw = analogRead(sensors[i].pin);
+    int percent = map(raw, sensors[i].dryValue, sensors[i].wetValue, 0, 100);
+    percent = constrain(percent, 0, 100);
+    
+    bool isLowMoisture = (percent < sensors[i].minMoisture);
+    
+    // WATERING CYCLE LOGIC:
+    // Step 1: Moisture becomes LOW → Send alert ONCE
+    // Step 2: System waters → Moisture goes back to NORMAL
+    // Step 3: Flag resets → Ready for next cycle
+    // Step 4: Moisture becomes LOW again → Send new alert
+    
+    if (isLowMoisture) {
+      // Moisture is currently LOW
+      if (!lastMoistureLowState[i]) {
+        // TRANSITION: Normal → Low (START OF NEW WATERING CYCLE)
+        if (!lowMoistureAlertSent[i]) {
+          int sensorId = 5 + i;
+          postIndividualSensor(sensorId, percent, "active");
+          lowMoistureAlertSent[i] = true;
+          Serial.println("🚨 " + sensors[i].name + " MOISTURE LOW - ALERT SENT (Watering Cycle Started)!");
+        }
+      }
+      // else: Moisture is STILL low (already sent alert, don't send again)
+    } else {
+      // Moisture is currently NORMAL
+      if (lastMoistureLowState[i]) {
+        // TRANSITION: Low → Normal (END OF WATERING CYCLE)
+        lowMoistureAlertSent[i] = false; // Reset flag for next cycle
+        Serial.println("✅ " + sensors[i].name + " moisture back to NORMAL - ready for next cycle");
+      }
+      
+      // Regular 10-minute posting when moisture is normal
+      if (now - lastMoisturePost[i] >= moisturePostInterval) {
+        int sensorId = 5 + i;
+        postIndividualSensor(sensorId, percent, "inactive");
+        lastMoisturePost[i] = now;
+        Serial.println("📊 " + sensors[i].name + " normal moisture - 10min update");
+      }
+    }
+    
+    lastMoistureLowState[i] = isLowMoisture;
+  }
+}
+
+void checkAndPostWaterLevel() {
+  unsigned long now = millis();
+  int waterLevel = getWaterLevelPercentage();
+  
+  bool isLowWater = (waterLevel <= 10);
+  
+  if (isLowWater) {
+    // Water level is currently LOW
+    if (!lastWaterLevelLowState) {
+      // TRANSITION: Normal → Low
+      if (!lowWaterLevelAlertSent) {
+        postIndividualSensor(8, waterLevel, "active");
+        lowWaterLevelAlertSent = true;
+        Serial.println("🚨 WATER LEVEL LOW (≤10%) - ALERT SENT!");
+      }
+    }
+    // else: Water is STILL low (already sent alert, don't send again)
+  } else {
+    // Water level is currently NORMAL
+    if (lastWaterLevelLowState) {
+      // TRANSITION: Low → Normal
+      lowWaterLevelAlertSent = false; // Reset flag
+      Serial.println("✅ Water level back to NORMAL");
+    }
+    
+    // Regular 10-minute posting when water is normal
+    if (now - lastWaterLevelPost >= waterLevelPostInterval) {
+      postIndividualSensor(8, waterLevel, "inactive");
+      lastWaterLevelPost = now;
+      Serial.println("📊 Water level normal - 10min update");
+    }
+  }
+  
+  lastWaterLevelLowState = isLowWater;
 }
 
 /************ SEND READINGS - NON-BLOCKING ************/
@@ -355,7 +478,7 @@ void handleSystemSwitch() {
   }
 }
 
-/************ HANDLE PLANT BUTTONS - INSTANT TOGGLE ************/
+/************ HANDLE PLANT BUTTONS - TRUE INSTANT ************/
 void handlePlantButtons() {
   for (int i = 0; i < 3; i++) {
     if (plantBtnPressed[i]) {
@@ -417,36 +540,56 @@ void setup() {
   WiFi.mode(WIFI_OFF);
 
   Serial.println("\n========================================");
-  Serial.println("🚀 ESP32 READY - INSTANT MODE");
-  Serial.println("⚡ PLANT BUTTONS: 1-CLICK TOGGLE");
-  Serial.println("   • Press = FORCE OFF");
-  Serial.println("   • Press Again = AUTO MODE");
+  Serial.println("🚀 ESP32 READY - WATERING CYCLE MODE");
+  Serial.println("⚡ PLANT BUTTONS: ANYTIME INSTANT");
+  Serial.println("   • Press = FORCE OFF (ANYTIME)");
+  Serial.println("   • Press Again = AUTO MODE (ANYTIME)");
   Serial.println("📡 WiFi: ONLY WHEN SYSTEM ON");
   Serial.println("🤖 SENSORS: AUTO (5s cycle)");
   Serial.println("💧 ULTRASONIC: TRIG=16, ECHO=17");
   Serial.println("🌐 NODE.JS COMMANDS: REAL-TIME");
+  Serial.println("📤 INDIVIDUAL POSTS:");
+  Serial.println("   • Moisture LOW: ONCE per watering cycle");
+  Serial.println("   • Moisture NORMAL: Every 10min");
+  Serial.println("   • Water LOW (≤10%): ONCE per cycle");
+  Serial.println("   • Water NORMAL: Every 10min");
   Serial.println("========================================\n");
 }
 
-/************ LOOP - OPTIMIZED FOR INSTANT RESPONSE ************/
+/************ LOOP - MAXIMUM BUTTON RESPONSIVENESS ************/
 void loop() {
-  // ⚡⚡⚡ ABSOLUTE PRIORITY - INSTANT RESPONSE ⚡⚡⚡
-  handleSystemSwitch();
+  // ⚡⚡⚡ CRITICAL: CHECK BUTTONS FIRST - ALWAYS ⚡⚡⚡
   handlePlantButtons();
+  handleSystemSwitch();
 
   if (!systemEnabled) {
     turnOffAllValvesAndPump();
     handleWiFi();
-    delay(10);
+    handlePlantButtons(); // Check again before delay
+    delay(1); // Minimal delay
     return;
   }
 
   // === SYSTEM IS ON ===
+  
+  // Check buttons between every operation
+  handlePlantButtons();
   handleWiFi();
   
+  handlePlantButtons();
   if (wifiConnected) {
     webSocket.loop();
   }
+
+  handlePlantButtons();
+
+  // === CHECK AND POST INDIVIDUAL SENSORS ===
+  if (wifiConnected) {
+    checkAndPostMoistureSensors();
+    checkAndPostWaterLevel();
+  }
+
+  handlePlantButtons();
 
   // === SENSOR READING - EVERY 5s ===
   if (millis() - lastReadTime >= readInterval) {
@@ -455,6 +598,8 @@ void loop() {
     Serial.println("\n📊 SENSOR READING (5s update):");
     Serial.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
+    handlePlantButtons(); // Check before ultrasonic read
+    
     float distance = getDistanceInches();
     int waterLevel = getWaterLevelPercentage();
     
@@ -465,7 +610,11 @@ void loop() {
     Serial.println("%");
     Serial.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
+    handlePlantButtons(); // Check before sensor loop
+
     for (int i = 0; i < 3; i++) {
+      handlePlantButtons(); // Check during each sensor read
+      
       int raw = analogRead(sensors[i].pin);
       int percent = map(raw, sensors[i].dryValue, sensors[i].wetValue, 0, 100);
       percent = constrain(percent, 0, 100);
@@ -509,6 +658,8 @@ void loop() {
       Serial.println(actualValveState ? "OPEN ✅" : "CLOSED ❌");
     }
 
+    handlePlantButtons(); // Check after sensor reads
+
     // Update all valve states based on current logic
     updatePumpState();
 
@@ -516,13 +667,15 @@ void loop() {
     bool pumpOn = digitalRead(pumpPin) == LOW;
     Serial.println(pumpOn ? "ON ✅" : "OFF ❌");
 
+    handlePlantButtons(); // Check before HTTP POST
+
     if (wifiConnected) {
       sendReadings("PERIODIC");
     }
     
     Serial.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-    
-  }  
+  }
+
+  // Final button check before loop repeats
+  handlePlantButtons();
 }
-
-

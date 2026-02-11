@@ -9,9 +9,9 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
 
   if (!isOpen) return null;
   const plantOptions = [
-    { name: "Bokchoy", min: 45, max: 70 },
-    { name: "Pechay", min: 50, max: 75 },
-    { name: "Mustasa", min: 45, max: 70 },
+    { name: "Bokchoy", min: 50, max: 70 },
+    { name: "Pechay", min: 50, max: 70 },
+    { name: "Mustasa", min: 55, max: 70 },
     { name: "Lettuce", min: 50, max: 75 },
     { name: "Spinach", min: 50, max: 75 },
     { name: "Kangkong", min: 55, max: 80 },
@@ -21,6 +21,7 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
     { name: "Cucumber", min: 50, max: 75 },
     { name: "Bell Pepper", min: 45, max: 75 }
   ];
+  
 
   const [formData, setFormData] = useState({
     tray_group_name: "",

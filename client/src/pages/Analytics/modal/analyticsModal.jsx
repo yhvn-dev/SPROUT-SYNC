@@ -48,14 +48,9 @@ function AnalyticsModal({ isModalOpen, onClose,reloadReadings}) {
                   Delete
                 </button>
               </div>
-              
-  
         </div>
         
       </main>
-      
-      
-
     </section>
   );
 }
