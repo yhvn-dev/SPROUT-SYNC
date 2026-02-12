@@ -80,11 +80,6 @@
         setInfoModalOpen(true)
     }
 
-
-
-
-
-
     
     return (
       <section className="con_main users grid grid-cols-1 sm:grid-cols-[12fr_30fr_58fr] 

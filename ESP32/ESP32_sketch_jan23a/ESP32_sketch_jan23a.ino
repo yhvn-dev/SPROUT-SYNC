@@ -78,25 +78,22 @@ const unsigned long moisturePostInterval = 600000; // 10 minutes
 bool previousWateringState[3] = {false, false, false};
 bool wateringCycleAlertSent[3] = {false, false, false};
 
-/************ WATER LEVEL TRACKING - SMART POSTING ************/
+/************ WATER LEVEL TRACKING - SMART POSTING WITH STABILIZATION ************/
 unsigned long lastWaterLevelPost = 0;
 const unsigned long waterLevelPostInterval = 900000; // 15 minutes
+
+// Water level stabilization - wait for first 5s reading before sending ANY data
+bool waterLevelFirstReadingDone = false;
+int stableWaterLevel = 0;
 
 // Threshold tracking - one alert per threshold crossing
 bool waterLevel30AlertSent = false;
 bool waterLevel20AlertSent = false;
-  /************ WATER LEVEL STABILIZATION (BOOT FIX) ************/
-bool waterLevelReady = false;
-unsigned long waterLevelInitTime = 0;
-const unsigned long waterLevelWarmupTime = 3000; // 3s warmup
-int stableWaterLevel = 0;
-
-
 
 // Previous level tracking for detecting threshold crossings
 int previousWaterLevel = 100;
 
-// Boot flag - to send water level immediately on system start
+// Boot flag - to send water level AFTER first stable reading
 bool waterLevelBootSent = false;
 
 /************ INTERRUPT SERVICE ROUTINES ************/
@@ -168,9 +165,6 @@ int getWaterLevelPercentage() {
   return percentage;
 }
 
-
-
-  
 /************ ACCURATE MOISTURE READING - FIXED MAPPING ************/
 int getMoisturePercent(int sensorIndex) {
   int raw = analogRead(sensors[sensorIndex].pin);  
@@ -196,10 +190,29 @@ void turnOffAllValvesAndPump() {
   setRelay(pumpPin, false);
 }
 
-/************ UPDATE PUMP STATE - INSTANT ************/
+/************ UPDATE PUMP STATE - WITH WATER LEVEL CHECK ************/
 void updatePumpState() {
   bool pumpNeeded = false;
   
+  // ⚠️ NEW: Check water level - disable pump if water level <= 20%
+  int currentWaterLevel = getWaterLevelPercentage();
+  
+  if (currentWaterLevel <= 20) {
+    // Water level too low - force all valves closed and pump off
+    for (int i = 0; i < 3; i++) {
+      setRelay(sensors[i].valvePin, false);
+    }
+    setRelay(pumpPin, false);
+    
+    static unsigned long lastLowWaterWarning = 0;
+    if (millis() - lastLowWaterWarning > 30000) { // Print warning every 30 seconds
+      Serial.println("⚠️⚠️⚠️ WATER LEVEL TOO LOW (" + String(currentWaterLevel) + "%) - PUMP DISABLED ⚠️⚠️⚠️");
+      lastLowWaterWarning = millis();
+    }
+    return;
+  }
+  
+  // Water level OK (>20%) - normal operation
   for (int i = 0; i < 3; i++) {
     bool valveOpen = false;
     
@@ -359,89 +372,75 @@ void checkWateringCycleStart() {
   }
 }
 
-
-
-int getStableWaterLevel() {
-  int valid = 0;
-  int total = 0;
-
-  for (int i = 0; i < 5; i++) {
-    float d = getDistanceInches();
-    if (d > 0 && d <= MAX_DISTANCE_INCHES) {
-      int lvl = 100 - (d / MAX_DISTANCE_INCHES * 100);
-      lvl = constrain(lvl, 0, 100);
-      total += lvl;
-      valid++;
-    }
-    delay(40);
-  }
-
-  if (valid >= 3) return total / valid;
-  return -1;
-}
-
-
-
-
+/************ CHECK AND POST WATER LEVEL - WAITS FOR FIRST 5S READING ************/
 void checkAndPostWaterLevel() {
-
-
-  unsigned long now = millis();
-
-  // === 0. WAIT FOR ULTRASONIC TO STABILIZE (BOOT FIX) ===
-  if (!waterLevelReady) {
-    if (now - waterLevelInitTime < waterLevelWarmupTime) {
-      return; // wait for sensor to stabilize
-    }
-
-    int lvl = getStableWaterLevel();
-    if (lvl < 0) return;
-
-    stableWaterLevel = lvl;
-    waterLevelReady = true;
-
-    Serial.println("✅ Ultrasonic stabilized");
-    Serial.println("💧 Stable Water Level: " + String(stableWaterLevel) + "%");
+  // === CRITICAL FIX: WAIT FOR FIRST STABLE READING (5s cycle) ===
+  if (!waterLevelFirstReadingDone) {
+    // Don't send ANY water level data until we have the first stable reading
+    Serial.println("⏳ Waiting for first water level reading (5s cycle)...");
+    return;
   }
-
+  
+  unsigned long now = millis();
   int waterLevel = stableWaterLevel;
-
-  // === 1. BOOT SEND (FIXED — REAL CURRENT LEVEL ONLY) ===
+  
+  // === 1. BOOT SEND - USING FIRST STABLE READING ===
   if (!waterLevelBootSent && wifiConnected) {
     String status = (waterLevel <= 30) ? "active" : "inactive";
     postIndividualSensor(8, waterLevel, status);
     waterLevelBootSent = true;
-
-    Serial.println("🚀 BOOT WATER LEVEL SENT (FIXED)");
-    Serial.println("   └─ Level: " + String(waterLevel) + "%");
+    
+    Serial.println("🚀 BOOT WATER LEVEL SENT (STABLE READING)");
+    Serial.println("   └─ Level: " + String(waterLevel) + "% ✓");
+    
+    // ⚡ NEW FIX: CHECK AND SEND THRESHOLD ALERTS AT BOOT TIME (ONE TIME ONLY)
+    if (waterLevel <= 30) {
+      if (!waterLevel30AlertSent) {
+        postIndividualSensor(8, waterLevel, "active");
+        waterLevel30AlertSent = true;
+        Serial.println("⚠️ BOOT: Water level ≤30% alert sent: " + String(waterLevel) + "% (ONE TIME)");
+      }
+    }
+    
+    if (waterLevel <= 20) {
+      if (!waterLevel20AlertSent) {
+        postIndividualSensor(8, waterLevel, "active");
+        waterLevel20AlertSent = true;
+        Serial.println("🚨 BOOT: Water level ≤20% alert sent: " + String(waterLevel) + "% (ONE TIME)");
+      }
+    }
+    
+    // Set previousWaterLevel for future threshold crossings
+    previousWaterLevel = waterLevel;
   }
-
-  // === 2. THRESHOLD CROSSING ===
+  
+  // === 2. THRESHOLD CROSSING - USING STABLE READING (DURING RUNTIME) ===
   if (waterLevel <= 30 && previousWaterLevel > 30 && !waterLevel30AlertSent) {
     postIndividualSensor(8, waterLevel, "active");
     waterLevel30AlertSent = true;
+    Serial.println("⚠️ RUNTIME: Water level crossed ≤30% threshold: " + String(waterLevel) + "% (ONE TIME)");
   }
-
+  
   if (waterLevel <= 20 && previousWaterLevel > 20 && !waterLevel20AlertSent) {
     postIndividualSensor(8, waterLevel, "active");
     waterLevel20AlertSent = true;
+    Serial.println("🚨 RUNTIME: Water level crossed ≤20% threshold: " + String(waterLevel) + "% (ONE TIME)");
   }
-
-  // === 3. RESET FLAGS ===
+  
+  // === 3. RESET FLAGS WHEN WATER REFILLED ===
   if (waterLevel > 35) waterLevel30AlertSent = false;
   if (waterLevel > 25) waterLevel20AlertSent = false;
-
-  // === 4. PERIODIC UPDATE ===
+  
+  // === 4. PERIODIC UPDATE (15 MINUTES) ===
   if (now - lastWaterLevelPost >= waterLevelPostInterval) {
     String status = (waterLevel <= 30) ? "active" : "inactive";
     postIndividualSensor(8, waterLevel, status);
     lastWaterLevelPost = now;
+    Serial.println("📅 15-minute water level update: " + String(waterLevel) + "%");
   }
-
+  
   previousWaterLevel = waterLevel;
 }
-
-
 
 /************ SEND READINGS - NON-BLOCKING (LEGACY - NOT USED) ************/
 void sendReadings(const char* reason) {
@@ -551,7 +550,7 @@ void handleSystemSwitch() {
     if (systemEnabled) {
       Serial.println("\n🟢🟢🟢 SYSTEM ON - INSTANT 🟢🟢🟢\n");
       digitalWrite(SWITCH_LED, HIGH);
-      lastReadTime = 0;
+      lastReadTime = 0; // Force immediate sensor reading
       WiFi.mode(WIFI_STA);
       wifiShouldBeConnected = true;
       
@@ -563,16 +562,16 @@ void handleSystemSwitch() {
         wateringCycleAlertSent[i] = false;
       }
       
-      // Initialize water level tracking
-     lastWaterLevelPost = now;
+      // === CRITICAL FIX: RESET WATER LEVEL FLAGS ===
+      waterLevelFirstReadingDone = false;  // Wait for first 5s reading
+      stableWaterLevel = 0;
+      lastWaterLevelPost = now;
       previousWaterLevel = 100;
       waterLevel30AlertSent = false;
       waterLevel20AlertSent = false;
       waterLevelBootSent = false;
-
-      waterLevelReady = false;
-      waterLevelInitTime = millis();
-
+      
+      Serial.println("⏳ Water level will be sent after first 5s reading cycle");
       
     } else {
       Serial.println("\n🔴🔴🔴 SYSTEM OFF - INSTANT 🔴🔴🔴\n");
@@ -656,13 +655,17 @@ void setup() {
   Serial.println("📤 SMART DATA POSTING:");
   Serial.println("   • Moisture → Every 10 minutes (normal)");
   Serial.println("   • Moisture → START of watering cycle (ONCE)");
-  Serial.println("   • Water → SYSTEM BOOT (sensor_id: 8)");
+  Serial.println("   • Water → AFTER FIRST 5s READING (sensor_id: 8) ✓");
   Serial.println("   • Water → Every 15min (sensor_id: 8)");
-  Serial.println("   • Water → ≤30% threshold (sensor_id: 8)");
-  Serial.println("   • Water → ≤20% threshold (sensor_id: 8)");
+  Serial.println("   • Water → ≤30% AT BOOT (sensor_id: 8) ✓ NEW FIX");
+  Serial.println("   • Water → ≤20% AT BOOT (sensor_id: 8) ✓ NEW FIX");
+  Serial.println("   • Water → ≤30% THRESHOLD CROSS (sensor_id: 8) ✓");
+  Serial.println("   • Water → ≤20% THRESHOLD CROSS (sensor_id: 8) ✓");
   Serial.println("🔧 FIXED: All readings now ACCURATE!");
   Serial.println("   • High distance = Low water level ✓");
   Serial.println("   • Low distance = High water level ✓");
+  Serial.println("   • Water level waits for 5s reading ✓");
+  Serial.println("⚠️ PUMP DISABLED when water ≤20% ✓");
   Serial.println("========================================\n");
 }
 
@@ -701,7 +704,7 @@ void loop() {
   // === CHECK AND POST SENSORS (SMART INTERVALS) ===
   if (wifiConnected) {
     checkAndPostMoistureSensors();
-    checkAndPostWaterLevel();
+    checkAndPostWaterLevel(); // Now waits for first stable reading
   }
   
   handlePlantButtons();
@@ -718,11 +721,29 @@ void loop() {
     float distance = getDistanceInches();
     int waterLevel = getWaterLevelPercentage();
     
+    // === CRITICAL: CAPTURE STABLE WATER LEVEL FOR POSTING ===
+    stableWaterLevel = waterLevel;
+    if (!waterLevelFirstReadingDone) {
+      waterLevelFirstReadingDone = true;
+      Serial.println("✅ First water level reading captured: " + String(waterLevel) + "%");
+      Serial.println("   └─ Ready to send boot data on next check");
+    }
+    
     Serial.print("💧 WATER TANK | DISTANCE: ");
     Serial.print(distance, 2);
     Serial.print(" inches | LEVEL: ");
     Serial.print(waterLevel);
-    Serial.println("% ✓");
+    Serial.print("% ");
+    
+    // Show water level status
+    if (waterLevel <= 20) {
+      Serial.println("⚠️ CRITICAL - PUMP DISABLED");
+    } else if (waterLevel <= 30) {
+      Serial.println("⚠️ LOW");
+    } else {
+      Serial.println("✓");
+    }
+    
     Serial.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
     
     handlePlantButtons();
@@ -783,6 +804,7 @@ void loop() {
     handlePlantButtons();
     Serial.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
   }
-  
+
   handlePlantButtons();
+
 }

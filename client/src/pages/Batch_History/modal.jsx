@@ -11,7 +11,7 @@ export function Batch_History_Modal({isModalOpen,onClose,selectedBatch,reloadBat
         try {
             await plantBatchHistory.deleteBatchHistory(selectedBatch.history_id);
 
-            setSuccessMsg(`${selectedBatch.plant_name} deleted successfully`);
+            setSuccessMsg(`${selectedBatch.plant_name} Record Deleted Sucessfully`);
             reloadBatchHistory();
             onClose();
 

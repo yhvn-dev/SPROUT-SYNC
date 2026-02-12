@@ -113,40 +113,51 @@ export const getAverageBySensorType = async (req, res) => {
 
 
 
+
+
 export const createReadings = async (req, res) => {
   try {
     const readingData = req.body;
     const { sensor_id, value } = readingData;
 
+    // CHECK SENSOR
     const existingSensor = await sensorModels.readSensorById(sensor_id);
     if (!existingSensor) {
       return res.status(404).json({ message: "Sensor with this id doesn't exist" });
     }
 
-    const { sensor_type } = existingSensor;
+    // CREATE READING
     const reading = await readingModel.createReadings(readingData);
 
-    // **NOTIFICATIONS ARE BONUS** (won't block readings)
+    
+    
     try {
-      if (sensor_type === "moisture") {
+      // ✅ MOISTURE (ALREADY WORKING)
+      if (existingSensor.sensor_type === "moisture") {
         await handleMoistureNotifications(existingSensor, value);
-      } else if (sensor_type === "ultra_sonic") {
+      }
+      
+      if (Number(sensor_id) === 8) {
         await handleUltrasonicNotifications(sensor_id, value);
       }
+
     } catch (notifError) {
       console.error("❌ Notification failed (reading still created):", notifError);
     }
 
-    res.status(201).json(reading);
+
+
+
     console.log("✅ READING CREATED:", reading);
+    res.status(201).json(reading);
+
+
 
   } catch (err) {
     console.error("CONTROLLER: Error creating reading", err);
     res.status(500).json({ message: "Error creating reading" });
   }
 };
-
-
 
 
 
@@ -196,56 +207,30 @@ const handleMoistureNotifications = async (existingSensor, value) => {
 
 
 
-
-
-
-
-const handleUltrasonicNotifications = async (value) => {
+const handleUltrasonicNotifications = async (sensor_id, value) => {
   const waterLevel = Number(value);
-  const maxWaterHeight = 20;
-  const minWaterHeight = 2;
 
-  // CRITICAL HIGH - Overflow
-  if (waterLevel > maxWaterHeight) {
+  if (isNaN(waterLevel)) return;
+  if (waterLevel <= 20) {
     await notificationModels.createNotif({
       type: "Alert",
-      message: `Water Tank is OVERFLOWING (${waterLevel}cm)`,
-      status: "HIGH"
-    });
-  } 
-  // APPROACHING MAX (NEW! - 3cm below max)
-  else if (waterLevel > (maxWaterHeight - 3)) {
-    await notificationModels.createNotif({
-      type: "Info",
-      message: `Water Tank approaching overflow (${waterLevel}cm)`,
-      status: "HIGH"
+      status: "HIGH",
+      related_sensor: sensor_id,
+      message: `🚨 Water level is CRITICALLY LOW (${waterLevel}%)`
     });
   }
-  // CRITICAL LOW - Empty
-  else if (waterLevel < minWaterHeight) {
-    await notificationModels.createNotif({
-      type: "Alert",
-      message: `Water Tank is CRITICALLY LOW (${waterLevel}cm)`,
-      status: "LOW"
-    });
-  } 
-  // WARNING LOW - Getting low (2-5cm)
-  else if (waterLevel < (minWaterHeight + 3)) {
+
+  else if (waterLevel <= 30) {
     await notificationModels.createNotif({
       type: "Warning",
-      message: `Water Tank level is getting low (${waterLevel}cm)`,
-      status: "LOW"
-    });
-  }
-  // APPROACHING MIN (NEW! - 5-8cm)
-  else if (waterLevel < (minWaterHeight + 6)) {
-    await notificationModels.createNotif({
-      type: "Info",
-      message: `Water Tank approaching minimum level (${waterLevel}cm)`,
-      status: "LOW"
+      status: "MEDIUM",
+      related_sensor: sensor_id,
+      message: `⚠️ Water level is LOW (${waterLevel}%)`
     });
   }
 };
+
+
 
 
 

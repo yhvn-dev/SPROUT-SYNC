@@ -166,9 +166,7 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
       throw err
     }
   }
-  
-    const COLORS = ['#7BA591',"#6b7070"];
-    // ================================================================================
+      // ================================================================================
     return (
         <main className="flex flex-col h-full w-full gap-4">  
         

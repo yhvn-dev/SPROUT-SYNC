@@ -474,6 +474,8 @@ body.dark .user_table_div::-webkit-scrollbar{
 
 
 
+
+
     
     /* ANALYTICS PAGE */
     /* DARK MODE – default (inactive tab) */
@@ -680,8 +682,6 @@ body.dark .succMsg{
 body.dark .success_msg p{
     @apply text-[var(--metal-dark5)];    
 }
-
-
 
 
 
@@ -1025,4 +1025,11 @@ body.dark .browser_window_main_container{
 
         body.dark .info_modal main li{
             @apply text-[var(--main-white)];
+        }
+
+
+
+
+        body.dark .succes_msg_pro p{
+            @apply text-[var(--metal-dark2)];
         }

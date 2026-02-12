@@ -80,7 +80,7 @@ function NurseryDashboard() {
   
   return (
     <main className="flex flex-col items-center justify-start h-full w-full col-start-2 col-end-4 row-start-3 row-end-3 rounded-[10px] ">
-      <div className="nursery_data_div  w-full overflow-hidden">
+      <div className="  w-full overflow-hidden">
         <div className="w-full max-w-full sm:max-w-7xl mx-auto space-y-4">
 
           {/* Header */}
