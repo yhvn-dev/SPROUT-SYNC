@@ -1,5 +1,7 @@
+import { motion } from "framer-motion";
+
 function InfosModal({ isInfosModalOpen, onClose, purpose }) {
-  if (!isInfosModalOpen) return null; // better than false
+  if (!isInfosModalOpen) return null; 
 
   // Function to render the title dynamically
   const renderTitle = () => {
@@ -151,9 +153,14 @@ function InfosModal({ isInfosModalOpen, onClose, purpose }) {
 
   
   return (
-    <section className="info_modal fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+    <section className="info_modal fixed inset-0 bg-transparent backdrop-blur-2xl flex items-center justify-center p-4">
 
-      <main className="conb bg-[var(--main-white)] rounded-2xl shadow-2xl max-w-lg w-full p-6 relative">
+      <motion.div
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        transition={{ duration: 0.4 }} 
+        className="conb bg-[var(--main-white)] rounded-2xl shadow-2xl max-w-lg w-full p-6 relative">
         {/* Header */}
         <div className="flex justify-between items-center mb-4 border-b py-4">
           <h2 className="text-xl font-semibold">{renderTitle()}</h2>
@@ -166,7 +173,7 @@ function InfosModal({ isInfosModalOpen, onClose, purpose }) {
 
         {/* Conditional Description */}
         <div className="text-gray-700">{renderContent()}</div>
-      </main>
+      </motion.div>
       
     </section>
   );

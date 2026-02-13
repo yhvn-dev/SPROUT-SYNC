@@ -1,78 +1,83 @@
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import Login from "./pages/Login/login.jsx"
-import Contact from "./pages/Contacts/contacts.jsx"
-import Home from "./pages/Home/home.jsx"
-import About from "./pages/About/about.jsx"
-import Dashboard from "./pages/Dashboard/dashboard.jsx";
-import Users from "./pages/Users/users.jsx"
-import Analytics from './pages/Analytics/analytics.jsx';
-import Batch_History from "./pages/Batch_History/batch_history.jsx";
-import Control_Panel from "./pages/Control_Panel/control_panel.jsx";
+import {lazy,Suspense} from "react";
+const Login = lazy(() => import("./pages/Login/login.jsx"));
+const Contact = lazy(() => import("./pages/Contacts/contacts.jsx"));
+const Home = lazy(() => import("./pages/Home/home.jsx"));
+const About = lazy(() => import("./pages/About/about.jsx"));
+const Dashboard = lazy(() => import("./pages/Dashboard/dashboard.jsx"));
+const Users = lazy(() => import("./pages/Users/users.jsx"));
+const Analytics = lazy(() => import('./pages/Analytics/analytics.jsx'));
+const Batch_History = lazy(() => import("./pages/Batch_History/batch_history.jsx"));
+const Control_Panel = lazy(() => import("./pages/Control_Panel/control_panel.jsx"));
 
-
+import { Dashboard_Skeleton } from "./components/skeletons.jsx";
 
 import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";
 import { PlantDataProvider } from "./hooks/plantContext.jsx";
 import { ESP32Provider } from "./hooks/esp32Hooks.jsx"
+import { ValveProvider } from "./hooks/valveContext.jsx";
+
+
 
 import './styles.css'
 function App() {
 
-  return(
-      <>
-      <PlantDataProvider>
-        <BrowserRouter> 
-          <Routes>         
-              <Route path='/' element={<Home/>}/>
-              <Route path='/contacts' element={<Contact/>}/>
-              <Route path='/about' element={<About/>}/>
-              <Route path='/login' element={<Login/>}/>  
-        
 
-              <Route path='/dashboard' element={
-                <ESP32Provider>
-                  <ProtectedRoute allowedRoles={['admin','viewer']}>
-                    <Dashboard/>
-                  </ProtectedRoute>
-                </ESP32Provider>
-              }/>
+  return (
+    <PlantDataProvider>
+       <ValveProvider>   
+      <BrowserRouter>
+        <Suspense fallback={
+          <div className="flex justify-center items-center h-screen">
+             <Dashboard_Skeleton/>
+        </div>}>
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/contacts' element={<Contact />} />
+            <Route path='/about' element={<About />} />
+            <Route path='/login' element={<Login />} />
 
-              <Route path='/users' element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <Users/>
-                </ProtectedRoute>
-              }/>
-
-               <Route path='/analytics' element={
+            <Route path='/dashboard' element={
+              <ESP32Provider>
                 <ProtectedRoute allowedRoles={['admin','viewer']}>
-                  <Analytics/>
+                  <Dashboard />
                 </ProtectedRoute>
-              }/>
-
-              <Route path='/batch_history' element={
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <Batch_History/>
-                </ProtectedRoute>
-              }/>
-        
-              <Route path='/control_panel' element={
-                <ESP32Provider>
-                  <ProtectedRoute allowedRoles={['admin']}>
-                    <Control_Panel/>
-                  </ProtectedRoute>
-                </ESP32Provider>
-            
+              </ESP32Provider>
             }/>
 
-          
+            <Route path='/users' element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <Users />
+              </ProtectedRoute>
+            }/>
+
+            <Route path='/analytics' element={
+              <ProtectedRoute allowedRoles={['admin','viewer']}>
+                <Analytics />
+              </ProtectedRoute>
+            }/>
+
+            <Route path='/batch_history' element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <Batch_History />
+              </ProtectedRoute>
+            }/>
+
+            <Route path='/control_panel' element={
+              <ESP32Provider>
+                <ProtectedRoute allowedRoles={['admin']}>
+                  <Control_Panel />
+                </ProtectedRoute>
+              </ESP32Provider>
+            }/>
           </Routes>
-        </BrowserRouter>
+        </Suspense>
+      </BrowserRouter>
+      </ValveProvider>
     </PlantDataProvider>
 
-      </>
-
-  )
-
+  );
 }
 
-export default App
+export default App;
+

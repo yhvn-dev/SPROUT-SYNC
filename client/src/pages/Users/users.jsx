@@ -10,7 +10,7 @@
   import { LogoutModal } from '../../components/logoutModal';
   import  InfosModal  from "../../components/infosModal"
 
-  import { Menu,CircleQuestionMark } from "lucide-react";
+  import { Menu,CircleQuestionMark,Search} from "lucide-react";
 
   import "./users.css";
 
@@ -89,9 +89,12 @@
           {/* ================= MOBILE MENU BUTTON ================= */}
           <button
             onClick={() => setSidebarOpen(true)}
-            className="conb md:hidden fixed top-4 left-4 z-50 bg-white p-2.5 rounded-lg shadow-lg">
+            className="menu_button md:hidden fixed top-4 left-4 z-50 bg-white p-2.5 rounded-lg shadow-lg">
             <Menu size={22} className="text-[var(--acc-darkb)]" />
           </button>
+
+
+
 
           {/* ================= MOBILE OVERLAY ================= */}
           {sidebarOpen && (
@@ -110,28 +113,32 @@
             <Sidebar user={user}  setLogoutOpen={setLogoutOpen}   />
           </aside>
 
+
+
+
+
           {/* ================= HEADER ================= */}
           <div className='col-start-1 col-span-full md:col-start-2'>
-
             <Db_Header
               input={
-                <div className="form_box center h-full flex-grow-1  ">
+                <div className="relative  form_box center h-full flex-grow-1  ">
                   <input
-                    className="border-[1px] w-full md:w-1/2 border-[var(--acc-darkc)] rounded-2xl px-4"
+                    className="border-[1px] p-[4px] text-xs w-full md:w-1/2 border-[var(--metal-dark4)] rounded-xl px-4"
                     onChange={handleSearchChange}
                     type="text"
                     value={searchValue}
-                    placeholder="Search for Users"
-                  />
+                    placeholder="Search for Users"/>
                 </div>
-              }
+              }         
               setNotifOpen={setNotifOpen}
             />
           </div>
             
-            
+
+
           {/* ================= TAB NAVIGATION ================= */}
           <nav className='users_nav flex col-start-1 col-span-full md:col-start-2  row-start-2 row-end-2 my-4'>
+
             <div className='w-full'>
                 <button
                 onClick={() => setActiveTab("Overview")}

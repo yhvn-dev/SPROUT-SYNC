@@ -149,4 +149,20 @@ input{
     .input-normal {
         border: 2px solid var(--acc-darkc); 
     }
+
+
+    .userTbody .u_tr:nth-child(odd){
+          @apply bg-[var(--main-white)] shadow-sm;
+    }
+
+    
+    body.dark .userTbody .u_tr:nth-child(odd){
+          @apply bg-[var(--metal-dark2)] shadow-sm;
+    }
+   
+ 
+ 
+ 
+
+    
    

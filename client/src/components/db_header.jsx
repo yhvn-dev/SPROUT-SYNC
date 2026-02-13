@@ -2,11 +2,11 @@ import { useContext, useState, useEffect } from "react";
 import { UserContext } from "../hooks/userContext";
 import { usePlantData } from "../hooks/plantContext";
 import Pfp from "../assets/Images/Default Profile Picture 2.jpg";
-import { Search } from "./search";
+
 import { Bell } from "lucide-react";
 import { Darkmode } from "../features/darkmode";
 
-export function Db_Header({ input, setNotifOpen }) {
+export function Db_Header({ input, setNotifOpen}) {
   const { user } = useContext(UserContext);
   const { notifsCount, loadNotifsCount } = usePlantData();
   
@@ -19,7 +19,7 @@ export function Db_Header({ input, setNotifOpen }) {
     <section className="db_header bg-[var(--main-whiteb)] col-start-3 col-span-full md:col-start-3 md:col-span-2 row-start-1 px-4 md:px-0  rounded-[10px] flex items-center justify-between shadow-lg min-h-[4rem] gap-2">    
  
       <div className="flex items-center justify-end md:justify-start w-full md:w-1/2 md:mx-4">
-        <Search input={input} />
+        {input}        
       </div>
            
       {/* User Info Section */}

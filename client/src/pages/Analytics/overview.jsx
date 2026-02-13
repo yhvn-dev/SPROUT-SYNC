@@ -1,6 +1,5 @@
-import { XAxis, YAxis, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts";
 import { Droplets, CircleQuestionMark,Trash2 } from "lucide-react";
-import { useMemo, useState } from "react";
+import { use, useState } from "react";
 
 import InfosModal from "../../components/infosModal";
 
@@ -20,13 +19,73 @@ const StatCard = ({ label, value, gradient, color }) => (
   </div>
 );
 
-// =====================
-// OVERVIEW
-// =====================
-export const Overview = ({ batchTotal,averageReadingsBySensor,setModalOpen}) => {
+
+
+
+
+const MoistureProgressBar = ({ average, isDark }) => {
+  const value = Math.min(Math.max(average, 0), 100);
+
+  let status = "Dry";
+  let barClass = "bg-red-500";
+
+  if (value > 30 && value <= 60) {
+    status = "Moist";
+    barClass = "bg-yellow-400";
+  } else if (value > 60) {
+    status = "Wet";
+    barClass = "bg-green-500";
+  }
+
+  return (
+    <div className="flex flex-col items-start w-full">
+
+      <p className="mb-2 text-2xl font-bold text-gray-900 dark:text-gray-200">
+        {value}%
+      </p>
+
+      {/* Progress Bar Container */}
+      <div
+        className={`
+          w-full h-4 rounded-full overflow-hidden
+          ${isDark ? "bg-gray-700" : "bg-gray-200"}
+        `}
+      >
+        {/* Progress Fill */}
+        <div
+          className={`
+            h-full
+            transition-all duration-500 ease-out
+            ${barClass}
+          `}
+          style={{ width: `${value}%` }}
+        />
+      </div>
+
+      {/* Status */}
+      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+        Status: <strong>{status}</strong>
+      </p>
+    </div>
+
+    
+  );
+};
+
+export default MoistureProgressBar;
+
+
+
+
+
+
+
+export const Overview = ({setDeleteModalMode,batchTotal,averageReadingsBySensor,setModalOpen}) => {
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
   const [infoModalPurpose, setInfoModalPurpose] = useState("");
 
+
+  
   // =====================
   // DARK MODE DETECTION
   // =====================
@@ -34,7 +93,7 @@ export const Overview = ({ batchTotal,averageReadingsBySensor,setModalOpen}) => 
     typeof window !== "undefined" &&
     document.documentElement.classList.contains("dark");
 
-  const axisColor = isDark ? "#e5e7eb" : "#374151"; // gray-200 / gray-700
+  
 
   // =====================
   // AVERAGES
@@ -48,14 +107,24 @@ export const Overview = ({ batchTotal,averageReadingsBySensor,setModalOpen}) => 
     setInfoModalOpen(true);
   };
 
-  const handleOpenDeleteModal = () =>{
+  const handleOpenDeleteMoistureModal = () =>{
      setModalOpen(true)
+     setDeleteModalMode("moisture")
   }
+
+  
+  const handleOpenDeleteWaterLevelModal = () =>{
+     setModalOpen(true)
+     setDeleteModalMode("water_level")
+  }
+
+  
+ 
   return (
     <div className="h-full grid md:grid-cols-12 md:grid-rows- gap-4">
 
       <div
-        className="w-full col-start-1 col-span-7 md:col-span-full grid grid-cols-1 gap-4 md:grid-cols-4
+        className="w-full col-start-1 row-end-8 col-span-7 md:col-span-full grid grid-cols-4 gap-4 md:grid-cols-4
          row-start-1">
         <StatCard
           label="Active Total Seedlings"
@@ -86,52 +155,63 @@ export const Overview = ({ batchTotal,averageReadingsBySensor,setModalOpen}) => 
         />
       </div>
 
+
+
       {/* =====================
         MOISTURE LINE / BAR CHART
       ====================== */}
-      <div className="moisture_div col-span-7 py-2 row-span-9 bg-white dark:bg-gray-900 rounded-xl shadow-lg px-6 flex flex-col items-start justify-start gap-4">
+      <div className="conb col-span-7 bg-white py-2 row-span-9 dark:bg-gray-900 rounded-xl shadow-lg px-6 flex flex-col items-start justify-start gap-4">
         <div className="flex my-4 items-center justify-between w-full">
           <p className="font-semibold my-2">Average Moisture (%)</p>      
-          <button onClick={handleOpenDeleteModal} className=" 
-          flex text-sm cursor-pointer bg-[var(--sancga)] rounded-2xl shadow-lg 
-          px-4 py-2 text-[var(--main-white)] hover:bg-[var(--sancgb)]">
-          <Trash2 className="trash_logo w-4 h-4 mr-2 my-[1px] "/>
-            Clear Readings</button>    
+         
+          <button onClick={handleOpenDeleteMoistureModal} className=" 
+            flex text-xs cursor-pointer bg-[var(--sancga)] rounded-2xl shadow-lg 
+            px-4 py-2 text-[var(--main-white)] hover:bg-[var(--sancgb)]">
+            <Trash2 className="trash_logo w-3 h-3 mr-2 my-[1px] "/>
+              Clear Readings
+          </button>   
+
+
         </div>
 
+          <MoistureProgressBar
+            average={avgMoistureData[0].average}
+            isDark={isDark}
+          />
 
-
-
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={avgMoistureData}>
-              <XAxis dataKey="sensor" stroke={axisColor} />
-              <YAxis stroke={axisColor} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: isDark ? "#1f2937" : "#fff",
-                  borderColor: isDark ? "#4b5563" : "#ccc",
-                  color: "#000"
-                }}
-              />
-             <Bar dataKey="average" fill={isDark ? "#60a5fa" : "#3d56a4"} barSize={40} />
-            </BarChart>
-          </ResponsiveContainer>
 
       </div>
+
+
+
 
 
 
       {/* =====================
           WATER LEVEL GAUGE
       ====================== */}
-      <div className="relative conb col-span-7 md:col-span-5 row-span-9 bg-white dark:bg-gray-900 rounded-xl shadow-sm flex items-center justify-center p-6">
-        <button className="mx-4">
-          <CircleQuestionMark onClick={handleOpenInfosModalWaterLevel}
-            className="absolute top-4 left-4 mr-4 w-4 h-4 cursor-pointer"
-          />
-        </button>
+      <div className="relative flex-col conb col-span-7 md:col-span-5 row-span-9 bg-white dark:bg-gray-900 rounded-xl shadow-sm flex items-center justify-start p-6">
 
-        <div className="flex flex-col items-center">
+        <div className="flex items-center justify-between w-full h-auto">
+           <button className="mx-4">
+            <CircleQuestionMark onClick={handleOpenInfosModalWaterLevel}
+              className=" mr-4 w-4 h-4 cursor-pointer"
+            />
+          </button>
+          
+          <button onClick={handleOpenDeleteWaterLevelModal} className=" 
+            flex text-xs cursor-pointer bg-[var(--sancga)] rounded-2xl shadow-lg 
+            px-4 py-2 text-[var(--main-white)] hover:bg-[var(--sancgb)]">
+            <Trash2 className="trash_logo w-3 h-3 mr-2 my-[1px] "/>
+              Clear Readings
+          </button>   
+          
+        </div>
+       
+
+
+
+        <div className="flex flex-col justify-center items-center  h-full">
           <div className="relative w-40 h-40">
             <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
               <circle
@@ -167,10 +247,9 @@ export const Overview = ({ batchTotal,averageReadingsBySensor,setModalOpen}) => 
 
           <p className="text-base font-semibold text-gray-800 dark:text-gray-100 mt-4">
             Water Level
-          </p>
-
-          
+          </p>          
         </div>
+        
       </div>
 
 
@@ -181,7 +260,6 @@ export const Overview = ({ batchTotal,averageReadingsBySensor,setModalOpen}) => 
           purpose={infoModalPurpose}
         />
       )}
-
       
     </div>
   );

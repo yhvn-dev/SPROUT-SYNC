@@ -3,7 +3,7 @@
 
 :root{
     /* [PL1] FOUNDATIONS */
-    --main-white--: #eae5f5;
+    --main-white: #eae5f5;
     --main-whiteb:#f6f6f6;
     --white-blple--: lab(76.54% 1.57 -14.3);
     --purpluish--: #8f9bbc;
@@ -384,4 +384,5 @@ select{
 
 .sprout-sync-text{
     font-family: "Moonet";
+    @apply text-[var(--main-white)];
 }

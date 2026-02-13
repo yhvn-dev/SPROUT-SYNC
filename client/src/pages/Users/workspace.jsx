@@ -4,12 +4,10 @@ import { useEffect, useState,useContext} from "react"
 import { Modal } from "./modal"
 import { User} from "react-feather"
 import { SucessMsgs} from "../../components/sucessMsgs"
-import { Users, UserRoundCheck } from 'lucide-react'
-
-import { StatusChart} from "./charts"
 import * as userService from "../../data/userService"
-
 import { UserContext } from "../../hooks/userContext"
+
+
 
 export function StatusChartLegend({statusCount,colors}){
   return(
@@ -122,6 +120,9 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
   }
 
 
+
+
+
   const handleDelete = async () => {
     try {
       if (!selectedUser?.user_id) return;
@@ -129,8 +130,8 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
       await userService.deleteUsers(selectedUser.user_id);
       const updatedUsers = await userService.fetchAllUsers(); // <-- refetch latest users
 
-      setAllUsers(updatedUsers); // <-- set explicitly
-      setFiltered([]); // <-- clear any filter/search
+      setAllUsers(updatedUsers); 
+      setFiltered([]); 
 
       await refreshChart();
       await refreshStatus();
@@ -166,17 +167,19 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
       throw err
     }
   }
-      // ================================================================================
+
+  
+    // ================================================================================
     return (
         <main className="flex flex-col h-full w-full gap-4">  
         
           {/* USER TABLE ======== ==== ==== ==== ==== ==== ==== ==== ==== ==== ==== ====  */}
           <div className="conb bg-white workspace flex flex-col w-full flex-1 row-start-4 row-span-full
-          col-start-2 col-end-4 overflow-y-auto  rounded-[10px] my-4">    
+          col-start-2 col-end-4 overflow-y-auto  rounded-[10px] ">    
             <div className="wp_header flex w-full h-[10%] md:h-[10%] ">
                 <ol className='h_part left flex items-center justify-start w-1/2 '>
                     <User className="mx-4" size={24}/>
-                    <span className='text-2xl'>Users</span>
+                    <h1 className='text-2xl'>Users</h1>
                 </ol>
                 <ol className='h_part right flex flex-row-reverse items-center w-1/2'>
                     <button className="btn-p mx-4 text-[0.9rem] " 

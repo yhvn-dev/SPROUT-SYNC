@@ -92,10 +92,6 @@
 
 
 
-
-
-
-    
     --status-ok-bg: #ecfdf5;
     --status-ok-text: #047857;
 
@@ -208,6 +204,9 @@ body.dark .db_header p {
     @apply text-[var(--main-white)];
 }
 
+body.dark .close_button:hover{
+    @apply bg-[var(--metal-dark4)];
+}
 
 
 /* DASHBOARD ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== */
@@ -215,8 +214,9 @@ body.dark .navs-btn {
     @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
 }
     body.dark .con_main{
-            background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark5));
-        }   
+        background: linear-gradient(to bottom right, var(--metal-dark5), var(--metal-dark5));
+    }   
+
         body.dark .con_main::-webkit-scrollbar{
             @apply bg-[var(--metal-dark2)];
         }
@@ -231,8 +231,7 @@ body.dark .navs-btn {
             box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
         }
 
-
-
+   
 
 
     
@@ -240,16 +239,29 @@ body.dark .navs-btn {
             @apply bg-[var(--metal-dark3)];
             box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
         }
+        body.dark .conc {
+                @apply bg-[var(--metal-dark4)];
+        }
+
+
+
+
+
         body.dark .conb p{
             @apply text-[var(--main-white)];
         }
         body.dark .conb h1{
             @apply text-[var(--main-white)];
         }
+         body.dark .conb li{
+            @apply text-[var(--main-white)];
+        }
         body.dark .nursery_data_div{
                 background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
         }
 
+
+            
 
     
 
@@ -299,6 +311,23 @@ body.dark .batch_div {
     body.dark .batch_scroll_div::-webkit-scrollbar-thumb {
         @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
     }
+        
+    body.dark .batch_div .fully_grown_seedlings_text {
+       @apply text-green-500;
+    }
+    body.dark  .batch_div .dead_seedlings_text{
+        @apply text-red-500;
+    }
+    body.dark .batch_div .replanted_seedlings_text{
+        @apply text-[var(--color-warning)];
+    }
+    body.dark .batch_modal_main::-webkit-scrollbar {
+        @apply bg-[var(--metal-dark1)];
+    }
+    body.dark .batch_modal_main::-webkit-scrollbar-thumb {
+        @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+    }
+
 
 
 
@@ -317,6 +346,12 @@ body.dark .manage_plants_nav button{
 }
 body.dark .manage_plants_nav button{
      @apply text-[var(--main-white)];
+}
+
+
+
+body.dark .manage_plants_nav button:hover{
+     @apply bg-[var(--sancgb)];
 }
 
     /* Tray groups */
@@ -364,41 +399,60 @@ body.dark .manage_plants_nav button{
 
     /* Maintenance */
     .status-maintenance {
-    background: var(--color-warning-b);
-    color: #f97316;
+        background: var(--color-warning-b);
+        color: #f97316;
     }
 
     /* Disabled */
     .status-disabled {
-    background: #fee2e2;
-    color: var(--acc-darkc);
+        background: #fee2e2;
+        color: var(--acc-darkc);
     }
 
-     body.dark .status-data {
-         background: transparent;
+    body.dark .status-data {
+        background: transparent;
     }
 
         /* Available */
         body.dark .status-available {
-        color: #4ade80;
-        border-color: #4ade80;
+            color: #4ade80;
+            border-color: #4ade80;
         }
         /* Occupied */
         body.dark .status-occupied {
-        color: #fb923c;
-        border-color: #fb923c;
+            color: #fb923c;
+            border-color: #fb923c;
         }
         /* Maintenance */
         body.dark .status-maintenance {
-        color: #facc15;
-        border-color: #facc15;
+            color: #facc15;
+            border-color: #facc15;
         }
 
         /* Disabled */
         body.dark .status-disabled {
-        color: #f87171;
-        border-color: #f87171;
+            color: #f87171;
+            border-color: #f87171;
         }
+
+
+
+            
+        body.dark .total_seedlings{
+             @apply text-[var(--sancgb)];
+        }
+        body.dark .grown_plants{
+            @apply text-[var(--sancgb)];
+        } 
+        body.dark .dead_seedlings{
+         @apply text-[var(--color-danger)];
+        }
+         body.dark .replanted_seedlings{
+         @apply text-[var(--color-warning)];
+        }
+        
+        
+        
 
 
 
@@ -408,12 +462,12 @@ body.dark .pb_con{
     border:0px solid;
 }
 
-  body.dark .pb_data_container::-webkit-scrollbar{
-            @apply bg-[var(--metal-dark1)];
-        }
-          body.dark .pb_data_container::-webkit-scrollbar-thumb {
-            @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
-         }
+    body.dark .pb_data_container::-webkit-scrollbar{
+                @apply bg-[var(--metal-dark1)];
+    }
+    body.dark .pb_data_container::-webkit-scrollbar-thumb {
+     @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+    }
 
          
     body.dark .pb_name_div {
@@ -421,10 +475,19 @@ body.dark .pb_con{
         box-shadow: 5px 5px 5px 1px var(--shad-dark-e);
         border:0px solid;
     }
+    body.dark .seedlings_stat_card{
+          @apply bg-[var(--metal-dark2)];
+    }
 
-    body.dark .total_seedlings_div{
+
+    
+    body.dark .total_planted_div{
     @apply bg-[var(--metal-dark2)];
     }
+         body.dark .seedlings_stat_card .pb_total_planted{
+             @apply text-[var(--main-white)];
+        }
+
 
     body.dark .alive_seeedlings_div{
         @apply bg-[var(--metal-dark2)];
@@ -443,8 +506,6 @@ body.dark .pb_con{
 
 
 
-
-
 /* USERS ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== */
 body.dark .user_table_div::-webkit-scrollbar{
     @apply bg-[var(--metal-dark1)];
@@ -453,6 +514,9 @@ body.dark .user_table_div::-webkit-scrollbar{
     body.dark .users_nav button {
         @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
         box-shadow: none;
+    }
+    body.dark .users_nav button:hover{
+         @apply bg-[var(--metal-dark2)];
     }
     /* DARK MODE – ACTIVE tab */
     body.dark .users_nav button.active {
@@ -463,7 +527,9 @@ body.dark .user_table_div::-webkit-scrollbar{
     body.dark button {       
         box-shadow: none;
     }
-    
+    body.dark .nursery_nav button:hover{
+         @apply bg-[var(--metal-dark2)];
+    }
 
     body.dark .user_table_div::-webkit-scrollbar-thumb{
         @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
@@ -473,15 +539,14 @@ body.dark .user_table_div::-webkit-scrollbar{
     }
 
 
-
-
-
-    
     /* ANALYTICS PAGE */
     /* DARK MODE – default (inactive tab) */
     body.dark .analytics_nav button {
         @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
         box-shadow: none;
+    }
+    body.dark .analytics_nav button:hover{
+         @apply bg-[var(--metal-dark2)];
     }
     /* DARK MODE – ACTIVE tab */
     body.dark .analytics_nav button.active {
@@ -496,10 +561,32 @@ body.dark .user_table_div::-webkit-scrollbar{
             box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
         }
 
-        body.dark .moisture_div{
-            @apply bg-[var(--metal-dark1)];
-            box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
+        /* Dark Mode Icon Colors */
+        body.dark .total_seedling_icon {
+        @apply stroke-green-300;
         }
+
+        body.dark .total_growth_icon {
+        @apply stroke-green-300;
+        }
+
+        body.dark .dead_seedlings_icon {
+        @apply stroke-red-300;
+        }
+
+        body.dark .replanted_icon {
+        @apply stroke-amber-300;
+        }
+
+        body.dark .soil_moisture_box{
+            @apply bg-[var(--metal-dark1)];  
+        }
+
+        body.dark .soil_moisture_box h1{
+            @apply text-[var(--main-white)];
+           
+        }
+        
 
 
 
@@ -540,8 +627,29 @@ body.dark .batch_history_table tr:nth-child(odd){
 }
 body.dark .batch_history_table tr:nth-child(even){
     @apply bg-[var(--metal-dark3)];
+}
+body.dark .batch_history_table tr:hover{
+     @apply bg-[var(--metal-dark3)];
 }   
+body.dark .batch_history_table_mobile_box:hover{
+  @apply bg-[var(--metal-dark2)];
+}
+body.dark .batch_history_table::-webkit-scrollbar{
+ @apply bg-[var(--metal-dark1)];
+}
 
+    body.dark .batch_history_table::-webkit-scrollbar{
+        @apply bg-[var(--metal-dark1)];
+    }
+    body.dark .batch_history_table::-webkit-scrollbar-thumb {
+     @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+    }
+
+
+    
+
+
+    
     body.dark .date_planted_data{
         @apply text-[var(--main-white)];
     }
@@ -756,27 +864,42 @@ body.dark .hero{
             }
 
 
-    body.dark .benefits_containers{
-             @apply bg-gradient-to-tr 
-                from-[var(--metal-dark5)] 
-                via-[var(--metal-dark3)]
-                to-[var(--metal-dark3)];
-            box-shadow:4px 4px 5px 1px var(--shad-dark); 
+    body.dark .benefits_main_text {
+        @apply text-[var(--main-white)];
+    }
+    body.dark .benefits_grid{      
+        box-shadow:4px 4px 5px 1px var(--shad-dark); 
+    }  
+    
+    body.dark .benefits_grid p {      
+      @apply text-[var(--metal-dark2)];
+    }            
+ 
+    body.dark .benefits_grid .automatic_irrigation_text{
+        @apply text-[var(--main-white)];
+    }
+
+    body.dark .benefits_grid h3 {
+        @apply text-[var(--metal-dark3)];
+    }
+
+    body.dark .icon_badges{
+
+            @apply bg-gradient-to-tr 
+        from-[var(--metal-dark2)] 
+        via-[var(--metal-dark3)]
+        to-[var(--sancga)];
+        box-shadow:1px 1px 2px 1px var(--shad-dark); 
     }
 
 
 
-
-     body.dark .notif_button:hover{
+    body.dark .notif_button:hover{
         @apply bg-[var(--main-white--)];
     }
-
     body.dark .notif_button:hover .bell_icon {
         @apply stroke-[var(--metal-dark4)]; 
     }
-
-
-
     body.dark .notif_box {
         @apply bg-[var(--metal-dark1)];
     }
@@ -833,7 +956,6 @@ body.dark .scrolling.header_nav{
     @apply bg-[var(--metal-dark2)];
 }
 
-
 body.dark .browser_window_main_container{
   @apply bg-[var(--metal-dark3)];
    box-shadow:5px 5px 5px 1px var(--shad-dark); 
@@ -841,8 +963,7 @@ body.dark .browser_window_main_container{
 
     body.dark .mockup_traygroup_div{
           @apply bg-[var(--metal-dark3)];
-              box-shadow:5px 5px 5px 1px var(--shad-dark); 
-        
+        box-shadow:5px 5px 5px 1px var(--shad-dark);        
     }
 
     body.dark .mockup_db_pb_header:hover{
@@ -881,6 +1002,12 @@ body.dark .browser_window_main_container{
 
 
 
+    body.dark .feature_section p {
+        @apply text-[var(--main-whiteb)];
+    }
+
+    
+
     /* db mockup home */
     body.dark .mockup_dashboard_sidebar{
         @apply bg-[var(--metal-dark5)];
@@ -896,12 +1023,20 @@ body.dark .browser_window_main_container{
         }
     
     body.dark .farm_info_icons{
-            @apply bg-gradient-to-tr 
+        @apply bg-gradient-to-tr 
         from-[var(--metal-dark2)] 
         via-[var(--metal-dark3)]
         to-[var(--sancga)];
         box-shadow:4px 4px 5px 1px var(--shad-dark); 
     }
+    body.dark .farm_info_section p{
+         @apply text-[var(--metal-dark4)];
+    }
+     body.dark .farm_info_section .description{
+         @apply text-[var(--main-whiteb)];
+    }
+
+
 
 
     body.dark .hero_icons_a{
@@ -1026,10 +1161,6 @@ body.dark .browser_window_main_container{
         body.dark .info_modal main li{
             @apply text-[var(--main-white)];
         }
-
-
-
-
         body.dark .succes_msg_pro p{
             @apply text-[var(--metal-dark2)];
         }

@@ -28,15 +28,16 @@ export function Form({ handleSubmit, errorMsg, successMsg, loginInputRef, passwo
       {/* Inputs */}
       <ul className="flex items-center justify-start flex-col w-full h-[80%]">
         {/* Username */}
-        <div className="form_box input_box w-1/2 relative mt-14">
+        <div className="form_box center  input_box w-1/2 relative mt-14">
+          
           <input
             ref={loginInputRef}
-            className="px-2 py-1 border-2 border-[var(--acc-darkc)]"
+            className="px-1 py-1 border-2 rounded-xl border-[var(--acc-darkc)]"
             name="username-email-inp"
             placeholder=""
           />
           <label>Username or Email</label>
-          <User size={16} className="mt-[1px]" color={colors.accDarkc} />
+          <User size={16} className="absolute right-0 mt-[1px]" color={colors.accDarkc} />
         </div>
         {errorMsg.loginInput && (
           <p className="message-text bg-red-50 border-1 border-red-200 px-4 py-1 rounded-lg text-sm mt-2">
@@ -45,16 +46,16 @@ export function Form({ handleSubmit, errorMsg, successMsg, loginInputRef, passwo
         )}
 
         {/* Password */}
-        <div className="form_box input_box w-1/2 relative mt-4">
+        <div className="form_box center input_box w-1/2 relative mt-4">
           <input
             ref={passwordRef}
-            className="px-2 py-1 border-2 border-[var(--acc-darkc)] pr-10 transition-all duration-300"
+            className="py-1 px-1 border-2 rounded-xl  border-[var(--acc-darkc)]  transition-all duration-300"
             type={showPassword ? "text" : "password"}
             name="password-inp"
             placeholder=""
           />
           <label>Password</label>
-          <Lock size={8} className="mt-[1px]" color="var(--acc-darkc)" />
+          <Lock size={8} className="mt-[1px] absolute right-0 " color="var(--acc-darkc)" />
           <button
             type="button"
             onClick={() => setShowPassword(prev => !prev)}

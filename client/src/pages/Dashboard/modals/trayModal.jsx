@@ -92,14 +92,17 @@ export function TrayModal({
   };
 
   return (
-    <motion.div className="tray_modal fixed inset-0 bg-transparent backdrop-blur-2xl flex items-center justify-center p-4 z-50">
+    <motion.div 
+
+      className="tray_modal fixed inset-0 bg-transparent backdrop-blur-2xl flex items-center justify-center p-4 z-50">
       <motion.div
         className={`conb bg-white rounded-2xl shadow-2xl ${trayModalMode === "delete" ? "w-[450px] h-[250px]" : "w-[750px]"} overflow-hidden flex flex-col`}
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ duration: 0.4 }}
-      >
+        transition={{ duration: 0.4 }}>
+
+          
         {/* HEADER */}
         <header className="tray_modal_header px-6 py-5 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -118,9 +121,10 @@ export function TrayModal({
             </div>
           </div>
 
-          <button onClick={onClose} className="p-2 rounded-lg hover:bg-gray-100">
+          <button onClick={onClose} className="close_button p-2 rounded-lg hover:bg-gray-100">
             <X size={24} />
           </button>
+          
         </header>
 
 
@@ -196,4 +200,6 @@ export function TrayModal({
       </motion.div>
     </motion.div>
   );
+
+  
 }

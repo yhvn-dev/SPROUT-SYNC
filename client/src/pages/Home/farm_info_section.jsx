@@ -3,10 +3,9 @@ import { Leaf, TrendingUp, MapPin } from "lucide-react";
 export default function Farm_Info_Section() {
   return (
     <>
-      {/* Farm Information Section */}
       <section
         id="farm"
-        className="farm_info_section py-24 bg-gradient-to-b from-[#E8F3ED] to-white"
+        className="farm_info_section  p-8  bg-gradient-to-b from-[#E8F3ED] to-white"
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
@@ -22,7 +21,7 @@ export default function Farm_Info_Section() {
                 Flor & Daisy's Agricultural Farm
             </h2>
 
-              <p className="text-xl text-[#5A8F73] leading-relaxed mb-8">
+              <p className="description text-lg text-[var(--metal-dark2)]  leading-relaxed mb-8">
                 Located along Quezon Avenue Extension, Brgy. Mamala 2, Sariaya,
                 Quezon, F&D Agriculture and Livelihood Training Center OPC serves
                 as a hub for sustainable farming, agricultural training, and
@@ -40,13 +39,15 @@ export default function Farm_Info_Section() {
                     <h3 className="text-lg font-bold text-[#003333] mb-2">
                       Strategic Location
                     </h3>
-                    <p className="text-[#5A8F73]">
+                    <p className="text-[var(--metal-dark2)] ">
                       Situated in a high-elevation area of Sariaya, Quezon, the
                       farm benefits from good airflow, natural drainage, and
                       accessibility for training activities and farm operations.
                     </p>
                   </div>
                 </div>
+
+
 
                 {/* SUSTAINABILITY */}
                 <div className="flex items-start gap-4">
@@ -57,7 +58,7 @@ export default function Farm_Info_Section() {
                     <h3 className="text-lg font-bold text-[#003333] mb-2">
                       Sustainable Farming Practices
                     </h3>
-                    <p className="text-[#5A8F73]">
+                    <p className="text-[var(--metal-dark2)]">
                       Promotes responsible land use, efficient water management,
                       and environmentally conscious farming methods to support
                       long-term agricultural productivity.
@@ -74,7 +75,7 @@ export default function Farm_Info_Section() {
                     <h3 className="text-lg font-bold text-[#003333] mb-2">
                       Training & Innovation
                     </h3>
-                    <p className="text-[#5A8F73]">
+                    <p className="text-[var(--metal-dark2)] ">
                       Actively engages in training programs, focus group
                       discussions, and technology adoption initiatives to
                       enhance farmers’ skills and improve farm efficiency.

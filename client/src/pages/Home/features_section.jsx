@@ -8,13 +8,14 @@ export default function FeatureSection(){
       <section id="features" className="feature_section py-24 bg-gradient-to-b from-white to-[#E8F3ED]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-16">
-            <h2 className="text-5xl md:text-6xl font-bold text-[#003333] mb-6">
+            <h2 className="text-5xl md:text-6xl font-bold text-[var(--sancga)] mb-6">
               Intelligent Monitoring
             </h2>
-            <p className="text-xl text-[#5A8F73] max-w-2xl mx-auto">
+            <p className="text-xl text-[var(--metal-dark2)] max-w-2xl mx-auto">
              Our system continuously monitors soil moisture and environmental conditions to automate watering and ensure healthy nursery plant growth.
             </p>
           </div>
+
 
           <div className=" grid md:grid-cols-2 lg:grid-cols-2 gap-8 ">
             {[
@@ -54,7 +55,7 @@ export default function FeatureSection(){
                   <feature.icon className="w-8 h-8" style={{ color: feature.color }} />
                 </div>
                 <h3 className="text-2xl font-bold text-[#003333] mb-4">{feature.title}</h3>
-                <p className="text-[#5A8F73] leading-relaxed">{feature.description}</p>
+                <p className="text-[var(--metal-dark2)] ] leading-relaxed">{feature.description}</p>
               </div>
             ))}
           </div>

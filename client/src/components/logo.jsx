@@ -13,7 +13,7 @@ export function Text_Logo() {
 export function Img_Logo(){
     return (
       <>
-      <div className="center mx-4">
+      <div className="center ">
         <img src={Logo} className="w-5 h-auto mr-2"/>
         <span className="logo-text text-3xl text-[var(--sancgb)] font-medium">SPROUT</span>
         <span className="logo-text text-3xl font-medium">SYNC</span>

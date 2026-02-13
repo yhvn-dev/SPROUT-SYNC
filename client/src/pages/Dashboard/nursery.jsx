@@ -271,7 +271,7 @@ function NurseryDashboard() {
                   )}
 
                   {batches.length > 0 && batches.map(batch => (
-                    <div key={batch.batch_id} className="conc batch_div bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-4 border border-gray-100 w-full">
+                    <div key={batch.batch_id} className="batch_div bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-4 border border-gray-100 w-full">
                       <div className="flex items-start justify-between mb-3">
                         <h3 className="text-base font-semibold text-gray-900">[{batch.batch_number}]{batch.plant_name}</h3>
                       </div>
@@ -291,22 +291,22 @@ function NurseryDashboard() {
 
 
 
-                      <div className="grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-200">
+                      <div className="active_plant_batches_nursery_data grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-200">
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Seedlings</p>
-                          <p className="text-lg font-bold text-[#25a244]">{batch.total_seedlings}</p>
+                          <p className="total_seedlings_text text-lg font-bold text-[#25a244]">{batch.total_seedlings}</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Grown</p>
-                          <p className="text-lg font-bold text-[#208b3a]">{batch.fully_grown_seedlings}</p>
+                          <p className="fully_grown_seedlings_text text-lg font-bold text-[#208b3a]">{batch.fully_grown_seedlings}</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Dead</p>
-                          <p className="text-lg font-bold text-[var(--color-danger-b)]">{batch.dead_seedlings}</p>
+                          <p className="dead_seedlings_text text-lg font-bold text-[var(--color-danger-b)]">{batch.dead_seedlings}</p>
                         </div>
                         <div className="text-center">
                           <p className="text-xs text-gray-500">Replants</p>
-                          <p className="text-lg font-bold text-[var(--color-warning)]">{batch.replanted_seedlings}</p>
+                          <p className="replanted_seedlings_text text-lg font-bold text-[var(--color-warning)]">{batch.replanted_seedlings}</p>
                         </div>
                       </div>
 

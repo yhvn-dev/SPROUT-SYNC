@@ -4,6 +4,8 @@ import { X, Trash2, Sprout } from "lucide-react";
 
 import * as trayGroupModels from "../../../data/trayGroupServices";
 
+
+
 export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup, setSuccessMsg, loadTrayGroups, reloadTrayGroups,}) {
 
 
@@ -131,20 +133,24 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
 
   
   return (
-    <motion.div className="modal_backdrop fixed inset-0 flex items-center justify-center bg-black/30 backdrop-blur-sm z-50">
+    <motion.div
+
+
+      className="modal_backdrop fixed inset-0 flex items-center justify-center bg-tranparent backdrop-blur-2xl z-50">
       <motion.div
-        className={`conb bg-white rounded-xl shadow-xl p-6 relative ${
-          tgModalMode === "delete" ? "w-[420px]" : "w-[600px]"
-        }`}
+
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.4 }}
-      >
+          
+        className={`conb bg-white rounded-xl shadow-xl p-6 relative ${
+        tgModalMode === "delete" ? "w-[420px]" : "w-[600px]"}`}>
+
         {/* CLOSE BUTTON */}
         <button
           onClick={onClose}
-          className="cursor-pointer absolute top-4 right-4 hover:bg-gray-100 p-2 rounded-lg"
+          className="close_button cursor-pointer absolute top-4 right-4 hover:bg-gray-100 p-2 rounded-lg"
         >
           <X />
         </button>

@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { validateUserEmptyFields } from "../../utils/userValidations"; 
-import { X, UserPen, UserPlus, Trash2 } from "lucide-react";
+import { X, UserPen, UserPlus, Trash2,EyeOff,Eye } from "lucide-react";
 
 export function Modal({
   isOpen,
@@ -21,6 +21,8 @@ export function Modal({
   const [phoneNumber, setPhoneNumber] = useState("");
   const [password, setPassword] = useState("");
   const [role, setRole] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  
 
   useEffect(() => {
     if (userData) {
@@ -87,13 +89,13 @@ export function Modal({
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.95, opacity: 0 }}
-        transition={{ duration: 0.2 }}
-      >
+        transition={{ duration: 0.2 }}>
+
+
         {/* Close Button */}
         <button
-          className="absolute top-6 right-6 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-          onClick={handleClose}
-        >
+          className="close_button absolute top-6 right-6 p-2 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+          onClick={handleClose}>           
           <X size={20} className="text-gray-600" />
         </button>
 
@@ -179,7 +181,7 @@ export function Modal({
 
                 {/* Right Column */}
                 <div className="space-y-5">
-                  <div>
+                  <div className=""> 
                     <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
                     <input
                       type="text"
@@ -190,18 +192,39 @@ export function Modal({
                     />
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Password {mode === "update" && <p className="text-gray-400 text-xs">(leave blank to keep current)</p>}
+
+                  <div >
+                    <label className="flex  text-sm font-medium text-gray-700 mb-2">
+                      Password {mode === "update" && <p className="text-gray-400 text-xs mx-2 mt-[2px]">(leave blank to keep current)</p>}
                     </label>
-                    <input
-                      type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200"
-                      placeholder="Enter password"
-                    />
-                    {errors.password && <h6 className=" text-red-600 text-sm mt-1">{errors.password}</h6>}
+
+                    <div className="relative">
+                      <input
+                        
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl focus:border-blue-500 focus:outline-none transition-colors duration-200"
+                            placeholder="Enter password"
+                            type={showPassword ? "text" : "password"}
+        
+                          />
+                          {errors.password && <h6 className=" text-red-600 text-sm mt-1">{errors.password}</h6>}
+
+                          
+                          <button
+                            type="button"
+                            onClick={() => setShowPassword(prev => !prev)}
+                            className="cursor-pointer absolute right-4 top-1/2 -translate-y-1/2 p-1 rounded-full transition-all duration-300 hover:bg-gray-200 active:scale-90">
+                            {showPassword ? (
+                              <EyeOff size={16} className="animate-fadeIn" color="var(--acc-darkc)" />
+                            ) : (
+                              <Eye size={16} className="animate-fadeIn" color="var(--acc-darkc)" />
+                            )}
+                          </button>
+
+                        </div>
+                   
+          
                   </div>
 
 

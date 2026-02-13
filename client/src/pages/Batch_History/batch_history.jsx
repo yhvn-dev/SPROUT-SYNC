@@ -150,7 +150,7 @@ function Batch_History() {
           input={
             <div className="form_box center h-full flex-grow-1">
               <input
-                className="border-[1px] w-full md:w-1/2 border-[#027c68] rounded-2xl px-4"
+                className="border-[1px] text-sm p-[2px] w-full md:w-1/2 border-[var(--metal-dark4)] rounded-2xl px-4"
                 onChange={handleSearchChange}
                 type="text"
                 value={searchValue}
@@ -199,6 +199,9 @@ function Batch_History() {
           />
         </div> 
 
+
+
+
         <main className='conb bg-white rounded-tr-2xl rounded-tl-2xl'>         
 
           <nav className='center w-full py-4 '>
@@ -224,6 +227,8 @@ function Batch_History() {
             </div>
           </nav>
 
+
+
           {/* TABLE SECTION */}
           <div className="batch_history_table  rounded-2xl shadow-lg 
                     h-[55vh] md:h-[57vh] 
@@ -247,11 +252,14 @@ function Batch_History() {
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
+
+
+                
                 <tbody className="divide-y divide-gray-200">
                   {filteredData.map((record, index) => (
                     <tr
                       key={record.history_id}
-                      className={`hover:bg-[#E8F3ED] transition-colors ${
+                      className={`pbh_tr hover:bg-[#E8F3ED] transition-colors ${
                         index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                       }`}>
                       <td className="px-4 py-3 text-sm font-medium text-[#027c68] flex"><p>[{record.batch_number}]</p>{record.plant_name}</td>
@@ -280,8 +288,7 @@ function Batch_History() {
                       <td className="px-4 py-3 text-sm">
                         <span
                           className="bh_growth_stage inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white"
-                          style={{ backgroundColor: getStageColor(record.growth_stage) }}
-                        >
+                          style={{ backgroundColor: getStageColor(record.growth_stage) }}>
                           {record.growth_stage}
                         </span>
                       </td>
@@ -306,12 +313,13 @@ function Batch_History() {
 
 
 
+
+
             {/* Mobile Table - Simple List */}
-            <div className="md:hidden">
-              {filteredData.map((record) => (
+            <div className="md:hidden">             {filteredData.map((record) => (
                 <div
                   key={record.history_id}
-                  className="border-b border-gray-200 p-4 hover:bg-[#E8F3ED] transition-colors"
+                  className="batch_history_table_mobile_box border-b border-gray-200 p-4 hover:bg-[#E8F3ED] transition-colors"
                 >
                   <div className="flex justify-between items-start mb-2">
                     <div>
@@ -329,6 +337,9 @@ function Batch_History() {
                   </div>
 
 
+
+
+{/*  */}
                   <div className="flex items-center gap-2 mb-2">
                     <span
                       className="bh_stage px-2 py-1 

@@ -56,7 +56,7 @@ export const fetchAverageReadings = async () =>{
 
 export const fetchAverageReadingsBySensor = async (sensor_type) =>{
     try {
-        const res = await api.get(`/readings/get/readings/average/${sensor_type}`);
+        const res = await api.get(`/readings/get/readings/average/`,sensor_type);
         return res.data; 
     } catch (error) {
         console.error("Error Fetching Average Readings By Sensor",error);
@@ -74,5 +74,16 @@ export const deleteAllReadings = async () =>{
         console.error("Error Deleting All Readings",error);
         throw error;
     }
-    
 }
+
+
+
+export const deleteAllReadingsByType = async (sensor_type) => {
+  try {
+    const res = await api.delete(`/readings/delete/readings/type/${sensor_type}`);
+    return res;
+  } catch (error) {
+    const errorMsg = error.response.data.message
+    throw errorMsg
+  }
+};

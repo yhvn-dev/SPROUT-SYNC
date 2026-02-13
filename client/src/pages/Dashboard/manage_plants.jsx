@@ -36,8 +36,6 @@ const ManagePlants = ({ reloadTrayGroups, reloadTrays, reloadBatches }) => {
   const [selectedBatch, setSelectedBatches] = useState([]);
 
 
-  const [isInfoModalOpen,setInfoModalOpen] = useState(false);
-  const [infoModalPurpose,setInfoModalPurpose] = useState("");
 
   
 
@@ -101,7 +99,7 @@ const ManagePlants = ({ reloadTrayGroups, reloadTrays, reloadBatches }) => {
 
         {/* TABS */}
         <nav className="manage_plants_nav bg-white rounded-2xl sm:rounded-3xl shadow-sm border border-gray-100 sm:mb-6">
-          <div className="flex  sm:flex-row gap-2 p-2">
+          <div className="flex sm:flex-row gap-2 p-2">
             {[
               { key: 'trayGroups', label: 'Tray Groups', icon:LayoutGrid  },
               { key: 'trays', label: 'Trays', icon: Sprout },
@@ -114,15 +112,15 @@ const ManagePlants = ({ reloadTrayGroups, reloadTrays, reloadBatches }) => {
                 <button
                   key={tab.key}
                   onClick={() => setActiveTab(tab.key)}
-                  className={`flex-1 flex items-center justify-center gap-2
+                  className={`manage_plants_button flex-1 flex items-center justify-center gap-2
                     px-3 sm:px-6 py-2.5 sm:py-3
                     rounded-xl sm:rounded-2xl
                     text-sm sm:text-base font-medium
                     transition-all
                     cursor-pointer
                     ${active
-                      ? 'bg-gradient-to-r from-[#A8C7B8] to-[#7BA591] text-white shadow-md'
-                      : 'text-gray-600 hover:bg-gray-50'
+                      ? 'bg-gradient-to-r from-[var(--sancgb)] to-[var(--sancga)] text-white shadow-md'
+                      : 'text-gray-600 hover:bg-gray-50 {'
                     }`}
                 >
                   <Icon className="w-4 h-4 sm:w-5 sm:h-5" />

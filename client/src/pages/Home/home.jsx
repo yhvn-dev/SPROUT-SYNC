@@ -11,11 +11,20 @@ const Farm_Info_Section = lazy(() => import('./farm_info_section'));
 const Logo_Page = lazy(() => import('./logo_page'));
 const Footer = lazy(() => import('../../components/footer'))
 
+
 import SproutImg from "../../assets/Images/SPROUT-SYNC LOGO.png"
 import Plant_Bg_1 from "../../assets/Images/PLANT BG -1.jpg"
-import { Features_Skeleton,Dashboard_Mockup_Skeleton} from '../../components/skeletons';
+import {
+  Features_Skeleton,
+  Dashboard_Mockup_Skeleton,
+  Farm_Info_Skeleton,
+  BenefitSection_Skeleton,
+  Footer_Skeleton,
+  Logo_Page_Skeleton,
+  Dashboard_Skeleton} from '../../components/skeletons';
 
 import "./home.css";
+
 
 
 export function InstallButton() {
@@ -153,6 +162,9 @@ function Home() {
                   </a>
                 </div>
 
+
+
+
                 {/* Mobile Menu Button */}
                 <div className="flex items-center justify-end w-full md:hidden">
                   <button
@@ -166,30 +178,32 @@ function Home() {
                   </button>
                 </div>
 
+
+
                 {/* Mobile Navigation Menu */}
                 {mobileMenuOpen && (
-                  <div className="md:hidden absolute top-full left-0 right-0 bg-[var(--metal-dark5)] shadow-lg rounded-b-2xl mt-2 py-2 px-4 space-y-2 border-t border-gray-100">
+                  <div className="md:hidden absolute top-0 left-0 right-0 bg-[var(--metal-dark1)] shadow-lg rounded-b-2xl mt-2 py-2 px-4 space-y-2 border-t border-gray-100">
                     <Link 
                       to="/login" 
-                      className="header-button block text-[var(--main-white--)]  text-center rounded-2xl px-4 py-2 hover:opacity-90 transition-all font-medium"
+                      className="header-button block text-[var(--main-white--)]   rounded-2xl px-4 py-2  hover:bg-[var(--metal-dark4)] transition-all font-medium"
                       onClick={() => setMobileMenuOpen(false)}>
                       Login
                     </Link>
                     <a 
                       href="#features" 
-                      className="header-button block text-[var(--main-white--)]  rounded-2xl px-4 py-[1px] hover:bg-gray-50 transition-colors font-medium"
+                      className="header-button block text-[var(--main-white--)]   rounded-2xl px-4 py-2  hover:bg-[var(--metal-dark4)] transition-all font-medium"
                       onClick={() => setMobileMenuOpen(false)}>
                       Features
                     </a>
                     <a 
                       href="#dashboard_mockup" 
-                      className="header-button block text-[var(--main-white--)]  rounded-2xl px-4 py-[1px] hover:bg-gray-50 transition-colors font-medium"
+                      className="header-button block text-[var(--main-white--)]   rounded-2xl px-4 py-2  hover:bg-[var(--metal-dark4)] transition-all font-medium"
                       onClick={() => setMobileMenuOpen(false)}>
                       Dashboard
                     </a>
                     <a 
                       href="#farm" 
-                      className="header-button block text-[var(  --main-white--)] rounded-2xl px-4 py-[1px] hover:bg-gray-50 transition-colors font-medium"
+                      className="header-button block text-[var(--main-white--)]   rounded-2xl px-4 py-2  hover:bg-[var(--metal-dark4)] transition-all font-medium"
                       onClick={() => setMobileMenuOpen(false)}>
                       Our Farm
                     </a>
@@ -225,20 +239,19 @@ function Home() {
                   <div className="flex flex-col items-center justify-center absolute inset-0 p-4 w-full">
 
                     <ul className='flex w-[95%]  flex-col sm:flex-row items-start gap-4 sm:gap-4 '>
-                      <li className="mx-10 text-2xl text-white">Nurtured by</li>
+                      <li className="px-4 text-2xl text-white">Nurtured by</li>
                     </ul>
         
-                    <ul className='flex w-[95%] center flex-col sm:flex-row items-center md:items-start gap-4 sm:gap-4'>
+                    <ul className='flex w-[95%] center   flex-col sm:flex-row items-center md:items-start gap-4 sm:gap-4'>
                       
                       <li className='sprout-sync-text
                         font-bold
                         text-[var(--main-white)]
                         text-center
-                        text-[11.07rem]
-                        leading-[0.50]              
-                        mr-4
+                        text-[8.07rem]
+                        leading-[0.50]                                  
                         md:text-[11.07rem]
-                        lg:text-[17.07rem]
+                        lg:text-[16.07rem]
                         pointer-events-none
                         drop-shadow-2xl'>SPROUT
                       </li>
@@ -246,11 +259,12 @@ function Home() {
                       <li 
                       className='flex sprout-sync-text font-bold
                         text-[var(--main-white)]                
-                        text-[11.07rem]
+                        text-[8.07rem]
                         leading-[0.50]
                         ml-10
+                        mt-4
                         md:text-[11.07rem]
-                        lg:text-[17.07rem]
+                        lg:text-[16.07rem]
                         pointer-events-none
                         drop-shadow-2xl'>S
                         <img className="h-auto w-25 xs:w-24 sm:w-28 md:w-30 my-2 sm:my-4" 
@@ -259,7 +273,7 @@ function Home() {
 
                     </ul>
                    
-                    <p className='my-4 sm:my-8 text-center  text-white text-xs sm:text-sm md:text-base px-4'>
+                    <p className=' sm:my-8 text-center  text-white text-xs sm:text-sm md:text-base px-4'>
                         We take care of your plant’s needs with smart monitoring and gentle,<br/> 
                         targeted watering—so it grows happy and healthy.
                     </p>
@@ -338,11 +352,10 @@ function Home() {
 
           </section>
 
-          {/* Install Button */}
-          <InstallButton />
+        {/* Install Button */}
+        <InstallButton />
 
          
-
          {/* Features Section */}
         <section id="features" className="w-full">
           <Suspense fallback={<div className="text-center py-8">
@@ -352,41 +365,63 @@ function Home() {
           </Suspense>
         </section>
 
-        
-
+      
         {/* Dashboard Section */}
         <section className='w-full flex justify-center' id="dashboard_mockup">
-           <Suspense fallback={
+            <Suspense fallback={
             <Dashboard_Mockup_Skeleton/>
           }>       
           </Suspense> 
+       
           <Dashboard_Mockup />   
         </section>
 
+
         {/* Farm Info Section */}
         <section id="farm" className="w-full">
-          <Suspense fallback={<div className="text-center py-8">Loading</div>}>
-            <Farm_Info_Section />
+          <Suspense fallback={
+              <div className="text-center py-8">
+              <Farm_Info_Skeleton/>
+              </div>}>
           </Suspense>
+          <Farm_Info_Section />
         </section>
+
+
 
         {/* Benefits Section */}
         <section className="w-full">
-          <Suspense fallback={<div className="text-center py-8 ">Loading</div>}>
-            <BenefitSection />
+          <Suspense fallback={<div className="text-center py-8 ">
+             <BenefitSection_Skeleton/>
+          </div>}>
           </Suspense>
+
+           <BenefitSection />
         </section>
+
 
         {/* Logo Section */}
         <section className="w-full">
-          <Suspense fallback={<div className="text-center py-8">Loading</div>}>
+          
+          <Suspense fallback={
+            <div className="text-center py-8">     
+                 <Logo_Page_Skeleton/>
+            </div>}>
             <Logo_Page />
+        
           </Suspense>
         </section>
 
-        <Suspense fallback={<div className="text-center py-8">Loading</div>}>
-            <Footer />
-        </Suspense>
+
+        <section className='w-full p-8'>
+          <Suspense fallback={<div className="text-center py-8">
+            <Footer_Skeleton/>
+          </div>}>
+              <Footer />  
+           </Suspense>        
+        </section>
+
+       
 
         </>
       )}

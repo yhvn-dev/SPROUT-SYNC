@@ -1,7 +1,4 @@
 
-import Pfp from "../../assets/Images/Default Profile Picture 2.jpg"
-
-
 export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
   return (
     <div className=" w-full">
@@ -24,17 +21,8 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
           <tbody className="userTbody">
             {users.map((u) => (
               <tr className="u_tr" key={u.user_id}>             
-                <td className="u_td">
-                  <div className="flex items-center">
-                    <div
-                      className={`w-3 h-3 rounded-full mr-2 ${
-                        u.status === "active"
-                          ? "bg-[var(--ptl-greenb)]"
-                          : "bg-[var(--acc-darkc)]"
-                      }`}
-                    />
-                    <span className="truncate">{u.username}</span>
-                  </div>
+                <td className="u_td">          
+                    {u.username}
                 </td>
                 <td className="u_td">                              
                     <p className="ml-3 truncate">{u.fullname}</p>              
@@ -46,6 +34,8 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
                     {u.role}
                   </p>
                 </td>
+                
+
                 
                 <td className="u_td">
                   <div className="flex items-center justify-center gap-2">
@@ -106,21 +96,10 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
 
               {/* HEADER */}
               <div className="flex items-center gap-3 mb-4 pb-4 border-b border-gray-200">
-                <img
-                  src={u.profile_picture || Pfp}
-                  alt="profile"
-                  className="h-10 w-10 object-cover rounded-full"
-                />
-
+          
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1">
-                    <div
-                      className={`w-3 h-3 rounded-full ${
-                        u.status === "active"
-                          ? "bg-[var(--ptl-greenb)]"
-                          : "bg-[var(--acc-darkc)]"
-                      }`}
-                    />
+              
                     <h3 className="text-base font-semibold truncate">
                       {u.fullname}
                     </h3>

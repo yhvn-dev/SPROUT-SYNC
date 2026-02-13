@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from "react";
+import { useState, useContext, useEffect,useCallback } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
 import { UserContext } from "../../hooks/userContext";
@@ -13,6 +13,7 @@ import { SeedlingStats } from "./seedlingStats";
 
 import InfosModal from "../../components/infosModal";
 import AnalyticsModal from "./modal/analyticsModal";
+import { FloatSuccessMsg } from "../../components/sucessMsgs";
 
 
 export default function Analytics() {
@@ -26,8 +27,6 @@ export default function Analytics() {
     loadGrowthOvertime,
     readings,
     loadReadings,
-    moistureReadingsLast24h,
-    loadMoistureReadingsLast24h,
     averageReadingsBySensor,
     loadAverageReadingsBySensor,
   } = usePlantData();
@@ -41,13 +40,15 @@ export default function Analytics() {
   const [isModalOpen,setModalOpen] = useState(false);
   const [infoModalPurpose,setInfoModalPurpose] = useState("");
 
+  const [deleteModalMode,setDeleteModalMode] = useState("");
+  const [msg,setMsg] = useState("");
+  const clearMsg = useCallback(() => setMsg(""), []);
   
   useEffect(() => {
     loadBatchTotal();
     loadBatchTotalHistory();
     loadGrowthOvertime();
     loadReadings();
-    loadMoistureReadingsLast24h();
     loadAverageReadingsBySensor("moisture");
     loadAverageReadingsBySensor("ultra_sonic");
   }, [
@@ -55,9 +56,13 @@ export default function Analytics() {
     loadBatchTotalHistory,
     loadGrowthOvertime,
     loadReadings,
-    loadMoistureReadingsLast24h,
     loadAverageReadingsBySensor,
   ]);
+
+  // useEffect(() =>{
+  //   console.log("MESSAGE EROR",msg)
+  // })
+
 
   const handleOpenInfosModalAnalytics = () =>{
       setInfoModalPurpose("analytics")
@@ -124,12 +129,10 @@ export default function Analytics() {
       </div>
 
 
+
+
       {/* NAVIGATION TABS */}
       <nav className="analytics_nav row-start-2 row-end-2 col-start-1 col-span-full md:col-start-2 py-3 flex items-center justify-between gap-2 px-4 md:px-0">
-        
-
-
-        
         {/* LEFT: Tabs */}
         <div className="flex gap-4 items-center">
           <button
@@ -148,15 +151,20 @@ export default function Analytics() {
 
 
           <button
-            onClick={() => setActiveTab("Seedling Stats")}
-            className={`cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
-          text-xs md:text-sm rounded-lg transition${
-              activeTab === "Seedling Stats"
-                ? "active bg-white text-[#027c68] shadow-md"
-                : "bg-white/50 text-[#5A8F73] hover:bg-white/70"
-            }`}>
+            onClick={() => setActiveTab("Seedling Stats")}           
+            className={`            
+                cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
+                text-xs md:text-sm rounded-lg transition
+              ${activeTab === "Seedling Stats" 
+                ? "active bg-white text-[#027c68] shadow-md dark:bg-[var(--metal-dark3)] dark:text-[#00ffe0] dark:shadow-md"
+                : "bg-white/50 text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark1)]"
+              }
+            `}
+            >
             Seedling Stats
           </button>
+
+          
         </div>
 
         {/* RIGHT: Info Icon */}
@@ -170,16 +178,19 @@ export default function Analytics() {
       <main className="col-start-1 col-end-3 md:col-span-full md:col-start-2 row-start-3 row-span-full overflow-y-auto px-0  ">
         {activeTab === "Overview" && (
           <Overview
+            setDeleteModalMode={setDeleteModalMode}
+            activeTab={activeTab}
             batchTotal={batchTotal}
             readings={readings}
             setModalOpen={setModalOpen}
-            moistureReadingsLast24h={moistureReadingsLast24h}
+         
             averageReadingsBySensor={averageReadingsBySensor}
           />
         )}
 
         {activeTab === "Seedling Stats" && (
           <SeedlingStats
+            activeTab={activeTab}
             batchTotal={batchTotal}
             growthOvertime={growthOvertime}
             averageReadingsBySensor={averageReadingsBySensor}
@@ -207,11 +218,15 @@ export default function Analytics() {
 
       {isModalOpen && 
         <AnalyticsModal
+          setMsg={setMsg}
+          deleteModalMode={deleteModalMode}
           isModalOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
           reloadReadings={loadReadings}
         />          
       }
+
+     {msg && <FloatSuccessMsg text={msg} clearMsg={clearMsg}/>}
 
 
 

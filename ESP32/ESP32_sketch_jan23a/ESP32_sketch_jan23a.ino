@@ -68,8 +68,8 @@ bool wifiConnected = false;
 unsigned long lastReadTime = 0;
 unsigned long lastWiFiCheck = 0;
 const unsigned long readInterval = 5000;
-const unsigned long wifiCheckInterval = 100;
-
+const unsigned long wifiCheckInterval = 100;  
+  
 /************ MOISTURE SENSOR POSTING - 10 MINUTE INTERVALS ************/
 unsigned long lastMoisturePost[3] = {0, 0, 0};
 const unsigned long moisturePostInterval = 600000; // 10 minutes

@@ -42,7 +42,7 @@ export function LogoutModal({isOpen,onClose}) {
 
     
   return (
-    <section className="center flex items-center justify-center h-full w-full absolute
+    <section className="center flex items-center justify-center h-full w-full fixed
     top-0 left-0 bg-transparent-[100%]  backdrop-blur-[10px] z-[50]">
 
         <motion.div className="conb bg-[var(--main-whiteb)] p-4

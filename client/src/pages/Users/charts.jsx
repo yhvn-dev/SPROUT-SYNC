@@ -33,8 +33,10 @@ export function RoleChart({ chartData }) {
     color.setRoleColor.viewerColor,
   ];
 
+
+  
   return (
-    <div className="bg-white rounded-2xl p-6 flex flex-col gap-6 h-full">
+    <div className="rounded-2xl p-4 flex flex-col gap-6 h-full">
 
       {/* HEADER */}
       <div>
@@ -47,7 +49,7 @@ export function RoleChart({ chartData }) {
       </div>
 
       {/* CHART */}
-      <div className="relative w-full min-h-[320px]">
+      <div className="relative w-full min-h-[300px]">
         {/* CENTER LABEL */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
           <span className="text-sm text-gray-500">Total</span>
@@ -98,10 +100,6 @@ export function RoleChart({ chartData }) {
   );
 }
 
-
-
-
-
 export function chartBg({}){
   <PieChart width={450} height={230}></PieChart>
 }
@@ -109,9 +107,11 @@ export function chartBg({}){
 
 
 
+
+
 export function StatusChart({ statusData, COLORS }) {
   return (
-    <div className="bg-white rounded-2xl p-6 flex flex-col gap-6 h-full">
+    <div className="rounded-2xl p-4 flex flex-col gap-6 h-full">
 
       {/* HEADER */}
       <div>
@@ -124,7 +124,7 @@ export function StatusChart({ statusData, COLORS }) {
       </div>
 
       {/* CHART */}
-      <div className="relative w-full min-h-[320px]">
+      <div className="relative w-full min-h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <PieChart>
             <Pie

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { motion } from "framer-motion";
 import { X, Sprout, Calendar, TrendingUp, Trash2, AlertCircle } from 'lucide-react';
 import * as batchModels from "../../../data/batchesData"
 
@@ -28,7 +29,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
     const day = String(d.getDate()).padStart(2, "0");
     return `${year}-${month}-${day}`;
   };
-
+  
   useEffect(() => {
     if (!isOpen) return;             
     if (!selectedTray) return;          
@@ -130,15 +131,23 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  return (
-    <div
-      onClick={onClose}
-      className="batch_modal fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
 
-      <div
+
+  
+  return (
+    <motion.div
+      className="batch_modal fixed inset-0 bg-transparent backdrop-blur-2xl z-50 flex items-center justify-center p-4">
+
+      <motion.div
+         initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        transition={{ duration: 0.4 }}
         onClick={(e) => e.stopPropagation()}
         className="conb bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
+
+
         {/* HEADER */}
         <header className="pb_modal_header px-6 py-4 border-b border-gray-200 bg-[#E8F3ED]">
           <div className="flex items-center justify-between">
@@ -170,14 +179,15 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
             </div>
             <button
               onClick={onClose}
-              className="cursor-pointer p-2 hover:bg-white/80 rounded-lg transition-colors text-[#5A8F73]">
+              className="close_button cursor-pointer p-2 hover:bg-white/80 rounded-lg transition-colors text-[#5A8F73]">
               <X className="w-4 h-4" />
             </button>
           </div>
         </header>
         
+        
         {/* CONTENT */}
-        <div className="p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
+        <main className="batch_modal_main p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {batchModalMode === "delete" ? (
             <>
               <div className="pb_delete_modal flex items-center gap-3 p-3 rounded-lg mb-4 bg-red-50">
@@ -408,9 +418,9 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
 
             </div>
           )}
-        </div>
-      </div>
-    </div>
+        </main>
+      </motion.div>
+    </motion.div>
   );
 
 

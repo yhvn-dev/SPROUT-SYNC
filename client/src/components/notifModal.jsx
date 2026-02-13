@@ -1,48 +1,71 @@
 import { Clock, AlertCircle, CheckCircle, AlertTriangle,Trash2 ,Bell} from "lucide-react";
 import { usePlantData } from "../hooks/plantContext";
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+
+
 import * as notifService from "./../data/notifsServices"
 
 
 
+
+  // --color-danger-a: hsl(355, 100%, 70%);
+  // --color-danger-b: hsl(355,100%, 85%);
+  // --color-danger-c:hsl(353, 40%, 90%);
+  // --color-warning: hsl(35, 80%, 70%);
+  // --color-warning-b: hsl(35, 80%, 90%);
+  // --color-warning-c: hsl(35, 80%, 95%);
+  // --color-success-a: hsl(125, 85%, 60%);
+  // --color-success-a-soft: hsl(110, 58%, 90%);
+  // --color-success-c: hsl(160,60%, 70%);
+  // --color-success-d:hsl(150, 80%, 80%);
+ 
+    
+
+
+
+
+    
 const getColorScheme = (type, status) => {
   switch (type.toLowerCase()) {
-    case "alert":
-    case "danger":
-    case "critical":
-      return { 
-        bg: "#fee2e2", 
-        text: "#dc2626", 
-        icon: AlertCircle 
-      };
-    case "warning":
-      return { 
-        bg: "#fef3c7", 
-        text: "#d97706", 
-        icon: AlertTriangle 
-      };
-    case "info":  // ✅ NEW! For 10% approaching thresholds
-      return { 
-        bg: "#dbeafe", 
-        text: "#2563eb", 
-        icon: Clock  // ⏰ Approaching/early warning
-      };
-    case "success":
-    case "optimal":
-    case "normal":
-      return { 
-        bg: "#d1fae5", 
-        text: "#059669", 
-        icon: CheckCircle 
-      };
-    default:
-      return { 
-        bg: "#f3f4f6", 
-        text: "#374151", 
-        icon: AlertCircle 
-      };
-  }
+  case "alert":
+  case "danger":
+  case "critical":
+    return { 
+      bg: "hsl(353, 40%, 90%)",  // --color-danger-c
+      text: "var(--color-danger-a)", // --color-danger-a
+      icon: AlertCircle
+    };
+  case "warning":
+    return { 
+      bg: "hsl(35, 80%, 90%)",  // --color-warning-b
+      text: "hsl(35, 80%, 70%)", // --color-warning
+      icon: AlertTriangle
+    };
+  case "info":
+    return { 
+      bg: "hsl(210, 100%, 97%)",  
+      text: "hsl(220, 80%, 50%)",  
+      icon: Clock
+    };
+  case "success":
+  case "optimal":
+  case "normal":
+    return { 
+      bg: "hsl(110, 58%, 90%)",  // --color-success-a-soft
+      text: "hsl(125, 85%, 60%)", // --color-success-a
+      icon: CheckCircle
+    };
+  default:
+    return { 
+      bg: "hsl(210, 20%, 95%)",  // light gray fallback
+      text: "hsl(210, 10%, 25%)",
+      icon: AlertCircle
+    };
+}
 };
+
+
 
 export function DeleteNotifModal({isOpen,onClose}){
   
@@ -96,7 +119,12 @@ export function Notif_Modal({ isOpen, onClose}) {
   
   if (!isOpen) return null;
   return (
-    <aside className="notif_modal absolute top-4 right-4">
+    <motion.div className="notif_modal absolute top-4 right-4"
+    initial={{ opacity: 0 }}
+    animate={{ opacity: 1 }}
+    exit={{ opacity: 0 }}
+    transition={{ duration: 0.2 }}
+    >
       <div className="notif_box bg-white rounded-2xl w-96 max-h-[80vh] shadow-lg flex flex-col">
 
         {/* Header */}
@@ -149,9 +177,7 @@ export function Notif_Modal({ isOpen, onClose}) {
                   <p
                     className="text-sm font-semibold" style={{ color: text, whiteSpace: "pre-line" }}>
                     {notif.message}{" "}
-                    <span className="text-xs font-normal text-gray-600">
-                      ({notif.status})
-                    </span>
+                 
                   </p>
                   
                   <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
@@ -178,7 +204,7 @@ export function Notif_Modal({ isOpen, onClose}) {
           </button>
         </div>
       </div>
-    </aside>
+    </motion.div>
   );
 }
 

@@ -1,21 +1,19 @@
-import { Leaf, Phone, MapPin, ArrowRight,Facebook} from 'lucide-react';
+import {  Phone, MapPin, ArrowRight,Facebook} from 'lucide-react';
+import { Img_Logo } from './logo';
 
 
 export default function Footer() {
   
   
   return (
-    <footer id="footer" className="bg-[#003333] text-white ">
+    <footer id="footer" className="bg-[#003333] text-white rounded-4xl shadow-2xl ">
       <div className="max-w-7xl mx-auto px-6 py-12">
         {/* Main Footer Content */}
         <div className="grid md:grid-cols-4 gap-8 mb-8">
           {/* Brand Section */}
           <div className="col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#027c68] to-[#009983] flex items-center justify-center">
-                <Leaf className="w-6 h-6 text-white" />
-              </div>
-              <span className="text-xl font-bold">SPROUTSYNC</span>
+            <div className="flex items-center gap-2 mb-4 rounded-2xl">
+              <Img_Logo/>
             </div>
 
 
@@ -87,17 +85,7 @@ export default function Footer() {
           <p className="text-[#A8C7B8] text-sm">
             © 2025 SPROUTSYNC. All rights reserved.
           </p>
-          <div className="flex gap-6 text-sm">
-            <a href="#" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors">
-              Privacy Policy
-            </a>
-            <a href="#" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors">
-              Terms of Service
-            </a>
-            <a href="#" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors">
-              Security Policy
-            </a>
-          </div>
+         
         </div>
       </div>
 
