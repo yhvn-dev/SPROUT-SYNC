@@ -13,6 +13,21 @@ export const readReadings = async () => {
 };
 
 
+export const readReadingById = async (reading_id) => {
+  try {
+    const sql = `
+      SELECT r.*, s.sensor_type
+      FROM sensor_readings r
+      JOIN sensors s ON r.sensor_id = s.sensor_id
+      WHERE r.reading_id = $1
+    `;
+    const result = await query(sql, [reading_id]);
+    return result.rows[0];       
+  } catch (error) {
+    throw error;
+  }
+};
+
 
 
 // ===== READ latest reading per sensor =====
@@ -37,19 +52,6 @@ export const readLatestReadingsPerSensor = async () => {
 };
 
 
-
-
-
-// ===== READ single reading by ID =====
-export const readReadingById = async (reading_id) => {
-  try {
-    const sql = `SELECT * FROM sensor_readings WHERE reading_id = $1`;
-    const result = await query(sql, [reading_id]);
-    return result.rows[0];       
-  } catch (error) {
-    throw error;
-  }
-};
 
 // ===== READ moisture readings for last 24 hours =====
 export const readMoistureReadingsLast24h = async () => {
@@ -156,3 +158,24 @@ export const deleteAllReadings = async () => {
     deletedCount: result.rowCount
   };
 };
+
+
+
+
+export const deleteAllReadingsByType = async (sensorType) => {
+  try {
+    const { rows } = await query(`
+      DELETE FROM sensor_readings r
+      USING sensors s
+      WHERE r.sensor_id = s.sensor_id
+        AND s.sensor_type = $1
+      RETURNING r.*
+    `, [sensorType]);
+
+    return rows; 
+  } catch (error) {
+    console.error("Error deleting readings by type:", error);
+    throw error;
+  }
+};
+

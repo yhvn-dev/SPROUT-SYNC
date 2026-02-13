@@ -302,7 +302,25 @@ export const deleteAllReadings = async (req, res) => {
 
 
 
-// MOISTURE STATUS
-// 1. HIGH
-// 2. MEDIUM
-// 3. LOW
+
+
+export const removeAllReadingsByType = async (req, res) => {
+  try {
+    const { type } = req.params;
+    const deleted = await readingModel.deleteAllReadingsByType(type);
+
+    if (deleted.length === 0) {
+      return res.status(404).json({ message: `No readings found for sensor type: ${type}` });
+    }
+
+    return res.status(200).json({ 
+      success: true, 
+      message: `Deleted ${deleted.length} readings of type ${type}`, 
+      deleted 
+    });
+  } catch (error) {
+    console.error("Error deleting readings by type:", error);
+    return res.status(500).json({ success: false, message: "Internal server error" });
+  }
+};
+

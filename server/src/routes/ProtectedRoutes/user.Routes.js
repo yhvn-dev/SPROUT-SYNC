@@ -4,7 +4,7 @@ import * as authController from "../../controllers/auth.Controller.js";
 import * as userValidation from "../../middlewares/userValidation.js";
 import express from "express";
 
-const router = express.Router();
+const router = express.Router();    
 
 /* ================= USER ROUTES ================= */
 router.get("/users", verifyAccessToken, userController.getUsers);
@@ -12,8 +12,8 @@ router.get("/users/count", verifyAccessToken, userController.getUsersCount);
 router.get("/users/roles", verifyAccessToken, userController.getUserCountByRole);
 router.get("/users/status",userController.getUserByStatus);
 router.get("/users/me", verifyAccessToken, userController.getLoggedUser);
-router.get("/users/filter", userController.getFilteredUser);
-router.get("/users/search", userController.searchUser);
+router.get("/users/filter", verifyAccessToken,userController.getFilteredUser);
+router.get("/users/search", verifyAccessToken,userController.searchUser);
 router.get("/users/:user_id", verifyAccessToken, userController.selectUser);
 
 

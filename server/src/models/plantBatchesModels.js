@@ -74,49 +74,60 @@ export const getSeedlingGrowthByWeekAll = async () => {
 };
 
 
+
 export const createPlantBatch = async (batchData) => {
   const {
     tray_id,
     plant_name,
     total_seedlings,
-    dead_seedlings = 0,
-    replanted_seedlings = 0,
-    fully_grown_seedlings = 0,
+    dead_seedlings,
+    replanted_seedlings,
+    fully_grown_seedlings,
     growth_stage = "Seedling",
     date_planted,
     expected_harvest_days,
     batch_number
   } = batchData;
 
+  // Force numeric defaults
+  const dead = Number(dead_seedlings) || 0;
+  const replanted = Number(replanted_seedlings) || 0;
+  const grown = Number(fully_grown_seedlings) || 0;
 
-  // ✅ AUTO-ADJUST: Never exceed total_seedlings
-  const safeReplanted = Math.min(replanted_seedlings, total_seedlings);
-  const safeFullyGrown = Math.min(fully_grown_seedlings, total_seedlings);
-  const totalAlive = total_seedlings - dead_seedlings;
+  // AUTO-ADJUST: Never exceed total_seedlings
+  const safeReplanted = Math.min(replanted, total_seedlings);
+  const safeFullyGrown = Math.min(grown, total_seedlings);
+  const totalAlive = total_seedlings - dead;
   const finalReplanted = Math.min(safeReplanted, totalAlive);
   const finalFullyGrown = Math.min(safeFullyGrown, totalAlive - finalReplanted);
-  
+
   const sql = `
     INSERT INTO plant_batches (
       tray_id, plant_name, total_seedlings, dead_seedlings,
       replanted_seedlings, fully_grown_seedlings, growth_stage,
-      date_planted, expected_harvest_days,batch_number
+      date_planted, expected_harvest_days, batch_number
     )
     VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
     RETURNING *
   `;
 
   const values = [
-    tray_id, plant_name, total_seedlings, dead_seedlings,
-    finalReplanted, finalFullyGrown, growth_stage,
-    date_planted, expected_harvest_days,batch_number
+    tray_id,
+    plant_name,
+    total_seedlings,
+    dead,              
+    finalReplanted,
+    finalFullyGrown,
+    growth_stage,
+    date_planted,
+    expected_harvest_days,
+    batch_number
   ];
 
   const result = await query(sql, values);
   return result.rows[0];
-
+  
 };
-
 
 
 
@@ -173,6 +184,9 @@ export const updatePlantBatch = async (batchData, batch_id) => {
   }
 };
   
+
+
+
 
 
 

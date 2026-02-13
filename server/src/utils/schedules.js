@@ -5,7 +5,7 @@ import * as notifyController from "../controllers/notifications.Controller.js";
 
 
 // Production: run every day at 7 AM
-cron.schedule("0 7 * * *", async () => {
+cron.schedule("* 6 * * *", async () => {
   console.log("⏰ Running daily harvest check:", new Date().toISOString());
   try {
     await notifyController.notifyReplantDate();
@@ -13,6 +13,7 @@ cron.schedule("0 7 * * *", async () => {
     console.error("❌ Error running daily harvest check:", error);
   }
 });
+
 
 // Helper function
 export const toDateOnlyUTC = (date) =>
