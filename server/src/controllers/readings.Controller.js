@@ -3,7 +3,7 @@ import * as sensorModels from "../models/sensorModels.js";
 import * as notificationModels from "../models/notificationModels.js"
 import * as trayModels from "../models/trayModels.js"
 import * as trayGroupModels from "../models/trayGroupsModel.js"
-
+import { io } from "../app.js"; 
 
 // ===== GET all readings =====
 export const getReadings = async (req, res) => {
@@ -125,12 +125,9 @@ export const createReadings = async (req, res) => {
     if (!existingSensor) {
       return res.status(404).json({ message: "Sensor with this id doesn't exist" });
     }
-
-    // CREATE READING
     const reading = await readingModel.createReadings(readingData);
 
-    
-    
+  
     try {
       // ✅ MOISTURE (ALREADY WORKING)
       if (existingSensor.sensor_type === "moisture") {
@@ -145,18 +142,14 @@ export const createReadings = async (req, res) => {
       console.error("❌ Notification failed (reading still created):", notifError);
     }
 
-
-
-
     console.log("✅ READING CREATED:", reading);
     res.status(201).json(reading);
-
-
-
   } catch (err) {
     console.error("CONTROLLER: Error creating reading", err);
     res.status(500).json({ message: "Error creating reading" });
   }
+
+  
 };
 
 

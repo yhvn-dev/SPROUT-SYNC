@@ -1,5 +1,5 @@
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import {lazy,Suspense} from "react";
+import {lazy,Suspense, useEffect} from "react";
 const Login = lazy(() => import("./pages/Login/login.jsx"));
 const Contact = lazy(() => import("./pages/Contacts/contacts.jsx"));
 const Home = lazy(() => import("./pages/Home/home.jsx"));
@@ -11,18 +11,14 @@ const Batch_History = lazy(() => import("./pages/Batch_History/batch_history.jsx
 const Control_Panel = lazy(() => import("./pages/Control_Panel/control_panel.jsx"));
 
 import { Dashboard_Skeleton } from "./components/skeletons.jsx";
-
 import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";
 import { PlantDataProvider } from "./hooks/plantContext.jsx";
 import { ESP32Provider } from "./hooks/esp32Hooks.jsx"
 import { ValveProvider } from "./hooks/valveContext.jsx";
 
-
-
 import './styles.css'
 function App() {
-
-
+  
   return (
     <PlantDataProvider>
        <ValveProvider>   

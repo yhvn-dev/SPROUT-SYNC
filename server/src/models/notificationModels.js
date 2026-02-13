@@ -1,4 +1,6 @@
 import {query} from "../config/db.js" 
+import { io } from "../app.js"; 
+
 
 // NOTIF TYPE
 //  - Warning
@@ -6,14 +8,6 @@ import {query} from "../config/db.js"
 // - Error
 // - Info
 //  - Success
-
-
-
-// NOTIF STATUS
-// NORMAL
-// DISCONNECTED
-// FAULTY
-
 
 export const readNotif = async () => {
   try {
@@ -67,13 +61,19 @@ export const markAllNotificationsAsRead = async () => {
 
 
 export const createNotif = async (notificationData) => {
-    const { type, message, related_sensor, status } = notificationData;
-    const { rows } = await query(`
-        INSERT INTO notifications (type, message, related_sensor, status, is_read, created_at) 
-        VALUES ($1, $2, $3, $4, false, NOW())
-        RETURNING *
-    `, [type, message, related_sensor, status]);
-    return rows[0];
+  const { type, message, related_sensor, status, user_id = 1 } = notificationData;
+
+  const { rows } = await query(`
+    INSERT INTO notifications 
+      (type, message, related_sensor, status, user_id, is_read, created_at)
+    VALUES 
+      ($1, $2, $3, $4, $5, false, NOW())
+    RETURNING *
+  `, [type, message, related_sensor, status, user_id]);
+
+  const notif = rows[0];
+  io.to(`user_${notif.user_id}`).emit("notification", notif);
+  return notif;
 };
 
 
@@ -107,7 +107,6 @@ export const deleteNotif = async (notification_id) => {
     throw error;
   }
 };
-
 
 
 export const deleteAllNotifs = async () => {

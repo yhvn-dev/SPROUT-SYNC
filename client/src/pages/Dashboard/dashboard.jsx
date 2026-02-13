@@ -1,5 +1,5 @@
 // Dashboard.jsx
-import { useState, useContext } from "react";
+import { useState, useContext,useEffect } from "react";
 import { UserContext } from "../../hooks/userContext";
 import { Menu } from "lucide-react";
 
@@ -10,7 +10,6 @@ import { LogoutModal } from "../../components/logoutModal.jsx";
 import { usePlantData } from "../../hooks/plantContext.jsx";
 import Nursery_Dashboard from "./nursery.jsx";
 import ManagePlants from "./manage_plants.jsx";
-
 
 
 export function Dashboard() {

@@ -1,5 +1,6 @@
 import api from "../utils/api";
 
+
 export const fetchAllNotifs = async () => {
     try{
         const res = await api.get("/notif/get/notif");
