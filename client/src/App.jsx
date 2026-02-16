@@ -15,15 +15,23 @@ import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";
 import { PlantDataProvider } from "./hooks/plantContext.jsx";
 import { ESP32Provider } from "./hooks/esp32Hooks.jsx"
 import { ValveProvider } from "./hooks/valveContext.jsx";
-import { listenForMessages } from "./utils/firebase.js";
+import {listenForMessages } from "./utils/firebase.js";
+
 
 
 import './styles.css'
 function App() {
 
+  
   useEffect(() => {
-    listenForMessages();
-  },[])
+  const init = async () => {   
+    listenForMessages();    
+  };
+
+  init();
+}, []);
+
+
   
   return (
     <PlantDataProvider>
