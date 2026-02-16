@@ -180,7 +180,7 @@ function Batch_History() {
             icon={TrendingUp}
             title="Fully Grown"
             value={stats.totalFullyGrown}
-            subtitle="Ready for harvest"
+            subtitle="Total Grown"
             color="#2dc653"
           />
           <StatsCard

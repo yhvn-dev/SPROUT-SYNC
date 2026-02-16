@@ -1,5 +1,6 @@
 import * as userModels from "../models/userModels.js";
 import * as authModels from "../models/authModels.js";
+import * as deviceTokenModels from "../models/deviceTokenModels.js"
 import { getDeviceInfo } from "../utils/getDeviceInfo.js";
 
 import { generateAccessToken, generateRefreshToken } from "../utils/tokens.js";
@@ -42,6 +43,10 @@ export const getUserCountByRole = async (req, res) => {
   }
 };
 
+
+
+
+
 export const getUserByStatus = async (req, res) => {
   try {
     const status = await userModels.countUsersByStatus()
@@ -55,12 +60,13 @@ export const getUserByStatus = async (req, res) => {
 };
 
 
-
 /* ================= LOGIN ================= */
 export const loginUser = async (req, res) => {
   try {
     const { loginInput, password } = req.body;
     const user = await userModels.findUser(loginInput);
+
+    console.log("LOGGED USER:",user)
 
     if (!user) {
       return res.status(404).json({ message: "User Not Found" });
@@ -80,6 +86,9 @@ export const loginUser = async (req, res) => {
       refresh_token: refreshToken,
       device: deviceInfo,
     });
+
+
+    
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
@@ -107,6 +116,7 @@ export const loginUser = async (req, res) => {
         role: user.role,
         status: user.status,
         created_at: user.created_at,
+        first_time_login:user.first_time_login
       },
     });
   } catch (err) {
@@ -127,15 +137,16 @@ export const getLoggedUser = async (req, res) => {
     if (!req.user)
       return res.status(404).json({ message: "User not found" });
 
-    res.json({
-      user_id: req.user.user_id,
-      username: req.user.username,
-      fullname: req.user.fullname,
-      email: req.user.email,
-      phone_number: req.user.phone_number,
-      role: req.user.role,
-      status: req.user.status,
-    });
+      res.json({
+        user_id: req.user.user_id,
+        username: req.user.username,
+        fullname: req.user.fullname,
+        email: req.user.email,
+        phone_number: req.user.phone_number,
+        role: req.user.role,
+        status: req.user.status,
+        first_time_login: req.user.first_time_login,
+      });
   } catch (err) {
     console.error("CONTROLLER: Error Fetching Logged User", err);
     return res

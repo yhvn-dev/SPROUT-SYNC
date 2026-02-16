@@ -2,6 +2,7 @@ import { Droplets, CircleQuestionMark,Trash2 } from "lucide-react";
 import { use, useState } from "react";
 
 import InfosModal from "../../components/infosModal";
+import { useEffect } from "react";
 
 // =====================
 // STAT CARD
@@ -76,14 +77,15 @@ export default MoistureProgressBar;
 
 
 
-
-
-
-
 export const Overview = ({setDeleteModalMode,batchTotal,averageReadingsBySensor,setModalOpen}) => {
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
   const [infoModalPurpose, setInfoModalPurpose] = useState("");
 
+
+  useEffect(() =>{
+
+      console.log("AVERAGE SENSOR READINGS OVERVIEW",averageReadingsBySensor.moisture)
+  },[])
 
   
   // =====================
@@ -93,13 +95,8 @@ export const Overview = ({setDeleteModalMode,batchTotal,averageReadingsBySensor,
     typeof window !== "undefined" &&
     document.documentElement.classList.contains("dark");
 
-  
-
-  // =====================
-  // AVERAGES
-  // =====================
-  const avgMoisture = averageReadingsBySensor?.moisture?.average ?? 0;
-  const waterLevel = averageReadingsBySensor?.ultra_sonic?.average ?? 0;
+  const avgMoisture = averageReadingsBySensor?.moisture?? 0;
+  const waterLevel = averageReadingsBySensor?.ultra_sonic?? 0;
   const avgMoistureData = [{ sensor: "Moisture", average: Number(avgMoisture) }];
 
   const handleOpenInfosModalWaterLevel = () => {

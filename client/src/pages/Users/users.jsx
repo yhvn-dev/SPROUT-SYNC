@@ -121,9 +121,9 @@
           <div className='col-start-1 col-span-full md:col-start-2'>
             <Db_Header
               input={
-                <div className="relative  form_box center h-full flex-grow-1  ">
+                <div className="relative  form_box center h-full  ">
                   <input
-                    className="border-[1px] p-[4px] text-xs w-full md:w-1/2 border-[var(--metal-dark4)] rounded-xl px-4"
+                    className="search_input border-[1px] p-[4px] text-xs w-full md:w-1/2 border-[var(--metal-dark4)] rounded-xl px-4"
                     onChange={handleSearchChange}
                     type="text"
                     value={searchValue}

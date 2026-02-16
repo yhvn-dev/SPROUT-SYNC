@@ -21,7 +21,6 @@ CREATE TABLE tokens (
 );
 
 
-
 CREATE TABLE tray_groups (
     tray_group_id SERIAL PRIMARY KEY,
     tray_group_name VARCHAR(100) NOT NULL, 
@@ -68,8 +67,6 @@ CREATE TABLE plant_batches (
 );
 
 
-
-
 CREATE TABLE sensors(   
     sensor_id SERIAL PRIMARY KEY,
     tray_id INT REFERENCES trays(tray_id),
@@ -87,6 +84,7 @@ CREATE TABLE sensor_readings (
    recorded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
 -- COMPLETE notifications table schema with is_read column
 CREATE TABLE notifications (
     notification_id SERIAL PRIMARY KEY,         
@@ -95,6 +93,18 @@ CREATE TABLE notifications (
     related_sensor INT REFERENCES sensors(sensor_id), 
     status VARCHAR(10) DEFAULT 'NORMAL',        
     is_read BOOLEAN DEFAULT false,            
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+
+
+CREATE TABLE device_tokens (
+    id SERIAL PRIMARY KEY,
+    user_id INT REFERENCES users(id) ON DELETE CASCADE,
+    push_token TEXT NOT NULL,
+    device_type TEXT NOT NULL,        -- web | android | ios
+    device_info JSONB,                -- optional device details
+    last_active TIMESTAMP DEFAULT NOW(),
     created_at TIMESTAMP DEFAULT NOW()
 );
 

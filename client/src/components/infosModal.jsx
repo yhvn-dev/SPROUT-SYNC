@@ -154,7 +154,6 @@ function InfosModal({ isInfosModalOpen, onClose, purpose }) {
   
   return (
     <section className="info_modal fixed inset-0 bg-transparent backdrop-blur-2xl flex items-center justify-center p-4">
-
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}

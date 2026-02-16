@@ -4,7 +4,7 @@ import * as plantBatchModel from "../models/plantBatchesModels.js"
 import * as trayModel from "../models/trayModels.js"
 import * as trayGroupModel from "../models/trayGroupsModel.js"
 import { toDateOnlyUTC } from "../utils/schedules.js";
-
+import { sendPushNotification } from "../utils/firebaseAdmin.js"; 
   
 
 // ===== GET all notifications =====
@@ -59,7 +59,6 @@ export const markNotificationsAsRead = async (req, res) => {
     }
 };
 
-
 export const createNotification = async (req, res) => {
   try {
     const notificationData = req.body;
@@ -72,10 +71,6 @@ export const createNotification = async (req, res) => {
     res.status(500).json({ message: "Error creating notification", err });
   }
 };
-
-
-
-
 
 export const notifyReplantDate = async (req, res) => {
   try {
@@ -221,3 +216,32 @@ export const removeAllNotifications = async (req, res) => {
     res.status(500).json({ message: "Error deleting notification", err });
   }
 };
+
+
+
+export const sendPushNotifications = async (req,res) =>{
+  try {
+    const { push_token, title, body, data } = req.body;
+
+    if (!push_token || !title || !body) {
+      return res.status(400).json({
+        success: false,
+        message: "push_token, title, and body are required",
+      });
+    }
+
+    const response = await sendPushNotification(push_token, title, body, data);
+    res.status(200).json({
+      success: true,
+      message: "Notification sent successfully",
+      response,
+    });
+
+  } catch (err) {
+    console.error("Error sending notification:", err);
+    res.status(500).json({ success: false, message: err.message });
+  }
+}
+
+
+    

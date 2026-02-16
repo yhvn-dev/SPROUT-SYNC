@@ -53,7 +53,7 @@ function Tray_groups({
               text-xs sm:text-sm
               shadow-md
               bg-[var(--sancgb)]
-              text-[var(--main-white--)]
+              text-[var(--main-white)]
               w-full sm:w-auto
             "
           >

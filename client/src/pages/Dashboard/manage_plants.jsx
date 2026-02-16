@@ -131,8 +131,6 @@ const ManagePlants = ({ reloadTrayGroups, reloadTrays, reloadBatches }) => {
           </div>
         </nav>
 
-
-
         {/* CONTENT */}
         <div className="manage_plants_page_wrapper bg-white rounded-2xl h-[450px] sm:rounded-3xl shadow-sm border  border-gray-100 p-3 sm:p-6 mt-4">   
           {activeTab === 'trayGroups' && (

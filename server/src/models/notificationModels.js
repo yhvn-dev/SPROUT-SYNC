@@ -2,13 +2,6 @@ import {query} from "../config/db.js"
 import { io } from "../app.js"; 
 
 
-// NOTIF TYPE
-//  - Warning
-//  - Alert
-// - Error
-// - Info
-//  - Success
-
 export const readNotif = async () => {
   try {
     const { rows } = await query(

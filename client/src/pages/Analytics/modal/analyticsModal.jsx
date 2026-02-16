@@ -6,26 +6,31 @@ function AnalyticsModal({setMsg,deleteModalMode, isModalOpen, onClose, reloadRea
   if (!isModalOpen) return null; 
 
 
+
+
     const handleSubmit = async () => {
-    try {
-      const sensorType =
-        deleteModalMode === "moisture" ? "moisture" : "ultra_sonic";
+      try {
+        const sensorType = deleteModalMode === "moisture" ? "moisture" : "ultra_sonic";
+        await readingsService.deleteAllReadingsByType(sensorType);
 
-      await readingsService.deleteAllReadingsByType(sensorType);
+        setMsg("Sensor Readings Successfully Deleted");
+        reloadReadings();
 
-      setMsg("Sensor Readings Successfully Deleted");
-      reloadReadings();
-      onClose();
+        // Close modal after a tiny delay
+        setTimeout(() => {
+          onClose();
+        }, 100); // 100ms is enough for React to render FloatSuccessMsg
 
-    } catch (err) {
-      if (err.response?.status === 404) {
-        setMsg(`No readings to delete for ${sensorType} sensor`);
-      } else {
-        setMsg(err  .response?.data?.message   || "Something went wrong");
+      } catch (err) {
+        if (err.response?.status === 404) {
+          setMsg(`No readings to delete for ${sensorType} sensor`);
+        } else {
+          setMsg(err.response?.data?.message || "Something went wrong");
+        }
+        onClose();
       }
-      onClose();
-    }
-  };
+     };
+
 
 
 

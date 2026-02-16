@@ -10,6 +10,7 @@
     import readingRoutes from "./routes/ProtectedRoutes/readings.Routes.js";
     import notifificationRoutes from "./routes/ProtectedRoutes/notification.Routes.js";
     import esp32Routes from "./routes/ProtectedRoutes/esp32.Routes.js";
+    import deviceTokenRoutes from "./routes/ProtectedRoutes/deviceToken.Routes.js"
 
     // ===== CORE =====
     import express from "express";
@@ -53,11 +54,14 @@
     app.use('/notif', notifificationRoutes);
     app.use('/auth', publicRoutes);
     app.use("/esp32", esp32Routes);
+    app.use ("/deviceToken",deviceTokenRoutes)
 
+
+    
     // ===== TEST =====
     app.get("/", (req, res) => res.send("Serving is Running"));
     app.get("/api/hello", (req, res) => {
-    res.json({ success: true, message: "Hello from Node.js" });
+        res.json({ success: true, message: "Hello from Node.js" });
     });
 
     // ===== HTTP SERVER =====

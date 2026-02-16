@@ -172,6 +172,23 @@ body.dark .sidebar{
 
 
 
+body.dark .succMsg{
+    @apply bg-transparent border-[1px] border-[var(--sancgb)]; 
+}
+body.dark .success_msg p{
+    @apply text-[var(--metal-dark5)];    
+}
+body.dark .success_msg_pro{
+    @apply text-[var(--metal-dark5)];    
+}
+body .error_msg{
+    @apply bg-[var(--color-danger-b)];    
+}
+body.dark .error_msg{
+    @apply text-[var(--metal-dark5)] bg-[var(--color-danger-a)] ;    
+}
+
+
 /* SIDEBAR  */
 body.dark svg {
     @apply stroke-[var(--main-white)];
@@ -510,6 +527,18 @@ body.dark .pb_con{
 body.dark .user_table_div::-webkit-scrollbar{
     @apply bg-[var(--metal-dark1)];
 }
+
+
+    .search_input {
+        @apply text-[var(--metal-dark2)];
+    }
+
+
+    body.dark .search_input {
+        @apply text-[var(--main-white)];
+    }
+
+
     /* DARK MODE – default (inactive tab) */
     body.dark .users_nav button {
         @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
@@ -784,12 +813,6 @@ body.dark .btn_box{
 
 
 
-body.dark .succMsg{
-    @apply bg-transparent border-[1px] border-[var(--sancgb)]; 
-}
-body.dark .success_msg p{
-    @apply text-[var(--metal-dark5)];    
-}
 
 
 

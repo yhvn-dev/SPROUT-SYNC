@@ -13,7 +13,8 @@ import { SeedlingStats } from "./seedlingStats";
 
 import InfosModal from "../../components/infosModal";
 import AnalyticsModal from "./modal/analyticsModal";
-import { FloatSuccessMsg } from "../../components/sucessMsgs";
+
+import { FloatErrorMsg } from "../../components/messages";
 
 
 export default function Analytics() {
@@ -51,6 +52,7 @@ export default function Analytics() {
     loadReadings();
     loadAverageReadingsBySensor("moisture");
     loadAverageReadingsBySensor("ultra_sonic");
+
   }, [
     loadBatchTotal,
     loadBatchTotalHistory,
@@ -59,17 +61,11 @@ export default function Analytics() {
     loadAverageReadingsBySensor,
   ]);
 
-  // useEffect(() =>{
-  //   console.log("MESSAGE EROR",msg)
-  // })
-
-
   const handleOpenInfosModalAnalytics = () =>{
       setInfoModalPurpose("analytics")
       setInfoModalOpen(true)
   }
 
-  
   return (
     <section
       className="
@@ -226,11 +222,11 @@ export default function Analytics() {
         />          
       }
 
-     {msg && <FloatSuccessMsg text={msg} clearMsg={clearMsg}/>}
-
-
-
-
+      {msg && (
+      <>
+        <FloatErrorMsg txt={msg} clearMsg={clearMsg}/>
+      </> 
+      )}
     </section>
 
 

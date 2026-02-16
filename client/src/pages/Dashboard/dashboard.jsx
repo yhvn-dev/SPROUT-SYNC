@@ -1,5 +1,5 @@
 // Dashboard.jsx
-import { useState, useContext,useEffect } from "react";
+import { useState, useContext,useEffect,useCallback } from "react";
 import { UserContext } from "../../hooks/userContext";
 import { Menu } from "lucide-react";
 
@@ -8,8 +8,11 @@ import { Db_Header } from "../../components/db_header";
 import { Notif_Modal } from "../../components/notifModal.jsx";
 import { LogoutModal } from "../../components/logoutModal.jsx";
 import { usePlantData } from "../../hooks/plantContext.jsx";
+import { FloatSuccessMsg } from "../../components/sucessMsgs.jsx";
+
 import Nursery_Dashboard from "./nursery.jsx";
 import ManagePlants from "./manage_plants.jsx";
+import RegisterDeviceModal from "./modals/registerDeviceModal.jsx";
 
 
 export function Dashboard() {
@@ -18,8 +21,30 @@ export function Dashboard() {
   const [isNotifOpen, setNotifOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isRegisterDeviceOpen,setRegisterDeviceOpen] = useState(false);
   const { loadTrayGroups } = usePlantData();
+  const [msg,setMsg] = useState("");
 
+  const clearMsg = useCallback(() => setMsg(""), []);
+
+  
+  useEffect(() => {
+    const registerUserDevice = async () => {
+      try {
+        if (user.first_time_login === true) {
+          setRegisterDeviceOpen(true);
+        }
+      } catch (error) {
+        console.error(error, "Error Fetching Logged User");
+      }
+    };
+
+    registerUserDevice();
+  }, []); 
+
+
+
+  
 
   return (
     
@@ -38,8 +63,6 @@ export function Dashboard() {
         className="menu_button md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
         <Menu size={22} className="text-[var(--acc-darkb)]" />
       </button>
-
-
 
 
       {/* MOBILE OVERLAY */}
@@ -129,11 +152,22 @@ export function Dashboard() {
         <Notif_Modal isOpen={isNotifOpen} onClose={() => setNotifOpen(false)} />
       )}
 
+      {isRegisterDeviceOpen && (
+        <RegisterDeviceModal
+          isRegisterModalOpen={isRegisterDeviceOpen}
+          userData={user}
+          onClose={() => setRegisterDeviceOpen(false)}
+          setMsg={setMsg}
+          />
+      )}
+      
       {logoutOpen && (
         <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
       )}
       
-
+      {setMsg && (
+        <FloatSuccessMsg txt={msg} clearMsg={clearMsg} />
+      )}
       
     </section>
   );
