@@ -6,7 +6,6 @@ const serviceAccount = JSON.parse(
   fs.readFileSync(path.resolve("./src/config/serviceAccountKey.json"), "utf-8")
 );
 
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
@@ -14,10 +13,15 @@ admin.initializeApp({
 export const sendPushNotification = async (pushToken, title, body, data = {}) => {
   try {
     const message = {
-      notification: { title, body },
-      data,
       token: pushToken,
+      data: {
+        title: String(title),
+        body: String(body),
+        ...data,
+      },
     };
+
+    console.log("DATA", data);
     const response = await admin.messaging().send(message);
     console.log("FCM sent:", response);
     return response;
@@ -25,5 +29,4 @@ export const sendPushNotification = async (pushToken, title, body, data = {}) =>
     console.error("FCM Error:", err);
   }
 };
-
 

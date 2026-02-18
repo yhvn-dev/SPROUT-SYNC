@@ -9,12 +9,12 @@
   "theme_color": "#027c68",
   "icons": [
     {
-      "src": "./icons/SPROUTSYNC LOGO.png",
+      "src": "./SPROUTSYNC LOGO.png",
       "sizes": "192x192",
       "type": "image/png"
     },
     {
-      "src": "./icons/SPROUTSYNC LOGO.png",
+      "src": "./SPROUTSYNC LOGO.png",
       "sizes": "512x512",
       "type": "image/png"
     }

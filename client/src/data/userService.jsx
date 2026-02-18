@@ -60,7 +60,6 @@ export const getUsersCountByRole = async () =>{
 export const getUsersByStatus = async () => {
     try {
         const res = await api.get("/users/status")
-        console.log("USER DATA",res.data)
         return res.data
     } catch (error) {
         console.err("Error Fetching Users By Status",err);
@@ -95,8 +94,6 @@ export const insertUsers = async (data) =>{
         const isFormData = data instanceof FormData;
         const res = await api.post("/users/",data,{
             headers: isFormData ? {"Content-Type":"multipart/form-data"} :{},})
-
-        console.log("User Added Succesfully! | ",res)    
         return res.data        
     }catch(err){
         console.error("Error Inserting Users",err);

@@ -21,6 +21,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
+
 export const getPushToken = async () => {
   try {
     // 1️⃣ Request permission
@@ -50,6 +51,7 @@ export const getPushToken = async () => {
 };
 
 
+
 /**
  * Listen for foreground messages
  * @param {function} callback - Function to handle incoming payload
@@ -58,21 +60,47 @@ export const getPushToken = async () => {
 
 
 export const listenForMessages = () => {
-    onMessage(messaging, (payload) => {
-      console.log("📩 Foreground message received:", payload);
+  onMessage(messaging, (payload) => {
+    console.log("📩 Foreground message received:", payload);
 
-      if (Notification.permission === "granted") {
-        new Notification(payload.notification.title, {
-          body: payload.notification.body,
-          icon: "/icon.png",
-        });
-      }
-    });
+    const { title, body } = payload.data || {};
+    if (!title || !body) return;
+
+    if (Notification.permission === "granted") {
+      new Notification(title, {
+        body,
+        icon: "../../public/SPROUTSYNC LOGO.png",
+        badge: "../../public/SPROUTSYNC LOGO.png",
+        tag: "sprout-sync",
+        renotify: true,
+      });
+    } else {
+      console.warn("Notification permission not granted for foreground message");
+    }
+    showInPageNotification(title, body);
+  });
 };
 
 
+function showInPageNotification(title, body) {
+  const container = document.getElementById("notification-container");
+  if (!container) return;
 
+  if (container.classList.contains("hidden")) {
+    container.classList.remove("hidden");
+  }
 
+  const notif = document.createElement("div");
+  notif.className = "notification bg-white p-4 rounded-xl shadow mb-2"; // Tailwind styling
+  notif.innerHTML = `<strong>${title}</strong><p>${body}</p>`;
+  container.appendChild(notif);
 
+  setTimeout(() => {
+    notif.remove();
 
-
+    if (container.children.length === 0) {
+      container.classList.add("hidden");
+    }
+  }, 5000);
+  
+}

@@ -10,7 +10,7 @@ import { useEffect } from "react";
 
 
 
-function RegisterDeviceModal({ onClose, isRegisterModalOpen, setMsg, userData }) {
+function RegisterDeviceModal({ onClose, isRegisterModalOpen, userData }) {
   const [isLoading, setIsLoading] = useState(false);
   const [deviceInfo,setDeviceInfo] = useState({});
 
@@ -21,8 +21,6 @@ function RegisterDeviceModal({ onClose, isRegisterModalOpen, setMsg, userData })
     const device_Info = getDeviceInfo()
     setDeviceInfo(device_Info)  
   },[])
-  
-
   
   const handleRegister = async (e) => {
     e.preventDefault();
@@ -45,10 +43,9 @@ function RegisterDeviceModal({ onClose, isRegisterModalOpen, setMsg, userData })
 
       console.log("Register payload:", payload);
       await registerDevice(payload);
-
-      setMsg("Device Registered Successfully!");
       setIsLoading(false);
       onClose();
+      
     } catch (error) {
       console.error("Device Registration Failed", error);
       setIsLoading(false);
@@ -56,7 +53,7 @@ function RegisterDeviceModal({ onClose, isRegisterModalOpen, setMsg, userData })
   };
 
   const handleSkip = () => {
-    if (!isLoading) onClose(); // prevent closing during registration
+    if (!isLoading) onClose(); 
   };
 
   return (
@@ -66,17 +63,17 @@ function RegisterDeviceModal({ onClose, isRegisterModalOpen, setMsg, userData })
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative w-full h-auto my-4 max-w-md bg-gradient-to-br from-white to-sage-lighter rounded-3xl shadow-2xl overflow-hidden animate-slideUp"
-      >
+        className="relative w-full h-auto my-4 max-w-md bg-gradient-to-br from-white to-sage-lighter rounded-3xl shadow-2xl overflow-hidden animate-slideUp">
         {/* Close button */}
         <button
           onClick={handleSkip}
           className={`absolute top-4 right-4 p-2 rounded-full hover:bg-black/5 transition-colors duration-200 z-10 ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
           aria-label="Close modal"
-          disabled={isLoading}
-        >
+          disabled={isLoading} >
           <X className="cursor-pointer w-5 h-5 text-acc-darkc" />
         </button>
+
+
 
         {/* Content */}
         <div className="p-8 sm:p-10">
@@ -88,7 +85,7 @@ function RegisterDeviceModal({ onClose, isRegisterModalOpen, setMsg, userData })
             <h2 className="text-2xl sm:text-3xl font-semibold text-acc-darka mb-2">
               Welcome, {userData.username}!
             </h2>
-            <p className="text-sm text-acc-darkc">to <Img_Logo/></p>
+            <span className="text-sm text-acc-darkc">to <Img_Logo/></span>
           </div>
 
 

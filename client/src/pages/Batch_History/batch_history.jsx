@@ -214,15 +214,17 @@ function Batch_History() {
               </button>
             </div>
             <div className='flex items-center justify-start flex-row-reverse w-1/2'>                     
-                <select
-                  value={selectedBatch}
+
+                 <select
+                  value={selectedStage}
                   onChange={(e) => setSelectedStage(e.target.value)}
-                  className="mx-4 border border-[#027c68] rounded-lg px-4 py-[1px] focus:outline-none focus:ring-2 focus:ring-[#027c68] bg-white"
-                >
+                  className="...">
                   {growthStages.map(stage => (
                     <option key={stage} value={stage}>{stage}</option>
                   ))}
                 </select>
+
+
                 <label className="text-sm font-medium text-[#027c68] ">Filter by Stage:</label>
             </div>
           </nav>
@@ -230,7 +232,7 @@ function Batch_History() {
 
 
           {/* TABLE SECTION */}
-          <div className="batch_history_table  rounded-2xl shadow-lg 
+          <div className="batch_history_table  rounde d-2xl shadow-lg 
                     h-[55vh] md:h-[57vh] 
                     overflow-y-auto">
 
@@ -316,7 +318,7 @@ function Batch_History() {
 
 
             {/* Mobile Table - Simple List */}
-            <div className="md:hidden">             {filteredData.map((record) => (
+            <div className="md:hidden"> {filteredData.map((record) => (
                 <div
                   key={record.history_id}
                   className="batch_history_table_mobile_box border-b border-gray-200 p-4 hover:bg-[#E8F3ED] transition-colors"
@@ -329,17 +331,13 @@ function Batch_History() {
                       <p className="text-xs text-gray-500">{new Date(record.date_recorded).toLocaleDateString()}</p>
                     </div>
                     <button
-                      onClick={() => handleDelete(record.history_id)}
+                      onClick={() => handleDelete(record)}
                       className="p-2 hover:bg-red-100 rounded-full transition-colors"
                     >
                       <Trash2 size={16} className="text-red-600" />
                     </button>
                   </div>
 
-
-
-
-{/*  */}
                   <div className="flex items-center gap-2 mb-2">
                     <span
                       className="bh_stage px-2 py-1 

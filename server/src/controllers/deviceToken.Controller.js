@@ -13,7 +13,6 @@ export const registerDevice = async (req, res) => {
         message: "Missing required fields",
       });
     }
-  
     const device = await deviceTokenModel.insertDeviceToken(
       user_id,
       push_token,
@@ -27,8 +26,7 @@ export const registerDevice = async (req, res) => {
       "Welcome to Sprout Sync!",
       "Your device is registered successfully 🌱"
     );
-
-    console.log("Device successfully inserted:", device);    
+    
     res.status(200).json({
       success: true,
       message: "Device registered successfully",

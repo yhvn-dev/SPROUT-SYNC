@@ -23,11 +23,7 @@ export function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isRegisterDeviceOpen,setRegisterDeviceOpen] = useState(false);
   const { loadTrayGroups } = usePlantData();
-  const [msg,setMsg] = useState("");
 
-  const clearMsg = useCallback(() => setMsg(""), []);
-
-  
   useEffect(() => {
     const registerUserDevice = async () => {
       try {
@@ -157,7 +153,7 @@ export function Dashboard() {
           isRegisterModalOpen={isRegisterDeviceOpen}
           userData={user}
           onClose={() => setRegisterDeviceOpen(false)}
-          setMsg={setMsg}
+     
           />
       )}
       
@@ -165,10 +161,7 @@ export function Dashboard() {
         <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
       )}
       
-      {setMsg && (
-        <FloatSuccessMsg txt={msg} clearMsg={clearMsg} />
-      )}
-      
+    
     </section>
   );
 }

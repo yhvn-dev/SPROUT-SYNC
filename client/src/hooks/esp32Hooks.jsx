@@ -17,14 +17,10 @@ export function ESP32Provider({ children }) {
     }, []);
 
 
-
     async function getESP32Status() {
         try {
-
             const esp32Status = await esp32Services.getESP32Status()
-            console.log("ESP32 STATUS",esp32Status)
             setESP32Status(esp32Status);
-
         } catch (err) {
         console.error(err);
         }
