@@ -63,6 +63,7 @@ export const fetchUserDevices = async (req, res) => {
 
 
 
+
 export const fetchAllUserDevices = async (req, res) => {
   try {
 

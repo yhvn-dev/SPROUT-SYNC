@@ -42,7 +42,16 @@ export const getAllDeviceTokens = async () => {
 };
 
 
-
+export const getAllDeviceTokensForNotif = async () => {
+  try {
+    const { rows } = await query(
+      `SELECT * FROM device_tokens WHERE push_token IS NOT NULL`);
+    return rows;
+  } catch (err) {
+    console.error("MODELS: Error Fetching All Device Tokens", err);
+    throw err;
+  }
+};
 
 // Get all tokens for a user
 export const getDeviceTokensByUser = async (user_id) => {

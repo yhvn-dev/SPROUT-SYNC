@@ -8,7 +8,6 @@ const router = express.Router();
     router.get("/get/notif/notify", notificationController.notifyReplantDate)
     router.get("/get/notif/test-harvest",notificationController.testHarvestNotification)
     router.get("/get/notif/:notification_id",notificationController.getNotificationById);
-    router.post("/post/notif",notificationController.createNotification);
     router.post("/post/pushNotif",notificationController.sendPushNotifications)
     router.put("/put/notif/read",notificationController.markNotificationsAsRead)
     router.put("/put/notif/:notification_id",notificationController.updateNotification);

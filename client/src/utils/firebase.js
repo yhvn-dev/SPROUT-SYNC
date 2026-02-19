@@ -82,6 +82,9 @@ export const listenForMessages = () => {
 };
 
 
+
+
+
 function showInPageNotification(title, body) {
   const container = document.getElementById("notification-container");
   if (!container) return;

@@ -34,7 +34,7 @@ struct PlantSensor {
 
 PlantSensor sensors[3] = {
   {32, "BOKCHOY", 3000, 1800, 21, 50, 75},
-  {33, "PECHAY", 2900, 1750, 22, 50, 75},
+  {33, "PECHAY",  2900, 1750, 22, 50, 75},
   {34, "MUSTASA", 2800, 1700, 23, 55, 75}
 };
 
@@ -43,58 +43,60 @@ const int pumpPin = 18;
 
 /************ SYSTEM SWITCH ************/
 const int LOCK_SWITCH = 19;
-const int SWITCH_LED = 2;
+const int SWITCH_LED  = 2;
 
 /************ PLANT BUTTONS ************/
 const int bokchoyBtn = 25;
 const int petchayBtn = 26;
 const int mustasaBtn = 27;
 
+/************ LED PINS ************/
+const int WIFI_LED    = 4;
+const int BOKCHOY_LED = 13;
+const int PECHAY_LED  = 14;
+const int MUSTASA_LED = 15;
+const int plantLedPins[3] = {BOKCHOY_LED, PECHAY_LED, MUSTASA_LED};
+
 /************ STATE ************/
-volatile bool systemEnabled = false;
+volatile bool systemEnabled       = false;
 volatile bool systemSwitchPressed = false;
-volatile bool plantBtnPressed[3] = {false, false, false};
+volatile bool plantBtnPressed[3]  = {false, false, false};
 
-// buttonManualOn = true means user MANUALLY turned ON via button
-// buttonManualOff = true means user MANUALLY turned OFF via button
-bool buttonManualOn[3] = {false, false, false};
+bool buttonManualOn[3]  = {false, false, false};
 bool buttonManualOff[3] = {false, false, false};
+bool wateringState[3]   = {false, false, false};
 
-bool wateringState[3] = {false, false, false};
-
-// Node.js remote control override
 bool nodeJsOverride[3] = {false, false, false};
 bool nodeJsForceOff[3] = {false, false, false};
 
 bool wifiShouldBeConnected = false;
-bool wifiConnected = false;
+bool wifiConnected         = false;
 
 /************ TIMING ************/
-unsigned long lastReadTime = 0;
-unsigned long lastWiFiCheck = 0;
-const unsigned long readInterval = 5000;
+unsigned long lastReadTime    = 0;
+unsigned long lastWiFiCheck   = 0;
+const unsigned long readInterval      = 5000;
 const unsigned long wifiCheckInterval = 100;
 
-/************ MOISTURE SENSOR POSTING - 10 MINUTE INTERVALS ************/
-unsigned long lastMoisturePost[3] = {0, 0, 0};
+/************ MOISTURE POSTING - 10 MIN ************/
+unsigned long lastMoisturePost[3]        = {0, 0, 0};
 const unsigned long moisturePostInterval = 600000;
 
 /************ WATERING CYCLE TRACKING ************/
-bool previousWateringState[3] = {false, false, false};
+bool previousWateringState[3]  = {false, false, false};
 bool wateringCycleAlertSent[3] = {false, false, false};
 
 /************ WATER LEVEL TRACKING ************/
-unsigned long lastWaterLevelPost = 0;
+unsigned long lastWaterLevelPost           = 0;
 const unsigned long waterLevelPostInterval = 900000;
 
 bool waterLevelFirstReadingDone = false;
-int stableWaterLevel = 0;
+int  stableWaterLevel           = 0;
 
 bool waterLevel30AlertSent = false;
 bool waterLevel20AlertSent = false;
-
-int previousWaterLevel = 100;
-bool waterLevelBootSent = false;
+int  previousWaterLevel    = 100;
+bool waterLevelBootSent    = false;
 
 /************ INTERRUPT SERVICE ROUTINES ************/
 void IRAM_ATTR systemSwitchISR() {
@@ -140,7 +142,6 @@ float getDistanceInches() {
   digitalWrite(TRIG_PIN, HIGH);
   delayMicroseconds(10);
   digitalWrite(TRIG_PIN, LOW);
-
   long duration = pulseIn(ECHO_PIN, HIGH, 30000);
   float inches = duration / 74.0 / 2.0;
   return inches;
@@ -152,16 +153,14 @@ int getWaterLevelPercentage() {
   if (distance > MAX_DISTANCE_INCHES) distance = MAX_DISTANCE_INCHES;
   if (distance < MIN_DISTANCE_INCHES) distance = MIN_DISTANCE_INCHES;
   int percentage = (int)(100.0 - (distance / MAX_DISTANCE_INCHES * 100.0));
-  percentage = constrain(percentage, 0, 100);
-  return percentage;
+  return constrain(percentage, 0, 100);
 }
 
 /************ MOISTURE READING ************/
 int getMoisturePercent(int sensorIndex) {
-  int raw = analogRead(sensors[sensorIndex].pin);
+  int raw     = analogRead(sensors[sensorIndex].pin);
   int percent = map(raw, sensors[sensorIndex].dryValue, sensors[sensorIndex].wetValue, 0, 100);
-  percent = constrain(percent, 0, 100);
-  return percent;
+  return constrain(percent, 0, 100);
 }
 
 /************ UTILS ************/
@@ -169,22 +168,44 @@ void setRelay(int pin, bool on) {
   digitalWrite(pin, on ? LOW : HIGH);
 }
 
+/************ GET ACTUAL VALVE STATE FOR PLANT ************/
+// Single source of truth — used by both relay control and LED sync
+bool getValveState(int i) {
+  if (!systemEnabled) return false;
+  if (nodeJsOverride[i]) return !nodeJsForceOff[i];
+  if (buttonManualOn[i])  return true;
+  if (buttonManualOff[i]) return false;
+  return wateringState[i];
+}
+
+/************ UPDATE PLANT LEDs ************/
+// LED ON  = valve is OPEN (any reason: auto, button-on, node-on)
+// LED OFF = valve is CLOSED (any reason: button-off, node-off, auto-off, system off)
+void updatePlantLEDs() {
+  for (int i = 0; i < 3; i++) {
+    bool valveOpen = getValveState(i);
+    digitalWrite(plantLedPins[i], valveOpen ? HIGH : LOW);
+  }
+}
+
+/************ TURN OFF ALL VALVES AND PUMP ************/
 void turnOffAllValvesAndPump() {
   for (int i = 0; i < 3; i++) {
-    buttonManualOn[i] = false;
+    buttonManualOn[i]  = false;
     buttonManualOff[i] = false;
-    wateringState[i] = false;
-    nodeJsOverride[i] = false;
-    nodeJsForceOff[i] = false;
+    wateringState[i]   = false;
+    nodeJsOverride[i]  = false;
+    nodeJsForceOff[i]  = false;
     setRelay(sensors[i].valvePin, false);
   }
   setRelay(pumpPin, false);
+  updatePlantLEDs();
 }
 
 /************ UPDATE PUMP STATE ************/
 void updatePumpState() {
-  bool pumpNeeded = false;
-  int currentWaterLevel = getWaterLevelPercentage();
+  bool pumpNeeded       = false;
+  int  currentWaterLevel = getWaterLevelPercentage();
 
   if (currentWaterLevel <= 20) {
     for (int i = 0; i < 3; i++) {
@@ -196,27 +217,18 @@ void updatePumpState() {
       Serial.println("⚠️⚠️⚠️ WATER LEVEL TOO LOW (" + String(currentWaterLevel) + "%) - PUMP DISABLED ⚠️⚠️⚠️");
       lastLowWaterWarning = millis();
     }
+    updatePlantLEDs();
     return;
   }
 
   for (int i = 0; i < 3; i++) {
-    bool valveOpen = false;
-
-    if (nodeJsOverride[i]) {
-      valveOpen = !nodeJsForceOff[i];
-    } else if (buttonManualOn[i]) {
-      valveOpen = true;
-    } else if (buttonManualOff[i]) {
-      valveOpen = false;
-    } else {
-      valveOpen = wateringState[i];
-    }
-
+    bool valveOpen = getValveState(i);
     setRelay(sensors[i].valvePin, valveOpen);
     if (valveOpen) pumpNeeded = true;
   }
 
   setRelay(pumpPin, pumpNeeded);
+  updatePlantLEDs(); // Always sync LEDs to actual valve states
 }
 
 /************ NODE.JS COMMAND HANDLER ************/
@@ -262,7 +274,7 @@ void handleNodeJsCommand(String command) {
     Serial.println("🟢 NODE.JS → MUSTASA AUTO MODE ⚡");
   }
 
-  updatePumpState();
+  updatePumpState(); // Syncs valves + LEDs immediately
 }
 
 /************ POST INDIVIDUAL SENSOR ************/
@@ -296,7 +308,7 @@ void checkAndPostMoistureSensors() {
   unsigned long now = millis();
   for (int i = 0; i < 3; i++) {
     if (now - lastMoisturePost[i] >= moisturePostInterval) {
-      int percent = getMoisturePercent(i);
+      int percent   = getMoisturePercent(i);
       String status = (percent < sensors[i].minMoisture) ? "active" : "inactive";
       postIndividualSensor(5 + i, percent, status);
       lastMoisturePost[i] = now;
@@ -308,17 +320,7 @@ void checkAndPostMoistureSensors() {
 /************ CHECK WATERING CYCLE START ************/
 void checkWateringCycleStart() {
   for (int i = 0; i < 3; i++) {
-    bool currentlyWatering = false;
-
-    if (nodeJsOverride[i]) {
-      currentlyWatering = !nodeJsForceOff[i];
-    } else if (buttonManualOn[i]) {
-      currentlyWatering = true;
-    } else if (buttonManualOff[i]) {
-      currentlyWatering = false;
-    } else {
-      currentlyWatering = wateringState[i];
-    }
+    bool currentlyWatering = getValveState(i);
 
     if (currentlyWatering && !previousWateringState[i]) {
       if (!wateringCycleAlertSent[i]) {
@@ -347,7 +349,7 @@ void checkAndPostWaterLevel() {
   }
 
   unsigned long now = millis();
-  int waterLevel = stableWaterLevel;
+  int waterLevel    = stableWaterLevel;
 
   if (!waterLevelBootSent && wifiConnected) {
     String status = (waterLevel <= 30) ? "active" : "inactive";
@@ -365,7 +367,6 @@ void checkAndPostWaterLevel() {
       waterLevel20AlertSent = true;
       Serial.println("🚨 BOOT: Water level ≤20% alert sent: " + String(waterLevel) + "%");
     }
-
     previousWaterLevel = waterLevel;
   }
 
@@ -398,8 +399,10 @@ void checkAndPostWaterLevel() {
 void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
   if (type == WStype_CONNECTED) {
     Serial.println("🟢 WebSocket Connected");
+    digitalWrite(WIFI_LED, HIGH);
   } else if (type == WStype_DISCONNECTED) {
     Serial.println("🔴 WebSocket Disconnected");
+    digitalWrite(WIFI_LED, LOW);
   } else if (type == WStype_TEXT) {
     String msg = String((char*)payload);
     msg.trim();
@@ -425,7 +428,10 @@ void handleWiFi() {
         webSocket.onEvent(webSocketEvent);
       }
     } else {
-      wifiConnected = false;
+      if (wifiConnected) {
+        wifiConnected = false;
+        digitalWrite(WIFI_LED, LOW);
+      }
       if (now - lastAttempt > 5000) {
         lastAttempt = now;
         WiFi.begin(ssid, password);
@@ -439,75 +445,86 @@ void handleWiFi() {
       WiFi.disconnect(true);
       WiFi.mode(WIFI_OFF);
       wifiConnected = false;
+      digitalWrite(WIFI_LED, LOW);
     }
   }
 }
 
 /************ HANDLE SYSTEM SWITCH ************/
 void handleSystemSwitch() {
-  if (systemSwitchPressed) {
-    systemSwitchPressed = false;
-    systemEnabled = !systemEnabled;
+  if (!systemSwitchPressed) return;
+  systemSwitchPressed = false;
+  systemEnabled = !systemEnabled;
 
-    if (systemEnabled) {
-      Serial.println("\n🟢🟢🟢 SYSTEM ON 🟢🟢🟢\n");
-      digitalWrite(SWITCH_LED, HIGH);
-      lastReadTime = 0;
-      WiFi.mode(WIFI_STA);
-      wifiShouldBeConnected = true;
+  if (systemEnabled) {
+    Serial.println("\n🟢🟢🟢 SYSTEM ON 🟢🟢🟢\n");
+    digitalWrite(SWITCH_LED, HIGH);
 
-      unsigned long now = millis();
-      for (int i = 0; i < 3; i++) {
-        lastMoisturePost[i] = now;
-        previousWateringState[i] = false;
-        wateringCycleAlertSent[i] = false;
-      }
+    // Plant LEDs ON when system starts (valves start closed = LEDs off initially,
+    // but they will reflect valve state via updatePlantLEDs)
+    updatePlantLEDs();
 
-      waterLevelFirstReadingDone = false;
-      stableWaterLevel = 0;
-      lastWaterLevelPost = millis();
-      previousWaterLevel = 100;
-      waterLevel30AlertSent = false;
-      waterLevel20AlertSent = false;
-      waterLevelBootSent = false;
+    lastReadTime = 0;
+    WiFi.mode(WIFI_STA);
+    wifiShouldBeConnected = true;
 
-      Serial.println("⏳ Water level will be sent after first 5s reading cycle");
-
-    } else {
-      Serial.println("\n🔴🔴🔴 SYSTEM OFF 🔴🔴🔴\n");
-      digitalWrite(SWITCH_LED, LOW);
-      turnOffAllValvesAndPump();
-      wifiShouldBeConnected = false;
+    unsigned long now = millis();
+    for (int i = 0; i < 3; i++) {
+      lastMoisturePost[i]       = now;
+      previousWateringState[i]  = false;
+      wateringCycleAlertSent[i] = false;
     }
+
+    waterLevelFirstReadingDone = false;
+    stableWaterLevel           = 0;
+    lastWaterLevelPost         = millis();
+    previousWaterLevel         = 100;
+    waterLevel30AlertSent      = false;
+    waterLevel20AlertSent      = false;
+    waterLevelBootSent         = false;
+
+    Serial.println("⏳ Water level will be sent after first 5s reading cycle");
+
+  } else {
+    Serial.println("\n🔴🔴🔴 SYSTEM OFF 🔴🔴🔴\n");
+    digitalWrite(SWITCH_LED, LOW);
+    digitalWrite(WIFI_LED, LOW);
+
+    turnOffAllValvesAndPump(); // Also calls updatePlantLEDs() → all plant LEDs off
+    wifiShouldBeConnected = false;
   }
 }
 
-/************ HANDLE PLANT BUTTONS - PRESS=ON / PRESS AGAIN=OFF ************/
+/************ HANDLE PLANT BUTTONS — REAL-TIME NON-BLOCKING ************/
 void handlePlantButtons() {
   for (int i = 0; i < 3; i++) {
-    if (plantBtnPressed[i]) {
-      plantBtnPressed[i] = false;
+    if (!plantBtnPressed[i]) continue;
+    plantBtnPressed[i] = false;
 
-      // Clear Node.js override when physical button is pressed
-      nodeJsOverride[i] = false;
-      nodeJsForceOff[i] = false;
+    if (!systemEnabled) continue;
 
-      if (buttonManualOn[i]) {
-        // Currently manually ON → turn OFF
-        buttonManualOn[i] = false;
-        buttonManualOff[i] = true;
-        setRelay(sensors[i].valvePin, false);
-        Serial.println("🔴 " + sensors[i].name + " → BUTTON OFF ⚡INSTANT⚡");
-      } else {
-        // Currently OFF (manual off or auto) → turn ON
-        buttonManualOn[i] = true;
-        buttonManualOff[i] = false;
-        setRelay(sensors[i].valvePin, true);
-        Serial.println("🟢 " + sensors[i].name + " → BUTTON ON ⚡INSTANT⚡");
-      }
+    // Physical button always clears Node.js override
+    nodeJsOverride[i] = false;
+    nodeJsForceOff[i] = false;
 
-      updatePumpState();
+    if (buttonManualOn[i]) {
+      // Currently manually ON → turn OFF instantly
+      buttonManualOn[i]  = false;
+      buttonManualOff[i] = true;
+      setRelay(sensors[i].valvePin, false);
+      digitalWrite(plantLedPins[i], LOW);  // ⚡ LED off INSTANTLY on button press
+      Serial.println("🔴 " + sensors[i].name + " → BUTTON OFF ⚡INSTANT⚡");
+    } else {
+      // Currently OFF → turn ON instantly
+      buttonManualOn[i]  = true;
+      buttonManualOff[i] = false;
+      setRelay(sensors[i].valvePin, true);
+      digitalWrite(plantLedPins[i], HIGH); // ⚡ LED on INSTANTLY on button press
+      Serial.println("🟢 " + sensors[i].name + " → BUTTON ON ⚡INSTANT⚡");
     }
+
+    // Sync pump state (other valves/pump) — LEDs already set above
+    updatePumpState();
   }
 }
 
@@ -537,19 +554,31 @@ void setup() {
   pinMode(petchayBtn, INPUT_PULLUP);
   pinMode(mustasaBtn, INPUT_PULLUP);
 
+  pinMode(WIFI_LED, OUTPUT);
+  digitalWrite(WIFI_LED, LOW);
+
+  pinMode(BOKCHOY_LED, OUTPUT);
+  pinMode(PECHAY_LED, OUTPUT);
+  pinMode(MUSTASA_LED, OUTPUT);
+  digitalWrite(BOKCHOY_LED, LOW);
+  digitalWrite(PECHAY_LED, LOW);
+  digitalWrite(MUSTASA_LED, LOW);
+
   attachInterrupt(digitalPinToInterrupt(LOCK_SWITCH), systemSwitchISR, FALLING);
-  attachInterrupt(digitalPinToInterrupt(bokchoyBtn), bokchoyISR, FALLING);
-  attachInterrupt(digitalPinToInterrupt(petchayBtn), petchayISR, FALLING);
-  attachInterrupt(digitalPinToInterrupt(mustasaBtn), mustasaISR, FALLING);
+  attachInterrupt(digitalPinToInterrupt(bokchoyBtn),  bokchoyISR,      FALLING);
+  attachInterrupt(digitalPinToInterrupt(petchayBtn),  petchayISR,      FALLING);
+  attachInterrupt(digitalPinToInterrupt(mustasaBtn),  mustasaISR,      FALLING);
 
   WiFi.mode(WIFI_OFF);
 
   Serial.println("\n========================================");
   Serial.println("🚀 ESP32 READY");
-  Serial.println("⚡ PLANT BUTTONS: PRESS=ON / PRESS AGAIN=OFF");
+  Serial.println("⚡ PLANT BUTTONS: REAL-TIME NON-BLOCKING");
   Serial.println("📡 WiFi: ONLY WHEN SYSTEM ON");
   Serial.println("🤖 SENSORS: AUTO (5s cycle)");
   Serial.println("⚠️ PUMP DISABLED when water ≤20%");
+  Serial.println("💡 SYSTEM=GPIO2 | WIFI=GPIO4 | BOK=GPIO13 | PEC=GPIO14 | MUS=GPIO15");
+  Serial.println("💡 LED = valve open | LED off = valve closed");
   Serial.println("========================================\n");
 }
 
@@ -557,38 +586,27 @@ void setup() {
 void loop() {
   handlePlantButtons();
   handleSystemSwitch();
+  handlePlantButtons();
 
   if (!systemEnabled) {
-    turnOffAllValvesAndPump();
     handleWiFi();
-    handlePlantButtons();
     delay(1);
     return;
   }
 
-  handlePlantButtons();
   handleWiFi();
   handlePlantButtons();
 
   if (wifiConnected) {
     webSocket.loop();
-  }
-
-  handlePlantButtons();
-
-  if (wifiConnected) {
+    handlePlantButtons();
     checkWateringCycleStart();
-  }
-
-  handlePlantButtons();
-
-  if (wifiConnected) {
+    handlePlantButtons();
     checkAndPostMoistureSensors();
     checkAndPostWaterLevel();
   }
 
   handlePlantButtons();
-
 
   if (millis() - lastReadTime >= readInterval) {
     lastReadTime = millis();
@@ -598,8 +616,8 @@ void loop() {
 
     handlePlantButtons();
 
-    float distance = getDistanceInches();
-    int waterLevel = getWaterLevelPercentage();
+    float distance   = getDistanceInches();
+    int   waterLevel = getWaterLevelPercentage();
 
     stableWaterLevel = waterLevel;
     if (!waterLevelFirstReadingDone) {
@@ -613,13 +631,9 @@ void loop() {
     Serial.print(waterLevel);
     Serial.print("% ");
 
-    if (waterLevel <= 20) {
-      Serial.println("⚠️ CRITICAL - PUMP DISABLED");
-    } else if (waterLevel <= 30) {
-      Serial.println("⚠️ LOW");
-    } else {
-      Serial.println("✓");
-    }
+    if (waterLevel <= 20)      Serial.println("⚠️ CRITICAL - PUMP DISABLED");
+    else if (waterLevel <= 30) Serial.println("⚠️ LOW");
+    else                       Serial.println("✓");
 
     Serial.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
 
@@ -628,10 +642,10 @@ void loop() {
     for (int i = 0; i < 3; i++) {
       handlePlantButtons();
 
-      int raw = analogRead(sensors[i].pin);
+      int raw     = analogRead(sensors[i].pin);
       int percent = getMoisturePercent(i);
 
-      // AUTO MODE LOGIC - only when no button or Node.js override
+      // AUTO MODE — only when no manual/override active
       if (!nodeJsOverride[i] && !buttonManualOn[i] && !buttonManualOff[i]) {
         if (percent < sensors[i].minMoisture) {
           wateringState[i] = true;
@@ -641,23 +655,16 @@ void loop() {
         }
       }
 
-
-
-
-      bool actualValveState = false;
-      String mode = "AUTO";
+      bool   actualValveState = getValveState(i);
+      String mode             = "AUTO";
 
       if (nodeJsOverride[i]) {
-        actualValveState = !nodeJsForceOff[i];
         mode = nodeJsForceOff[i] ? "NODE.JS-OFF" : "NODE.JS-ON";
       } else if (buttonManualOn[i]) {
-        actualValveState = true;
         mode = "BUTTON-ON";
       } else if (buttonManualOff[i]) {
-        actualValveState = false;
         mode = "BUTTON-OFF";
       } else {
-        actualValveState = wateringState[i];
         mode = "AUTO";
       }
 
@@ -674,7 +681,7 @@ void loop() {
     }
 
     handlePlantButtons();
-    updatePumpState();
+    updatePumpState(); // Syncs relays + LEDs after auto-mode decisions
 
     Serial.print("💧 PUMP: ");
     bool pumpOn = digitalRead(pumpPin) == LOW;
@@ -683,10 +690,7 @@ void loop() {
     handlePlantButtons();
     Serial.println("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
   }
-  handlePlantButtons(); 
+
+  handlePlantButtons();
 }
-
-
-
-
 

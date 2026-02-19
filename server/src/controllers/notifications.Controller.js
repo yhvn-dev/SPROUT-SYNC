@@ -5,7 +5,9 @@ import * as trayModel from "../models/trayModels.js"
 import * as trayGroupModel from "../models/trayGroupsModel.js"
 import { toDateOnlyUTC } from "../utils/schedules.js";
 import { sendPushNotification } from "../utils/firebaseAdmin.js"; 
-  
+import * as deviceTokenModel from "../models/deviceTokenModels.js"
+
+
 
 // ===== GET all notifications =====
 export const getNotifications = async (req, res) => {
@@ -28,7 +30,6 @@ export const getNotificationById = async (req, res) => {
 
     if (!notification) return res.status(404).json({ message: "Notification not found" });
     res.status(200).json(notification);
-    console.log("NOTIFICATION:", notification);
   } catch (err) {
     console.error("CONTROLLER: Error getting notification by ID", err);
     res.status(500).json({ message: "Error getting notification", err });
@@ -40,7 +41,6 @@ export const getUnreadNotificationCount = async (req, res) => {
   try {
     const count = await notificationModel.readTotalUnreadNotifCount()
     res.status(200).json(count);
-    console.log("NOTIFICATION:", count );
   } catch (err) {
     console.error("CONTROLLER: Error getting notification count", err);
     res.status(500).json({ message: "Error getting notification count", err });
@@ -50,8 +50,7 @@ export const getUnreadNotificationCount = async (req, res) => {
 
 export const markNotificationsAsRead = async (req, res) => {
     try {
-        const isRead = await notificationModel.markAllNotificationsAsRead();
-        console.log("✅ Model returned:", isRead); // Add this
+        await notificationModel.markAllNotificationsAsRead();
         res.json({ success: true, message: "All notifications marked as read" });
     } catch (error) {
         console.error("CONTROLLER: Error marking all notifications as read", error);
@@ -59,18 +58,10 @@ export const markNotificationsAsRead = async (req, res) => {
     }
 };
 
-export const createNotification = async (req, res) => {
-  try {
-    const notificationData = req.body;
-    const notification = await notificationModel.createNotif(notificationData);
-    res.status(201).json(notification);
-    console.log("NOTIFICATION CREATED:", notification);
 
-  } catch (err) {
-    console.error("CONTROLLER: Error creating notification", err);
-    res.status(500).json({ message: "Error creating notification", err });
-  }
-};
+
+
+
 
 export const notifyReplantDate = async (req, res) => {
   try {
@@ -106,23 +97,38 @@ export const notifyReplantDate = async (req, res) => {
 
       if (daysRemaining === 1) {
         const tray = await trayModel.readTrayById(batch.tray_id);
-        const tray_group_id = tray?.tray_group_id;
-        const trayGroup = await trayGroupModel.readTrayGroupById(tray_group_id);
+        const trayGroup = await trayGroupModel.readTrayGroupById(tray?.tray_group_id);
         const location = trayGroup?.location || "Unknown";
 
-        await notificationModel.createNotif({
-          type: "Info",
-          status: "Medium",
-          message: 
-            `🌱 Harvest Reminder\n` +
-            `1 Day Remaining before harvest \n\n` +
-            `Plant:    ${batch.plant_name}\n` +
-            `Location: ${location}\n` +
-            `Planted:  ${planted.toISOString().slice(0,10)}\n` +
-            `Expected Harvest: ${harvestDate.toISOString().slice(0,10)}`
-        });
+        // 🔹 Fetch all registered devices
+        const devices = await deviceTokenModel.getAllDeviceTokens();
+        console.log("ALL REGISTERED DEVICES", devices.length);
 
-        // ✅ Save both batch_id and plant_name
+       
+        for (const device of devices) {
+          const userId = device.user_id;
+
+          // ✅ Create a notification per user
+          await notificationModel.createNotif({
+            user_id: userId,
+            batch_id: batch.batch_id, // optional but good for tracking
+            type: "Info",
+            status: "Medium",
+            message:
+              `🌱 Harvest Reminder\n` +
+              `1 Day Remaining before harvest \n\n` +
+              `Plant:    ${batch.plant_name}\n` +
+              `Location: ${location}\n` +
+              `Planted:  ${planted.toISOString().slice(0, 10)}\n` +
+              `Expected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
+          });
+
+          await sendPushNotification(
+            device.push_token,
+            "Sprout Sync Notification",
+            `🌱 Harvest Reminder: ${batch.plant_name} harvest is tomorrow!`
+          );
+        }
         notifiedBatches.push({ batch_id: batch.batch_id, plant_name: batch.plant_name });
       }
     }
@@ -142,8 +148,6 @@ export const notifyReplantDate = async (req, res) => {
     });
   }
 };
-
-
 
 
 

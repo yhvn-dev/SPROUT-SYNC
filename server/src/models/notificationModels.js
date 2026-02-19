@@ -70,6 +70,7 @@ export const createNotif = async (notificationData) => {
 };
 
 
+
 export const updateNotif = async function (notifData,notification_id) {
   const {type,message,related_sensor,status,is_read} = notifData
 
