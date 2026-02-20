@@ -528,7 +528,6 @@ body.dark .user_table_div::-webkit-scrollbar{
     @apply bg-[var(--metal-dark1)];
 }
 
-
     .search_input {
         @apply text-[var(--metal-dark2)];
     }
@@ -950,7 +949,11 @@ body.dark .hero{
         @apply stroke-[var(--metal-dark5)] border-[1px] border-gray-100 rounded-full;
     }
     
+        body.dark #notification-container{
+            @apply bg-[var(--metal-dark2)] border-2 border-[var(--main-white)];
+        }
 
+        
 
 
 /* LOGIN FORM */

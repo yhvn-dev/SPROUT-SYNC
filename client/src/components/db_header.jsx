@@ -33,7 +33,7 @@ export function Db_Header({ input, setNotifOpen}) {
             
             <Bell className="bell_icon" size={18} />
           {notifsCount > 0 && ( 
-            <span className="absolute rounded-full min-w-[1rem] h-4 text-xs text-[var(--main-white--)] bg-[var(--sancgb)] flex items-center justify-center px-1 top-0 right-0">
+            <span className="absolute rounded-full min-w-[1rem] h-4 text-xs text-white bg-[var(--sancgb)] flex items-center justify-center px-1 top-0 right-0">
               {notifsCount}
             </span>
           )}

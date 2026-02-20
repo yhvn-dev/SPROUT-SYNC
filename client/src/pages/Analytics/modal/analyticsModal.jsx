@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import * as readingsService from "../../../data/readingsServices"
 
-function AnalyticsModal({setMsg,deleteModalMode, isModalOpen, onClose, reloadReadings}) {
+function AnalyticsModal({setScsMsg,setErrMsg,deleteModalMode, isModalOpen, onClose, reloadReadings}) {
   if (!isModalOpen) return null; 
 
 
@@ -13,19 +13,19 @@ function AnalyticsModal({setMsg,deleteModalMode, isModalOpen, onClose, reloadRea
         const sensorType = deleteModalMode === "moisture" ? "moisture" : "ultra_sonic";
         await readingsService.deleteAllReadingsByType(sensorType);
 
-        setMsg("Sensor Readings Successfully Deleted");
+        setScsMsg("Sensor Readings Successfully Deleted");
         reloadReadings();
 
         // Close modal after a tiny delay
         setTimeout(() => {
           onClose();
-        }, 100); // 100ms is enough for React to render FloatSuccessMsg
+        }, 100); 
 
       } catch (err) {
         if (err.response?.status === 404) {
-          setMsg(`No readings to delete for ${sensorType} sensor`);
+          setErrMsg(`No readings to delete for ${sensorType} sensor`);
         } else {
-          setMsg(err.response?.data?.message || "Something went wrong");
+          setErrMsg(err.response?.data?.message || "Something went wrong");
         }
         onClose();
       }

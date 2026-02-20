@@ -3,7 +3,8 @@ import * as sensorModels from "../models/sensorModels.js";
 import * as notificationModels from "../models/notificationModels.js"
 import * as trayModels from "../models/trayModels.js"
 import * as trayGroupModels from "../models/trayGroupsModel.js"
-import { io } from "../app.js"; 
+import * as deviceTokenModel from  "../models/deviceTokenModels.js";
+import { sendPushNotification } from "../utils/firebaseAdmin.js";
 
 // ===== GET all readings =====
 export const getReadings = async (req, res) => {
@@ -112,60 +113,73 @@ export const getAverageBySensorType = async (req, res) => {
 
 
 
-
-
-
 export const createReadings = async (req, res) => {
   try {
-    const readingData = req.body;
-    const { sensor_id, value } = readingData;
+    const { sensor_id, value } = req.body;
+    const numericValue = Number(value);
 
-    // CHECK SENSOR
     const existingSensor = await sensorModels.readSensorById(sensor_id);
     if (!existingSensor) {
-      return res.status(404).json({ message: "Sensor with this id doesn't exist" });
-    }
-    const reading = await readingModel.createReadings(readingData);
-
-  
-    try {
-      // ✅ MOISTURE (ALREADY WORKING)
-      if (existingSensor.sensor_type === "moisture") {
-        await handleMoistureNotifications(existingSensor, value);
-      }
-      
-      if (Number(sensor_id) === 8) {
-        await handleUltrasonicNotifications(sensor_id, value);
-      }
-
-    } catch (notifError) {
-      console.error("❌ Notification failed (reading still created):", notifError);
+      return res.status(404).json({ message: "Sensor not found" });
     }
 
-    console.log("✅ READING CREATED:", reading);
+    const reading = await readingModel.createReadings({
+      sensor_id,
+      value: numericValue
+    });
+
+    let notifPayload = null;
+    if (existingSensor.sensor_type === "moisture") {
+      notifPayload = await handleMoistureNotifications(existingSensor, numericValue);
+    }
+
+    if (existingSensor.sensor_type === "ultrasonic") {
+      notifPayload = await handleUltrasonicNotifications(sensor_id, numericValue);
+    }
+
+    // 🔔 IF MAY ALERT → CREATE ONLY 1 NOTIFICATION IN DB
+    if (notifPayload) {
+      // ✅ Create single notification (not per user)
+      await notificationModels.createNotif({
+        user_id: null, // optional: system-wide notification
+        related_sensor: sensor_id,
+        type: notifPayload.type,
+        status: notifPayload.status,
+        message: notifPayload.message
+      });
+
+      const devices = await deviceTokenModel.getAllDeviceTokens();
+      for (const device of devices) {
+        await sendPushNotification(
+          device.push_token,
+          "Sprout Sync Alert",
+          notifPayload.message
+        );
+      }
+    }
+
     res.status(201).json(reading);
-  } catch (err) {
-    console.error("CONTROLLER: Error creating reading", err);
+
+  } catch (error) {
+    console.error("❌ Sensor reading error:", error);
     res.status(500).json({ message: "Error creating reading" });
   }
-
-  
 };
 
 
 
 
-const handleMoistureNotifications = async (existingSensor, value) => {
+export const handleMoistureNotifications = async (existingSensor, value) => {
   const { tray_id } = existingSensor;
-  if (!tray_id) return;
+  if (!tray_id) return null;
 
   const selectedTray = await trayModels.readTrayById(tray_id);
-  if (!selectedTray) return;
+  if (!selectedTray) return null;
 
   const selectedTrayGroup = await trayGroupModels.readTrayGroupById(
     selectedTray.tray_group_id
   );
-  if (!selectedTrayGroup) return;
+  if (!selectedTrayGroup) return null;
 
   const { min_moisture, max_moisture, tray_group_name, group_number } =
     selectedTrayGroup;
@@ -174,53 +188,55 @@ const handleMoistureNotifications = async (existingSensor, value) => {
   const min = Number(min_moisture);
   const max = Number(max_moisture);
 
-  // TOO DRY → NEED WATERING
   if (moisture < min) {
-    await notificationModels.createNotif({
+    return {
       type: "Alert",
       status: "HIGH",
-      related_sensor: existingSensor.sensor_id,
-      message: `[${group_number}] ${tray_group_name} soil is TOO DRY! Needs watering (${moisture.toFixed(
+      message: `💧 [${group_number}] ${tray_group_name} soil is TOO DRY! Needs watering (${moisture.toFixed(
         1
       )}%)`
-    });
+    };
   }
-  // TOO WET → DO NOT WATER
-  else if (moisture > max) {
-    await notificationModels.createNotif({
+
+  if (moisture > max) {
+    return {
       type: "Alert",
       status: "HIGH",
-      related_sensor: existingSensor.sensor_id,
-      message: `[${group_number}] ${tray_group_name} soil is TOO WET! Do not water (${moisture.toFixed(
+      message: `💧 [${group_number}] ${tray_group_name} soil is TOO WET! Do not water (${moisture.toFixed(
         1
       )}%)`
-    });
+    };
   }
+
+  return null;
 };
 
 
 
-const handleUltrasonicNotifications = async (sensor_id, value) => {
-  const waterLevel = Number(value);
 
-  if (isNaN(waterLevel)) return;
+
+export const handleUltrasonicNotifications = async (sensor_id, value) => {
+  const waterLevel = Number(value);
+  if (isNaN(waterLevel)) return null;
+
   if (waterLevel <= 20) {
-    await notificationModels.createNotif({
+    return {
       type: "Alert",
       status: "HIGH",
-      related_sensor: sensor_id,
       message: `🚨 Water level is CRITICALLY LOW (${waterLevel}%)`
-    });
+    };
   }
 
-  else if (waterLevel <= 30) {
-    await notificationModels.createNotif({
+  if (waterLevel <= 30) {
+    return {
       type: "Warning",
       status: "MEDIUM",
-      related_sensor: sensor_id,
       message: `⚠️ Water level is LOW (${waterLevel}%)`
-    });
+    };
   }
+
+  return null;
+
 };
 
 

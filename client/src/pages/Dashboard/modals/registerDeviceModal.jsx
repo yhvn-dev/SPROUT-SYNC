@@ -52,10 +52,13 @@ function RegisterDeviceModal({ onClose, isRegisterModalOpen, userData }) {
     }
   };
 
+  
   const handleSkip = () => {
     if (!isLoading) onClose(); 
   };
 
+
+  
   return (
     <motion.div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent backdrop-blur-2xl animate-fadeIn">
       <motion.div
@@ -63,7 +66,7 @@ function RegisterDeviceModal({ onClose, isRegisterModalOpen, userData }) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.4 }}
-        className="relative w-full h-auto my-4 max-w-md bg-gradient-to-br from-white to-sage-lighter rounded-3xl shadow-2xl overflow-hidden animate-slideUp">
+        className="conb relative w-full h-auto my-4 max-w-md rounded-3xl shadow-2xl overflow-hidden animate-slideUp">
         {/* Close button */}
         <button
           onClick={handleSkip}
@@ -76,7 +79,7 @@ function RegisterDeviceModal({ onClose, isRegisterModalOpen, userData }) {
 
 
         {/* Content */}
-        <div className="p-8 sm:p-10">
+        <div className="p-8 sm:px-10 sm:p-1">
           {/* Welcome Header */}
           <div className="text-center mb-8">
             <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-ptl-greenb to-ptl-greenc rounded-2xl flex items-center justify-center shadow-lg">
@@ -99,7 +102,7 @@ function RegisterDeviceModal({ onClose, isRegisterModalOpen, userData }) {
 
 
           {/* Device Info Card */}
-          <div className="bg-white/60 backdrop-blur-sm rounded-2xl p-4 mb-8 border border-sage-light/30">
+          <div className="conb  bg-white/60 backdrop-blur-sm rounded-2xl p-4 mb-8 border border-sage-light/30">
             <div className="flex items-center justify-between text-sm">
               <span className="text-acc-darkc font-medium">Device Type</span>
               <span className="text-acc-darka">

@@ -4,7 +4,7 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
     <div className=" w-full">
 
       {/* ================= DESKTOP TABLE VIEW ================= */}
-      <div className="hidden md:block overflow-x-auto ">
+      <div className="user_table_div hidden md:block max-h-[70vh] overflow-y-auto overflow-x-auto ">
         <table className="w-full text-base">
           <thead>
             <tr>

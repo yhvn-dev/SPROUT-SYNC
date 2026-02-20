@@ -14,7 +14,7 @@ export const getNotifications = async (req, res) => {
   try {
     const notifications = await notificationModel.readNotif()
     res.status(200).json(notifications);
-    console.log("NOTIFICATIONS:", notifications);
+    // console.log("NOTIFICATIONS:", notifications);
   } catch (err) {
     console.error("CONTROLLER: Error getting notifications", err);
     res.status(500).json({ message: "Error getting notifications", err });
@@ -59,14 +59,10 @@ export const markNotificationsAsRead = async (req, res) => {
 };
 
 
-
-
-
-
 export const notifyReplantDate = async (req, res) => {
   try {
     const batchData = await plantBatchModel.readPlantBatches();
-    console.log("🌱 Checking batches:", batchData.length);
+    // console.log("🌱 Checking batches:", batchData.length);
 
     const today = toDateOnlyUTC(new Date());
     const notifiedBatches = [];
@@ -95,23 +91,16 @@ export const notifyReplantDate = async (req, res) => {
         daysRemaining
       });
 
+
       if (daysRemaining === 1) {
-        const tray = await trayModel.readTrayById(batch.tray_id);
-        const trayGroup = await trayGroupModel.readTrayGroupById(tray?.tray_group_id);
-        const location = trayGroup?.location || "Unknown";
+          const tray = await trayModel.readTrayById(batch.tray_id);
+          const trayGroup = await trayGroupModel.readTrayGroupById(tray?.tray_group_id);
+          const location = trayGroup?.location || "Unknown";
 
-        // 🔹 Fetch all registered devices
-        const devices = await deviceTokenModel.getAllDeviceTokens();
-        console.log("ALL REGISTERED DEVICES", devices.length);
-
-       
-        for (const device of devices) {
-          const userId = device.user_id;
-
-          // ✅ Create a notification per user
+          // ✅ Only create 1 notification in DB per batch
           await notificationModel.createNotif({
-            user_id: userId,
-            batch_id: batch.batch_id, // optional but good for tracking
+            user_id: null, // or some generic value if you don't want to tie to a specific user
+            batch_id: batch.batch_id,
             type: "Info",
             status: "Medium",
             message:
@@ -123,15 +112,20 @@ export const notifyReplantDate = async (req, res) => {
               `Expected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
           });
 
-          await sendPushNotification(
-            device.push_token,
-            "Sprout Sync Notification",
-            `🌱 Harvest Reminder: ${batch.plant_name} harvest is tomorrow!`
-          );
-        }
-        notifiedBatches.push({ batch_id: batch.batch_id, plant_name: batch.plant_name });
-      }
+          // ✅ Send push notification to all devices (optional)
+          const devices = await deviceTokenModel.getAllDeviceTokens();
+          for (const device of devices) {
+            await sendPushNotification(
+              device.push_token,
+              "Sprout Sync Notification",
+              `${batch.plant_name}[${batch.batch_number}] harvest is tomorrow!`
+            );
+          }
+          notifiedBatches.push({ batch_id: batch.batch_id, plant_name: batch.plant_name });
+        }      
     }
+
+    
 
     res.status(200).json({
       success: true,

@@ -2,7 +2,7 @@
 
 :root{
     /* [PL1] FOUNDATIONS */
-    --main-white: #eae5f5;
+    --main-white: hsl(259, 44%, 93%);
     --main-whiteb:#f6f6f6;
     --white-blple--: lab(76.54% 1.57 -14.3);
     --purpluish--: #8f9bbc;

@@ -41,6 +41,30 @@ export const readTotalUnreadNotifCount = async () => {
 
 
 
+
+export const findRecentNotif = async ({ user_id, related_sensor, type, withinMinutes }) => {
+  try {
+    const text = `
+      SELECT *
+      FROM notifications
+      WHERE user_id = $1
+        AND related_sensor = $2
+        AND type = $3
+        AND created_at >= NOW() - INTERVAL '${withinMinutes} minutes'
+      LIMIT 1
+    `;
+    const values = [user_id, related_sensor, type];
+
+    const result = await query(text, values);
+    return result.rows[0] || null;
+  } catch (error) {
+    console.error("❌ findRecentNotif error:", error);
+    return null;
+  }
+};
+
+
+
 // Mark ALL unread notifications as read (clears the count)
 export const markAllNotificationsAsRead = async () => {
     try {

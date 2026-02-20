@@ -34,33 +34,38 @@ const getColorScheme = (type, status) => {
     return { 
       bg: "hsl(353, 40%, 90%)",  // --color-danger-c
       text: "var(--color-danger-a)", // --color-danger-a
-      icon: AlertCircle
+      icon: AlertCircle,
+      iconBg:"#fff"
     };
   case "warning":
     return { 
       bg: "hsl(35, 80%, 90%)",  // --color-warning-b
       text: "hsl(35, 80%, 70%)", // --color-warning
-      icon: AlertTriangle
+      icon: AlertTriangle,
+      iconBg:"#fff"
     };
   case "info":
     return { 
       bg: "hsl(210, 100%, 97%)",  
       text: "hsl(220, 80%, 50%)",  
-      icon: Clock
+      icon: Clock,
+      iconBg:"#fff"
     };
   case "success":
   case "optimal":
   case "normal":
     return { 
-      bg: "hsl(110, 58%, 90%)",  // --color-success-a-soft
-      text: "hsl(125, 85%, 60%)", // --color-success-a
-      icon: CheckCircle
+      bg: "#E8F3ED",  
+      text: "hsl(125, 85%, 60%)", 
+      icon: CheckCircle,
+      iconBg:"#fff"
     };
   default:
     return { 
-      bg: "hsl(210, 20%, 95%)",  // light gray fallback
+      bg: "hsl(210, 20%, 95%)",  
       text: "hsl(210, 10%, 25%)",
-      icon: AlertCircle
+      icon: AlertCircle,
+      iconBg:"#fff"
     };
 }
 };
@@ -68,13 +73,10 @@ const getColorScheme = (type, status) => {
 
 
 export function DeleteNotifModal({isOpen,onClose}){
-  
-
-
   if (!isOpen) return null;
-
-
 }
+
+
 
 export function Notif_Modal({ isOpen, onClose}) {
   const {notifs,loadNotifs,markNotifsAsRead} = usePlantData()
@@ -136,13 +138,11 @@ export function Notif_Modal({ isOpen, onClose}) {
             <button onClick={onClose} className="text-gray-500 cursor-pointer hover:bg-[var(--main-white--)] rounded-lg p-2">
               ✕
             </button>
+            
             <button onClick={removeAllNotifs} className="flex items-center gap-2 m-4 text-gray-500 cursor-pointer hover:bg-[var(--main-white--)] rounded-lg p-2">
               <Trash2 
                 className="trash_logo w-4 h-4 stroke-var(--metal-dark4)" 
-               
-            
               />
-
               <span className="text-sm">Delete All</span>
             </button> 
           </div>
@@ -162,35 +162,37 @@ export function Notif_Modal({ isOpen, onClose}) {
             </div>
           )}
 
+
+
           {(notifs || []).map((notif) => {
-            const { bg, text, icon: Icon } = getColorScheme(notif.type);
+            const { bg, text, icon: Icon,iconBg:iconBg } = getColorScheme(notif.type);
             return (
               <div
                 key={notif.notification_id}
                 className="flex items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors"
-                style={{ backgroundColor: bg }}
-              >
-                <div className="mt-1">
+                style={{ backgroundColor: bg }}>
+
+                 <div className="mt-1  p-[4px] rounded-lg  " style={{ backgroundColor: iconBg }}>
                   <Icon size={20} className="clock_icon" color={text} />
                 </div>
+
                 <div className="flex-1">
                   <p
                     className="text-sm font-semibold" style={{ color: text, whiteSpace: "pre-line" }}>
-                    {notif.message}{" "}
-                 
+                    {notif.message}{""}
                   </p>
                   
                   <div className="flex items-center gap-2 text-xs text-gray-500 mt-1">
                     <Clock size={12} className="clock_icon" /> {new Date(notif.created_at).toLocaleString()}
                   </div>
-                
                 </div>
-
-
+                
                 <button type="submit" onClick={() => handleDelete(notif)}className="rounded-full p-2 h-5 w-5 cursor-pointer mx-2">
                   <Trash2 className="delete_notif text-[var(--acc-darkc)]" size={16}/>
                   </button>
               </div>
+
+
             );
           })}
         </form>

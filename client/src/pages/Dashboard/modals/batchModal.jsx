@@ -83,9 +83,12 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
 
   }, [isOpen, selectedTray, selectedBatch, batchModalMode]);
 
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormErrors({});
+
+
 
     try {
       const payload = { 
@@ -186,6 +189,10 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
         </header>
         
         
+
+
+        
+
         {/* CONTENT */}
         <main className="batch_modal_main p-6 overflow-y-auto max-h-[calc(90vh-120px)]">
           {batchModalMode === "delete" ? (

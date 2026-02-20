@@ -102,7 +102,7 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
         );
         onClose();
         setSuccessMsg(
-          `${selectedTrayGroup.tray_group_name} Group is Updated to ${updatedGroup.tray_group_name}`
+          `${selectedTrayGroup.tray_group_name} Group is Updated`
         );
       } else if (tgModalMode === "delete") {
         await trayGroupModels.deleteTrayGroup(selectedTrayGroup.tray_group_id);

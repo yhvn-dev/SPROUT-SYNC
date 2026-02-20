@@ -39,9 +39,6 @@ export function Dashboard() {
   }, []); 
 
 
-
-  
-
   return (
     
     <section
@@ -60,7 +57,6 @@ export function Dashboard() {
         <Menu size={22} className="text-[var(--acc-darkb)]" />
       </button>
 
-
       {/* MOBILE OVERLAY */}
       {sidebarOpen && (
         <div
@@ -70,8 +66,6 @@ export function Dashboard() {
       )}
 
 
-
-  
       {/* SIDEBAR */}
       <aside
         className={`
@@ -93,38 +87,45 @@ export function Dashboard() {
       </div>
 
 
-    {/* TABS */}
-    <nav className="nursery_nav flex flex-wrap gap-2 px-4 md:px-0 md:col-start-2">
-      <button
-        onClick={() => setActiveTab("Overview")}
-        className={`
-          cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
-          text-xs md:text-sm rounded-lg transition
-          ${activeTab === "Overview"
-            ? "bg-white text-[#027c68] shadow-md active"
-            : "bg-white/50 text-[#5A8F73]"
-          }
-        `}>
-        Overview
-      </button>
 
+     {user.role === "admin" ? (
 
+        <>
+        {/* TABS */}
+      <nav className="nursery_nav flex flex-wrap gap-2 px-4 md:px-0 md:col-start-2">
+        <button
+          onClick={() => setActiveTab("Overview")}
+          className={`
+            cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
+            text-xs md:text-sm rounded-lg transition
+            ${activeTab === "Overview"
+              ? "bg-white text-[#027c68] shadow-md active"
+              : "bg-white/50 text-[#5A8F73]"
+            }
+          `}>
 
-      <button
-        onClick={() => setActiveTab("Manage Plants")}
-        className={`
-          cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
-          text-xs md:text-sm rounded-lg transition hover:shadow-2xl
-          ${activeTab === "Manage Plants"
-            ? "bg-white text-[#027c68] shadow-md active"
-            : "bg-white/50 text-[#5A8F73]"
-          }
-        `}
-      >
-        Manage Plants
-      </button>
-    </nav>
+          Overview
+        </button>
+    
+          <button
+            onClick={() => setActiveTab("Manage Plants")}
+            className={`
+              cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
+              text-xs md:text-sm rounded-lg transition hover:shadow-2xl
+              ${activeTab === "Manage Plants"
+                ? "bg-white text-[#027c68] shadow-md active"
+                : "bg-white/50 text-[#5A8F73]"
+              }
+            `}>
+            Manage Plants
+          </button>
+      </nav> 
+      </>
+     ) : (
+      null
+     )}
 
+   
 
       {/* MAIN CONTENT */}
       <main
@@ -136,11 +137,11 @@ export function Dashboard() {
           overflow-y-auto
         "
       >
-        {activeTab === "Overview" ? (
+      {activeTab === "Overview" ? (
           <Nursery_Dashboard />
-        ) : (
+        ) : user.role === "admin" ? (
           <ManagePlants reloadTrayGroups={loadTrayGroups} />
-        )}
+        ) : null}  
       </main>
 
       {/* MODALS */}

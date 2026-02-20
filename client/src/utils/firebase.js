@@ -40,9 +40,8 @@ export const getPushToken = async () => {
       vapidKey: VAPID_KEY,
       serviceWorkerRegistration: registration,
     });
-    
 
-    console.log("Push token obtained:", token);
+    // console.log("Push token obtained:", token);
     return token;
   } catch (err) {
     console.error("Failed to get push token:", err);
@@ -50,13 +49,10 @@ export const getPushToken = async () => {
   }
 };
 
-
-
 /**
  * Listen for foreground messages
  * @param {function} callback - Function to handle incoming payload
  */
-
 
 
 export const listenForMessages = () => {
@@ -84,7 +80,6 @@ export const listenForMessages = () => {
 
 
 
-
 function showInPageNotification(title, body) {
   const container = document.getElementById("notification-container");
   if (!container) return;
@@ -94,8 +89,8 @@ function showInPageNotification(title, body) {
   }
 
   const notif = document.createElement("div");
-  notif.className = "notification bg-white p-4 rounded-xl shadow mb-2"; // Tailwind styling
-  notif.innerHTML = `<strong>${title}</strong><p>${body}</p>`;
+  notif.className = " p-4 rounded-xl shadow "; // Tailwind styling
+  notif.innerHTML = `<strong class="toast_notif_div">${title}</strong><p>${body}</p>`;
   container.appendChild(notif);
 
   setTimeout(() => {

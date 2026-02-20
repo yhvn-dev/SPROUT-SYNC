@@ -6,15 +6,12 @@ import { usePlantData } from "../../hooks/plantContext";
 import { Notif_Modal } from "../../components/notifModal";
 import { LogoutModal } from "../../components/logoutModal";
 import { Menu, CircleQuestionMark} from "lucide-react";
-
 import { Overview } from "./overview";
 import { SeedlingStats } from "./seedlingStats";
-
-
 import InfosModal from "../../components/infosModal";
 import AnalyticsModal from "./modal/analyticsModal";
-
 import { FloatErrorMsg } from "../../components/messages";
+import { FloatSuccessMsg } from "../../components/sucessMsgs";
 
 
 export default function Analytics() {
@@ -42,8 +39,13 @@ export default function Analytics() {
   const [infoModalPurpose,setInfoModalPurpose] = useState("");
 
   const [deleteModalMode,setDeleteModalMode] = useState("");
-  const [msg,setMsg] = useState("");
-  const clearMsg = useCallback(() => setMsg(""), []);
+  const [errMsg,setErrMsg] = useState("");
+  const [scsMsg,setScsMsg] = useState("");
+  
+  const clearMsg = useCallback(() => {
+  setErrMsg("");
+  setScsMsg("");
+}, []);
   
   useEffect(() => {
     loadBatchTotal();
@@ -52,7 +54,6 @@ export default function Analytics() {
     loadReadings();
     loadAverageReadingsBySensor("moisture");
     loadAverageReadingsBySensor("ultra_sonic");
-
   }, [
     loadBatchTotal,
     loadBatchTotalHistory,
@@ -179,7 +180,6 @@ export default function Analytics() {
             batchTotal={batchTotal}
             readings={readings}
             setModalOpen={setModalOpen}
-         
             averageReadingsBySensor={averageReadingsBySensor}
           />
         )}
@@ -214,7 +214,8 @@ export default function Analytics() {
 
       {isModalOpen && 
         <AnalyticsModal
-          setMsg={setMsg}
+          setErrMsg={setErrMsg}
+          setScsMsg={setScsMsg}
           deleteModalMode={deleteModalMode}
           isModalOpen={isModalOpen}
           onClose={() => setModalOpen(false)}
@@ -222,9 +223,16 @@ export default function Analytics() {
         />          
       }
 
-      {msg && (
+      {errMsg && (
       <>
-        <FloatErrorMsg txt={msg} clearMsg={clearMsg}/>
+        <FloatErrorMsg txt={errMsg} clearMsg={clearMsg}/>
+      </> 
+      )}
+
+
+      {scsMsg && (
+      <>
+        <FloatSuccessMsg txt={scsMsg} clearMsg={clearMsg}/>
       </> 
       )}
     </section>
