@@ -133,7 +133,7 @@ export const createReadings = async (req, res) => {
       notifPayload = await handleMoistureNotifications(existingSensor, numericValue);
     }
 
-    if (existingSensor.sensor_type === "ultrasonic") {
+    if (existingSensor.sensor_type === "ultra_sonic") {
       notifPayload = await handleUltrasonicNotifications(sensor_id, numericValue);
     }
 
@@ -157,7 +157,6 @@ export const createReadings = async (req, res) => {
         );
       }
     }
-
     res.status(201).json(reading);
 
   } catch (error) {
