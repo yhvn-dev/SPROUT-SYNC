@@ -11,6 +11,7 @@
     import notifificationRoutes from "./routes/ProtectedRoutes/notification.Routes.js";
     import esp32Routes from "./routes/ProtectedRoutes/esp32.Routes.js";
     import deviceTokenRoutes from "./routes/ProtectedRoutes/deviceToken.Routes.js"
+    import streamRoutes from "./routes/ProtectedRoutes/streams.Routes.js"; // <-- add this
 
     // ===== CORE =====
     import express from "express";
@@ -42,6 +43,7 @@
     }));
 
     app.use(cookieParser());
+    app.use("/streams", express.static(path.resolve("./streams")));
 
     // ===== ROUTES =====
     app.use('', userRoutes);
@@ -55,7 +57,7 @@
     app.use('/auth', publicRoutes);
     app.use("/esp32", esp32Routes);
     app.use ("/deviceToken",deviceTokenRoutes)
-
+    app.use("/stream", streamRoutes);
 
     
     // ===== TEST =====
@@ -64,11 +66,10 @@
         res.json({ success: true, message: "Hello from Node.js" });
     });
 
+
     // ===== HTTP SERVER =====
     const port = process.env.PORT || 5000;
     const server = http.createServer(app);
-
-
 
     // =====================================================
     // 🔥 SOCKET.IO — USER PUSH NOTIFICATIONS
