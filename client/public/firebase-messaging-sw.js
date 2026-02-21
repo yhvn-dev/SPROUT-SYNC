@@ -24,8 +24,8 @@ messaging.onBackgroundMessage((payload) => {
 
   self.registration.showNotification(title, {
     body,
-    icon: "./SPROUTSYNC LOGO.png", // your app icon
-    badge: "./SPROUTSYNC LOGO.png", // optional badge
+    icon: "/SPROUTSYNC LOGO.png", // your app icon
+    badge: "/SPROUTSYNC LOGO.png", // optional badge
     tag: "sprout-sync", // ensures same notification updates instead of stacking
     renotify: true, // allows re-notification
     data: { url: "/dashboard" }, // store any extra data (used on click)

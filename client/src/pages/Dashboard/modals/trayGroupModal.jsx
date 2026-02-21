@@ -1,13 +1,11 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { X, Trash2, Sprout } from "lucide-react";
-
 import * as trayGroupModels from "../../../data/trayGroupServices";
 
 
 
 export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup, setSuccessMsg, loadTrayGroups, reloadTrayGroups,}) {
-
 
   if (!isOpen) return null;
   const plantOptions = [

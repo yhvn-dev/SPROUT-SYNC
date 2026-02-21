@@ -43,18 +43,22 @@ const int pumpPin = 18;
 
 /************ SYSTEM SWITCH ************/
 const int LOCK_SWITCH = 19;
-const int SWITCH_LED  = 2;
+const int SWITCH_LED  = 5;
 
 /************ PLANT BUTTONS ************/
 const int bokchoyBtn = 25;
 const int petchayBtn = 26;
 const int mustasaBtn = 27;
 
-/************ LED PINS ************/
-const int WIFI_LED    = 4;
-const int BOKCHOY_LED = 13;
-const int PECHAY_LED  = 14;
-const int MUSTASA_LED = 15;
+/************ PLANT LED PINS ************/
+// GPIO4  = BOKCHOY LED
+// GPIO13 = PECHAY LED
+// GPIO14 = MUSTASA LED
+// LED ON  (HIGH) = valve is OPEN
+// LED OFF (LOW)  = valve is CLOSED or system is OFF
+const int BOKCHOY_LED = 4;
+const int PECHAY_LED  = 13;
+const int MUSTASA_LED = 14;
 const int plantLedPins[3] = {BOKCHOY_LED, PECHAY_LED, MUSTASA_LED};
 
 /************ STATE ************/
@@ -168,8 +172,12 @@ void setRelay(int pin, bool on) {
   digitalWrite(pin, on ? LOW : HIGH);
 }
 
+/************ SWITCH LED — ACTIVE-LOW RELAY on PIN 5 ************/
+void setSwitchLED(bool on) {
+  digitalWrite(SWITCH_LED, on ? LOW : HIGH);
+}
+
 /************ GET ACTUAL VALVE STATE FOR PLANT ************/
-// Single source of truth — used by both relay control and LED sync
 bool getValveState(int i) {
   if (!systemEnabled) return false;
   if (nodeJsOverride[i]) return !nodeJsForceOff[i];
@@ -178,13 +186,14 @@ bool getValveState(int i) {
   return wateringState[i];
 }
 
-/************ UPDATE PLANT LEDs ************/
-// LED ON  = valve is OPEN (any reason: auto, button-on, node-on)
-// LED OFF = valve is CLOSED (any reason: button-off, node-off, auto-off, system off)
+/************ UPDATE PLANT LEDs — SINGLE SOURCE OF TRUTH ************/
+// Reads getValveState() for each plant and sets LED accordingly.
+// Called everywhere so LEDs are always in sync with valve states.
+// HIGH = LED ON  = valve OPEN  (system on + watering)
+// LOW  = LED OFF = valve CLOSED (system off, forced off, idle)
 void updatePlantLEDs() {
   for (int i = 0; i < 3; i++) {
-    bool valveOpen = getValveState(i);
-    digitalWrite(plantLedPins[i], valveOpen ? HIGH : LOW);
+    digitalWrite(plantLedPins[i], getValveState(i) ? HIGH : LOW);
   }
 }
 
@@ -199,12 +208,12 @@ void turnOffAllValvesAndPump() {
     setRelay(sensors[i].valvePin, false);
   }
   setRelay(pumpPin, false);
-  updatePlantLEDs();
+  updatePlantLEDs();  // all valves now closed → all LEDs OFF
 }
 
 /************ UPDATE PUMP STATE ************/
 void updatePumpState() {
-  bool pumpNeeded       = false;
+  bool pumpNeeded        = false;
   int  currentWaterLevel = getWaterLevelPercentage();
 
   if (currentWaterLevel <= 20) {
@@ -212,12 +221,12 @@ void updatePumpState() {
       setRelay(sensors[i].valvePin, false);
     }
     setRelay(pumpPin, false);
+    updatePlantLEDs();  // valves forced closed → LEDs reflect that
     static unsigned long lastLowWaterWarning = 0;
     if (millis() - lastLowWaterWarning > 30000) {
       Serial.println("⚠️⚠️⚠️ WATER LEVEL TOO LOW (" + String(currentWaterLevel) + "%) - PUMP DISABLED ⚠️⚠️⚠️");
       lastLowWaterWarning = millis();
     }
-    updatePlantLEDs();
     return;
   }
 
@@ -228,7 +237,7 @@ void updatePumpState() {
   }
 
   setRelay(pumpPin, pumpNeeded);
-  updatePlantLEDs(); // Always sync LEDs to actual valve states
+  updatePlantLEDs();  // sync LEDs to current valve states
 }
 
 /************ NODE.JS COMMAND HANDLER ************/
@@ -274,7 +283,7 @@ void handleNodeJsCommand(String command) {
     Serial.println("🟢 NODE.JS → MUSTASA AUTO MODE ⚡");
   }
 
-  updatePumpState(); // Syncs valves + LEDs immediately
+  updatePumpState();  // syncs relays + LEDs immediately
 }
 
 /************ POST INDIVIDUAL SENSOR ************/
@@ -399,10 +408,8 @@ void checkAndPostWaterLevel() {
 void webSocketEvent(WStype_t type, uint8_t* payload, size_t length) {
   if (type == WStype_CONNECTED) {
     Serial.println("🟢 WebSocket Connected");
-    digitalWrite(WIFI_LED, HIGH);
   } else if (type == WStype_DISCONNECTED) {
     Serial.println("🔴 WebSocket Disconnected");
-    digitalWrite(WIFI_LED, LOW);
   } else if (type == WStype_TEXT) {
     String msg = String((char*)payload);
     msg.trim();
@@ -430,7 +437,6 @@ void handleWiFi() {
     } else {
       if (wifiConnected) {
         wifiConnected = false;
-        digitalWrite(WIFI_LED, LOW);
       }
       if (now - lastAttempt > 5000) {
         lastAttempt = now;
@@ -445,7 +451,6 @@ void handleWiFi() {
       WiFi.disconnect(true);
       WiFi.mode(WIFI_OFF);
       wifiConnected = false;
-      digitalWrite(WIFI_LED, LOW);
     }
   }
 }
@@ -458,11 +463,8 @@ void handleSystemSwitch() {
 
   if (systemEnabled) {
     Serial.println("\n🟢🟢🟢 SYSTEM ON 🟢🟢🟢\n");
-    digitalWrite(SWITCH_LED, HIGH);
-
-    // Plant LEDs ON when system starts (valves start closed = LEDs off initially,
-    // but they will reflect valve state via updatePlantLEDs)
-    updatePlantLEDs();
+    setSwitchLED(true);
+    updatePlantLEDs();  // system just ON, valves all closed → all LEDs OFF
 
     lastReadTime = 0;
     WiFi.mode(WIFI_STA);
@@ -487,10 +489,8 @@ void handleSystemSwitch() {
 
   } else {
     Serial.println("\n🔴🔴🔴 SYSTEM OFF 🔴🔴🔴\n");
-    digitalWrite(SWITCH_LED, LOW);
-    digitalWrite(WIFI_LED, LOW);
-
-    turnOffAllValvesAndPump(); // Also calls updatePlantLEDs() → all plant LEDs off
+    setSwitchLED(false);
+    turnOffAllValvesAndPump();  // resets all state + calls updatePlantLEDs() → all LEDs OFF
     wifiShouldBeConnected = false;
   }
 }
@@ -503,28 +503,25 @@ void handlePlantButtons() {
 
     if (!systemEnabled) continue;
 
-    // Physical button always clears Node.js override
     nodeJsOverride[i] = false;
     nodeJsForceOff[i] = false;
 
     if (buttonManualOn[i]) {
-      // Currently manually ON → turn OFF instantly
+      // Currently ON → turn OFF
       buttonManualOn[i]  = false;
       buttonManualOff[i] = true;
       setRelay(sensors[i].valvePin, false);
-      digitalWrite(plantLedPins[i], LOW);  // ⚡ LED off INSTANTLY on button press
       Serial.println("🔴 " + sensors[i].name + " → BUTTON OFF ⚡INSTANT⚡");
     } else {
-      // Currently OFF → turn ON instantly
+      // Currently OFF → turn ON
       buttonManualOn[i]  = true;
       buttonManualOff[i] = false;
       setRelay(sensors[i].valvePin, true);
-      digitalWrite(plantLedPins[i], HIGH); // ⚡ LED on INSTANTLY on button press
       Serial.println("🟢 " + sensors[i].name + " → BUTTON ON ⚡INSTANT⚡");
     }
 
-    // Sync pump state (other valves/pump) — LEDs already set above
-    updatePumpState();
+    updatePlantLEDs();  // instantly sync LED to new valve state
+    updatePumpState();  // sync pump + re-sync LEDs again to be safe
   }
 }
 
@@ -548,20 +545,18 @@ void setup() {
 
   pinMode(LOCK_SWITCH, INPUT_PULLUP);
   pinMode(SWITCH_LED, OUTPUT);
-  digitalWrite(SWITCH_LED, LOW);
+  setSwitchLED(false);
 
   pinMode(bokchoyBtn, INPUT_PULLUP);
   pinMode(petchayBtn, INPUT_PULLUP);
   pinMode(mustasaBtn, INPUT_PULLUP);
 
-  pinMode(WIFI_LED, OUTPUT);
-  digitalWrite(WIFI_LED, LOW);
-
+  // Plant LEDs — all OFF at boot (system off, no valves open)
   pinMode(BOKCHOY_LED, OUTPUT);
-  pinMode(PECHAY_LED, OUTPUT);
+  pinMode(PECHAY_LED,  OUTPUT);
   pinMode(MUSTASA_LED, OUTPUT);
   digitalWrite(BOKCHOY_LED, LOW);
-  digitalWrite(PECHAY_LED, LOW);
+  digitalWrite(PECHAY_LED,  LOW);
   digitalWrite(MUSTASA_LED, LOW);
 
   attachInterrupt(digitalPinToInterrupt(LOCK_SWITCH), systemSwitchISR, FALLING);
@@ -577,8 +572,8 @@ void setup() {
   Serial.println("📡 WiFi: ONLY WHEN SYSTEM ON");
   Serial.println("🤖 SENSORS: AUTO (5s cycle)");
   Serial.println("⚠️ PUMP DISABLED when water ≤20%");
-  Serial.println("💡 SYSTEM=GPIO2 | WIFI=GPIO4 | BOK=GPIO13 | PEC=GPIO14 | MUS=GPIO15");
-  Serial.println("💡 LED = valve open | LED off = valve closed");
+  Serial.println("💡 SYSTEM=GPIO5 | BOK=GPIO4 | PEC=GPIO13 | MUS=GPIO14");
+  Serial.println("💡 LED ON = valve OPEN | LED OFF = valve CLOSED or system OFF");
   Serial.println("========================================\n");
 }
 
@@ -645,7 +640,6 @@ void loop() {
       int raw     = analogRead(sensors[i].pin);
       int percent = getMoisturePercent(i);
 
-      // AUTO MODE — only when no manual/override active
       if (!nodeJsOverride[i] && !buttonManualOn[i] && !buttonManualOff[i]) {
         if (percent < sensors[i].minMoisture) {
           wateringState[i] = true;
@@ -681,7 +675,7 @@ void loop() {
     }
 
     handlePlantButtons();
-    updatePumpState(); // Syncs relays + LEDs after auto-mode decisions
+    updatePumpState();  // syncs relays + LEDs after auto decisions
 
     Serial.print("💧 PUMP: ");
     bool pumpOn = digitalRead(pumpPin) == LOW;
@@ -693,4 +687,3 @@ void loop() {
 
   handlePlantButtons();
 }
-
