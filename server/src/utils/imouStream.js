@@ -38,7 +38,6 @@ if (!fs.existsSync(streamsDir)) {
 /* ===============================
    CLEAN OLD FILES
 ================================ */
-
 const cleanOldSegments = () => {
   try {
     const files = fs.readdirSync(streamsDir);
@@ -119,6 +118,25 @@ export const startStream = (req, res) => {
     outputPath
   ];
 
+  //   const ffmpegArgs = [
+  //   "-rtsp_transport", "udp",        // faster than TCP
+  //   "-fflags", "+nobuffer+genpts",  // reduce buffering
+  //   "-i", rtspUrl,
+  //   "-map", "0:v:0",
+  //   "-map", "0:a?",
+  //   "-c:v", "libx264",
+  //   "-preset", "ultrafast",
+  //   "-tune", "zerolatency",
+  //   "-g", "48",
+  //   "-c:a", "aac",
+  //   "-ar", "16000",
+  //   "-f", "hls",
+  //   "-hls_time", "1",             
+  //   "-hls_list_size", "3",        
+  //   "-hls_flags", "delete_segments+append_list",
+  //   outputPath
+  // ];
+    
   // Use spawn instead of exec — better process control
   ffmpegProcess = spawn("ffmpeg", ffmpegArgs);
   ffmpegPid = ffmpegProcess.pid;
