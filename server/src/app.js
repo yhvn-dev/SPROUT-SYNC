@@ -1,6 +1,5 @@
     // ===== ROUTES =====
     import userRoutes from "./routes/ProtectedRoutes/user.Routes.js";
-    import pageRoutes from "./routes/ProtectedRoutes/page.Routes.js";
     import publicRoutes from "./routes/UnprotectedRoutes/public.Routes.js";
     import trayGroupRoutes from "./routes/ProtectedRoutes/trayGroup.Routes.js";
     import plantBatchRoutes from "./routes/ProtectedRoutes/plantBatch.Routes.js";
@@ -43,7 +42,7 @@
     }));
 
     app.use(cookieParser());
-    app.use("/streams", express.static(path.resolve("./streams")));
+    app.use("/streams", express.static(path.join(__dirname, "../streams")));
 
     // ===== ROUTES =====
     app.use('', userRoutes);
@@ -94,8 +93,6 @@
         console.log("🔴 User socket disconnected:", socket.id);
     });
     });
-
-
 
     // =====================================================
     // 🔌 RAW WEBSOCKET — ESP32 (UNCHANGED)
