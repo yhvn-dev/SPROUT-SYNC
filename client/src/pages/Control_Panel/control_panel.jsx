@@ -223,18 +223,19 @@ function Control_panel() {
                   <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                   <span className="text-white text-[10px] font-bold tracking-widest">LIVE</span>
                 </div>
-              )}
+              )}            
 
-              {/* HLS video — videoRef is managed by useStream */}
-              <video
-                ref={videoRef}
-                autoPlay
-                muted
-                playsInline
-                className="w-full h-full object-cover"
-                style={{ display: running ? 'block' : 'none' }}
-              />
+             <video
+              ref={videoRef}
+              autoPlay
+              muted
+              playsInline
+              className="w-full h-full object-cover"
+            />
             </div>
+
+
+
 
             {/* Footer */}
             <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-3">

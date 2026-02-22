@@ -4,9 +4,6 @@ import { startStream, stopStream, getStreamsStatus } from "../data/streamService
 
 const STREAM_URL = `${import.meta.env.VITE_API_URL}/streams/stream.m3u8`;
 
-// ===============================
-// Wait until .m3u8 has real segments
-// ===============================
 const waitForStream = async (maxRetries = 20, interval = 2000) => {
   for (let i = 0; i < maxRetries; i++) {
     try {
@@ -27,25 +24,28 @@ const waitForStream = async (maxRetries = 20, interval = 2000) => {
   throw new Error("Stream did not become ready in time.");
 };
 
-// ===============================
-// Hook: useStream
-// ===============================
+
 export const useStream = () => {
   const [running, setRunning] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const videoRef = useRef(null);
+
+  // ✅ videoEl holds the actual DOM node
+  const [videoEl, setVideoEl] = useState(null);
   const hlsRef = useRef(null);
 
-  // ===============================
-  // Initialize HLS when running = true
-  // ===============================
+  // ✅ Callback ref — properly captures the <video> DOM node
+  const videoRef = useCallback((node) => {
+    if (node) setVideoEl(node);
+  }, []);
+
+  // ✅ HLS init — depends on BOTH running AND videoEl
   useEffect(() => {
-    const video = videoRef.current;
+    const video = videoEl; // ✅ use videoEl, NOT videoRef.current
     if (!video) return;
 
-    // Cleanup previous HLS instance
+    // Cleanup old HLS instance
     if (hlsRef.current) {
       hlsRef.current.destroy();
       hlsRef.current = null;
@@ -65,7 +65,6 @@ export const useStream = () => {
       return;
     }
 
-    // HLS.js fallback
     if (!Hls.isSupported()) {
       setError("HLS not supported in this browser.");
       return;
@@ -112,11 +111,9 @@ export const useStream = () => {
         hlsRef.current = null;
       }
     };
-  }, [running]);
+  }, [running, videoEl]); // ✅ both dependencies
 
-  // ===============================
-  // Fetch initial status on mount
-  // ===============================
+  // Fetch status on mount
   useEffect(() => {
     const fetchStatus = async () => {
       try {
@@ -129,25 +126,15 @@ export const useStream = () => {
     fetchStatus();
   }, []);
 
-  // ===============================
-  // Start Stream
-  // ===============================
   const start = async () => {
     try {
       setLoading(true);
       setError(null);
-
-      // 1. Tell backend to start FFmpeg
       await startStream();
       console.log("▶️ FFmpeg started, waiting for segments...");
-
-      // 2. Wait until .m3u8 actually has segments
       await waitForStream();
-
-      // 3. Stream ready → display video
       setRunning(true);
       console.log("✅ Stream running");
-
     } catch (err) {
       console.error("Start stream error:", err);
       setError("Failed to start stream. Check camera or FFmpeg.");
@@ -157,24 +144,18 @@ export const useStream = () => {
     }
   };
 
-  // ===============================
-  // Stop Stream
-  // ===============================
   const stop = async () => {
     try {
       setLoading(true);
       setError(null);
-
       await stopStream();
-
+      // ✅ hlsRef is now properly declared so this won't crash
       if (hlsRef.current) {
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
-
       setRunning(false);
       console.log("🛑 Stream stopped");
-
     } catch (err) {
       console.error("Stop stream error:", err);
       setError("Failed to stop stream.");
@@ -183,9 +164,8 @@ export const useStream = () => {
     }
   };
 
-  // ===============================
-  // Refresh stream status
-  // ===============================
+
+  
   const refreshStatus = useCallback(async () => {
     try {
       const res = await getStreamsStatus();
@@ -196,4 +176,5 @@ export const useStream = () => {
   }, []);
 
   return { running, loading, error, videoRef, start, stop, refreshStatus };
+  
 };
