@@ -24,101 +24,117 @@ const waitForStream = async (maxRetries = 20, interval = 2000) => {
   throw new Error("Stream did not become ready in time.");
 };
 
+const safePlay = async (video) => {
+  if (!video) return;
+  if (video.readyState < 2) {
+    await new Promise((resolve) => {
+      const onReady = () => {
+        video.removeEventListener("canplay", onReady);
+        resolve();
+      };
+      video.addEventListener("canplay", onReady);
+    });
+  }
+  try {
+    await video.play();
+  } catch (err) {
+    if (err.name !== "AbortError") {
+      console.warn("play() failed:", err);
+    }
+  }
+};
+
+const attachHls = (video, hlsRef, setError, setRunning) => {
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+
+  if (hlsRef.current) {
+    hlsRef.current.destroy();
+    hlsRef.current = null;
+  }
+
+  if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    video.src = `${STREAM_URL}?nocache=${Date.now()}`;
+    safePlay(video);
+    return;
+  }
+
+  if (!Hls.isSupported()) {
+    setError("HLS not supported in this browser.");
+    return;
+  }
+
+  const hls = new Hls({
+    lowLatencyMode: true,
+    liveSyncDurationCount: 3,
+    liveMaxLatencyDurationCount: 6,
+    maxBufferLength: 10,
+    backBufferLength: 30,
+    enableWorker: true,
+  });
+
+  hlsRef.current = hls;
+  hls.loadSource(`${STREAM_URL}?nocache=${Date.now()}`);
+  hls.attachMedia(video);
+
+  hls.on(Hls.Events.MANIFEST_PARSED, () => {
+    safePlay(video);
+  });
+
+  hls.on(Hls.Events.ERROR, (event, data) => {
+    console.error("HLS ERROR:", data);
+    if (data.fatal) {
+      if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
+        console.warn("🔁 Retrying...");
+        hls.startLoad();
+      } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
+        console.warn("🔁 Recovering...");
+        hls.recoverMediaError();
+      } else {
+        setError("Stream error. Try restarting.");
+        hls.destroy();
+        hlsRef.current = null;
+        setRunning(false);
+      }
+    }
+  });
+};
 
 export const useStream = () => {
   const [running, setRunning] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-
-  // ✅ videoEl holds the actual DOM node
-  const [videoEl, setVideoEl] = useState(null);
+  const videoElRef = useRef(null);
   const hlsRef = useRef(null);
 
-  // ✅ Callback ref — properly captures the <video> DOM node
   const videoRef = useCallback((node) => {
-    if (node) setVideoEl(node);
+    if (node) videoElRef.current = node;
   }, []);
 
-  // ✅ HLS init — depends on BOTH running AND videoEl
-  useEffect(() => {
-    const video = videoEl; // ✅ use videoEl, NOT videoRef.current
-    if (!video) return;
-
-    // Cleanup old HLS instance
-    if (hlsRef.current) {
-      hlsRef.current.destroy();
-      hlsRef.current = null;
-    }
-
-    if (!running) {
-      video.pause();
-      video.removeAttribute("src");
-      video.load();
-      return;
-    }
-
-    // Safari native HLS
-    if (video.canPlayType("application/vnd.apple.mpegurl")) {
-      video.src = `${STREAM_URL}?nocache=${Date.now()}`;
-      video.play().catch(err => console.warn("Autoplay blocked:", err));
-      return;
-    }
-
-    if (!Hls.isSupported()) {
-      setError("HLS not supported in this browser.");
-      return;
-    }
-
-    const hls = new Hls({
-      lowLatencyMode: true,
-      liveSyncDurationCount: 3,
-      liveMaxLatencyDurationCount: 6,
-      maxBufferLength: 10,
-      backBufferLength: 30,
-      enableWorker: true,
-    });
-
-    hlsRef.current = hls;
-    hls.loadSource(`${STREAM_URL}?nocache=${Date.now()}`);
-    hls.attachMedia(video);
-
-    hls.on(Hls.Events.MANIFEST_PARSED, () => {
-      video.play().catch(err => console.warn("Autoplay blocked:", err));
-    });
-
-    hls.on(Hls.Events.ERROR, (event, data) => {
-      console.error("HLS ERROR:", data);
-      if (data.fatal) {
-        if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-          console.warn("🔁 HLS network error, retrying...");
-          hls.startLoad();
-        } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-          console.warn("🔁 HLS media error, recovering...");
-          hls.recoverMediaError();
-        } else {
-          setError("Stream error. Try restarting.");
-          hls.destroy();
-          hlsRef.current = null;
-          setRunning(false);
-        }
-      }
-    });
-
-    return () => {
-      if (hlsRef.current) {
-        hlsRef.current.destroy();
-        hlsRef.current = null;
-      }
-    };
-  }, [running, videoEl]); // ✅ both dependencies
-
-  // Fetch status on mount
+  // ✅ On mount — fetch status, if already running attach HLS immediately
   useEffect(() => {
     const fetchStatus = async () => {
       try {
         const res = await getStreamsStatus();
-        setRunning(res.data.running);
+        const isRunning = res.data.running;
+        setRunning(isRunning);
+
+        // ✅ KEY: kung running na sa backend, attach HLS agad after mount
+        if (isRunning) {
+          // Hintayin muna na ma-mount ang video element
+          const waitForVideoEl = () => new Promise((resolve) => {
+            const check = () => {
+              if (videoElRef.current) return resolve(videoElRef.current);
+              requestAnimationFrame(check);
+            };
+            check();
+          });
+
+          const video = await waitForVideoEl();
+          attachHls(video, hlsRef, setError, setRunning);
+        }
       } catch (err) {
         console.error("Stream status error:", err);
       }
@@ -133,8 +149,12 @@ export const useStream = () => {
       await startStream();
       console.log("▶️ FFmpeg started, waiting for segments...");
       await waitForStream();
-      setRunning(true);
-      console.log("✅ Stream running");
+      console.log("✅ Stream ready — reloading page to display video...");
+
+      // ✅ THE FIX: i-reload ang page — on mount makita niya na running=true
+      // at mag-aattach ng HLS automatically
+      window.location.reload();
+
     } catch (err) {
       console.error("Start stream error:", err);
       setError("Failed to start stream. Check camera or FFmpeg.");
@@ -149,10 +169,15 @@ export const useStream = () => {
       setLoading(true);
       setError(null);
       await stopStream();
-      // ✅ hlsRef is now properly declared so this won't crash
       if (hlsRef.current) {
         hlsRef.current.destroy();
         hlsRef.current = null;
+      }
+      const video = videoElRef.current;
+      if (video) {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
       }
       setRunning(false);
       console.log("🛑 Stream stopped");
@@ -164,17 +189,18 @@ export const useStream = () => {
     }
   };
 
-
-  
   const refreshStatus = useCallback(async () => {
     try {
       const res = await getStreamsStatus();
-      setRunning(res.data.running);
+      const isRunning = res.data.running;
+      setRunning(isRunning);
+      if (isRunning && videoElRef.current) {
+        attachHls(videoElRef.current, hlsRef, setError, setRunning);
+      }
     } catch (err) {
       console.error("Refresh status error:", err);
     }
   }, []);
 
   return { running, loading, error, videoRef, start, stop, refreshStatus };
-  
 };
