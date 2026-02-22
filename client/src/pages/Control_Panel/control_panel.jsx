@@ -171,70 +171,84 @@ function Control_panel() {
               </div>
             </div>
 
-            {/* Video Viewport */}
+                
+
+
             <div
               className="relative w-full bg-gray-900 rounded-2xl overflow-hidden"
-              style={{ aspectRatio: '16/9', minHeight: '220px' }}
-            >
-              {/* ✅ video ALWAYS in DOM, absolute to fill container */}
-              <video
-                ref={videoRef}
-                autoPlay
-                muted
-                playsInline
-                className="absolute inset-0 w-full h-full object-cover"
-                style={{ display: running ? 'block' : 'none' }}
-              />
+              style={{ aspectRatio: "16/9", minHeight: "220px" }}>
 
-              {/* Idle */}
+                
+              {/* ✅ VIDEO ONLY WHEN RUNNING */}
+              {running && (
+                <video
+                  key="live-video"
+                  ref={videoRef}
+                  muted
+                  autoPlay
+                  playsInline
+                  controls
+                  className="absolute inset-0 w-full h-full object-cover z-0"
+                />
+              )}
+
+              {/* IDLE */}
               {!running && !loading && !error && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-4 z-10">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-4 z-10 pointer-events-none">
                   <Video size={40} className="text-white/20" />
-                  <p className="text-white/50 font-semibold text-sm m-0">Camera Offline</p>
-                  <p className="text-white/25 text-xs m-0">Press Start Stream to begin monitoring</p>
+                  <p className="text-white/50 font-semibold text-sm m-0">
+                    Camera Offline
+                  </p>
+                  <p className="text-white/25 text-xs m-0">
+                    Press Start Stream to begin monitoring
+                  </p>
                 </div>
               )}
 
-              {/* Starting — ✅ special message habang nag-reloload */}
-              {loading && !running && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-10">
+              {/* LOADING */}
+              {loading && (
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-10 pointer-events-none">
                   <Loader2 size={36} className="text-yellow-400 animate-spin" />
-                  <p className="text-white/50 font-semibold text-sm m-0">Starting stream...</p>
-                  <p className="text-white/25 text-xs m-0">Page will reload automatically</p>
+                  <p className="text-white/50 font-semibold text-sm m-0">
+                    Starting stream...
+                  </p>
+                  <p className="text-white/25 text-xs m-0">
+                    Please wait
+                  </p>
                 </div>
               )}
 
-              {/* Stopping */}
-              {loading && running && (
-                <div className="absolute inset-0 z-20 flex flex-col items-center justify-center gap-3 bg-black/60 backdrop-blur-sm">
-                  <Loader2 size={36} className="text-white/50 animate-spin" />
-                  <p className="text-white/50 font-semibold text-sm m-0">Stopping stream...</p>
-                </div>
-              )}
-
-              {/* Error */}
+              {/* ERROR */}
               {error && !loading && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center z-10">
                   <AlertTriangle size={36} className="text-red-400" />
-                  <p className="text-red-400 font-semibold text-sm m-0">Stream Error</p>
-                  <p className="text-white/30 text-xs m-0 max-w-xs">{error}</p>
+                  <p className="text-red-400 font-semibold text-sm m-0">
+                    Stream Error
+                  </p>
+                  <p className="text-white/30 text-xs m-0 max-w-xs">
+                    {error}
+                  </p>
                   <button
                     onClick={start}
-                    className="mt-1 px-4 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium transition-colors border-none cursor-pointer"
+                    className="mt-1 px-4 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white text-xs font-medium"
                   >
                     Retry
                   </button>
                 </div>
               )}
 
-              {/* LIVE badge */}
+              {/* LIVE BADGE */}
               {running && !loading && (
-                <div className="absolute top-3 left-3 z-30 flex items-center gap-1.5 px-2.5 py-1 bg-black/60 backdrop-blur-sm rounded-full">
+                <div className="absolute top-3 left-3 z-20 flex items-center gap-1.5 px-2.5 py-1 bg-black/60 rounded-full">
                   <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                  <span className="text-white text-[10px] font-bold tracking-widest">LIVE</span>
+                  <span className="text-white text-[10px] font-bold tracking-widest">
+                    LIVE
+                  </span>
                 </div>
               )}
             </div>
+
+
 
             {/* Footer */}
             <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-3">
@@ -251,6 +265,13 @@ function Control_panel() {
               )}
             </div>
           </div>
+
+
+
+
+
+
+
 
           {/* WATER LEVEL GAUGE */}
           <div className="conb flex flex-col justify-start items-start bg-white center rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl mb-6 min-h-[400px]">

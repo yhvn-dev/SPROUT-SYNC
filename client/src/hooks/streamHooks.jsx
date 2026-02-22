@@ -4,6 +4,9 @@ import { startStream, stopStream, getStreamsStatus } from "../data/streamService
 
 const STREAM_URL = `${import.meta.env.VITE_API_URL}/streams/stream.m3u8`;
 
+/* ===============================
+   WAIT FOR VALID HLS SEGMENTS
+================================ */
 const waitForStream = async (maxRetries = 20, interval = 2000) => {
   for (let i = 0; i < maxRetries; i++) {
     try {
@@ -15,26 +18,25 @@ const waitForStream = async (maxRetries = 20, interval = 2000) => {
           return true;
         }
       }
-    } catch (err) {
-      console.warn(`⏳ Attempt ${i + 1} failed:`, err.message);
-    }
-    console.log(`⏳ Waiting for stream segments... ${i + 1}/${maxRetries}`);
-    await new Promise(resolve => setTimeout(resolve, interval));
+    } catch {}
+    console.log(`⏳ Waiting for stream... ${i + 1}/${maxRetries}`);
+    await new Promise(r => setTimeout(r, interval));
   }
-  throw new Error("Stream did not become ready in time.");
+  throw new Error("Stream not ready");
 };
 
+/* ===============================
+   SAFE VIDEO PLAY
+================================ */
 const safePlay = async (video) => {
   if (!video) return;
+
   if (video.readyState < 2) {
-    await new Promise((resolve) => {
-      const onReady = () => {
-        video.removeEventListener("canplay", onReady);
-        resolve();
-      };
-      video.addEventListener("canplay", onReady);
-    });
+    await new Promise(resolve =>
+      video.addEventListener("canplay", resolve, { once: true })
+    );
   }
+
   try {
     await video.play();
   } catch (err) {
@@ -44,16 +46,23 @@ const safePlay = async (video) => {
   }
 };
 
-const attachHls = (video, hlsRef, setError, setRunning) => {
-  video.pause();
-  video.removeAttribute("src");
-  video.load();
+/* ===============================
+   ATTACH HLS
+================================ */
+const attachHls = (video, hlsRef, setError) => {
+  if (!video) return;
 
+  // Clean previous
   if (hlsRef.current) {
     hlsRef.current.destroy();
     hlsRef.current = null;
   }
 
+  video.pause();
+  video.removeAttribute("src");
+  video.load();
+
+  // Native HLS (Safari)
   if (video.canPlayType("application/vnd.apple.mpegurl")) {
     video.src = `${STREAM_URL}?nocache=${Date.now()}`;
     safePlay(video);
@@ -61,7 +70,7 @@ const attachHls = (video, hlsRef, setError, setRunning) => {
   }
 
   if (!Hls.isSupported()) {
-    setError("HLS not supported in this browser.");
+    setError("HLS not supported");
     return;
   }
 
@@ -71,10 +80,10 @@ const attachHls = (video, hlsRef, setError, setRunning) => {
     liveMaxLatencyDurationCount: 6,
     maxBufferLength: 10,
     backBufferLength: 30,
-    enableWorker: true,
   });
 
   hlsRef.current = hls;
+
   hls.loadSource(`${STREAM_URL}?nocache=${Date.now()}`);
   hls.attachMedia(video);
 
@@ -82,125 +91,149 @@ const attachHls = (video, hlsRef, setError, setRunning) => {
     safePlay(video);
   });
 
-  hls.on(Hls.Events.ERROR, (event, data) => {
+  hls.on(Hls.Events.ERROR, (_, data) => {
     console.error("HLS ERROR:", data);
     if (data.fatal) {
       if (data.type === Hls.ErrorTypes.NETWORK_ERROR) {
-        console.warn("🔁 Retrying...");
         hls.startLoad();
       } else if (data.type === Hls.ErrorTypes.MEDIA_ERROR) {
-        console.warn("🔁 Recovering...");
         hls.recoverMediaError();
       } else {
-        setError("Stream error. Try restarting.");
         hls.destroy();
         hlsRef.current = null;
-        setRunning(false);
+        setError("Stream crashed");
       }
     }
   });
 };
 
+/* ===============================
+   MAIN HOOK
+================================ */
 export const useStream = () => {
   const [running, setRunning] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  const videoElRef = useRef(null);
+  const videoRef = useRef(null);
   const hlsRef = useRef(null);
 
-  const videoRef = useCallback((node) => {
-    if (node) videoElRef.current = node;
+  /* ===============================
+     VIDEO REF CALLBACK
+  ================================ */
+  const setVideoRef = useCallback((node) => {
+    if (node) {
+      videoRef.current = node;
+    }
   }, []);
+  
+  /* ===============================
+     AUTO ATTACH WHEN READY
+  ================================ */
 
-  // ✅ On mount — fetch status, if already running attach HLS immediately
+  
+useEffect(() => {
+  if (!running || !videoRef.current) return;
+
+  const video = videoRef.current;
+
+  // Check if Hls is supported
+  if (Hls.isSupported()) {
+    import('hls.js').then(HlsModule => {
+      const hls = new HlsModule.default();
+      hls.loadSource(`${import.meta.env.VITE_API_URL}/streams/stream.m3u8`);
+      hls.attachMedia(video);
+      hls.on(HlsModule.default.Events.MANIFEST_PARSED, () => {
+        video.play().catch(err => console.warn("Video play failed:", err));
+      });
+
+      return () => {
+        hls.destroy();
+      };
+    });
+  } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    // Fallback for Safari
+    video.src = `${import.meta.env.VITE_API_URL}/streams/stream.m3u8`;
+    video.addEventListener('loadedmetadata', () => video.play());
+  }
+}, [running, videoRef]);
+
+
+
+  /* ===============================
+     INITIAL STATUS CHECK
+  ================================ */
   useEffect(() => {
-    const fetchStatus = async () => {
+    const init = async () => {
       try {
         const res = await getStreamsStatus();
-        const isRunning = res.data.running;
-        setRunning(isRunning);
-
-        // ✅ KEY: kung running na sa backend, attach HLS agad after mount
-        if (isRunning) {
-          // Hintayin muna na ma-mount ang video element
-          const waitForVideoEl = () => new Promise((resolve) => {
-            const check = () => {
-              if (videoElRef.current) return resolve(videoElRef.current);
-              requestAnimationFrame(check);
-            };
-            check();
-          });
-
-          const video = await waitForVideoEl();
-          attachHls(video, hlsRef, setError, setRunning);
-        }
+        setRunning(res.data.running);
       } catch (err) {
-        console.error("Stream status error:", err);
+        console.error(err);
       }
     };
-    fetchStatus();
+    init();
   }, []);
 
+
+
+  
+
+  /* ===============================
+     START STREAM
+  ================================ */
   const start = async () => {
     try {
       setLoading(true);
       setError(null);
+
       await startStream();
-      console.log("▶️ FFmpeg started, waiting for segments...");
+      console.log("▶️ FFmpeg started");
+
       await waitForStream();
-      console.log("✅ Stream ready — reloading page to display video...");
 
-      // ✅ THE FIX: i-reload ang page — on mount makita niya na running=true
-      // at mag-aattach ng HLS automatically
-      window.location.reload();
-
+      setRunning(true); // <-- THIS triggers attach effect
     } catch (err) {
-      console.error("Start stream error:", err);
-      setError("Failed to start stream. Check camera or FFmpeg.");
+      setError("Failed to start stream");
       setRunning(false);
     } finally {
       setLoading(false);
     }
   };
 
+  /* ===============================
+     STOP STREAM
+  ================================ */
   const stop = async () => {
     try {
       setLoading(true);
-      setError(null);
       await stopStream();
+
       if (hlsRef.current) {
         hlsRef.current.destroy();
         hlsRef.current = null;
       }
-      const video = videoElRef.current;
-      if (video) {
-        video.pause();
-        video.removeAttribute("src");
-        video.load();
+
+      if (videoRef.current) {
+        videoRef.current.pause();
+        videoRef.current.removeAttribute("src");
+        videoRef.current.load();
       }
+
       setRunning(false);
-      console.log("🛑 Stream stopped");
-    } catch (err) {
-      console.error("Stop stream error:", err);
-      setError("Failed to stop stream.");
+    } catch {
+      setError("Failed to stop stream");
     } finally {
       setLoading(false);
     }
   };
 
-  const refreshStatus = useCallback(async () => {
-    try {
-      const res = await getStreamsStatus();
-      const isRunning = res.data.running;
-      setRunning(isRunning);
-      if (isRunning && videoElRef.current) {
-        attachHls(videoElRef.current, hlsRef, setError, setRunning);
-      }
-    } catch (err) {
-      console.error("Refresh status error:", err);
-    }
-  }, []);
-
-  return { running, loading, error, videoRef, start, stop, refreshStatus };
+  return {
+    running,
+    loading,
+    error,
+    videoRef: setVideoRef,
+    start,
+    stop,
+  };
 };
