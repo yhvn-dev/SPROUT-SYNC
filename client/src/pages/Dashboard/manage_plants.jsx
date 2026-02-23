@@ -15,7 +15,7 @@ import { TrayGroupModal } from './modals/trayGroupModal';
 import { TrayModal } from "./modals/trayModal";
 import { BatchModal } from './modals/batchModal';
 
-const ManagePlants = ({ reloadTrayGroups, reloadTrays, reloadBatches }) => {
+const ManagePlants = ({ reloadTrayGroups }) => {
   const [activeTab, setActiveTab] = useState('trayGroups');
   const [successMsg, setSuccessMsg] = useState("");
 

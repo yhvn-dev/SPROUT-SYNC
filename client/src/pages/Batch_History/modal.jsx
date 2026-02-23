@@ -1,8 +1,10 @@
 import { AlertCircle } from 'lucide-react'
 import * as plantBatchHistory from "../../data/plantBatchesHistory"
+import { useState } from 'react';
 
 export function Batch_History_Modal({isModalOpen,onClose,selectedBatch,reloadBatchHistory,setSuccessMsg}) {
-  if(!isModalOpen) return null
+  const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
+  if(!isModalOpen) return null  
 
 
     const handleSubmit = async (e) => {

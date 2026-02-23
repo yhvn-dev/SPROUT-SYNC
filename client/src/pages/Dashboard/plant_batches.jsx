@@ -112,7 +112,7 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
 
 
 
-              <div className="grid grid-cols-2 gap-4 mb-4">
+              <div className="grid grid-cols-3 gap-4 mb-4">
                 <div className=" rounded-xl p-3">
                   <p className="pb_data_label text-xs text-gray-500 mb-1">Date Planted</p>
                    <p className="pb_data_text pb_date_planted text-sm font-semibold text-gray-900">{formatDateOnly(pb.date_planted)}</p>
@@ -120,6 +120,11 @@ function Plant_batches({batchesData, setSelectedBatches, setBatchModalOpen,setBa
                 <div className="rounded-xl p-3">
                   <p className="pb_data_label text-xs text-gray-500 mb-1">Expected Harvest Days</p>
                   <p className="pb_data_text pb_harvest_date  text-sm font-semibold text-gray-900">{pb.expected_harvest_days}</p>
+                </div>
+
+                  <div className="rounded-xl p-3">
+                  <p className="pb_data_label text-xs text-gray-500 mb-1">Growth Stage</p>
+                  <p className="pb_data_text pb_harvest_date  text-sm font-semibold text-gray-900">{pb.growth_stage}</p>
                 </div>
               </div>
 

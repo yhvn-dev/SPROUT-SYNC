@@ -185,6 +185,25 @@ export const updateUser = async (user_id, userData) => {
 };
 
 
+export const updateFirstTimeLogin = async (user_id, first_time_login) => {
+  try {
+    const { rows } = await query(
+      `
+      UPDATE users
+      SET first_time_login = $1
+      WHERE user_id = $2
+      RETURNING *
+      `,
+      [first_time_login, user_id]
+    );
+
+    return rows[0];
+  } catch (err) {
+    console.log(`MODELS: Error Updating first_time_login ${err}`);
+    throw err;
+  }
+};
+
 
 export const deleteUser = async (user_id) => {
   try {

@@ -1,34 +1,37 @@
+// PlantDataContext.jsx
 import { createContext, useContext, useEffect, useState, useCallback } from "react";
 import * as trayGroupService from "../data/trayGroupServices";
 import * as traysService from "../data/traysServices";
 import * as plantBatches from "../data/batchesData";
-import * as plantBatchHistory from "../data/plantBatchesHistory"
+import * as plantBatchHistory from "../data/plantBatchesHistory";
 import * as sensorService from "../data/sensorServices";
 import * as readingsService from "../data/readingsServices";
 import * as notifService from "../data/notifsServices";
+import * as plantGroupService from "../data/plantGroupServices";
+import * as plantService from "../data/plantServices";
 
 const PlantDataContext = createContext(null);
 
 export const PlantDataProvider = ({ children }) => {
+  // ------------------- STATES -------------------
   const [trayGroups, setTrayGroups] = useState([]);
   const [trays, setTrays] = useState([]);
-
   const [batches, setBatches] = useState([]);
-  const [batchHistory,setBatchHistory] = useState([]);
+  const [batchHistory, setBatchHistory] = useState([]);
   const [batchTotal, setBatchTotal] = useState({});
-  const [batchHistoryTotal,setBatchHistoryTotal] = useState({})
-  const [growthOvertime,setGrowthOvertime] = useState([])
-
+  const [batchHistoryTotal, setBatchHistoryTotal] = useState({});
+  const [growthOvertime, setGrowthOvertime] = useState([]);
   const [sensors, setSensors] = useState([]);
-  
   const [readings, setReadings] = useState([]);
   const [latestReadings, setLatestReadings] = useState([]);
-
   const [averageReadingsBySensor, setAverageReadingsBySensor] = useState({});
-
   const [notifs, setNotifs] = useState([]);
-  const [notifsCount,setNotifCount] = useState([]);
-  const [readNotifs,setReadNotifs] = useState([])
+  const [notifsCount, setNotifCount] = useState([]);
+  const [readNotifs, setReadNotifs] = useState([]);
+
+  // NEW: Plant groups and plants
+  const [plantGroups, setPlantGroups] = useState([]);
+  const [plants, setPlants] = useState([]);
 
   // ------------------- LOAD FUNCTIONS -------------------
   const loadTrayGroups = useCallback(async () => {
@@ -57,30 +60,25 @@ export const PlantDataProvider = ({ children }) => {
       console.error("Error loading batches", error);
     }
   }, []);
-  
 
-  // Finished
   const loadBatchHistory = useCallback(async () => {
     try {
-      const data = await plantBatchHistory.fetchAllBatchHistory()
-      setBatchHistory(data)
+      const data = await plantBatchHistory.fetchAllBatchHistory();
+      setBatchHistory(data);
     } catch (error) {
       console.error("Error loading batch history", error);
     }
   }, []);
 
-
-  const loadBatchTotalHistory = useCallback(async () =>{
+  const loadBatchTotalHistory = useCallback(async () => {
     try {
-      const data = await plantBatchHistory.fetchAllBatchHistoryTotal()
-      setBatchHistoryTotal(data)
+      const data = await plantBatchHistory.fetchAllBatchHistoryTotal();
+      setBatchHistoryTotal(data);
     } catch (error) {
-      console.error("Error loading batch history", error);
+      console.error("Error loading batch history total", error);
     }
-  },[])
+  }, []);
 
-
-  // Active
   const loadBatchTotal = useCallback(async () => {
     try {
       const data = await plantBatches.fetchTotalBatchesData();
@@ -89,19 +87,15 @@ export const PlantDataProvider = ({ children }) => {
       console.error("Error loading batch totals", error);
     }
   }, []);
-  
 
-  
   const loadGrowthOvertime = useCallback(async () => {
     try {
-      const data = await plantBatchHistory.fetchSeedlingsGrowthOvertime()
+      const data = await plantBatchHistory.fetchSeedlingsGrowthOvertime();
       setGrowthOvertime(data);
     } catch (error) {
-      console.error("Error loading batch totals", error);
+      console.error("Error loading growth over time", error);
     }
   }, []);
-
-
 
   const loadSensors = useCallback(async () => {
     try {
@@ -121,21 +115,16 @@ export const PlantDataProvider = ({ children }) => {
     }
   }, []);
 
-
-    const loadLatestReadings = useCallback(async () => {
+  const loadLatestReadings = useCallback(async () => {
     try {
-      const data = await readingsService.fetchAllLatestReadings()
+      const data = await readingsService.fetchAllLatestReadings();
       setLatestReadings(data);
     } catch (error) {
-      console.error("Error loading readings", error);
+      console.error("Error loading latest readings", error);
     }
   }, []);
 
-  
-  
-
-        
-    const loadAverageReadingsBySensor = useCallback(async (sensorType) => {
+  const loadAverageReadingsBySensor = useCallback(async (sensorType) => {
     try {
       const data = await readingsService.fetchAverageReadingsBySensor(sensorType);
       const key = sensorType.replace(/\s+/g, "_").toLowerCase();
@@ -148,7 +137,6 @@ export const PlantDataProvider = ({ children }) => {
     }
   }, []);
 
-
   const loadNotifs = useCallback(async () => {
     try {
       const data = await notifService.fetchAllNotifs();
@@ -158,29 +146,49 @@ export const PlantDataProvider = ({ children }) => {
     }
   }, []);
 
-
-  
   const loadNotifsCount = useCallback(async () => {
     try {
-      const data = await notifService.fetchNotifsCount()
+      const data = await notifService.fetchNotifsCount();
       setNotifCount(data);
     } catch (error) {
-      console.error("Error loading total notifications ", error);
+      console.error("Error loading notifications count", error);
     }
   }, []);
-
 
   const markNotifsAsRead = useCallback(async () => {
     try {
-        const data = await notifService.markNotifAsRead()
-        setReadNotifs(data)
+      const data = await notifService.markNotifAsRead();
+      setReadNotifs(data);
     } catch (error) {
-      console.error("Error reading notifications ", error);
+      console.error("Error marking notifications as read", error);
+    }
+  }, []);
+
+  // NEW: Load plant groups
+  const loadPlantGroups = useCallback(async () => {
+    try {
+      const data = await plantGroupService.fetchAllPlantGroups();
+        console.log("PLANT GROUPS",plantGroups)
+      setPlantGroups(data);
+    } catch (error) {
+      console.error("Error loading plant groups", error);
+    }
+  }, []);
+
+  // NEW: Load plants
+  const loadPlants = useCallback(async () => {
+    try {
+      const data = await plantService.fetchAllPlants();
+      console.log("PLANTS",data)
+      setPlants(data);
+    } catch (error) {
+      console.error("Error loading plants", error);
     }
   }, []);
 
 
   
+  // ------------------- INITIAL LOAD -------------------
   useEffect(() => {
     loadTrayGroups();
     loadTrays();
@@ -195,8 +203,10 @@ export const PlantDataProvider = ({ children }) => {
     loadAverageReadingsBySensor("moisture");
     loadAverageReadingsBySensor("ultra_sonic");
     loadNotifs();
-    loadNotifsCount(),
-    markNotifsAsRead()
+    loadNotifsCount();
+    markNotifsAsRead();
+    loadPlantGroups();
+    loadPlants();
   }, [
     loadTrayGroups,
     loadTrays,
@@ -211,29 +221,33 @@ export const PlantDataProvider = ({ children }) => {
     loadAverageReadingsBySensor,
     loadNotifs,
     loadNotifsCount,
-    markNotifsAsRead
+    markNotifsAsRead,
+    loadPlantGroups,
+    loadPlants
   ]);
+
   
 
   // ------------------- INTERVAL UPDATES -------------------
   useEffect(() => {
     const interval = setInterval(() => {
       loadReadings();
-      loadLatestReadings(); 
+      loadLatestReadings();
       loadAverageReadingsBySensor("moisture");
       loadAverageReadingsBySensor("ultra_sonic");
-    }, 5000); 
+    }, 5000);
     return () => clearInterval(interval);
-  }, [loadReadings,loadLatestReadings,loadAverageReadingsBySensor]);
-  
-  // RENDER NOTIFICATION WHEN READINGS CHANGE
+  }, [loadReadings, loadLatestReadings, loadAverageReadingsBySensor]);
+
+  // ------------------- NOTIFICATIONS WHEN READINGS CHANGE -------------------
   useEffect(() => {
-   loadNotifsCount()
-   loadNotifs()
-  }, [readings,latestReadings]); 
+    loadNotifs();
+    loadNotifsCount();
+  }, [readings, latestReadings]);
 
 
-  
+
+
   return (
     <PlantDataContext.Provider
       value={{
@@ -251,6 +265,9 @@ export const PlantDataProvider = ({ children }) => {
         notifs,
         notifsCount,
         readNotifs,
+        plantGroups, // new
+        plants,      // new
+        // Load functions
         loadTrayGroups,
         loadTrays,
         loadBatches,
@@ -264,12 +281,14 @@ export const PlantDataProvider = ({ children }) => {
         loadAverageReadingsBySensor,
         loadNotifs,
         loadNotifsCount,
-        markNotifsAsRead
+        markNotifsAsRead,
+        loadPlantGroups, // new
+        loadPlants       // new
       }}>
+        
       {children}
     </PlantDataContext.Provider>
   );
-  
 };
 
 

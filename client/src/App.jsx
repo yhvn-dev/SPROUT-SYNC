@@ -9,6 +9,8 @@ const Users = lazy(() => import("./pages/Users/users.jsx"));
 const Analytics = lazy(() => import('./pages/Analytics/analytics.jsx'));
 const Batch_History = lazy(() => import("./pages/Batch_History/batch_history.jsx"));
 const Control_Panel = lazy(() => import("./pages/Control_Panel/control_panel.jsx"));
+const Plants = lazy(() => import ("./pages/Plants/plants.jsx"))
+
 
 import { Dashboard_Skeleton } from "./components/skeletons.jsx";
 import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";
@@ -80,8 +82,19 @@ function App() {
                 </ProtectedRoute>
               </ESP32Provider>
             }/>
+
+
+            <Route path='/plants' element={
+              <ESP32Provider>
+                <ProtectedRoute allowedRoles={['admin',"viewer"]}>
+                  <Plants />
+                </ProtectedRoute>
+              </ESP32Provider>
+            }/>
+      
           </Routes>
         </Suspense>
+        
       </BrowserRouter>
       </ValveProvider>
     </PlantDataProvider>

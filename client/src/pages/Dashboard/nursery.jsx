@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from 'react';
-import { Droplet, CircleQuestionMark, ChevronDown, ChevronUp, Sprout, Calendar, Wifi,WifiOff, TrendingUp } from 'lucide-react';
+import { Droplet, CircleQuestionMark, ChevronDown, ChevronUp, Sprout, Calendar, Wifi,WifiOff, TrendingUp} from 'lucide-react';
 import InfosModal from '../../components/infosModal';
 import { ESP32Context } from "../../hooks/esp32Hooks.jsx";
 import { usePlantData } from '../../hooks/plantContext';
@@ -190,6 +190,9 @@ function NurseryDashboard() {
                       </div>
                     </div>
 
+
+
+
                     {/* Tray List */}
                     {isExpanded && (
                       <div className="px-4 sm:px-6 pb-4 sm:pb-6">
@@ -246,8 +249,10 @@ function NurseryDashboard() {
 
 
 
-            {/* Batches */}
-      
+
+
+
+            {/* Batches */}  
               <div className="conb bg-[var(--main-whiteb)] rounded-3xl p-4 sm:p-6 shadow-sm  w-full">
                 <div className="flex items-center gap-3 mb-4 sm:mb-6">
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#92e6a7] to-[#25a244] flex items-center justify-center">
@@ -287,6 +292,17 @@ function NurseryDashboard() {
                             Harvest at: {batch.expected_harvest_days} {batch.expected_harvest_days === 1 ? "day" : "days"}
                           </span>
                         </div>
+
+
+
+                         <div className="flex items-center gap-2 text-xs">
+                          <Sprout className="w-3.5 h-3.5 text-gray-400" />
+                          <span className="text-gray-600">
+                            Growth Stage: {batch.growth_stage} 
+                          </span>
+                        </div>
+
+
                       </div>
 
 

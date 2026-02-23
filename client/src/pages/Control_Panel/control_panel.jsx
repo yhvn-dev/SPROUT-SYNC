@@ -12,18 +12,33 @@ import { useValve } from '../../hooks/valveContext';
 import * as closeValveServices from "../../data/closeValveServices";
 import { useStream } from '../../hooks/streamHooks';
 
+import RegisterDeviceModal from '../Dashboard/modals/registerDeviceModal';
+
 function Control_panel() {
-  const { user } = useContext(UserContext);
+  const { user, skippedRegister} = useContext(UserContext);
   const { ESP32Status } = useContext(ESP32Context);
-  const [logoutOpen, setLogoutOpen] = useState(false);
-  const [isInfoModalOpen, setInfoModalOpen] = useState(false);
-  const [infoModalPurpose, setInfoModalPurpose] = useState("");
-  const [isNotifOpen, setNotifOpen] = useState(false);
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [ logoutOpen, setLogoutOpen ] = useState(false);
+  const [ isInfoModalOpen, setInfoModalOpen ] = useState(false);
+  const [ infoModalPurpose, setInfoModalPurpose ] = useState("");
+  const [ isNotifOpen, setNotifOpen ] = useState(false);
+  const  [sidebarOpen, setSidebarOpen ] = useState(false);
   const { valveMode, setValveMode } = useValve();
   const { averageReadingsBySensor } = usePlantData();
-
+  const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
   const { running, loading, error, videoRef, start, stop, refreshStatus } = useStream();
+
+
+  useEffect(() => {
+  if (user?.first_time_login && !skippedRegister) {
+    setRegisterModalVisible(true);
+  } else {
+    setRegisterModalVisible(false);
+  }
+}, [user?.first_time_login, skippedRegister]);
+
+
+
+
 
   const isDark = typeof window !== "undefined" &&
     document.documentElement.classList.contains("dark");
@@ -71,7 +86,15 @@ function Control_panel() {
       {sidebarOpen && <div onClick={() => setSidebarOpen(false)} className="fixed inset-0 bg-black/40 z-40 md:hidden" />}
 
       <aside className={`${sidebarOpen ? "fixed inset-y-0 left-0 w-64 z-50" : "hidden"} md:static md:block md:row-span-full`}>
-        <Sidebar user={user} setLogoutOpen={setLogoutOpen} setSidebarOpen={setSidebarOpen} />
+     {/* SIDEBAR */}
+      <aside className={`${sidebarOpen ? "fixed inset-y-0 left-0 w-64 z-50" : "hidden"} md:static md:block`}>
+          <Sidebar
+            user={user}
+            setLogoutOpen={setLogoutOpen}
+            setSidebarOpen={setSidebarOpen}
+            setRegisterModalVisible={setRegisterModalVisible}
+          />
+      </aside>
       </aside>
 
       <header className="col-start-2 row-start-1">
@@ -377,6 +400,16 @@ function Control_panel() {
           purpose={infoModalPurpose}
         />
       )}
+      
+      {isRegisterModalVisible && (
+        <RegisterDeviceModal
+          userData={user}
+          onClose={() => setRegisterModalVisible(false)} 
+        />
+       )}
+
+
+
     </section>
   );
 }

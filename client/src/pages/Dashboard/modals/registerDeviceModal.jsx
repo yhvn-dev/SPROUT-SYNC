@@ -1,33 +1,32 @@
 import { motion } from "framer-motion";
-import { X, BellRing } from 'lucide-react';
+import { X, BellRing } from "lucide-react";
 import { registerDevice } from "../../../data/deviceTokenServices";
 import { getDeviceInfo } from "../../../utils/getDeviceInfo";
 import { getPushToken } from "../../../utils/firebase";
-import { useState } from "react";
-
-import {Img_Logo} from "../../../components/logo"
-import { useEffect } from "react";
-
+import { useState, useEffect, useContext } from "react";
+import { Img_Logo } from "../../../components/logo";
+import { UserContext } from "../../../hooks/userContext";
 
 
-function RegisterDeviceModal({ onClose, isRegisterModalOpen, userData }) {
+function RegisterDeviceModal({ onClose, userData }) {
   const [isLoading, setIsLoading] = useState(false);
-  const [deviceInfo,setDeviceInfo] = useState({});
+  const [deviceInfo, setDeviceInfo] = useState({});
+  const { setUser } = useContext(UserContext);
+  const { setSkippedRegister } = useContext(UserContext);
 
-  if (!isRegisterModalOpen) return null;
-  
-
+  // Always run hooks at top level
   useEffect(() => {
-    const device_Info = getDeviceInfo()
-    setDeviceInfo(device_Info)  
-  },[])
-  
+    const device_Info = getDeviceInfo();
+    setDeviceInfo(device_Info);
+  }, []);
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setIsLoading(true);
 
     try {
       const pushToken = await getPushToken();
+
       if (!pushToken) {
         console.warn("Push notifications permission denied");
         setIsLoading(false);
@@ -38,121 +37,122 @@ function RegisterDeviceModal({ onClose, isRegisterModalOpen, userData }) {
         user_id: userData.user_id,
         push_token: pushToken,
         device_type: deviceInfo.device_type,
-        device_info: JSON.stringify(deviceInfo)
+        device_info: JSON.stringify(deviceInfo),
       };
 
-      console.log("Register payload:", payload);
       await registerDevice(payload);
+
+      setUser(prev => ({ ...prev, first_time_login: false }));
+
       setIsLoading(false);
       onClose();
-      
     } catch (error) {
       console.error("Device Registration Failed", error);
       setIsLoading(false);
     }
   };
 
-  
   const handleSkip = () => {
-    if (!isLoading) onClose(); 
+    setSkippedRegister(true); 
+    onClose();                
   };
 
-
-  
   return (
-    <motion.div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-transparent backdrop-blur-2xl animate-fadeIn">
+    <motion.div
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-2xl"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
       <motion.div
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
-        transition={{ duration: 0.4 }}
-        className="conb relative w-full h-auto my-4 max-w-md rounded-3xl shadow-2xl overflow-hidden animate-slideUp">
+        transition={{ duration: 0.3 }}
+        className="relative w-full max-w-md rounded-3xl shadow-2xl overflow-hidden bg-white">
+          
         {/* Close button */}
         <button
           onClick={handleSkip}
-          className={`absolute top-4 right-4 p-2 rounded-full hover:bg-black/5 transition-colors duration-200 z-10 ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
-          aria-label="Close modal"
-          disabled={isLoading} >
-          <X className="cursor-pointer w-5 h-5 text-acc-darkc" />
+          disabled={isLoading}
+          className={`cursor-pointer absolute top-4 right-4 p-2 rounded-full hover:bg-black/5 transition ${
+            isLoading ? "opacity-50 cursor-not-allowed" : ""
+          }`}>
+
+          <X className="w-5 h-5" />
         </button>
 
 
 
-        {/* Content */}
-        <div className="p-8 sm:px-10 sm:p-1">
-          {/* Welcome Header */}
+        <div className="p-8">
+          {/* Header */}
           <div className="text-center mb-8">
-            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-ptl-greenb to-ptl-greenc rounded-2xl flex items-center justify-center shadow-lg">
-              <BellRing className="w-8 h-8" />
+            <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-green-400 to-green-600 rounded-2xl flex items-center justify-center shadow-lg">
+              <BellRing className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-2xl sm:text-3xl font-semibold text-acc-darka mb-2">
-              Welcome, {userData.username}!
-            </h2>
-            <span className="text-sm text-acc-darkc">to <Img_Logo/></span>
-          </div>
 
+            <h2 className="text-2xl font-semibold mb-2">
+              Welcome, {userData?.username}!
+            </h2>
+
+            <span className="text-sm text-gray-500">
+              to <Img_Logo />
+            </span>
+          </div>
 
           {/* Description */}
-          <div className="mb-8">
-            <p className="text-center text-acc-darkb leading-relaxed">
-              Register your device to receive important notifications and updates about your plants. Stay connected and never miss a watering reminder!
-            </p>
-          </div>
+          <p className="text-center text-gray-600 mb-8">
+            Register your device to receive important notifications and updates
+            about your plants.
+          </p>
 
-
-
-          {/* Device Info Card */}
-          <div className="conb  bg-white/60 backdrop-blur-sm rounded-2xl p-4 mb-8 border border-sage-light/30">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-acc-darkc font-medium">Device Type</span>
-              <span className="text-acc-darka">
+          {/* Device Info */}
+          <div className="bg-gray-50 rounded-2xl p-4 mb-8 border">
+            <div className="flex justify-between text-sm">
+              <span className="font-medium text-gray-500">
+                Device Type
+              </span>
+              <span>
                 {deviceInfo.device_type
-                  ? deviceInfo.device_type.charAt(0).toUpperCase() + deviceInfo.device_type.slice(1)
+                  ? deviceInfo.device_type.charAt(0).toUpperCase() +
+                    deviceInfo.device_type.slice(1)
                   : "Unknown"}
               </span>
             </div>
-            <div className="flex items-center justify-between text-sm mt-2">
-              <span className="text-acc-darkc font-medium">Date</span>
-              <span className="text-acc-darka">Feb 15, 2026</span>
-            </div>
           </div>
 
-          {/* Action Buttons */}
-          <div className="space-y-3 relative">
+          
+
+          {/* Buttons */}
+          <div className="space-y-3">
             <button
               onClick={handleRegister}
-              className={`cursor-pointer w-full py-4 bg-[var(--sancgb)] text-white font-semibold rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 ${isLoading ? "cursor-not-allowed opacity-70" : ""}`}
               disabled={isLoading}
+              className={`w-full py-4 bg-[var(--sancgb)] text-white font-semibold rounded-2xl transition ${
+                isLoading ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.02]"
+              }`}
             >
-              {isLoading ? (
-                <>
-                  <motion.div
-                    className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"
-                  />
-                  Registering...
-                </>
-              ) : (
-                "Register Device"
-              )}
+              {isLoading ? "Registering..." : "Register Device"}
             </button>
 
             <button
               onClick={handleSkip}
-              className={`cursor-pointer w-full py-4 bg-white/50 text-acc-darka font-medium rounded-2xl hover:bg-white/80 active:scale-[0.98] transition-all duration-200 border border-sage-light/30 ${isLoading ? "cursor-not-allowed opacity-50" : ""}`}
               disabled={isLoading}
+              className="w-full py-4 bg-gray-100 rounded-2xl hover:bg-gray-200 transition"
             >
               Skip for Now
             </button>
           </div>
 
-          <p className="text-xs text-center text-acc-darkc mt-6 opacity-75">
-            You can always register your device later in settings
+          <p className="text-xs text-center text-gray-400 mt-6">
+            You can always register your device later in settings.
           </p>
         </div>
-        
       </motion.div>
     </motion.div>
   );
 }
+
+
 
 export default RegisterDeviceModal;

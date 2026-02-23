@@ -7,10 +7,11 @@ import { Batch_History_Modal } from "./modal"
 import { LogoutModal } from '../../components/logoutModal';
 import { UserContext } from '../../hooks/userContext';
 import { usePlantData } from '../../hooks/plantContext';
-
 import InfosModal from '../../components/infosModal';
 import {FloatSuccessMsg} from "../../components/sucessMsgs"
-import { SucessMsgs } from '../../components/sucessMsgs';
+import RegisterDeviceModal from '../Dashboard/modals/registerDeviceModal';
+
+
 
 // Stats Card Component
 const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
@@ -29,8 +30,11 @@ const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
 );
 
 
+
+
+
 function Batch_History() {
-  const { user } = useContext(UserContext);;
+  const { user, skippedRegister} = useContext(UserContext);
   const {batchHistory,loadBatchHistory} = usePlantData()
   const [filteredData, setFilteredData] = useState(batchHistory);
   const [searchValue, setSearchValue] = useState("");
@@ -43,6 +47,8 @@ function Batch_History() {
   const [isInfoModalOpen,setInfoModalOpen] = useState(false);
   const [infoModalPurpose,setInfoModalPurpose] = useState("");
   const [successMsg,setSuccessMsg] = useState(null);
+  const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
+
   
   const clearMsg = () => setSuccessMsg("");
 
@@ -117,6 +123,10 @@ function Batch_History() {
 
 
 
+
+
+
+
   return (
     <section className="con_main grid grid-cols-1 sm:grid-cols-[12fr_30fr_58fr] 
     grid-rows-[8vh_10vh_auto] 
@@ -141,7 +151,12 @@ function Batch_History() {
 
       {/* SIDEBAR */}
       <aside className={`${sidebarOpen ? "fixed inset-y-0 left-0 w-64 z-50" : "hidden"} md:static md:block`}>
-        <Sidebar user={user} setLogoutOpen={setLogoutOpen} />
+          <Sidebar
+            user={user}
+            setLogoutOpen={setLogoutOpen}
+            setSidebarOpen={setSidebarOpen}
+            setRegisterModalVisible={setRegisterModalVisible}
+          />
       </aside>
 
       {/* HEADER */}
@@ -414,9 +429,12 @@ function Batch_History() {
         />
       }   
 
-
-
-        
+      {isRegisterModalVisible && (
+        <RegisterDeviceModal
+          userData={user}
+          onClose={() => setRegisterModalVisible(false)} // close modal locally
+        />
+       )}        
       {successMsg && 
         <FloatSuccessMsg txt={successMsg} clearMsg={clearMsg}/>
       }

@@ -1,6 +1,6 @@
 import  * as deviceTokenModel from "../models/deviceTokenModels.js";
 import { sendPushNotification } from "../utils/firebaseAdmin.js";
-
+import { updateFirstTimeLogin } from "../models/userModels.js";
 
 
 export const registerDevice = async (req, res) => {
@@ -26,6 +26,8 @@ export const registerDevice = async (req, res) => {
       "Welcome to Sprout Sync!",
       "Your device is registered successfully 🌱"
     );
+
+    await updateFirstTimeLogin(user_id, false);
     
     res.status(200).json({
       success: true,
@@ -35,9 +37,10 @@ export const registerDevice = async (req, res) => {
   } catch (err) {
     console.error("Error registering device:", err);
     res.status(500).json({ success: false, message: err.message });
-  }
-  
+  }  
 };
+
+
 
 
 export const fetchUserDevices = async (req, res) => {

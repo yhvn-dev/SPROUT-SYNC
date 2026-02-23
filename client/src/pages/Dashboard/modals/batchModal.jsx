@@ -315,6 +315,8 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                   />
                 </div>
 
+
+                  
                 {/* FULLY GROWN SEEDLINGS */}
                 <div>
                   <label className="block text-xs font-semibold mb-1.5 text-[#155d27]">

@@ -9,13 +9,14 @@
   import { Notif_Modal } from '../../components/notifModal';
   import { LogoutModal } from '../../components/logoutModal';
   import  InfosModal  from "../../components/infosModal"
+  import RegisterDeviceModal from '../Dashboard/modals/registerDeviceModal';
 
-  import { Menu,CircleQuestionMark,Search} from "lucide-react";
+  import { Menu,CircleQuestionMark} from "lucide-react";
 
   import "./users.css";
 
   function Users() {
-    const { user } = useContext(UserContext);
+    const { user, skippedRegister} = useContext(UserContext);
     const [chartData, setChartData] = useState({ count: { total_users: 0 }, roleCount: [] });
     const [statusData, setStatusData] = useState([]);
     const [searchValue, setSearchValue] = useState("");
@@ -25,9 +26,20 @@
     const [logoutOpen, setLogoutOpen] = useState(false);
     const [isInfoModalOpen,setInfoModalOpen] = useState(false);
     const [infoModalPurpose,setInfoModalPurpose] = useState("");
-    
+    const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
+        
     const token = localStorage.getItem("accessToken");
-
+    
+    useEffect(() => {
+      if (user) {
+        if (user.first_time_login && !skippedRegister) {
+          setRegisterModalVisible(true);
+        } else {
+          setRegisterModalVisible(false);
+        }
+      }
+    }, [user, skippedRegister]);
+    
     // Fetch chart data
     const fetchChartData = async () => {
       try {
@@ -47,6 +59,11 @@
         console.error("Error Fetching Chart");
       }
     };
+
+
+
+
+    
 
     
 
@@ -108,9 +125,13 @@
           <aside
             className={`${
               sidebarOpen ? "fixed inset-y-0 left-0 w-64 z-50" : "hidden"
-            } md:static md:block`}
-          >
-            <Sidebar user={user}  setLogoutOpen={setLogoutOpen}   />
+            } md:static md:block`}>
+              <Sidebar
+                user={user}
+                setLogoutOpen={setLogoutOpen}
+                setSidebarOpen={setSidebarOpen}
+                setRegisterModalVisible={setRegisterModalVisible}
+              />
           </aside>
 
 
@@ -215,13 +236,18 @@
             purpose={infoModalPurpose}  
           />
         }
-      
     
-
-
-
+        {isRegisterModalVisible && (
+          <RegisterDeviceModal
+            userData={user}
+            onClose={() => setRegisterModalVisible(false)} // close modal locally
+          />
+        )}
         </section>
     );
   }
+
+
+
 
   export default Users;

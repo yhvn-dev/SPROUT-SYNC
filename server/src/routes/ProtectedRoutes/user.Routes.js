@@ -2,6 +2,8 @@ import * as userController from "../../controllers/user.Controller.js";
 import { verifyAccessToken, verifyRefreshToken } from "../../middlewares/authMiddleware.js";
 import * as authController from "../../controllers/auth.Controller.js";
 import * as userValidation from "../../middlewares/userValidation.js";
+
+
 import express from "express";
 
 const router = express.Router();    
@@ -15,6 +17,7 @@ router.get("/users/me", verifyAccessToken, userController.getLoggedUser);
 router.get("/users/filter", verifyAccessToken,userController.getFilteredUser);
 router.get("/users/search", verifyAccessToken,userController.searchUser);
 router.get("/users/:user_id", verifyAccessToken, userController.selectUser);
+
 
 
 /* ================= CRUD ================= */

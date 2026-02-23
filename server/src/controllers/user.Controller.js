@@ -1,10 +1,12 @@
 import * as userModels from "../models/userModels.js";
 import * as authModels from "../models/authModels.js";
-import * as deviceTokenModels from "../models/deviceTokenModels.js"
 import { getDeviceInfo } from "../utils/getDeviceInfo.js";
-
 import { generateAccessToken, generateRefreshToken } from "../utils/tokens.js";
+import { updateFirstTimeLogin } from "../models/userModels.js";
+
 import bcrypt from "bcrypt";
+
+
 
 /* ================= GET ALL USERS ================= */
 export const getUsers = async (req, res) => {
@@ -87,9 +89,6 @@ export const loginUser = async (req, res) => {
       device: deviceInfo,
     });
 
-
-    
-
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: true,
@@ -125,6 +124,7 @@ export const loginUser = async (req, res) => {
       .status(500)
       .json({ message: "CONTROLLER Error Getting Credentials" });
   }
+
 };
 
 
@@ -274,6 +274,10 @@ export const updateUser = async (req, res) => {
       .json({ message: "CONTROLLER: Error Updating User", err });
   }
 };
+
+
+
+
 
 /* ================= DELETE USER ================= */
 export const deleteUser = async (req, res) => {

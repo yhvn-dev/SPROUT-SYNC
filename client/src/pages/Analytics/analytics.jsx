@@ -8,14 +8,15 @@ import { LogoutModal } from "../../components/logoutModal";
 import { Menu, CircleQuestionMark} from "lucide-react";
 import { Overview } from "./overview";
 import { SeedlingStats } from "./seedlingStats";
-import InfosModal from "../../components/infosModal";
-import AnalyticsModal from "./modal/analyticsModal";
 import { FloatErrorMsg } from "../../components/messages";
 import { FloatSuccessMsg } from "../../components/sucessMsgs";
 
+import InfosModal from "../../components/infosModal";
+import AnalyticsModal from "./modal/analyticsModal";
+import RegisterDeviceModal from "../Dashboard/modals/registerDeviceModal";
 
 export default function Analytics() {
-  const { user } = useContext(UserContext);
+  const { user, skippedRegister} = useContext(UserContext);
   const {
     batchTotal,
     loadBatchTotal,
@@ -37,10 +38,10 @@ export default function Analytics() {
   const [isInfoModalOpen,setInfoModalOpen] = useState(false);
   const [isModalOpen,setModalOpen] = useState(false);
   const [infoModalPurpose,setInfoModalPurpose] = useState("");
-
   const [deleteModalMode,setDeleteModalMode] = useState("");
   const [errMsg,setErrMsg] = useState("");
   const [scsMsg,setScsMsg] = useState("");
+  const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
   
   const clearMsg = useCallback(() => {
   setErrMsg("");
@@ -104,18 +105,23 @@ export default function Analytics() {
         <div
           className={`md:hidden fixed inset-y-0 left-0 w-64 z-50 transform transition-transform ${
             sidebarOpen ? "translate-x-0" : "-translate-x-full"
-          }`}
-        >
+          }`}>
           <Sidebar
-            user={user}
-            setLogoutOpen={setLogoutOpen}
-            setSidebarOpen={setSidebarOpen}
-          />
+              user={user}
+              setLogoutOpen={setLogoutOpen}
+              setSidebarOpen={setSidebarOpen}
+              setRegisterModalVisible={setRegisterModalVisible}
+            />
         </div>
         
         {/* Desktop Sidebar */}
         <div className="hidden md:block">
-          <Sidebar user={user} setLogoutOpen={setLogoutOpen} setSidebarOpen={() => {}} />
+         <Sidebar
+              user={user}
+              setLogoutOpen={setLogoutOpen}
+              setSidebarOpen={setSidebarOpen}
+              setRegisterModalVisible={setRegisterModalVisible}
+            />
         </div>
         
       </aside>
@@ -235,7 +241,17 @@ export default function Analytics() {
         <FloatSuccessMsg txt={scsMsg} clearMsg={clearMsg}/>
       </> 
       )}
+
+    
+    {isRegisterModalVisible && (
+      <RegisterDeviceModal
+        userData={user}
+        onClose={() => setRegisterModalVisible(false)} // close modal locally
+      />
+    )}
+    
     </section>
+    
 
 
   );

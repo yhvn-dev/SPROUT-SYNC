@@ -146,7 +146,7 @@ export const Overview = ({
       <div className="conb col-span-7 bg-white py-2 row-span-9 dark:bg-gray-900 rounded-xl shadow-lg px-6 flex flex-col items-start justify-start gap-4">
         <div className="flex my-4 items-center justify-between w-full">
           <p className="font-semibold my-2">Average Moisture (%)</p>
-          {user.role === "admin" && (
+          {user?.role === "admin" && (
             <button
               onClick={handleOpenDeleteMoistureModal}
               className="flex text-xs cursor-pointer bg-[var(--sancga)] rounded-2xl shadow-lg px-4 py-2 text-[var(--main-white)] hover:bg-[var(--sancgb)]"

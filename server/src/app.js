@@ -11,7 +11,10 @@
     import esp32Routes from "./routes/ProtectedRoutes/esp32.Routes.js";
     import deviceTokenRoutes from "./routes/ProtectedRoutes/deviceToken.Routes.js"
     import streamRoutes from "./routes/ProtectedRoutes/streams.Routes.js"; // <-- add this
-
+    import plantGroupRoutes from "./routes/ProtectedRoutes/plantGroup.Routes.js"
+    import plantRoutes from "./routes/ProtectedRoutes/plant.Routes.js"
+    
+    
     // ===== CORE =====
     import express from "express";
     import cors from "cors";
@@ -57,8 +60,9 @@
     app.use("/esp32", esp32Routes);
     app.use ("/deviceToken",deviceTokenRoutes)
     app.use("/stream", streamRoutes);
+    app.use("/plant_groups",plantGroupRoutes);
+    app.use("/plants",plantRoutes)
 
-    
     // ===== TEST =====
     app.get("/", (req, res) => res.send("Serving is Running"));
     app.get("/api/hello", (req, res) => {
