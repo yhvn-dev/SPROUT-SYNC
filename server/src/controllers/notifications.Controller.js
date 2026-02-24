@@ -59,11 +59,10 @@ export const markNotificationsAsRead = async (req, res) => {
 };
 
 
+
 export const notifyReplantDate = async (req, res) => {
   try {
     const batchData = await plantBatchModel.readPlantBatches();
-    // console.log("🌱 Checking batches:", batchData.length);
-
     const today = toDateOnlyUTC(new Date());
     const notifiedBatches = [];
 
@@ -72,7 +71,6 @@ export const notifyReplantDate = async (req, res) => {
 
       const planted = toDateOnlyUTC(new Date(batch.date_planted));
       const expectedDays = Number(batch.expected_harvest_days);
-
       const harvestDate = new Date(planted);
       harvestDate.setUTCDate(harvestDate.getUTCDate() + expectedDays);
 
@@ -91,46 +89,46 @@ export const notifyReplantDate = async (req, res) => {
         daysRemaining
       });
 
-
       if (daysRemaining === 1) {
-          const tray = await trayModel.readTrayById(batch.tray_id);
-          const trayGroup = await trayGroupModel.readTrayGroupById(tray?.tray_group_id);
-          const location = trayGroup?.location || "Unknown";
+        const tray = await trayModel.readTrayById(batch.tray_id);
+        const trayGroup = await trayGroupModel.readTrayGroupById(tray?.tray_group_id);
+        const location = trayGroup?.location || "Unknown";
 
-          // ✅ Only create 1 notification in DB per batch
-          await notificationModel.createNotif({
-            user_id: null, // or some generic value if you don't want to tie to a specific user
+
+        await notificationModel.createNotif({
+            user_id: null,
             batch_id: batch.batch_id,
             type: "Info",
             status: "Medium",
-            message:
-              `🌱 Harvest Reminder\n` +
-              `1 Day Remaining before harvest \n\n` +
-              `Plant:    ${batch.plant_name}\n` +
-              `Location: ${location}\n` +
-              `Planted:  ${planted.toISOString().slice(0, 10)}\n` +
-              `Expected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
+            message: `🌱 Harvest Reminder\n1 Day Remaining before harvest \n\nPlant: ${batch.plant_name}\nLocation: ${location}\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
           });
 
-          // ✅ Send push notification to all devices (optional)
+          // ✅ Send push notification ONCE per batch (not per device call)
           const devices = await deviceTokenModel.getAllDeviceTokens();
-          for (const device of devices) {
-            await sendPushNotification(
-              device.push_token,
-              "Sprout Sync Notification",
-              `${batch.plant_name}[${batch.batch_number}] harvest is tomorrow!`
+          console.log("📱 Device tokens count:", devices.length);
+
+          if (devices.length > 0) {
+            const notifMessage = `${batch.plant_name}[${batch.batch_number}] harvest is tomorrow!`;
+            await Promise.all(
+              devices.map(device =>
+                sendPushNotification(device.push_token, "Sprout Sync Notification", notifMessage)
+              )
             );
           }
-          notifiedBatches.push({ batch_id: batch.batch_id, plant_name: batch.plant_name });
-        }      
-    }
+  
 
-    
+        notifiedBatches.push({
+          batch_id: batch.batch_id,
+          plant_name: batch.plant_name,
+          message: `${batch.plant_name} harvest is tomorrow!`
+        });
+      }
+    }
 
     res.status(200).json({
       success: true,
       message: notifiedBatches.length
-        ? `Batches notified: ${notifiedBatches.map(b => `#${b.batch_id} ${b.plant_name}`).join(", ")}`
+        ? `Batches notified: ${notifiedBatches.map(b => b.message).join(", ")}`
         : "No batches need notification today"
     });
 
@@ -142,6 +140,9 @@ export const notifyReplantDate = async (req, res) => {
     });
   }
 };
+
+
+
 
 
 

@@ -4,12 +4,12 @@ import path from "path";
 
 const serviceAccount = JSON.parse(
   fs.readFileSync(path.resolve("./src/config/serviceAccountKey.json"), "utf-8")
-
 );
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
+
 
 export const sendPushNotification = async (pushToken, title, body, data = {}) => {
   try {

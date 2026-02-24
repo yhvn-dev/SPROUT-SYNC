@@ -12,7 +12,6 @@ export const readPlantBatches = async () => {
   }
 };
 
-
 // ===== READ single plant batch by ID =====
 export const readPlantBatchById = async (batch_id) => {
   try {
@@ -23,8 +22,6 @@ export const readPlantBatchById = async (batch_id) => {
     throw error;
   }
 };
-
-
 
 // ===== GET TOTALS OF SEEDLINGS =====
 export const getPlantBatchTotals = async () => {
@@ -52,7 +49,6 @@ export const getPlantBatchTotals = async () => {
   }
 };
 
-
 // ===== GET SEEDLING GROWTH PER WEEK FOR ALL BATCHES =====
 export const getSeedlingGrowthByWeekAll = async () => {
   try {
@@ -74,7 +70,6 @@ export const getSeedlingGrowthByWeekAll = async () => {
 };
 
 
-
 export const createPlantBatch = async (batchData) => {
   const {
     tray_id,
@@ -88,6 +83,7 @@ export const createPlantBatch = async (batchData) => {
     expected_harvest_days,
     batch_number
   } = batchData;
+
 
   // Force numeric defaults
   const dead = Number(dead_seedlings) || 0;
@@ -184,12 +180,6 @@ export const updatePlantBatch = async (batchData, batch_id) => {
   }
 };
   
-
-
-
-
-
-
 // ===== DELETE a plant batch =====
 export const deletePlantBatch = async (batch_id) => {
   try {

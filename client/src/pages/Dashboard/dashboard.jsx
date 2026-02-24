@@ -15,6 +15,10 @@ import RegisterDeviceModal from "./modals/registerDeviceModal.jsx";
 
 export function Dashboard() {
   const { user, skippedRegister} = useContext(UserContext);
+
+  if (!user) return <div>Loading...</div>; 
+
+    
   const [activeTab, setActiveTab] = useState("Overview");
   const [isNotifOpen, setNotifOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
@@ -92,7 +96,7 @@ export function Dashboard() {
                 : "bg-white/50 text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark1)]"
               }
             `}>
-            Overview
+              Manage Plants
           </button>
         </nav>
       )}

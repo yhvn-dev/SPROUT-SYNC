@@ -6,7 +6,6 @@ import api from "../../utils/api";
 export const ProtectedRoute = ({ children,role,allowedRoles }) => {
   const navigate = useNavigate();
   const [checking, setChecking] = useState(true);
-  const [userRole,setUserRole] = useState("");
 
 
   useEffect(() => {

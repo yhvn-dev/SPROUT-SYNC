@@ -1,19 +1,19 @@
 import api from '../utils/api';
 
+
 /* =========================
    CREATE PLANT
 ========================= */
 export const createPlant = async (plantData) => {
   try {
     const res = await api.post('plants/post/plants', plantData)
+    console.log("CREATED PLANTS",res)
     return res.data;
-    
   } catch (error) {
     console.derror('Error creating plant', error);
     throw error;
   }
 };
-
 
 
 /* =========================
@@ -22,7 +22,6 @@ export const createPlant = async (plantData) => {
 export const fetchAllPlants = async () => {
   try {
     const res = await api.get('plants/get/plants');
-    console.log("PLANTS FROM SERVICES",res.data.plants)
     return res.data.plants;
   } catch (error) {
     console.error('Error fetching all plants', error);
@@ -30,12 +29,14 @@ export const fetchAllPlants = async () => {
   }
 };
 
+
+
 /* =========================
    UPDATE PLANT
 ========================= */
 export const updatePlant = async (plant_id, plantData) => {
   try {
-    const res = await api.put(`plants/update/plants/${plant_id}`, plantData);
+    const res = await api.put(`plants/put/plants/${plant_id}`, plantData);
     return res.data;
   } catch (error) {
     console.error('Error updating plant', error);

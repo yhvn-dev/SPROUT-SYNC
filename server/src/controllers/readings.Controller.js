@@ -136,12 +136,11 @@ export const createReadings = async (req, res) => {
     if (existingSensor.sensor_type === "ultra_sonic") {
       notifPayload = await handleUltrasonicNotifications(sensor_id, numericValue);
     }
-
+    
     // 🔔 IF MAY ALERT → CREATE ONLY 1 NOTIFICATION IN DB
     if (notifPayload) {
       // ✅ Create single notification (not per user)
       await notificationModels.createNotif({
-        user_id: null, // optional: system-wide notification
         related_sensor: sensor_id,
         type: notifPayload.type,
         status: notifPayload.status,

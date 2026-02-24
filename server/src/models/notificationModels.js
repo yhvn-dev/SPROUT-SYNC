@@ -41,26 +41,14 @@ export const readTotalUnreadNotifCount = async () => {
 
 
 
-
-export const findRecentNotif = async ({ user_id, related_sensor, type, withinMinutes }) => {
-  try {
-    const text = `
-      SELECT *
-      FROM notifications
-      WHERE user_id = $1
-        AND related_sensor = $2
-        AND type = $3
-        AND created_at >= NOW() - INTERVAL '${withinMinutes} minutes'
-      LIMIT 1
-    `;
-    const values = [user_id, related_sensor, type];
-
-    const result = await query(text, values);
-    return result.rows[0] || null;
-  } catch (error) {
-    console.error("❌ findRecentNotif error:", error);
-    return null;
-  }
+export const exists = async ({ batch_id, type }) => {
+  const sql = `
+    SELECT COUNT(*) AS count 
+    FROM notifications 
+    WHERE batch_id = $1 AND type = $2
+  `;
+  const result = await query(sql, [batch_id, type]);
+  return result.rows[0].count > 0;
 };
 
 
@@ -78,15 +66,15 @@ export const markAllNotificationsAsRead = async () => {
 
 
 export const createNotif = async (notificationData) => {
-  const { type, message, related_sensor, status, user_id = 1 } = notificationData;
+  const { type, message, related_sensor, status} = notificationData;
 
   const { rows } = await query(`
     INSERT INTO notifications 
-      (type, message, related_sensor, status, user_id, is_read, created_at)
+      (type, message, related_sensor, status, is_read, created_at)
     VALUES 
-      ($1, $2, $3, $4, $5, false, NOW())
+      ($1, $2, $3, $4, false, NOW())
     RETURNING *
-  `, [type, message, related_sensor, status, user_id]);
+  `, [type, message, related_sensor, status]);
 
   const notif = rows[0];
   io.to(`user_${notif.user_id}`).emit("notification", notif);

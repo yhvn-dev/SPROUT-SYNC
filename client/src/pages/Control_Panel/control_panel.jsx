@@ -21,7 +21,7 @@ function Control_panel() {
   const [ isInfoModalOpen, setInfoModalOpen ] = useState(false);
   const [ infoModalPurpose, setInfoModalPurpose ] = useState("");
   const [ isNotifOpen, setNotifOpen ] = useState(false);
-  const  [sidebarOpen, setSidebarOpen ] = useState(false);
+  const [sidebarOpen, setSidebarOpen ] = useState(false);
   const { valveMode, setValveMode } = useValve();
   const { averageReadingsBySensor } = usePlantData();
   const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
