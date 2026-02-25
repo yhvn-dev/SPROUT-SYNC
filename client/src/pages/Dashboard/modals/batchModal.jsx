@@ -252,7 +252,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                       className="py-2 rounded-lg text-sm w-full"
                     />  
                     {/* BATCH NUMBER */}
-                    <div>
+                    <div className='hidden'>
                       <label className="block text-xs font-semibold mb-1.5 text-[#155d27]"> 
                         Batch Number
                       </label>
@@ -261,7 +261,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                         type="number"
                         name="batch_number"
                         value={formData.batch_number}
-                        className="py-2 rounded-lg text-sm w-full border-2 border-[#C4DED0]"
+                        className="py-2 rounded-lg text-sm w-full "
                       />
                     </div>
                   </div>
