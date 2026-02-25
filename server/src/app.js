@@ -145,6 +145,7 @@ app.get("/esp32/status", (req, res) => {
   });
 });
 
+// finalized
 
 // ===== START SERVER =====
 server.listen(port, '0.0.0.0', () => {
