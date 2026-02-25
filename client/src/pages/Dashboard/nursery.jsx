@@ -94,42 +94,60 @@ function NurseryDashboard() {
       <div className="w-full overflow-hidden">
         <div className="w-full max-w-full sm:max-w-7xl mx-auto space-y-4">
 
-          {/* Header */}
-          <div className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm">
-            <div className="flex items-center justify-between gap-2">
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-semibold text-gray-900">
-                  Nursery Dashboard
-                  <button className='mx-4' onClick={handleOpenInfosModalNursery}>
-                    <CircleQuestionMark className='w-4 h-4 cursor-pointer' />
-                  </button>
-                </h1>
-                <p className="text-xs sm:text-sm text-gray-500 mt-1">Monitor and manage your plant cultivation</p>
-              </div>
 
-              <div className="conb flex items-center gap-4 bg-white p-4 px-6 rounded-2xl shadow-md border border-gray-50 relative">
-                {ESP32Status ? (
-                  <>
-                    <Wifi size={24} className="text-green-500" />
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--color-dark-blue)] m-0">ESP32 Connected</p>
-                      <p className="text-xs text-[var(--gray_1--)] m-0 mt-1">Last updated: Just now</p>
-                    </div>
-                    <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_currentColor]" />
-                  </>
-                ) : (
-                  <>
-                    <WifiOff size={24} className="text-red-500" />
-                    <div>
-                      <p className="text-sm font-semibold text-[var(--color-dark-blue)] m-0">ESP32 Disconnected</p>
-                      <p className="text-xs text-[var(--gray_1--)] m-0 mt-1">Trying to reconnect...</p>
-                    </div>
-                    <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_currentColor]" />
-                  </>
-                )}
-              </div>
-            </div>
+
+      <div className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm w-full max-w-full">
+  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-2 w-full">
+    
+    {/* Title & Subtitle */}
+    <div className="flex-1 min-w-0">
+      <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 flex items-center flex-wrap">
+        Nursery Dashboard
+        <button 
+          className='ml-2 sm:ml-4 mt-2 sm:mt-0 flex-shrink-0' 
+          onClick={handleOpenInfosModalNursery}
+        >
+          <CircleQuestionMark className='w-4 h-4 cursor-pointer' />
+        </button>
+      </h1>
+      <p className="text-xs sm:text-sm text-gray-500 mt-1 truncate">
+        Monitor and manage your plant cultivation
+      </p>
+    </div>
+
+    {/* ESP32 Status */}
+    <div className="conb flex items-center gap-3 sm:gap-4 bg-white p-3 sm:p-4 rounded-2xl shadow-md border border-gray-50 w-full sm:w-auto">
+      {ESP32Status ? (
+        <>
+          <Wifi size={24} className="text-green-500 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm sm:text-base font-semibold text-[var(--color-dark-blue)] truncate m-0">
+              ESP32 Connected
+            </p>
+            <p className="text-xs text-[var(--gray_1--)] mt-1 truncate m-0">
+              Last updated: Just now
+            </p>
           </div>
+          <div className="w-2.5 h-2.5 rounded-full bg-green-500 animate-pulse shadow-[0_0_10px_currentColor] flex-shrink-0" />
+        </>
+      ) : (
+        <>
+          <WifiOff size={24} className="text-red-500 flex-shrink-0" />
+          <div className="flex-1 min-w-0">
+            <p className="text-sm sm:text-base font-semibold text-[var(--color-dark-blue)] truncate m-0">
+              ESP32 Disconnected
+            </p>
+            <p className="text-xs text-[var(--gray_1--)] mt-1 truncate m-0">
+              Trying to reconnect...
+            </p>
+          </div>
+          <div className="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_currentColor] flex-shrink-0" />
+        </>
+      )}
+    </div>
+  </div>
+</div>
+
 
 
 

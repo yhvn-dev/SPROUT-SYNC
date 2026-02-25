@@ -7,7 +7,12 @@ import { usePlantData } from "../../hooks/plantContext.jsx";
 import { PlantModal } from "./modals/plantModal.jsx";
 import { UserContext } from "../../hooks/userContext.jsx";
 import { LogoutModal } from "../../components/logoutModal.jsx";
+import {  CircleQuestionMark } from "lucide-react";
 import RegisterDeviceModal from "../Dashboard/modals/registerDeviceModal";
+import InfosModal from "../../components/infosModal.jsx";
+
+
+
 
 /* ─── MOISTURE BAR ───────────────────────────────────────── */
 function MoistureBar({ min, max, fillColor, trackColor, small = false }) {
@@ -148,6 +153,9 @@ function CategoryRow({ group, childPlants, onAdd, onUpdate, onDelete }) {
   );
 }
 
+
+
+
 /* ─── MAIN PAGE ──────────────────────────────────────────── */
 export default function Plants() {
   const { user } = useContext(UserContext);
@@ -156,6 +164,8 @@ export default function Plants() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
   const [successMsg, setSuccessMsg] = useState("");
+  const [isInfoModalOpen, setInfoModalOpen] = useState(false);
+  const [infoModalPurpose, setInfoModalPurpose] = useState("");
   const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
 
   const [modal, setModal] = useState({
@@ -197,6 +207,13 @@ export default function Plants() {
 
   const closeModal = () =>
     setModal((prev) => ({ ...prev, isOpen: false }));
+
+   const handleOpenInfosPlants = () => {
+    setInfoModalPurpose("plants");
+    setInfoModalOpen(true);
+  };
+
+  
 
   return (
     <section className="con_main grid grid-cols-1 sm:grid-cols-[12fr_30fr_58fr]
@@ -243,7 +260,15 @@ export default function Plants() {
       <main className="plant_main_div col-start-1 md:col-start-2 col-span-full row-start-2 row-span-full
         overflow-y-auto p-4 md:p-6">
 
-        <h1 className="plants-text text-3xl font-bold text-[var(--metal-dark5)] mb-6">Plants</h1>
+        <div className="w-full flex items-center justify-start gap-4 mb-6"> 
+          <h1 className="plants-text text-3xl font-bold text-[var(--metal-dark5)] ">Plants</h1>
+          <button 
+            className='ml-2 mt-2s sm:ml-4 mt-2 sm:mt-0 flex-shrink-0' 
+            onClick={handleOpenInfosPlants}>
+            <CircleQuestionMark className='w-4 h-4 cursor-pointer' />
+          </button>
+        </div>
+     
 
         <div className="flex flex-col gap-12">
           {groupsWithPlants.map(({ group, childPlants }) => (
@@ -304,6 +329,19 @@ export default function Plants() {
         setSuccessMsg={setSuccessMsg}
         reloadPlants={loadPlants}
       />
+
+
+
+
+      {isInfoModalOpen && (
+        <InfosModal
+          isInfosModalOpen={isInfoModalOpen}
+          onClose={() => setInfoModalOpen(false)}
+          purpose={infoModalPurpose}
+        />
+      )}
+
+
     </section>
   );
 }

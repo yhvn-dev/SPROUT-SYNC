@@ -70,8 +70,16 @@ function Control_panel() {
     } catch (err) { console.error(err); }
   };
 
+
+  
   const handleOpenInfosModalControlPanel = () => {
     setInfoModalPurpose("control_panel");
+    setInfoModalOpen(true);
+  };
+
+
+  const handleOpenInfosModalValveControls = () => {
+    setInfoModalPurpose("valve_controls");
     setInfoModalOpen(true);
   };
 
@@ -107,7 +115,13 @@ function Control_panel() {
           {/* Page Header */}
           <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-8">
             <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-dark-blue)]">Control Panel</h1>
+              <h1 className="text-3xl md:text-4xl font-bold text-[var(--color-dark-blue)]">Control Panel
+
+                          <button className='mx-4' onClick={handleOpenInfosModalControlPanel}>
+                            <CircleQuestionMark className='w-4 h-4 cursor-pointer' />
+                          </button>
+                   
+              </h1>
               <p className="text-base text-[var(--gray_1--)]">Monitor and Control your automatic plant watering system</p>
             </div>
             <div className="conb flex items-center gap-4 bg-white p-4 px-6 rounded-2xl shadow-md border border-gray-50">
@@ -215,9 +229,11 @@ function Control_panel() {
                 />
               )}
 
+
+
               {/* IDLE */}
               {!running && !loading && !error && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-4 z-10 pointer-events-none">
+                <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-4  pointer-events-none">
                   <Video size={40} className="text-white/20" />
                   <p className="text-white/50 font-semibold text-sm m-0">
                     Camera Offline
@@ -323,7 +339,7 @@ function Control_panel() {
                   <Droplets size={24} className="text-[var(--ptl-greend)]" />
                   <h2 className="text-2xl font-bold text-[var(--color-dark-blue)] m-0">
                     Valve Controls
-                    <button className='mx-4' onClick={handleOpenInfosModalControlPanel}>
+                    <button className='mx-4' onClick={handleOpenInfosModalValveControls}>
                       <CircleQuestionMark className='w-4 h-4 cursor-pointer' />
                     </button>
                   </h2>

@@ -16,13 +16,15 @@ function InfosModal({ isInfosModalOpen, onClose, purpose }) {
         return "Soil Moisture Trend Graph";
       case "water_level":
         return "Water Level Gauge"
+        case "valves_control":
+        return "Valve Control"
       default:
         return "System Information";
     }
   };
 
 
-  
+
   // Function to render the content dynamically
   const renderContent = () => {
     switch (purpose?.toLowerCase()) {
@@ -145,10 +147,64 @@ function InfosModal({ isInfosModalOpen, onClose, purpose }) {
             <li>This section helps monitor plant performance, track losses, and evaluate overall growing efficiency.</li>
         </ul>
         );
+
+        case "plants":
+          return (
+            <ul className="list-disc pl-5 space-y-2">
+                <li>
+                  Stores and displays different plants grouped by similar moisture requirements, making it easy to identify which plants can be transferred or managed together
+                </li>     
+            </ul>
+          );
+
+          case "plants":
+          return (
+            <ul className="list-disc pl-5 space-y-2">
+                <li>
+                  Stores and displays different plants grouped by similar moisture requirements, making it easy to identify which plants can be transferred or managed together
+                </li>     
+            </ul>
+          );
+
+          case "valve_controls":
+          return (
+            <ul className="list-disc pl-5 space-y-2">
+                <li>
+                 Lets you manually turn off unused valves—so if there are no plants like bokchoy growing, the valve stays off and doesn’t waste water.
+                </li>     
+            </ul>
+          );
+
+        case "control_panel":
+          return (
+            <ul className="list-disc pl-5 space-y-2">
+                <li>
+                   Monitor your nursery in real-time by starting the IMOU CCTV stream, controlling valves, and checking the current water level all in one place.
+                </li>     
+            </ul>
+          );
+
+
+
+          
+
  
       default:
         return <p>This section provides information about the selected system feature.</p>;
     }
+  };
+
+
+  
+  const handleOpenInfosModalControlPanel = () => {
+    setInfoModalPurpose("control_panel");
+    setInfoModalOpen(true);
+  };
+
+
+  const handleOpenInfosModalValveControls = () => {
+    setInfoModalPurpose("valve_controls");
+    setInfoModalOpen(true);
   };
 
   
@@ -162,7 +218,7 @@ function InfosModal({ isInfosModalOpen, onClose, purpose }) {
         className="conb bg-[var(--main-white)] rounded-2xl shadow-2xl max-w-lg w-full p-6 relative">
         {/* Header */}
         <div className="flex justify-between items-center mb-4 border-b py-4">
-          <h2 className="text-xl font-semibold">{renderTitle()}</h2>
+          <h2 className="z-50 text-xl font-semibold">{renderTitle()}</h2>
           <button
             onClick={onClose}
             className="cursor-pointer text-gray-500 hover:bg-gray-100 px-1 rounded-xl shadow-sm font-bold text-lg">
@@ -171,7 +227,7 @@ function InfosModal({ isInfosModalOpen, onClose, purpose }) {
         </div>
 
         {/* Conditional Description */}
-        <div className="text-gray-700">{renderContent()}</div>
+        <div className="z-50 text-gray-700">{renderContent()}</div>
       </motion.div>
       
     </section>
