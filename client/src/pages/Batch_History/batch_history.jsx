@@ -274,7 +274,7 @@ function Batch_History() {
                       className={`pbh_tr hover:bg-[#E8F3ED] transition-colors ${
                         index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                       }`}>
-                      <td className="px-4 py-3 text-sm font-medium text-[#027c68] flex"><p>[{record.batch_number}]</p>{record.plant_name}</td>
+                      <td className="px-4 py-3 text-sm font-medium text-[#027c68] flex"><p>[{record.batch_number}-{record.history_number}]</p>{record.plant_name}</td>
                       <td className="date_planted_data px-4 py-3 text-sm text-gray-600 whitespace-nowrap">{new Date(record.date_recorded).toLocaleDateString()}</td>
                       <td className="px-4 py-3 text-sm text-center font-semibold">{record.total_seedlings}</td>
                     

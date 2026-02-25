@@ -4,7 +4,7 @@ import { query } from "../config/db.js";
 // ===== READ all history =====
 export const readPlantBatchHistory = async () => {
   try {
-    const sql = `SELECT * FROM plant_batch_history ORDER BY date_recorded DESC`;
+    const sql = `SELECT * FROM plant_batch_history ORDER BY AND date_recorded DESC`;
     const result = await query(sql);
     return result.rows;
   } catch (error) {
@@ -111,6 +111,8 @@ export const readSeedlingGrowthByWeekAll = async () => {
 };
 
 
+
+
 export const createHistoryRecord = async (batchData) => {
   const {
     batch_number,  
@@ -126,36 +128,43 @@ export const createHistoryRecord = async (batchData) => {
     notes = null
   } = batchData;
 
-  const sql = `
-    INSERT INTO plant_batch_history (
-      batch_number, 
+  try {
+    // 1️⃣ Get the next history_number for this plant_name (or batch_number)
+    const result = await query(
+      `SELECT COALESCE(MAX(history_number), 0) + 1 AS next_number
+       FROM plant_batch_history
+       WHERE plant_name ILIKE $1`,
+      [plant_name.trim()]
+    );
+
+    const history_number = result.rows[0].next_number;
+
+    // 2️⃣ Insert new history record with the incremented history_number
+    const sql = `
+      INSERT INTO plant_batch_history (
+        batch_number, history_number,
+        tray_id, plant_name, date_recorded,
+        total_seedlings, dead_seedlings, replanted_seedlings, fully_grown_seedlings,
+        growth_stage, expected_harvest_days, notes
+      )
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+      RETURNING *
+    `;
+
+    const values = [
+      batch_number, history_number,
       tray_id, plant_name, date_recorded,
       total_seedlings, dead_seedlings, replanted_seedlings, fully_grown_seedlings,
       growth_stage, expected_harvest_days, notes
-    )
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
-    RETURNING *
-  `;
+    ];
 
-  const values = [
-    batch_number,
-    tray_id, plant_name, date_recorded,
-    total_seedlings, dead_seedlings, replanted_seedlings, fully_grown_seedlings,
-    growth_stage, expected_harvest_days, notes
-  ];
+    const insert = await query(sql, values);
+    return insert.rows[0];
 
-  try {
-    const result = await query(sql, values);
-    return result.rows[0];
   } catch (error) {
     throw error;
   }
-
-  
 };
-
-
-
 
 
 
