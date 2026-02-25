@@ -10,15 +10,20 @@ export const SeedlingStats = ({ activeTab, growthOvertime, batchHistoryTotal }) 
 
   // ================= SOURCE OF TRUTH =================
   const totals = batchHistoryTotal ?? {};
-  const total_grown = totals?.total_grown ?? 0;
-  const total_dead = totals?.total_dead ?? 0;
-  const total_replanted = totals?.total_replanted ?? 0;
-  const totalSeedlings = totals?.total_seedlings ?? 0; // Use the given total directly
+  const totalSeedlings = Number(totals?.total_seedlings ?? 0);
+  const total_grown = Number(totals?.total_grown ?? 0);
+  const total_dead = Number(totals?.total_dead ?? 0);
+  const total_replanted = Number(totals?.total_replanted ?? 0);
+
+  // Calculate percentages based on totalSeedlings
+  const grownPercent = totalSeedlings ? +((total_grown / totalSeedlings) * 100).toFixed(1) : 0;
+  const deadPercent = totalSeedlings ? +((total_dead / totalSeedlings) * 100).toFixed(1) : 0;
+  const replantedPercent = totalSeedlings ? +((total_replanted / totalSeedlings) * 100).toFixed(1) : 0;
 
   const statusData = [
-    { name: "Grown", value: totalSeedlings ? +((total_grown / totalSeedlings) * 100).toFixed(1) : 0, color: "#027c68" },
-    { name: "Dead", value: totalSeedlings ? +((total_dead / totalSeedlings) * 100).toFixed(1) : 0, color: "#ff6673" },
-    { name: "Replanted", value: totalSeedlings ? +((total_replanted / totalSeedlings) * 100).toFixed(1) : 0, color: "#f0bd75" },
+    { name: "Grown", value: grownPercent, color: "#027c68" },
+    { name: "Dead", value: deadPercent, color: "#ff6673" },
+    { name: "Replanted", value: replantedPercent, color: "#f0bd75" },
   ];
 
   const handleOpenInfosModalseedlingGrowthOvertime = () => {
@@ -136,5 +141,8 @@ export const SeedlingStats = ({ activeTab, growthOvertime, batchHistoryTotal }) 
         <InfosModal isInfosModalOpen={isInfoModalOpen} onClose={() => setInfoModalOpen(false)} purpose={infoModalPurpose} />
       )}
     </div>
+
+
+
   );
 };

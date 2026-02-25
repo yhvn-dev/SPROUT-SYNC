@@ -10,7 +10,7 @@ export const createPlant = async (plantData) => {
     console.log("CREATED PLANTS",res)
     return res.data;
   } catch (error) {
-    console.derror('Error creating plant', error);
+    console.error('Error creating plant', error);
     throw error;
   }
 };

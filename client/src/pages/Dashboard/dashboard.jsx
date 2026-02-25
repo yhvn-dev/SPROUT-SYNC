@@ -18,7 +18,6 @@ export function Dashboard() {
 
   if (!user) return <div>Loading...</div>; 
 
-    
   const [activeTab, setActiveTab] = useState("Overview");
   const [isNotifOpen, setNotifOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
@@ -41,7 +40,7 @@ export function Dashboard() {
       {/* MOBILE MENU */}
       <button
         onClick={() => setSidebarOpen(true)}
-        className="md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
+        className="menu_button md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
         <Menu size={22} />
       </button>
 
@@ -68,38 +67,37 @@ export function Dashboard() {
       <div className="md:col-start-2">
         <Db_Header setNotifOpen={setNotifOpen} />
       </div>
+      
 
-
-      {/* TABS */}
-      {user.role === "admin" && (
-        <nav className="flex gap-2 px-4 md:px-0 md:col-start-2">
-
-          <button
+      
+        {/* TABS */}
+        {user.role === "admin" && (   
+        <nav className="dashboard_nav flex gap-2 px-4 md:px-0 md:col-start-2">
+            <button
             onClick={() => setActiveTab("Overview")}
-            className={`            
-                cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
-                text-xs md:text-sm rounded-lg transition
-              ${activeTab === "Overview" 
-                ? "active bg-white text-[#027c68] shadow-md dark:bg-[var(--metal-dark3)] dark:text-[#00ffe0] dark:shadow-md"
-                : "bg-white/50 text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark1)]"
-              }
-            `}>
+            className={`db_nav_button cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
+              text-xs md:text-sm rounded-lg transition
+              ${activeTab === "Overview"
+                ? "conb active bg-white shadow-md text-[#5A8F73] dark:bg-[var(--metal-dark3)] dark:text-[#00ffe0] dark:shadow-md"
+                : "bg-white/50  text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark1)]"
+              }`}>
             Overview
           </button>
-            <button
+          
+          <button
             onClick={() => setActiveTab("Manage Plants")}
-            className={`            
-                cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
-                text-xs md:text-sm rounded-lg transition
-              ${activeTab === "Manage Plants" 
-                ? "active bg-white text-[#027c68] shadow-md dark:bg-[var(--metal-dark3)] dark:text-[#00ffe0] dark:shadow-md"
-                : "bg-white/50 text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark1)]"
-              }
-            `}>
-              Manage Plants
+            className={`db_nav_button cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
+              text-xs md:text-sm rounded-lg transition bg-[var(-)]
+              ${activeTab === "Manage Plants"
+                ? "conb active bg-white shadow-md text-[#5A8F73] dark:bg-[var(--metal-dark3)] dark:text-white dark:shadow-md"
+                : "bg-white/50  text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-white dark:hover:bg-[var(--metal-dark1)]"
+              }`}>
+                Manage Plants
           </button>
+                 
         </nav>
       )}
+
 
       {/* MAIN */}
       <main className="flex-1 md:col-start-2 overflow-y-auto px-4 pb-4">

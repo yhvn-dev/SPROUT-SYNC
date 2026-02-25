@@ -10,12 +10,14 @@ import * as notifService from "../data/notifsServices";
 import * as plantGroupService from "../data/plantGroupServices";
 import * as plantService from "../data/plantServices";
 
+
 const PlantDataContext = createContext(null);
 
 export const PlantDataProvider = ({ children }) => {
   // ------------------- STATES -------------------
   const [trayGroups, setTrayGroups] = useState([]);
   const [trays, setTrays] = useState([]);
+  const [tgWithTrayCount,setTgWithTrayCount] = useState([]);
   const [batches, setBatches] = useState([]);
   const [batchHistory, setBatchHistory] = useState([]);
   const [batchTotal, setBatchTotal] = useState({});
@@ -47,6 +49,16 @@ export const PlantDataProvider = ({ children }) => {
     try {
       const data = await traysService.fetchAllTrays();
       setTrays(data);
+    } catch (error) {
+      console.error("Error loading trays", error);
+    }
+  }, []);
+
+
+   const loadTrayGroupsWithCount = useCallback(async () => {
+    try {
+      const data = await traysService.fetchAllTrayGroupWithCount()
+      setTgWithTrayCount(data)
     } catch (error) {
       console.error("Error loading trays", error);
     }
@@ -192,6 +204,7 @@ export const PlantDataProvider = ({ children }) => {
   useEffect(() => {
     loadTrayGroups();
     loadTrays();
+    loadTrayGroupsWithCount(),
     loadBatches();
     loadBatchTotal();
     loadBatchHistory();
@@ -210,6 +223,7 @@ export const PlantDataProvider = ({ children }) => {
   }, [
     loadTrayGroups,
     loadTrays,
+    loadTrayGroupsWithCount,
     loadBatches,
     loadBatchTotal,
     loadBatchHistory,
@@ -253,6 +267,7 @@ export const PlantDataProvider = ({ children }) => {
       value={{
         trayGroups,
         trays,
+        tgWithTrayCount,
         batches,
         batchTotal,
         batchHistory,
@@ -270,6 +285,7 @@ export const PlantDataProvider = ({ children }) => {
         // Load functions
         loadTrayGroups,
         loadTrays,
+        loadTrayGroupsWithCount,
         loadBatches,
         loadBatchTotal,
         loadBatchHistory,

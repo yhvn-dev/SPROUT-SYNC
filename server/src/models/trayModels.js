@@ -3,23 +3,29 @@ import { query } from "../config/db.js";
 
 // ===== READ all trays with sensor count =====
 export const readTrays = async () => {
-    try {
-        const sql = `
-            SELECT 
-                t.*,
-                COUNT(s.sensor_id) AS "sensorCount"
-            FROM trays t
-            LEFT JOIN sensors s
-                ON s.tray_id = t.tray_id
-            GROUP BY t.tray_id
-            ORDER BY t.tray_id ASC
-        `;
-        const result = await query(sql);
-        return result.rows;
-    } catch (error) {
-        throw error;
-    }
+  try {
+    const sql = `
+      SELECT 
+        t.*,
+        COUNT(s.sensor_id) AS "sensorCount"
+      FROM trays t
+      LEFT JOIN sensors s
+        ON s.tray_id = t.tray_id
+      GROUP BY t.tray_id
+      ORDER BY 
+        LOWER(t.plant) ASC,   -- alphabetical by tray name
+        t.tray_number ASC        -- then by tray number
+    `;
+    const result = await query(sql) ;
+    return result.rows;
+  } catch (error) {
+    throw error;
+  }
 };
+
+
+
+
 
 // ===== READ single tray by ID =====
 export const readTrayById = async (tray_id) => {
@@ -33,8 +39,19 @@ export const readTrayById = async (tray_id) => {
 };
 
 
-
-
+export const getAllTrayGroupsWithTrayCount = async () => {
+  const sql = `
+    SELECT tg.tray_group_id AS tray_group_id,
+           tg.tray_group_name AS tray_group_name,
+           COUNT(t.tray_id) AS tray_count
+    FROM tray_groups tg
+    LEFT JOIN trays t ON t.tray_group_id = tg.tray_group_id
+    GROUP BY tg.tray_group_id, tg.tray_group_name
+    ORDER BY tg.tray_group_name ASC
+  `;
+  const result = await query(sql);
+  return result.rows;
+};
 
 // ===== CREATE a new tray =====
 export const createTray = async (trayData) => {

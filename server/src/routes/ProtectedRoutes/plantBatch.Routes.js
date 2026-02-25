@@ -6,15 +6,15 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/get/pb",plantBatchController.getPlantBatches);
-router.get("/get/pb/total",plantBatchController.getPlantBatchTotals)
-router.get("/get/pb/growthbyweek",plantBatchController.getSeedlingGrowthOverTime)
-router.get("/get/pb/:batch_id",plantBatchController.getPlantBatchById);
+router.get("/get/pb",verifyAccessToken,plantBatchController.getPlantBatches);
+router.get("/get/pb/total",verifyAccessToken,plantBatchController.getPlantBatchTotals)
+router.get("/get/pb/growthbyweek",verifyAccessToken,plantBatchController.getSeedlingGrowthOverTime)
+router.get("/get/pb/:batch_id",verifyAccessToken,plantBatchController.getPlantBatchById);
 
 
-router.post("/post/pb",validatePlantBatch, plantBatchController.createPlantBatch);
-router.put("/put/pb/:batch_id",validatePlantBatch, plantBatchController.updatePlantBatch);
-router.delete("/delete/pb/:batch_id",plantBatchController.deletePlantBatch);
+router.post("/post/pb",verifyAccessToken,validatePlantBatch, plantBatchController.createPlantBatch);
+router.put("/put/pb/:batch_id",verifyAccessToken,validatePlantBatch, plantBatchController.updatePlantBatch);
+router.delete("/delete/pb/:batch_id",verifyAccessToken,plantBatchController.deletePlantBatch);
 
 
 export default router;

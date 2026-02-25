@@ -1,16 +1,29 @@
 // plantBatches.model.js
 import { query } from "../config/db.js";
 
+
 // ===== READ all plant batches =====
 export const readPlantBatches = async () => {
   try {  
-    const sql = `SELECT * FROM plant_batches ORDER BY batch_id ASC`;
+    const sql = `
+      SELECT
+        *,
+        (date_planted + (expected_harvest_days || ' days')::interval) 
+          AS expected_harvest_date
+      FROM plant_batches
+      WHERE status = 'Growing'
+      ORDER BY expected_harvest_date ASC
+    `;
+
     const result = await query(sql);
     return result.rows;       
   } catch (error) {
     throw error;
   }
 };
+
+
+
 
 // ===== READ single plant batch by ID =====
 export const readPlantBatchById = async (batch_id) => {
@@ -70,6 +83,26 @@ export const getSeedlingGrowthByWeekAll = async () => {
 };
 
 
+
+
+
+const computeHarvestStatus = (datePlanted, expectedDays, harvestedAt = null) => {
+  if (harvestedAt) return "Harvested";
+
+  const planted = new Date(datePlanted);
+  const expected = new Date(planted);
+  expected.setDate(expected.getDate() + Number(expectedDays));
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+  expected.setHours(0,0,0,0);
+
+  if (expected > today) return "Not Ready";
+  if (expected.getTime() === today.getTime()) return "Due Now";
+  return "Past Due";
+};
+
+
 export const createPlantBatch = async (batchData) => {
   const {
     tray_id,
@@ -84,26 +117,37 @@ export const createPlantBatch = async (batchData) => {
     batch_number
   } = batchData;
 
-
-  // Force numeric defaults
   const dead = Number(dead_seedlings) || 0;
   const replanted = Number(replanted_seedlings) || 0;
   const grown = Number(fully_grown_seedlings) || 0;
 
-  // AUTO-ADJUST: Never exceed total_seedlings
   const safeReplanted = Math.min(replanted, total_seedlings);
   const safeFullyGrown = Math.min(grown, total_seedlings);
   const totalAlive = total_seedlings - dead;
   const finalReplanted = Math.min(safeReplanted, totalAlive);
   const finalFullyGrown = Math.min(safeFullyGrown, totalAlive - finalReplanted);
 
+  // 🔥 AUTO COMPUTE HARVEST STATUS
+  const harvest_status = computeHarvestStatus(
+    date_planted,
+    expected_harvest_days
+  );
+
   const sql = `
     INSERT INTO plant_batches (
-      tray_id, plant_name, total_seedlings, dead_seedlings,
-      replanted_seedlings, fully_grown_seedlings, growth_stage,
-      date_planted, expected_harvest_days, batch_number
+      tray_id,
+      plant_name,
+      total_seedlings,
+      dead_seedlings,
+      replanted_seedlings,
+      fully_grown_seedlings,
+      growth_stage,
+      date_planted,
+      expected_harvest_days,
+      batch_number,
+      harvest_status
     )
-    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+    VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11)
     RETURNING *
   `;
 
@@ -111,23 +155,24 @@ export const createPlantBatch = async (batchData) => {
     tray_id,
     plant_name,
     total_seedlings,
-    dead,              
+    dead,
     finalReplanted,
     finalFullyGrown,
     growth_stage,
     date_planted,
     expected_harvest_days,
-    batch_number
+    batch_number,
+    harvest_status
   ];
 
   const result = await query(sql, values);
   return result.rows[0];
-  
 };
 
 
 
-// ===== UPDATE a plant batch =====
+
+// plantBatchesModels.js
 export const updatePlantBatch = async (batchData, batch_id) => {
   const {
     tray_id,
@@ -138,47 +183,56 @@ export const updatePlantBatch = async (batchData, batch_id) => {
     fully_grown_seedlings = 0,
     growth_stage = "Seedling",
     date_planted,
-    expected_harvest_days
+    expected_harvest_days,
   } = batchData;
 
-  const computedTotal = total_seedlings + replanted_seedlings;
+  // Ensure total_alive is consistent
+  const totalAlive = Number(total_seedlings) - Number(dead_seedlings);
+  const finalReplanted = Math.min(Number(replanted_seedlings), totalAlive);
+  const finalFullyGrown = Math.min(Number(fully_grown_seedlings), totalAlive - finalReplanted);
+  const computedTotal = Number(total_seedlings); // keep total_seedlings as-is
 
-  try {
-    const sql = `
-      UPDATE plant_batches
-      SET
-        tray_id = $1,
-        plant_name = $2,
-        total_seedlings = $3,
-        dead_seedlings = $4,
-        replanted_seedlings = $5,
-        fully_grown_seedlings = $6,
-        growth_stage = $7,
-        date_planted = $8,
-        expected_harvest_days = $9
-      WHERE batch_id = $10
-      RETURNING *
-    `;
+  const harvest_status = computeHarvestStatus(
+    date_planted,
+    expected_harvest_days,
+  );
 
-    const values = [
-      tray_id,
-      plant_name,
-      computedTotal,
-      dead_seedlings,
-      replanted_seedlings,
-      fully_grown_seedlings,
-      growth_stage,
-      date_planted,
-      expected_harvest_days,
-      batch_id
-    ];
+  const sql = `
+    UPDATE plant_batches
+    SET
+      tray_id = $1,
+      plant_name = $2,
+      total_seedlings = $3,
+      dead_seedlings = $4,
+      replanted_seedlings = $5,
+      fully_grown_seedlings = $6,
+      growth_stage = $7,
+      date_planted = $8,
+      expected_harvest_days = $9,
+      harvest_status = $10
+    WHERE batch_id = $11
+    RETURNING *;
+  `;
 
-    const result = await query(sql, values);
-    return result.rows[0];
-  } catch (error) {
-    throw error;
-  }
+  const values = [
+    tray_id,
+    plant_name,
+    computedTotal,
+    dead_seedlings,
+    finalReplanted,
+    finalFullyGrown,
+    growth_stage,
+    date_planted,
+    expected_harvest_days,
+    harvest_status,
+    batch_id
+  ];
+
+  const result = await query(sql, values);
+  return result.rows[0];
 };
+
+
   
 // ===== DELETE a plant batch =====
 export const deletePlantBatch = async (batch_id) => {

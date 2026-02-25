@@ -3,6 +3,7 @@ import { query } from "../config/db.js";
 
 
 
+
 export const readTrayGroups = async () => {
   try {
     const sql = `
@@ -12,8 +13,10 @@ export const readTrayGroups = async () => {
       FROM tray_groups tg
       LEFT JOIN trays t ON t.tray_group_id = tg.tray_group_id
       LEFT JOIN sensors s ON s.tray_id = t.tray_id
-      GROUP BY tg.tray_group_id
-      ORDER BY tg.tray_group_id ASC
+      GROUP BY tg.tray_group_id, tg.tray_group_name, tg.group_number
+      ORDER BY 
+        LOWER(tg.tray_group_name) ASC,
+        tg.group_number ASC
     `;
     const result = await query(sql);
     return result.rows;       

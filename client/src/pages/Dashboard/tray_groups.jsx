@@ -1,4 +1,5 @@
 import { LayoutGrid } from "lucide-react";
+import { usePlantData } from '../../hooks/plantContext';
 
 function Tray_groups({
   trayGroupsData,
@@ -8,6 +9,15 @@ function Tray_groups({
   setTrayModalMode,
   setSelectedTrayGroup,
 }) {
+  
+  const {tgWithTrayCount} = usePlantData();
+
+  const getTrayCount = (groupId) => {
+    const groupWithCount = tgWithTrayCount.find(g => g.tray_group_id === groupId);
+    return groupWithCount ? Number(groupWithCount.tray_count) : 0;
+  };
+
+
 
   const handleAdd = () => {
     setTgModalMode("insert");
@@ -93,7 +103,7 @@ function Tray_groups({
                 shadow-md hover:shadow-lg
                 border border-gray-100
                 transition-shadow
-                p-3 sm:p-5
+                p-4 sm:p-6
               "
             >
               <div className="flex flex-col lg:flex-row gap-3">
@@ -118,14 +128,28 @@ function Tray_groups({
                         {group.description}
                       </p>
 
-                      {group.location && (
-                        <p className="text-xs sm:text-sm text-gray-500 mt-1">
-                          <span className="font-semibold">Location:</span>{" "}
-                          {group.location}
-                        </p>
-                      )}
+
+
+                     <div className="flex flex-wrap justify-center items-center gap-6">
+                        {/* Location */}
+                        <div className="flex flex-col sm:flex-row items-center gap-2">
+                          <span className="text-sm font-semibold">Location:</span>
+                          <span className="text-xs sm:text-sm font-semibold text-gray-500">{group.location}</span>
+                        </div>
+
+                        {/* Number of trays */}
+                        <div className="flex flex-col sm:flex-row items-center gap-2">
+                          <span className="text-sm font-semibold">Number of trays:</span>
+                          <span className="text-xs sm:text-sm font-semibold text-gray-500">
+                            {getTrayCount(group.tray_group_id)}
+                          </span>
+                        </div>  
+                    </div>
+
                     </div>
                   </div>
+
+
 
                   {/* MOISTURE */}
                   <div className="flex flex-wrap gap-4 mt-2 text-xs sm:text-sm">

@@ -1,11 +1,12 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, use } from 'react';
 import { Sprout, LayoutGrid, TrendingUp } from 'lucide-react';
 
 import Tray_groups from './tray_groups';
 import Trays from "./trays";
 import Plant_batches from './plant_batches';
 
-import { FloatSuccessMsg, SucessMsgs } from "../../components/sucessMsgs";
+import {  SucessMsgs } from "../../components/sucessMsgs";
+import { FloatErrorMsg } from "../../components/messages"
 
 import * as trayGroups from "../../data/trayGroupServices";
 import * as trays from "../../data/traysServices";
@@ -15,9 +16,11 @@ import { TrayGroupModal } from './modals/trayGroupModal';
 import { TrayModal } from "./modals/trayModal";
 import { BatchModal } from './modals/batchModal';
 
+
 const ManagePlants = ({ reloadTrayGroups }) => {
   const [activeTab, setActiveTab] = useState('trayGroups');
   const [successMsg, setSuccessMsg] = useState("");
+  const [msg,setMsg] = useState("");
 
   const [trayGroupsData, setTrayGroupsData] = useState([]);
   const [traysData, setTraysData] = useState([]);
@@ -35,11 +38,11 @@ const ManagePlants = ({ reloadTrayGroups }) => {
   const [batchModalMode, setBatchModalMode] = useState("");
   const [selectedBatch, setSelectedBatches] = useState([]);
 
-
-
+  const clearMsg = useCallback(() => {
+     setSuccessMsg(""),
+     setMsg("")
+  },[]);
   
-
-  const clearMsg = useCallback(() => setSuccessMsg(""), []);
 
   useEffect(() => {
     if (activeTab === "trayGroups") loadTrayGroups();
@@ -95,6 +98,10 @@ const ManagePlants = ({ reloadTrayGroups }) => {
           <SucessMsgs txt={successMsg} clearMsg={clearMsg} />
         </div>
 
+
+        <div className="mb-3 sm:mb-4">
+          <FloatErrorMsg txt={msg} clearMsg={clearMsg} />
+        </div>
   
 
         {/* TABS */}
@@ -119,7 +126,7 @@ const ManagePlants = ({ reloadTrayGroups }) => {
                     transition-all
                     cursor-pointer
                     ${active
-                      ? 'bg-gradient-to-r from-[var(--sancgb)] to-[var(--sancga)] text-white shadow-md'
+                      ? 'bg-[var(--sancgb)] text-white shadow-md'
                       : 'text-gray-600 hover:bg-gray-50 {'
                     }`}
                 >
@@ -159,6 +166,7 @@ const ManagePlants = ({ reloadTrayGroups }) => {
 
           {activeTab === 'batches' && (
             <Plant_batches
+             setMsg={setMsg}
               traysData={traysData}
               batchesData={batchesData}
               setBatchModalOpen={setBatchModalOpen}
@@ -198,6 +206,7 @@ const ManagePlants = ({ reloadTrayGroups }) => {
       {isBatchModalOpen && (
         <BatchModal
           isOpen
+        
           onClose={() => setBatchModalOpen(false)}
           batchModalMode={batchModalMode}
           selectedTray={selectedTray}

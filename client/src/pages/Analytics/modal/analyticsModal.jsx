@@ -22,11 +22,7 @@ function AnalyticsModal({setScsMsg,setErrMsg,deleteModalMode, isModalOpen, onClo
         }, 100); 
 
       } catch (err) {
-        if (err.response?.status === 404) {
-          setErrMsg(`No readings to delete for ${sensorType} sensor`);
-        } else {
-          setErrMsg(err.response?.data?.message || "Something went wrong");
-        }
+        setErrMsg(err)
         onClose();
       }
      };

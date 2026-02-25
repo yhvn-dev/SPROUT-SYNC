@@ -122,11 +122,6 @@ function Batch_History() {
   
 
 
-
-
-
-
-
   return (
     <section className="con_main grid grid-cols-1 sm:grid-cols-[12fr_30fr_58fr] 
     grid-rows-[8vh_10vh_auto] 

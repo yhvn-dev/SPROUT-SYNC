@@ -5,18 +5,16 @@
 
   export function Sidebar({ user,setRegisterModalVisible = null,setLogoutOpen }) {
     const [isMobile, setIsMobile] = useState(false);
-    
-    // Detect screen size
+
+
     useEffect(() => {
       const checkScreenSize = () => {
         setIsMobile(window.innerWidth < 768);   
       };
-
       checkScreenSize();
       window.addEventListener('resize', checkScreenSize);
       return () => window.removeEventListener('resize', checkScreenSize);
     }, []);
-    
     
     
   const handleRegisterModal = () => {
@@ -139,18 +137,22 @@
               {!isMobile && <p className="text-sm mr-2 whitespace-nowrap">Plants</p>}
           </NavLink>          
         
-          
-
-            {user?.first_time_login && (
+          {user?.first_time_login && (
+            <div className="flex justify-start w-full">
               <button
                 onClick={handleRegisterModal}
-                className={`text-sm not-odd:cursor-pointer flex items-center hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)]  ${isMobile ? 'justify-center' : 'justify-start'} gap-2 px-2 py-1 w-full my-2 rounded-[10px] transition-all duration-300 text-[var(--metal-dark2)]`}
-              >
+                className={`cursor-pointer text-sm
+                  flex items-center
+                  transition-all duration-300 rounded-[10px] my-2
+                  ${isMobile ? 'w-12 h-12 justify-center' : 'gap-2 py-1 px-2'}
+                `}>
+                  
                 <Settings className="mx-1" strokeWidth={1.5} size={isMobile ? 20 : 18} />
                 {!isMobile && 'Device'}
               </button>
-            )}   
-        
+            </div>
+          )}
+            
           {/* Logout Button */}
           <button 
             className={`text-sm  cursor-pointer flex justify-center md:justify-start items-center ${isMobile ? 'w-12 h-12' : 'gap-2 py-1 px-2'}  transition-all duration-300 rounded-[10px] my-2 w-full hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)]`}

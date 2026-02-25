@@ -30,6 +30,18 @@ export const getTrayById = async (req, res) => {
   }
 };
 
+
+
+export const getTrayGroupsWithCount = async (req, res) => {
+  try {
+    const data = await trayModels.getAllTrayGroupsWithTrayCount();
+    res.json(data);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
 // ===== CREATE a new tray =====
 export const createTray = async (req, res) => {
   try {

@@ -12,7 +12,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
     dead_seedlings: "",
     replanted_seedlings: "",
     fully_grown_seedlings: "", 
-    growth_stage: "Seedling",
+    growth_stage: "Sprout",
     date_planted: "",
     expected_harvest_days: "",
     batch_number: selectedTray?.tray_number || ""
@@ -30,7 +30,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
     return `${year}-${month}-${day}`;
   };
   
-  useEffect(() => {
+    useEffect(() => {
     if (!isOpen) return;             
     if (!selectedTray) return;          
     if (batchModalMode === "update" && !selectedBatch) return; 
@@ -46,25 +46,25 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
         dead_seedlings: selectedBatch.dead_seedlings ?? 0,
         replanted_seedlings: selectedBatch.replanted_seedlings ?? 0,
         fully_grown_seedlings: selectedBatch.fully_grown_seedlings ?? 0,
-        growth_stage: selectedBatch.growth_stage ?? "Seedling",
+        growth_stage: selectedBatch.growth_stage ?? "",
         date_planted: formatDate(selectedBatch.date_planted),
         expected_harvest_days: selectedBatch.expected_harvest_days ?? 0,
         batch_number: selectedBatch.batch_number ?? selectedTray.tray_number
       });
       
     } else if (batchModalMode === "insert") {
-      setFormData({
+      setFormData((prev) => ({
         tray_id: trayId,
         plant_name: plantName,
         total_seedlings: "",
         dead_seedlings: "",
         replanted_seedlings: "",
         fully_grown_seedlings: "",
-        growth_stage: "Seedling",
+        growth_stage: prev.growth_stage || "Sprout", 
         date_planted: "",
         expected_harvest_days: "",
         batch_number: selectedTray.tray_number
-      });
+      }));
       
     } else if (batchModalMode === "delete") {
       setFormData({
@@ -74,7 +74,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
         dead_seedlings: selectedBatch.dead_seedlings ?? 0,
         replanted_seedlings: selectedBatch.replanted_seedlings ?? 0,
         fully_grown_seedlings: selectedBatch.fully_grown_seedlings ?? 0,
-        growth_stage: selectedBatch.growth_stage ?? "Seedling",
+        growth_stage: selectedBatch.growth_stage ?? "Sprout",
         date_planted: selectedBatch.date_planted,
         expected_harvest_days: selectedBatch.expected_harvest_days ?? 0,
         batch_number: selectedBatch.batch_number ?? selectedTray.tray_number
@@ -83,52 +83,59 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
 
   }, [isOpen, selectedTray, selectedBatch, batchModalMode]);
 
+
+
+
+
   
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setFormErrors({});
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      setFormErrors({});
 
+      try {
+        // Prepare payload
+        const payload = { 
+          ...formData,
+          tray_id: batchModalMode === "insert" ? selectedTray.tray_id : formData.tray_id,
+          plant_name: batchModalMode === "insert" ? selectedTray.plant : formData.plant_name,
+          total_seedlings: formData.total_seedlings !== "" ? parseInt(formData.total_seedlings) : null,
+          dead_seedlings: formData.dead_seedlings !== "" ? parseInt(formData.dead_seedlings) : null,
+          replanted_seedlings: formData.replanted_seedlings !== "" ? parseInt(formData.replanted_seedlings) : null,
+          fully_grown_seedlings: formData.fully_grown_seedlings !== "" ? parseInt(formData.fully_grown_seedlings) : null,
+          expected_harvest_days: formData.expected_harvest_days !== "" ? parseInt(formData.expected_harvest_days) : null,
+          growth_stage: formData.growth_stage || "Sprout" // default fallback
+        };
 
+        console.log("Submitting payload:", payload);
 
-    try {
-      const payload = { 
-        ...formData,
-        tray_id: batchModalMode === "insert" ? selectedTray.tray_id : formData.tray_id,
-        plant_name: batchModalMode === "insert" ? selectedTray.plant : formData.plant_name,
-        total_seedlings: formData.total_seedlings !== "" ? parseInt(formData.total_seedlings) : null,
-        dead_seedlings: formData.dead_seedlings !== "" ? parseInt(formData.dead_seedlings) : null,
-        replanted_seedlings: formData.replanted_seedlings !== "" ? parseInt(formData.replanted_seedlings) : null,
-        fully_grown_seedlings: formData.fully_grown_seedlings !== "" ? parseInt(formData.fully_grown_seedlings) : null,
-        expected_harvest_days: formData.expected_harvest_days !== "" ? parseInt(formData.expected_harvest_days) : null,
-      };
+        if (batchModalMode === "insert") {
+          await batchModels.insertBatches(payload);
+          setSuccessMsg(`Batch for ${payload.plant_name} is Added`);
+        } else if (batchModalMode === "update") {
+          await batchModels.updateBatches(payload, selectedBatch.batch_id);
+          setSuccessMsg(`Batch for ${payload.plant_name} is Updated`);
+        } else if (batchModalMode === "delete") {
+          await batchModels.deleteBatches(selectedBatch.batch_id);
+          setSuccessMsg(`Batch for ${selectedBatch.plant_name} is Deleted`);
+        }
 
-      if (batchModalMode === "insert") {
-        await batchModels.insertBatches(payload);
-        setSuccessMsg(`Batch for ${payload.plant_name} is Added`);
-      } else if (batchModalMode === "update") {
-        await batchModels.updateBatches(payload, selectedBatch.batch_id);
-        setSuccessMsg(`Batch for ${payload.plant_name} is Updated`);
-      } else if (batchModalMode === "delete") {
-        await batchModels.deleteBatches(selectedBatch.batch_id);
-        setSuccessMsg(`Batch for ${selectedTray.plant} is Deleted`);
+        onClose();
+        reloadBatches();
+
+      } catch (error) {
+        const rawErrors = error?.response?.data?.errors;
+        if (Array.isArray(rawErrors)) {
+          const formattedErrors = rawErrors.reduce((acc, err) => {
+            acc[err.path] = err.msg;
+            return acc;
+          }, {});
+          setFormErrors(formattedErrors);
+        } else {
+          setFormErrors({ general: "Something went wrong." });
+        }
       }
+    };
 
-      onClose();
-      reloadBatches();
-
-    } catch (error) {
-      const rawErrors = error?.response?.data?.errors;
-      if (Array.isArray(rawErrors)) {
-        const formattedErrors = rawErrors.reduce((acc, err) => {
-          acc[err.path] = err.msg;
-          return acc;
-        }, {});
-        setFormErrors(formattedErrors);
-      } else {
-        setFormErrors({ general: "Something went wrong." });
-      }
-    }
-  };
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -333,7 +340,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                   />
                 </div>
 
-                {/* GROWTH STAGE */}
+            
                 <div>
                   <label className="block text-xs font-semibold mb-1.5 text-[#155d27]">
                     <TrendingUp className="w-3 h-3 inline mr-1" />
@@ -343,15 +350,19 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     name="growth_stage"
                     value={formData.growth_stage}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 text-sm rounded-lg border-2 border-[#C4DED0] focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all text-[#155d27]"
-                  >
+                    className="w-full px-3 py-2 text-sm rounded-lg border-2 border-[#C4DED0] focus:outline-none focus:ring-2 focus:ring-[#208b3a] transition-all text-[#155d27]">
+                    <option value="Sprout">Sprout</option>
                     <option value="Seedling">Seedling</option>
                     <option value="Vegetative">Vegetative</option>
+                    <option value="Budding">Budding</option>
                     <option value="Flowering">Flowering</option>
                     <option value="Fruiting">Fruiting</option>
-                    <option value="Mature">Mature</option>
+                    <option value="Ready To Harvest">Ready To Harvest</option>
                   </select>
                 </div>
+
+
+
 
                 {/* DATE PLANTED */}
                 <div>

@@ -32,10 +32,21 @@ export const validatePlantBatch = [
     .optional(),
 
   body("growth_stage")
-      .optional()
-      .isIn(["Seedling", "Vegetative", "Mature", "Ready for Harvest"])
-      .withMessage("Growth stage must be one of 'Seedling', 'Vegetative', 'Mature', 'Ready for Harvest'."),
-  // Date Planted
+  .optional()
+  .isIn([
+    "Sprout",
+    "Seedling",
+    "Vegetative",
+    "Budding",
+    "Flowering",
+    "Fruiting",
+    "Ready To Harvest"
+  ])
+  .withMessage(
+    "Growth stage must be one of 'Sprout', 'Seedling', 'Vegetative', 'Budding', 'Flowering', 'Fruiting', 'Ready To Harvest'."
+  ),
+  
+
   body("date_planted")
       .notEmpty()
       .withMessage("Please enter the planting date.")

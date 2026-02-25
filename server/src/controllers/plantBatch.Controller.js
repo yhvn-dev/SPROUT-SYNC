@@ -130,6 +130,44 @@ export const updatePlantBatch = async (req, res) => {
   }
 };
 
+
+
+// ===== CHECK and UPDATE batches past harvest =====
+export const updatePastHarvestStatus = async () => {
+  try {
+    const batches = await plantBatchModels.readPlantBatches();
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    for (const batch of batches) {
+      if (!batch.date_planted || batch.expected_harvest_days == null) continue;
+
+      let newStatus;
+      const expected = new Date(batch.date_planted);
+      expected.setDate(expected.getDate() + Number(batch.expected_harvest_days));
+      expected.setHours(0, 0, 0, 0);
+
+      if (batch.harvested_at) {
+        newStatus = "Harvested";
+      } else if (expected > today) {
+        newStatus = "Not Ready";
+      } else if (expected.getTime() === today.getTime()) {
+        newStatus = "Due Now";
+      } else {
+        newStatus = "Past Due";
+      }
+      if (batch.harvest_status !== newStatus) {
+        await plantBatchModels.updateHarvestStatus(batch.batch_id, newStatus);
+        console.log(`Batch ${batch.batch_id} harvest_status updated to '${newStatus}'`);
+      }
+    }
+  } catch (err) {
+    console.error("Error updating harvest status:", err);
+  }
+};
+
+
+
 // ===== DELETE a plant batch =====
 export const deletePlantBatch = async (req, res) => {
   try {

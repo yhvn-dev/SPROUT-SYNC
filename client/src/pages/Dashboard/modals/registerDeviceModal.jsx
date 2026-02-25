@@ -69,7 +69,7 @@ function RegisterDeviceModal({ onClose, userData }) {
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.3 }}
-        className="relative w-full max-w-md rounded-3xl shadow-2xl overflow-hidden bg-white">
+        className="conb relative w-full max-w-md rounded-3xl shadow-2xl overflow-hidden bg-white">
           
         {/* Close button */}
         <button
@@ -128,7 +128,7 @@ function RegisterDeviceModal({ onClose, userData }) {
             <button
               onClick={handleRegister}
               disabled={isLoading}
-              className={`w-full py-4 bg-[var(--sancgb)] text-white font-semibold rounded-2xl transition ${
+              className={`cursor-pointer w-full py-4 bg-[var(--sancgb)] text-white font-semibold rounded-2xl transition ${
                 isLoading ? "opacity-70 cursor-not-allowed" : "hover:scale-[1.02]"
               }`}
             >
@@ -138,7 +138,7 @@ function RegisterDeviceModal({ onClose, userData }) {
             <button
               onClick={handleSkip}
               disabled={isLoading}
-              className="w-full py-4 bg-gray-100 rounded-2xl hover:bg-gray-200 transition"
+              className="cursor-pointer registert-modal-skip-button w-full py-4 bg-gray-100 rounded-2xl hover:bg-gray-200 transition"
             >
               Skip for Now
             </button>

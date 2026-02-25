@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Sprout, Trash2 } from "lucide-react";
+import { X, Sprout, Trash2, AlertTriangle, Leaf, Link2, Droplets } from "lucide-react";
 import * as plantModels from "../../../data/plantServices";
 
 export function PlantModal({
@@ -13,94 +13,78 @@ export function PlantModal({
   reloadPlants,
 }) {
   const [formData, setFormData] = useState({
-    group_id: 0,        // ✅ renamed to match your DB field
+    group_id: 0,
     name: "",
     moisture_min: "",
     moisture_max: "",
-    reference_link:""
+    reference_link: "",
   });
   const [formErrors, setFormErrors] = useState({});
 
-
-  // ── Initialize form based on mode ──
   useEffect(() => {
     if (!isOpen) return;
-
     if (plantModalMode === "update" && selectedPlant) {
       setFormData({
-        group_id: selectedPlant.group_id,           // ✅ correct field
+        group_id: selectedPlant.group_id,
         name: selectedPlant.name,
         moisture_min: selectedPlant.moisture_min,
         moisture_max: selectedPlant.moisture_max,
-        reference_link:selectedPlant.reference_link,
+        reference_link: selectedPlant.reference_link,
       });
     } else if (plantModalMode === "insert") {
-      console.log("SELECTED PLANT GROUP →", selectedPlantGroup);
       setFormData({
         group_id: selectedPlantGroup?.plant_group_id || 0,
         name: "",
         moisture_min: "",
         moisture_max: "",
-        reference_link:""
+        reference_link: "",
       });
     } else if (plantModalMode === "delete" && selectedPlant) {
       setFormData({
-        group_id: selectedPlant.group_id,         
+        group_id: selectedPlant.group_id,
         name: selectedPlant.name,
         moisture_min: selectedPlant.moisture_min,
         moisture_max: selectedPlant.moisture_max,
-        reference_link:selectedPlant.reference_link
+        reference_link: selectedPlant.reference_link,
       });
     }
     setFormErrors({});
   }, [isOpen, plantModalMode, selectedPlant, selectedPlantGroup]);
 
-
-
-
-  
-  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     try {
       if (plantModalMode === "insert") {
-       const newPlant = await plantModels.createPlant({
-        group_id: selectedPlantGroup.plant_group_id,
-        name: formData.name,
-        moisture_min: Number(formData.moisture_min),
-        moisture_max: Number(formData.moisture_max),
-        reference_link: formData.reference_link,
+        const newPlant = await plantModels.createPlant({
+          group_id: selectedPlantGroup.plant_group_id,
+          name: formData.name,
+          moisture_min: Number(formData.moisture_min),
+          moisture_max: Number(formData.moisture_max),
+          reference_link: formData.reference_link,
         });
         setFormErrors({});
-        setSuccessMsg(`${newPlant.name} Plant Added`);
+        setSuccessMsg(`${formData.name} Plant Added`);
       }
-
       if (plantModalMode === "update") {
-        const updatedPlant = await plantModels.updatePlant(
-            selectedPlant.plant_id, 
-            {
-                group_id: selectedPlant.group_id,
-                name: formData.name,
-                moisture_min: Number(formData.moisture_min),
-                moisture_max: Number(formData.moisture_max),
-                reference_link: formData.reference_link,
-            }
-            );
+        const updatedPlant = await plantModels.updatePlant(selectedPlant.plant_id, {
+          group_id: selectedPlant.group_id,
+          name: formData.name,
+          moisture_min: Number(formData.moisture_min),
+          moisture_max: Number(formData.moisture_max),
+          reference_link: formData.reference_link,
+        });
         setFormErrors({});
         setSuccessMsg(`${updatedPlant.name} Plant Updated`);
       }
-
       if (plantModalMode === "delete") {
         await plantModels.deletePlant(selectedPlant.plant_id);
         setFormErrors({});
         setSuccessMsg(`${selectedPlant.name} Plant Deleted`);
       }
-
       reloadPlants();
       onClose();
     } catch (error) {
@@ -120,253 +104,294 @@ export function PlantModal({
   const isDelete = plantModalMode === "delete";
   const isInsert = plantModalMode === "insert";
 
+  const minVal = Number(formData.moisture_min) || 0;
+  const maxVal = Number(formData.moisture_max) || 0;
+  const barLeft = Math.min(minVal, 100);
+  const barWidth = Math.max(0, Math.min(maxVal, 100) - Math.min(minVal, 100));
+
   return (
     <AnimatePresence>
       {isOpen && (
-        <motion.div
-          className="fixed inset-0 bg-transparent backdrop-blur-2xl flex items-center justify-center p-4 z-50"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-        >
+        <>
+          {/* Backdrop */}
           <motion.div
-            className={`bg-white rounded-2xl shadow-2xl ${
-              isDelete ? "w-[450px] h-[250px]" : "w-[750px]"
-            } overflow-hidden flex flex-col`}
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            transition={{ duration: 0.4 }}
-          >
-            {/* ── HEADER ── */}
-            <header className="px-6 py-5 flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div
-                  className={`p-2.5 rounded-lg ${
-                    isDelete ? "bg-red-600" : "bg-emerald-600"
-                  }`}
+            key="backdrop"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={onClose}
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
+          />
+
+          {/* Modal Wrapper */}
+          <motion.div
+            key="modal"
+            initial={{ opacity: 0, scale: 0.95, y: 20 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 20 }}
+            transition={{ type: "spring", stiffness: 320, damping: 28 }}
+            className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
+
+            <div
+              className={`pointer-events-auto w-full bg-[var(--main-white--)] border border-gray-800 rounded-2xl overflow-hidden shadow-2xl ${
+                isDelete ? "max-w-md" : "max-w-lg"
+              }`}>
+
+              {/* ── HEADER ── */}
+              <div
+                className={`flex items-start justify-between gap-3 px-6 py-5 border-b border-gray-800/60 ${
+                  isDelete
+                    ? "bg-gradient-to-br from-red-950/40 to-gray-950"
+                    : "bg-gradient-to-br from-green-950/40 to-gray-950"
+                }`}>
+                  
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
+                      isDelete
+                        ? "bg-red-500/10 border border-red-500/25"
+                        : "bg-green-500/10 border border-green-500/25"
+                    }`}
+                  >
+                    {isDelete ? (
+                      <Trash2 size={18} className="text-red-400" />
+                    ) : (
+                      <Sprout size={18} className="text-green-400" />
+                    )}
+                  </div>
+                  
+                  <div>
+                    <h2 className="text-sm font-semibold text-gray-100 tracking-tight">
+                      {isDelete ? "Delete Plant" : isInsert ? "Add New Plant" : "Update Plant"}
+                    </h2>
+                    <p className="plant_group_name text-xs text-gray-500 mt-0.5">
+                      {isDelete
+                        ? `Removing: ${selectedPlant?.name}`
+                        : `Group: ${selectedPlantGroup?.group_name || selectedPlant?.group_name || "—"}`}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  onClick={onClose}
+                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-gray-700 text-gray-500 hover:bg-white/10 hover:text-gray-200 transition-colors shrink-0"
                 >
-                  {isDelete ? (
-                    <Trash2 className="w-5 h-5 text-white" />
-                  ) : (
-                    <Sprout className="w-5 h-5 text-white" />
-                  )}
-                </div>
-                <div>
-                  <h2 className="text-xl font-bold text-gray-800">
-                    {isDelete
-                      ? "Delete Plant"
-                      : isInsert
-                      ? "Add New Plant"
-                      : "Update Plant"}
-                  </h2>
-                  <p className="text-sm text-gray-500">
-                    {isDelete
-                      ? `Are you sure you want to delete ${selectedPlant?.name}?`
-                      : `Plant group: ${
-                          selectedPlantGroup?.group_name ||
-                          selectedPlant?.group_name
-                        }`}
-                  </p>
-                </div>
+                  <X size={15} />
+                </button>
               </div>
 
-              <button
-                onClick={onClose}
-                className="p-2 rounded-lg hover:bg-gray-100 transition-colors"
-              >
-                <X size={24} />
-              </button>
-            </header>
-
-            {/* ── DELETE MODE ── */}
-            {isDelete ? (
-              <>
-                <div className="flex-1 flex items-center justify-center">
-                  <p className="text-gray-600">
-                    Delete <b>{selectedPlant?.name}</b> plant? This action
-                    cannot be undone.
-                  </p>
-                </div>
-                <form
-                  onSubmit={handleSubmit}
-                  className="flex justify-end gap-3 p-6"
-                >
-                  <button
-                    type="button"
-                    onClick={onClose}
-                    className="px-4 py-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    className="px-4 py-2 rounded-lg bg-red-600 hover:bg-red-700 text-white font-medium transition-colors"
-                  >
-                    Yes, Delete
-                  </button>
-                </form>
-              </>
-            ) : (
-                
-              /* ── INSERT / UPDATE MODE ── */
-              <form onSubmit={handleSubmit} className="p-6 space-y-5">
-                {/* hidden group_id just for reference */}
-                <input type="hidden" name="group_id" value={formData.group_id} />
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-
-
-                  {/* PLANT NAME */}
-                  <div className="md:col-span-3 border border-gray-100 rounded-xl p-4">
-                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                      <Sprout className="w-4 h-4 text-emerald-500" />
-                      Plant Name *
-                    </label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name}
-                      onChange={handleChange}
-                      placeholder="e.g. Bok Choy A"
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-400 transition"
-                    />
-                    {formErrors.name && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {formErrors.name}
-                      </p>
-                    )}
+              {/* ── DELETE MODE ── */}
+              {isDelete ? (
+                <div className="p-6">
+                  <div className="flex gap-3 items-start bg-red-500/8 border border-red-500/20 rounded-xl p-4 mb-6">
+                    <AlertTriangle size={16} className="text-red-400 shrink-0 mt-0.5" />
+                    <p className="text-sm text-red-300 leading-relaxed">
+                      <span className="font-semibold text-red-400">{selectedPlant?.name}</span> will be
+                      permanently deleted. This action cannot be undone.
+                    </p>
                   </div>
-
-
-                   {/* REFERENCE LINK */}
-                  <div className="md:col-span-3 border border-gray-100 rounded-xl p-4">
-                    <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
-                      <Sprout className="w-4 h-4 text-emerald-500" />
-                        Refrence Link
-                    </label>
-                    <input
-                        type="text"
-                        name="reference_link"
-                        value={formData.reference_link}
-                        onChange={handleChange}
-                        placeholder="https://example.com"
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
-                    />
-
-                    {formErrors.reference_link && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {formErrors.reference_link}
-                      </p>
-                    )}
-                  </div>
-                
-                  {/* MIN MOISTURE */}
-                  <div className="md:col-span-1 border border-gray-100 rounded-xl p-4">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Min Moisture % *
-                    </label>
-                    <input
-                      type="number"
-                      name="moisture_min"
-                      value={formData.moisture_min}
-                      onChange={handleChange}
-                      placeholder="0"
-                      min={0}
-                      max={100}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-400 transition"
-                    />
-                    {formErrors.moisture_min && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {formErrors.moisture_min}
-                      </p>
-                    )}
-                  </div>
-
-                  {/* MAX MOISTURE */}
-                  <div className="md:col-span-1 border border-gray-100 rounded-xl p-4">
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      Max Moisture % *
-                    </label>
-                    <input
-                      type="number"
-                      name="moisture_max"
-                      value={formData.moisture_max}
-                      onChange={handleChange}
-                      placeholder="100"
-                      min={0}
-                      max={100}
-                      className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm outline-none focus:ring-2 focus:ring-emerald-400 transition"
-                    />
-                    {formErrors.moisture_max && (
-                      <p className="text-xs text-red-500 mt-1">
-                        {formErrors.moisture_max}
-                      </p>
-                    )}
-                  </div>
-
-
-
-                  {/* MOISTURE PREVIEW BAR */}
-                  <div className="md:col-span-1 border border-gray-100 rounded-xl p-4 flex flex-col justify-center gap-2">
-                    <label className="block text-sm font-semibold text-gray-700">
-                      Preview
-                    </label>
-                    <div className="relative w-full h-3 bg-gray-100 rounded-full overflow-hidden">
-                      <div
-                        className="absolute top-0 h-full rounded-full bg-emerald-400 transition-all"
-                        style={{
-                          left: `${formData.moisture_min || 0}%`,
-                          width: `${
-                            (formData.moisture_max || 0) -
-                            (formData.moisture_min || 0)
-                          }%`,
-                        }}
-                      />
-                    </div>
-                    <div className="flex justify-between text-[10px] text-gray-400">
-                      <span>{formData.moisture_min || 0}%</span>
-                      <span>{formData.moisture_max || 0}%</span>
-                    </div>
-                  </div>
-                </div>
-
-                {/* GENERAL ERROR */}
-                {formErrors.general && (
-                  <p className="text-sm text-red-500">{formErrors.general}</p>
-                )}
-
-
-
-                {/* ── FOOTER ── */}
-                <div className="border-t border-gray-100 pt-4 flex justify-between items-center">
-                  <span className="text-sm text-gray-400">* Required fields</span>
-                  <div className="flex gap-3">
+                  <div className="flex gap-2.5">
                     <button
                       type="button"
                       onClick={onClose}
-                      className="px-5 py-2 border border-gray-200 rounded-lg text-gray-500 hover:bg-gray-50 transition-colors"
+                      className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 border border-gray-700 hover:bg-white/5 transition-colors"
                     >
                       Cancel
                     </button>
                     <button
-                      type="submit"
-                      className={`cursor-pointer px-5 py-2.5 text-white rounded-lg font-medium shadow-lg transition-all ${
-                        isInsert
-                          ? "bg-emerald-500 hover:bg-emerald-600"
-                          : "bg-blue-500 hover:bg-blue-600"
-                      }`}
+                      type="button"
+                      onClick={handleSubmit}
+                      className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-br from-red-600 to-red-700 border border-red-500/30 hover:opacity-85 transition-opacity"
                     >
-                      {isInsert ? "Add Plant" : "Save Changes"}
+                      <Trash2 size={14} />
+                      Yes, Delete
                     </button>
                   </div>
                 </div>
-              </form>
-            )}
+              ) : (
+
+
+
+
+                /* ── INSERT / UPDATE MODE ── */
+                <form onSubmit={handleSubmit} className="conb bg-[var(--main-white)]">
+                  <div className=" px-6 pt-5 pb-1 space-y-4">
+                    {/* Plant Name */}
+                    <FieldGroup label="Plant Name" required icon={<Leaf size={12} />} error={formErrors.name}>
+                      <input
+                        name="name"
+                        value={formData.name}
+                        onChange={handleChange}
+                        placeholder="e.g. Monstera Deliciosa"
+                        className={`w-full  border rounded-lg px-3 py-2.5 text-sm  placeholder-gray-600 outline-none transition-colors focus:border-green-500 ${
+                          formErrors.name ? "border-red-500" : "border-gray-700"
+                        }`}
+                      />
+                    </FieldGroup>
+
+                    {/* Reference Link */}
+                    <FieldGroup
+                      label="Reference Link"
+                      icon={<Link2 size={12} />}
+                      error={formErrors.reference_link}>
+
+                      <input
+                        name="reference_link"
+                        value={formData.reference_link}
+                        onChange={handleChange}
+                        placeholder="https://..."
+                        className={`w-full border rounded-lg px-3 py-2.5 text-sm  placeholder-gray-600 outline-none transition-colors focus:border-green-500 ${
+                          formErrors.reference_link ? "border-red-500" : "border-gray-700"
+                        }`}
+                      />
+                    </FieldGroup>
+
+                    {/* Moisture Row */}
+                    <div className="grid grid-cols-2 gap-3">
+                      <FieldGroup
+                        label="Min Moisture %"
+                        required
+                        icon={<Droplets size={12} />}
+                        error={formErrors.moisture_min}
+                      >
+                        <input
+                          name="moisture_min"
+                          type="number"
+                          min={0}
+                          max={100}
+                          value={formData.moisture_min}
+                          onChange={handleChange}
+                          placeholder="0"
+                          className={`w-full border rounded-lg px-3 py-2.5 text-sm  placeholder-gray-600 outline-none transition-colors focus:border-green-500 ${
+                            formErrors.moisture_min ? "border-red-500" : "border-gray-700"
+                          }`}
+                        />
+                      </FieldGroup>
+                      <FieldGroup
+                        label="Max Moisture %"
+                        required
+                        icon={<Droplets size={12} />}
+                        error={formErrors.moisture_max}
+                      >
+                        <input
+                          name="moisture_max"
+                          type="number"
+                          min={0}
+                          max={100}
+                          value={formData.moisture_max}
+                          onChange={handleChange}
+                          placeholder="100"
+                          className={`w-full  border rounded-lg px-3 py-2.5 text-sm  placeholder-gray-600 outline-none transition-colors focus:border-green-500 ${
+                            formErrors.moisture_max ? "border-red-500" : "border-gray-700"
+                          }`}
+                        />
+                      </FieldGroup>
+                    </div>
+
+                    {/* Moisture Preview Bar */}
+                    <div className="border border-gray-800 rounded-xl px-4 py-3">
+                      <div className="flex justify-between items-center mb-2.5">
+                        <span className="text-[10px] font-medium  uppercase tracking-widest">
+                          Moisture Range Preview
+                        </span>
+                        <span className="text-[11px] font-semibold text-green-400">
+                          {minVal}% – {maxVal}%
+                        </span>
+                      </div>
+
+                      {/* Track */}
+                      <div className="relative h-2 rounded-full overflow-hidden shadow-lg bg-[var(--main-white)]">
+                        {[25, 50, 75].map((t) => (
+                          <div
+                            key={t}
+                            className="absolute top-0 w-px h-full bg-white/5"
+                            style={{ left: `${t}%` }}
+                          />
+                        ))}                
+                        <motion.div
+                          animate={{ left: `${barLeft}%`, width: `${barWidth}%` }}
+                          transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                          className="absolute top-0 h-full bg-gradient-to-r from-green-700 to-green-400 rounded-full shadow-[0_0_8px_rgba(74,222,128,0.4)]"
+                        />
+                      </div>
+                      
+                      <div className="flex justify-between mt-1.5 text-[10px] text-gray-600">
+                        <span>0%</span>
+                        <span>50%</span>
+                        <span>100%</span>
+                      </div>
+                    </div>
+
+                    {/* General Error */}
+                    <AnimatePresence>
+                      {formErrors.general && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="flex items-center gap-2 bg-red-500/8 border border-red-500/20 rounded-lg px-3 py-2.5 text-sm text-red-300"
+                        >
+                          <AlertTriangle size={13} className="text-red-400 shrink-0" />
+                          {formErrors.general}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  {/* Footer */}
+                  <div className="flex items-center justify-between gap-3 px-6 py-4 mt-3 border-t border-gray-800/60">
+                    <span className="text-[11px] text-gray-600">* Required fields</span>
+                    <div className="flex gap-2.5">
+                      <button
+                        type="button"
+                        onClick={onClose}
+                        className="px-4 py-2 rounded-lg text-sm font-medium text-gray-400 border border-gray-700 hover:bg-white/5 transition-colors"
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        type="submit"
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-br from-green-700 to-green-500 border border-green-500/30 hover:opacity-85 transition-opacity min-w-[110px] justify-center"
+                      >
+                        <Sprout size={14} />
+                        {isInsert ? "Add Plant" : "Save Changes"}
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              )}
+            </div>
           </motion.div>
-        </motion.div>
+        </>
       )}
     </AnimatePresence>
   );
+}
 
-  
+/* ── FieldGroup Sub-component ── */
+function FieldGroup({ label, required, icon, error, children }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <label className="flex items-center gap-1.5 text-xs font-medium text-gray-400">
+        <span className="text-gray-500">{icon}</span>
+        {label}
+        {required && <span className="text-green-400">*</span>}
+      </label>
+      {children}
+      <AnimatePresence>
+        {error && (
+          <motion.p
+            initial={{ opacity: 0, y: -4 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -4 }}
+            className="flex items-center gap-1 text-[11px] text-red-400 mt-0.5"
+          >
+            <AlertTriangle size={10} />
+            {error}
+          </motion.p>
+        )}
+      </AnimatePresence>
+    </div>
+  );
 }

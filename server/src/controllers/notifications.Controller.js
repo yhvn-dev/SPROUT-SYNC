@@ -66,7 +66,7 @@ export const notifyReplantDate = async (req, res) => {
     const today = toDateOnlyUTC(new Date());
     const notifiedBatches = [];
 
-    for (const batch of batchData) {
+    for (const batch of batchData) {  
       if (!batch.date_planted || batch.expected_harvest_days == null) continue;
 
       const planted = toDateOnlyUTC(new Date(batch.date_planted));

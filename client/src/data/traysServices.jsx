@@ -11,6 +11,18 @@ export const fetchAllTrays = async () =>{
 }
 
 
+export const fetchAllTrayGroupWithCount = async () =>{
+    try {
+        const data = await api.get("/trays/get/trays/count");
+        const trays = data.data
+        return trays 
+    } catch (error) {     
+        throw error
+    }
+}
+
+
+
 export const insertTray = async (trayData) =>{
     try {
         const data = await api.post("/trays/post/trays",trayData)

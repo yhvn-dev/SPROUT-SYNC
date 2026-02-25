@@ -6,11 +6,12 @@ import express from "express";
 
 const router = express.Router();
 
-router.get("/get/trays",  trayController.getTrays);
-router.get("/get/trays/:tray_id",trayController.getTrayById);
-router.post("/post/trays",validateTrays,trayController.createTray);
-router.put("/put/trays/:tray_id" ,validateTrays,trayController.updateTray);
-router.delete("/delete/trays/:tray_id",trayController.deleteTray);
+router.get("/get/trays",verifyAccessToken,trayController.getTrays);
+router.get("/get/trays/count",trayController.getTrayGroupsWithCount);
+router.get("/get/trays/:tray_id",verifyAccessToken,trayController.getTrayById);
+router.post("/post/trays",verifyAccessToken,validateTrays,trayController.createTray);
+router.put("/put/trays/:tray_id",verifyAccessToken,validateTrays,trayController.updateTray);
 
+router.delete("/delete/trays/:tray_id",verifyAccessToken,trayController.deleteTray);
 export default router;
     

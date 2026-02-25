@@ -32,6 +32,7 @@ struct PlantSensor {
   int maxMoisture;
 };
 
+
 PlantSensor sensors[3] = {
   {32, "BOKCHOY", 3000, 1800, 21, 50, 75},
   {33, "PECHAY",  2900, 1750, 22, 50, 75},
@@ -49,11 +50,11 @@ const int SWITCH_LED  = 5;
 const int bokchoyBtn = 25;
 const int petchayBtn = 26;
 const int mustasaBtn = 27;
-
+  
 /************ PLANT LED PINS ************/
 const int BOKCHOY_LED = 4;
 const int PECHAY_LED  = 13;
-const int MUSTASA_LED = 14;
+const int MUSTASA_LED = 14;     
 const int plantLedPins[3] = {BOKCHOY_LED, PECHAY_LED, MUSTASA_LED};
 
 // ============================================================

@@ -226,7 +226,22 @@ body.dark .close_button:hover{
 }
 
 
-/* DASHBOARD ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== */
+
+
+/* DASHBOARD ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== */    
+     body.dark .dashboard_nav button {
+        @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
+        box-shadow: none;
+    }
+    body.dark .dashboard_nav button:hover{
+            @apply bg-[var(--metal-dark2)];
+    }
+    body.dark .dashboard_nav button.active {
+        @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
+        box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
+    }
+
+    
 body.dark .navs-btn {
     @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
 }
@@ -247,23 +262,26 @@ body.dark .navs-btn {
             @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
             box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
         }
+        
+        body.dark .registert-modal-skip-button {
+            @apply bg-[var(--metal-dark4)];
+        }
 
    
-
-
     
         body.dark .conb{
             @apply bg-[var(--metal-dark3)];
             box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
         }
         body.dark .conc {
-                @apply bg-[var(--metal-dark4)];
+            @apply bg-[var(--metal-dark4)];
+            box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
         }
-
-
-
-
-
+            body.dark .conc  .moisture-text{
+            @apply text-[var(--main-white)];
+               
+            }
+           
         body.dark .conb p{
             @apply text-[var(--main-white)];
         }
@@ -276,9 +294,6 @@ body.dark .navs-btn {
         body.dark .nursery_data_div{
                 background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
         }
-
-
-            
 
     
 
@@ -295,6 +310,8 @@ body.dark .tray_group_div:hover {
 
 
 
+        
+        
 body.dark .tray_groups_main_div::-webkit-scrollbar{
     @apply bg-[var(--metal-dark1)];
 }
@@ -315,7 +332,6 @@ body.dark .tray_list_div{
 
 
 
-    
 
 body.dark .batch_div {
     background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
@@ -537,20 +553,21 @@ body.dark .user_table_div::-webkit-scrollbar{
         @apply text-[var(--main-white)];
     }
 
-
-    /* DARK MODE – default (inactive tab) */
-    body.dark .users_nav button {
+    
+  body.dark .users_nav button {
         @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
         box-shadow: none;
     }
     body.dark .users_nav button:hover{
          @apply bg-[var(--metal-dark2)];
     }
-    /* DARK MODE – ACTIVE tab */
     body.dark .users_nav button.active {
         @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
         box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
     }
+
+   
+
      /* DARK MODE – default (inactive tab) */
     body.dark button {       
         box-shadow: none;
@@ -567,7 +584,7 @@ body.dark .user_table_div::-webkit-scrollbar{
     }
 
 
-    /* ANALYTICS PAGE */
+
     /* DARK MODE – default (inactive tab) */
     body.dark .analytics_nav button {
         @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
@@ -576,11 +593,12 @@ body.dark .user_table_div::-webkit-scrollbar{
     body.dark .analytics_nav button:hover{
          @apply bg-[var(--metal-dark2)];
     }
-    /* DARK MODE – ACTIVE tab */
     body.dark .analytics_nav button.active {
         @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
         box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
     }
+
+
         body.dark .stat_card {
             @apply  bg-gradient-to-tr  
             from-[var(--metal-dark3)] 
@@ -1134,12 +1152,10 @@ body.dark .browser_window_main_container{
         box-shadow: 5px 5px 5px 1px rgba(0,0,0,0.5);
     }
 
-
     body.dark .cp_status_div{
         @apply bg-[var(--metal-dark2)];
     }
    
-
     .dark {
         --status-ok-bg: #064e3b;
         --status-ok-text: #6ee7b7;
@@ -1189,4 +1205,21 @@ body.dark .browser_window_main_container{
         }
         body.dark .succes_msg_pro p{
             @apply text-[var(--metal-dark2)];
+        }
+        /* PLANTS */
+        body.dark .conb .plant-modal-label{
+            @apply text-[var(--main-white--)];
+        }
+        body.dark .plant_main_div::-webkit-scrollbar{
+              @apply bg-[var(--metal-dark5)];
+        }
+
+        body.dark .plant_main_div::-webkit-scrollbar-thumb{
+           @apply bg-[var(--metal-dark4)] border-4 rounded-2xl border-[var(--metal-dark5)] cursor-pointer;
+        }
+        body.dark .plants-text {
+            @apply text-[var(--main-white)];
+        }
+        body.dark .plant_group_name{
+                 @apply text-[var(--main-white)];
         }
