@@ -78,7 +78,7 @@ export function PlantModal({
           reference_link: formData.reference_link,
         });
         setFormErrors({});
-        setSuccessMsg(`${updatedPlant.name} Plant Updated`);
+        setSuccessMsg(`${selectedPlant.name} Plant Updated`);
       }
       if (plantModalMode === "delete") {
         await plantModels.deletePlant(selectedPlant.plant_id);
@@ -140,7 +140,7 @@ export function PlantModal({
 
               {/* ── HEADER ── */}
               <div
-                className={`flex items-start justify-between gap-3 px-6 py-5 border-b border-gray-800/60 ${
+                className={`conb flex items-start justify-between gap-3 px-6 py-5 border-b border-gray-800/60 ${
                   isDelete
                     ? "bg-gradient-to-br from-red-950/40 to-gray-950"
                     : "bg-gradient-to-br from-green-950/40 to-gray-950"
@@ -183,7 +183,7 @@ export function PlantModal({
 
               {/* ── DELETE MODE ── */}
               {isDelete ? (
-                <div className="p-6">
+                <div className="conb p-6">
                   <div className="flex gap-3 items-start bg-red-500/8 border border-red-500/20 rounded-xl p-4 mb-6">
                     <AlertTriangle size={16} className="text-red-400 shrink-0 mt-0.5" />
                     <p className="text-sm text-red-300 leading-relaxed">
@@ -230,6 +230,8 @@ export function PlantModal({
                       />
                     </FieldGroup>
 
+
+
                     {/* Reference Link */}
                     <FieldGroup
                       label="Reference Link"
@@ -240,7 +242,7 @@ export function PlantModal({
                         name="reference_link"
                         value={formData.reference_link}
                         onChange={handleChange}
-                        placeholder="https://..."
+                        placeholder="https://... (optional)"
                         className={`w-full border rounded-lg px-3 py-2.5 text-sm  placeholder-gray-600 outline-none transition-colors focus:border-green-500 ${
                           formErrors.reference_link ? "border-red-500" : "border-gray-700"
                         }`}
@@ -262,7 +264,7 @@ export function PlantModal({
                           max={100}
                           value={formData.moisture_min}
                           onChange={handleChange}
-                          placeholder="0"
+                          placeholder="0 (optional)"
                           className={`w-full border rounded-lg px-3 py-2.5 text-sm  placeholder-gray-600 outline-none transition-colors focus:border-green-500 ${
                             formErrors.moisture_min ? "border-red-500" : "border-gray-700"
                           }`}
@@ -281,7 +283,7 @@ export function PlantModal({
                           max={100}
                           value={formData.moisture_max}
                           onChange={handleChange}
-                          placeholder="100"
+                          placeholder="100 (optional)"
                           className={`w-full  border rounded-lg px-3 py-2.5 text-sm  placeholder-gray-600 outline-none transition-colors focus:border-green-500 ${
                             formErrors.moisture_max ? "border-red-500" : "border-gray-700"
                           }`}
