@@ -20,6 +20,7 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
+// FIXED
 export const sendPushNotification = async (pushToken, title, body, data = {}) => {
   try {
  
@@ -27,6 +28,8 @@ export const sendPushNotification = async (pushToken, title, body, data = {}) =>
       token: pushToken,
       data: { title, body, ...data }
     };
+
+    
 
     
     console.log("📤 Sending   :", { title, body });
