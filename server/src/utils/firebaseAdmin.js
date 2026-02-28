@@ -1,33 +1,47 @@
 import admin from "firebase-admin";
-import fs from "fs";
-import path from "path";
+import dotenv from "dotenv";
 
-const serviceAccount = JSON.parse(
-  fs.readFileSync(path.resolve("./src/config/serviceAccountKey.json"), "utf-8")
-);
+dotenv.config();
+
+const serviceAccount = {
+  type: "service_account",
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  privateKeyId: process.env.FIREBASE_PRIVATE_KEY_ID,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+  authUri: "https://accounts.google.com/o/oauth2/auth",
+  tokenUri: "https://oauth2.googleapis.com/token",
+  authProviderX509CertUrl: "https://www.googleapis.com/oauth2/v1/certs",
+  clientX509CertUrl: process.env.FIREBASE_CLIENT_X509_CERT_URL,
+  universeDomain: "googleapis.com"
+};
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
 
-
 export const sendPushNotification = async (pushToken, title, body, data = {}) => {
   try {
-    const message = {
+ 
+    const dataMessage = {
       token: pushToken,
-      data: {
-        title: String(title),
-        body: String(body),
-        ...data,
-      },
+      data: { title, body, ...data }
     };
 
-    console.log("DATA", data);
-    const response = await admin.messaging().send(message);
-    console.log("FCM sent:", response);
-    return response;
+    
+    console.log("📤 Sending   :", { title, body });
+    
+    const [dataResponse, notifResponse] = await Promise.all([
+      admin.messaging().send(dataMessage),
+      admin.messaging().send(notifMessage)
+    ]);
+    
+    console.log("✅ Data:", dataResponse, "Notif:", notifResponse);
+    return { dataResponse, notifResponse };
   } catch (err) {
-    console.error("FCM Error:", err);
+    console.error("❌ FCM Error:", err);
   }
 };
+
+
 

@@ -60,7 +60,7 @@ function Login() {
           console.error("Login Error:", err);
 
           if (typeof err === "object") {
-            setErrorMsg(err);   // 🔥 DIRECT SET (cleanest solution)
+            setErrorMsg(err);  
           } else {
             setErrorMsg({ server: "An unexpected error occurred" });
           }

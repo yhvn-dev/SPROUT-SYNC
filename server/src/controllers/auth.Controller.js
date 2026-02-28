@@ -10,7 +10,7 @@ export const refreshAccessToken = async(req,res) => {
     try{
 
         const refreshToken = req.cookies.refreshToken;
-        if(!refreshToken) return res.status(401).json({message:"Refresh Token Not Found"})      
+        if(!refreshToken) return res.status(401).json({message:"Invalid Crdentials"})      
 
     
         const tokenRecord = await authModels.findRefreshToken(refreshToken)

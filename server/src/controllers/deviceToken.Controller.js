@@ -28,7 +28,6 @@ import { updateFirstTimeLogin } from "../models/userModels.js";
       );
 
       await updateFirstTimeLogin(user_id, false);
-      
       res.status(200).json({
         success: true,
         message: "Device registered successfully",

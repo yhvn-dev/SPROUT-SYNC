@@ -1,12 +1,8 @@
-
-
-// src/utils/firebase.js
 import { initializeApp } from "firebase/app";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const VAPID_KEY = "BME4hG6VTr7JC24lIO_p1H5hMw4DT3Ba35Mg_5D5z-hqL1EskJTF1Rw8KXfTCqejukY8bhDGWSZHk0X_GUdw9kk";
 
-// Firebase project configuration
 const firebaseConfig = {
   apiKey: "AIzaSyDutbmjQWIWYQD_swZiOQE9rLRCXqco2VM",
   authDomain: "sprout-sync-2e760.firebaseapp.com",
@@ -17,86 +13,78 @@ const firebaseConfig = {
   measurementId: "G-MRP06197XP",
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
+export const showInPageNotification = (title, body) => {
+  const container = document.getElementById("notification-container");
+  if (!container) {
+    console.warn("❌ Notification container not found!");
+    return;
+  }
+
+  container.classList.remove("hidden");
+  
+  const notif = document.createElement("div");
+  notif.className = "p-4 mb-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl shadow-xl border-l-4 border-green-400";
+  notif.innerHTML = `
+    <div class="font-bold text-lg mb-1 flex items-center">
+      🌱 <span class="ml-2">${title}</span>
+    </div>
+    <div class="text-sm">${body}</div>
+  `;
+  
+  container.appendChild(notif);
+  
+  setTimeout(() => {
+    if (notif.parentNode) notif.remove();
+    if (container.children.length === 0) {
+      container.classList.add("hidden");
+    }
+  }, 6000);
+};
 
 export const getPushToken = async () => {
   try {
-    // 1️⃣ Request permission
     const permission = await Notification.requestPermission();
     if (permission !== "granted") {
-      console.warn("Notification permission not granted");
+      console.warn("❌ Notification permission denied");
       return null;
     }
 
-    const registration = await navigator.serviceWorker.register(
-      "/firebase-messaging-sw.js"
-    );
-
+    const registration = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
     await navigator.serviceWorker.ready;
+    
     const token = await getToken(messaging, {
       vapidKey: VAPID_KEY,
       serviceWorkerRegistration: registration,
     });
 
-    // console.log("Push token obtained:", token);
+    console.log("✅ FCM Token:", token?.substring(0, 20) + "...");
     return token;
   } catch (err) {
-    console.error("Failed to get push token:", err);
+    console.error("❌ Push token error:", err);
     return null;
   }
 };
 
-/**
- * Listen for foreground messages
- * @param {function} callback - Function to handle incoming payload
- */
+
+
 
 
 export const listenForMessages = () => {
+  console.log("🔥 Listener starting...");  
   onMessage(messaging, (payload) => {
-    console.log("📩 Foreground message received:", payload);
-
-    const { title, body } = payload.data || {};
-    if (!title || !body) return;
-
-    if (Notification.permission === "granted") {
-      new Notification(title, {
-          body,
-          icon: "/SPROUTSYNC LOGO.png", 
-          badge: "/SPROUTSYNC LOGO.png",
-          tag: "sprout-sync",
-          renotify: true,
-        });
-    } else {
-      console.warn("Notification permission not granted for foreground message");
-    }
+    console.log("🚨 RAW PAYLOAD:", JSON.stringify(payload, null, 2));
+    console.log("📱 DATA:", payload.data);
+    console.log("📱 NOTIFICATION:", payload.notification);
+    
+    const title = payload.data?.title || payload.notification?.title || "SPROUT-SYNC";
+    const body = payload.data?.body || payload.notification?.body || "New notification";
+    
+    console.log("🎯 SHOWING:", { title, body });
     showInPageNotification(title, body);
   });
-};
-
-
-function showInPageNotification(title, body) {
-  const container = document.getElementById("notification-container");
-  if (!container) return;
-
-  if (container.classList.contains("hidden")) {
-    container.classList.remove("hidden");
-  }
-
-  const notif = document.createElement("div");
-  notif.className = " p-4 rounded-xl shadow "; // Tailwind styling
-  notif.innerHTML = `<strong class="toast_notif_div">${title}</strong><p>${body}</p>`;
-  container.appendChild(notif);
-
-  setTimeout(() => {
-    notif.remove();
-
-    if (container.children.length === 0) {
-      container.classList.add("hidden");
-    }
-  }, 5000);
   
-}
+  console.log("✅ Listener ACTIVE!");
+};

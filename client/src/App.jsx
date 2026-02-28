@@ -20,9 +20,9 @@ import { listenForMessages } from "./utils/firebase.js";
 import './styles.css';
 
 function App() {
-
   useEffect(() => {
     const init = async () => {
+      console.log("🚀 Starting SPROUT-SYNC notifications...");
       listenForMessages();
     };
     init();
@@ -30,19 +30,24 @@ function App() {
 
   return (
     <BrowserRouter>
+      {/* 🔥 NOTIFICATION CONTAINER - FIXED LOCATION */}
+      <div 
+        id="notification-container"
+        className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] hidden space-y-2 max-w-sm w-80 pointer-events-none"
+      />
+      
       <Suspense fallback={
         <div className="flex justify-center items-center h-screen">
           <Dashboard_Skeleton />
         </div>
       }>
         <Routes>
-          {/* Public routes — WALA PlantDataProvider dito */}
+          {/* Public routes */}
           <Route path='/' element={<Home />} />
-     
           <Route path='/about' element={<About />} />
           <Route path='/login' element={<Login />} />
 
-          {/* Protected routes — naka-wrap lang dito ang PlantDataProvider */}
+          {/* Protected routes */}
           <Route path='/dashboard' element={
             <PlantDataProvider>
               <ValveProvider>
@@ -108,12 +113,9 @@ function App() {
               </ValveProvider>
             </PlantDataProvider>
           }/>
-
         </Routes>
       </Suspense>
     </BrowserRouter>
-
-    
   );
 }
 

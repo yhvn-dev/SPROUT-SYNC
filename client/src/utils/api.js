@@ -5,7 +5,6 @@ const api = axios.create({
   withCredentials: true
 })
 
-
 let isRefreshing = false
 let refreshSubscribers = []
 
@@ -16,6 +15,13 @@ const onRefreshed = (newToken) => {
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken')
+  
+  // 🔥 SKIP AUTH HEADER FOR PUBLIC ROUTES
+  const publicRoutes = ['/auth/login', '/auth/register']
+  if (publicRoutes.some(route => config.url.includes(route))) {
+    return config
+  }
+  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -26,8 +32,16 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config
+    const originalUrl = originalRequest?.url || ''
 
-    if (originalRequest.url.includes('/auth/refresh-token')) {
+    // 🔥 SKIP REFRESH FOR PUBLIC & REFRESH ROUTES
+    const skipRefreshRoutes = [
+      '/auth/login', 
+      '/auth/register', 
+      '/auth/refresh-token'
+    ]
+    
+    if (skipRefreshRoutes.some(route => originalUrl.includes(route))) {
       return Promise.reject(error)
     }
 
@@ -69,9 +83,10 @@ api.interceptors.response.use(
         return Promise.reject(err)
       }
     }
-
     return Promise.reject(error)
   }
 )
+
+
 
 export default api

@@ -66,9 +66,8 @@ export const getUserByStatus = async (req, res) => {
 export const loginUser = async (req, res) => {
   try {
     const { loginInput, password } = req.body;
-    const user = await userModels.findUser(loginInput);
+    const user = await userModels.findUser(loginInput)
 
-    console.log("LOGGED USER:",user)
 
     if (!user) {
       return res.status(404).json({ message: "User Not Found" });
@@ -154,6 +153,9 @@ export const getLoggedUser = async (req, res) => {
       .json({ message: "Server Error Fetching Users" });
   }
 };
+
+
+
 
 /* ================= SELECT USER ================= */
 export const selectUser = async (req, res) => {

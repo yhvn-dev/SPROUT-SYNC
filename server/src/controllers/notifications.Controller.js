@@ -103,7 +103,7 @@ export const notifyReplantDate = async (req, res) => {
             message: `🌱 Harvest Reminder\n1 Day Remaining before harvest \n\nPlant: ${batch.plant_name}\nLocation: ${location}\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
           });
 
-          // ✅ Send push notification ONCE per batch (not per device call)
+        
           const devices = await deviceTokenModel.getAllDeviceTokens();
           console.log("📱 Device tokens count:", devices.length);
 

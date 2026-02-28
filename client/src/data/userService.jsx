@@ -146,7 +146,7 @@ export const deleteUsers = async (selectedUser) => {
 
 
 
-    export const loginUser = async ({ loginInput, password }) => {
+export const loginUser = async ({ loginInput, password }) => {
     try {
         const res = await api.post("/auth/login", { loginInput, password });    
         return res.data;
