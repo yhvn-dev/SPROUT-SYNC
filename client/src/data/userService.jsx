@@ -1,6 +1,5 @@
 import api from "../utils/api";
 
-
 export const fetchAllUsers = async () => {
     try{
         const res = await api.get("/users");
@@ -10,8 +9,6 @@ export const fetchAllUsers = async () => {
         throw err
     }
 }
-
-
 
 export const fetchLoggedUser = async () => {
   const token = localStorage.getItem("accessToken");
