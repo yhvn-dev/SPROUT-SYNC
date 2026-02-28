@@ -1,1 +1,3 @@
-./ESP32
+./ESP32server/src/config/serviceAccountKey.json
+.env
+node_modules/
