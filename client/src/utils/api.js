@@ -1,8 +1,7 @@
 import axios from 'axios'
 
-
 const api = axios.create({
-  baseURL: 'http://sproutsync.online', // changed from http://localhost:5000
+  baseURL: 'http://sproutsync.online', 
   withCredentials: true
 })
 

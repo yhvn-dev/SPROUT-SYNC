@@ -37,11 +37,12 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+
 // ===== CORS =====
 app.use(cors({
   origin: process.env.ORIGIN_URL || "http://localhost:3000",
   credentials: true
-}));
+}))
 
 app.use(cookieParser());
 app.use("/streams", express.static(path.join(__dirname, "../streams")));
@@ -78,14 +79,13 @@ const server = http.createServer(app);
 export const io = new SocketIOServer(server, {
   cors: {
     origin: process.env.ORIGIN_URL || "http://localhost:3000",
-    credentials: true
-  }
+    credentials: true}
 });
+
 
 io.on("connection", (socket) => {
   console.log("🟢 User socket connected:", socket.id);
 
-  // User joins their own room
   socket.on("join", (userId) => {
     socket.join(`user_${userId}`);
     console.log(`👤 User ${userId} joined room`);
@@ -95,6 +95,9 @@ io.on("connection", (socket) => {
     console.log("🔴 User socket disconnected:", socket.id);
   });
 });
+
+
+
 
 // =====================================================
 // 🔌 RAW WEBSOCKET — ESP32 (UNCHANGED)
@@ -120,7 +123,6 @@ wsServer.on("request", (request) => {
         console.log("✅ ESP32 is connected");
       }
 
-      // Broadcast ESP32 data to all listeners
       clients.forEach(client => {
         if (client.connected) {
           client.sendUTF(message.utf8Data);
@@ -136,6 +138,8 @@ wsServer.on("request", (request) => {
   });
 });
 
+
+
 // ===== ESP32 STATUS =====
 app.get("/esp32/status", (req, res) => {
   const esp32Connected = clients.some(client => client.connected);
@@ -145,7 +149,8 @@ app.get("/esp32/status", (req, res) => {
   });
 });
 
-// finalized
+
+
 
 // ===== START SERVER =====
 server.listen(port, '0.0.0.0', () => {
