@@ -16,8 +16,6 @@ function Login() {
   const navigate = useNavigate();
 
 
-
-
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -27,8 +25,6 @@ function Login() {
         // Reset messages first
         setErrorMsg({});
         setSuccessMsg("");
-
-        // Frontend validation
         const errors = validate.loginValidation({ loginInput, password }) || {};
         if (Object.keys(errors).length > 0) {
           setErrorMsg(errors);
