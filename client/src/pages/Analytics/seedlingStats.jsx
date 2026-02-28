@@ -45,9 +45,9 @@ export const SeedlingStats = ({ activeTab, growthOvertime, batchHistoryTotal }) 
     <div className="w-full h-full grid gap-4 md:grid-cols-[6fr_4fr] md:grid-rows-[2fr_1fr] overflow-x-hidden">
 
       {/* ================= GROWTH OVER TIME ================= */}
-      <div className="conb col-span-full md:col-span-1 bg-white dark:bg-gray-900 rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col h-[260px] sm:h-[300px] md:h-full">
+      <div className="conb col-span-full md:col-span-1 bg-white dark:bg-gray-900 rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col h-[360px] sm:h-auto md:h-full">
         <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2 flex items-center">
-          Seedling Growth Over Time
+          Weekly Growth Progress
           <button className="ml-2">
             <CircleQuestionMark onClick={handleOpenInfosModalseedlingGrowthOvertime} className="w-4 h-4 cursor-pointer text-gray-400 dark:text-gray-300"/>
           </button>
@@ -68,16 +68,17 @@ export const SeedlingStats = ({ activeTab, growthOvertime, batchHistoryTotal }) 
       </div>
 
       {/* ================= STATUS DISTRIBUTION ================= */}
-      <div className="conb col-span-full md:col-span-1 bg-white dark:bg-gray-900 rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col h-[280px] sm:h-[320px]">
-        <h3 className="flex text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2 items-center">
+      <div className="conb  col-span-full md:col-span-1 bg-white  dark:bg-gray-900 rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col h-auto sm:h-auto">
+        <h3 className="flex text-sm font-semibold text-gray-800 dark:text-gray-100  items-center">
           Status Distribution
           <button className="ml-2">
             <CircleQuestionMark onClick={handleOpenInfosModalStatusDistribution} className="w-4 h-4 cursor-pointer text-gray-400 dark:text-gray-300"/>
           </button>
         </h3>
 
-        <div className="flex-1 min-h-0 flex flex-col items-center justify-center gap-4">
-          <div className="relative w-full sm:w-1/2 h-[180px]">
+
+        <div className="flex-1 flex flex-col items-center justify-center gap-4 ">
+          <div className="relative w-full sm:w-1/2 h-[180px] ">
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie data={statusData} cx="50%" cy="50%" innerRadius={45} outerRadius={70} paddingAngle={5} dataKey="value">

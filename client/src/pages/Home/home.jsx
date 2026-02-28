@@ -101,8 +101,6 @@ function Home() {
     }
   }, []);
 
-
-
   
   // Close mobile menu when clicking outside
   useEffect(() => {
