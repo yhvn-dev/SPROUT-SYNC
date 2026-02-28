@@ -30,14 +30,13 @@ export const sendPushNotification = async (pushToken, title, body, data = {}) =>
 
     
     console.log("📤 Sending   :", { title, body });
-    
-    const [dataResponse, notifResponse] = await Promise.all([
+  
+    const [dataResponse] = await Promise.all([
       admin.messaging().send(dataMessage),
-      admin.messaging().send(notifMessage)
     ]);
-    
-    console.log("✅ Data:", dataResponse, "Notif:", notifResponse);
-    return { dataResponse, notifResponse };
+  
+    console.log("✅ Data:", dataResponse);
+    return { dataResponse };
   } catch (err) {
     console.error("❌ FCM Error:", err);
   }
