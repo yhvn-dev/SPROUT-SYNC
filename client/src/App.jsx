@@ -3,7 +3,6 @@ import {lazy, Suspense, useEffect} from "react";
 
 const Login = lazy(() => import("./pages/Login/login.jsx"));
 const Home = lazy(() => import("./pages/Home/home.jsx"));
-const About = lazy(() => import("./pages/About/about.jsx"));
 const Dashboard = lazy(() => import("./pages/Dashboard/dashboard.jsx"));
 const Users = lazy(() => import("./pages/Users/users.jsx"));
 const Analytics = lazy(() => import('./pages/Analytics/analytics.jsx'));
@@ -41,10 +40,10 @@ function App() {
           <Dashboard_Skeleton />
         </div>
       }>
+        
         <Routes>
           {/* Public routes */}
           <Route path='/' element={<Home />} />
-          <Route path='/about' element={<About />} />
           <Route path='/login' element={<Login />} />
 
           {/* Protected routes */}
