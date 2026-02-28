@@ -39,7 +39,7 @@ function Login() {
       const loggedUser = await fetchLoggedUser();
       setUser(loggedUser);
 
-      // Success message
+      
       setSuccessMsg("Login Successful!");
       setErrorMsg({});
 
@@ -100,6 +100,8 @@ function Login() {
     </section>
   );
 }
+
+
 
 
 

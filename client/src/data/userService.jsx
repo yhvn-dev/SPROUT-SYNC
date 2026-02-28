@@ -1,7 +1,5 @@
 import api from "../utils/api";
-import axios from "axios"
-const API_BASE_URL = "http://localhost:5000";
-
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000"
 
 
 
@@ -16,12 +14,13 @@ export const fetchAllUsers = async () => {
 }
 
 
+
 export const fetchLoggedUser = async () => {
   const token = localStorage.getItem("accessToken");
-  if (!token) return null; // walang token, return null
+  if (!token) return null;
 
   try {
-    const res = await api.get(`${API_BASE_URL}/users/me`, {
+    const res = await api.get(`/users/me`, {  
       headers: { Authorization: `Bearer ${token}` }
     });
     return res.data;
@@ -35,7 +34,6 @@ export const fetchLoggedUser = async () => {
     throw error;
   }
 };
-
 
 export const getUsersCount = async () =>{
     try{
