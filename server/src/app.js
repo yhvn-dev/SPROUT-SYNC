@@ -37,7 +37,6 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
 // ===== CORS =====
 app.use(cors({
   origin: process.env.ORIGIN_URL || "http://localhost:3000",
@@ -104,15 +103,14 @@ io.on("connection", (socket) => {
 // =====================================================
 const wsServer = new WebSocketServer({
   httpServer: server,
-  autoAcceptConnections: false
+  autoAcceptConnections: true  
 });
 
+
+
 export const clients = [];
-
-wsServer.on("request", (request) => {
-  const connection = request.accept(null, request.origin);
+wsServer.on("connect", (connection) => {
   console.log("🟢 ESP32 WebSocket connected");
-
   clients.push(connection);
 
   connection.on("message", (message) => {
