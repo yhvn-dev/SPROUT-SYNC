@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: 'http://sproutsync.online', 
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
   withCredentials: true
 })
 
@@ -49,12 +49,8 @@ api.interceptors.response.use(
 
       isRefreshing = true
       try {
-        const { data } = await axios.post(
-          'http://sproutsync.online/auth/refresh-token', // changed from http://localhost:5000
-          {},
-          { withCredentials: true }
-        )
-
+        const { data } = await api.post('/auth/refresh-token', {}, { withCredentials: true })
+        
         const newToken = data.accessToken
         localStorage.setItem('accessToken', newToken)
 

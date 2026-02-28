@@ -33,8 +33,6 @@ function Login() {
 
       // Call backend service
       const data = await loginUser({ loginInput, password });
-
-      // Save token & fetch user
       localStorage.setItem("accessToken", data.accessToken);
       const loggedUser = await fetchLoggedUser();
       setUser(loggedUser);
@@ -49,19 +47,15 @@ function Login() {
     } catch (err) {
       console.error(err);
 
-      // Normalize backend errors for UI
       const formatted = {};
 
       if (err.response?.data?.errors) {
-        // Validation errors from backend
         err.response.data.errors.forEach((e) => {
           formatted[e.path] = e.msg;
         });
       } else if (err.response?.data?.message) {
-        // Backend message like 'User Not Found'
         formatted.server = err.response.data.message;
       } else if (err.message) {
-        // JS/network error
         formatted.server = err.message;
       } else {
         formatted.server = "An unexpected error occurred";
@@ -70,8 +64,12 @@ function Login() {
       setErrorMsg(formatted);
       setSuccessMsg("");
       setStatus("notLoggedIn");
+
     }
   };
+
+
+
 
   return (
     <section className="page login grid grid-cols-1 grid-rows-[8vh_92vh] h-[100vh] w-full bg-white">
