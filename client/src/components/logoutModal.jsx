@@ -3,7 +3,6 @@ import { UserContext } from "../hooks/userContext";
 import { useContext } from "react";
 import { motion } from "framer-motion";
 
-// ✅ IMPORT api from your utils
 import api from "../utils/api";
 
 import { LogOut, X } from "react-feather";
