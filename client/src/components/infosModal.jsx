@@ -157,15 +157,6 @@ function InfosModal({ isInfosModalOpen, onClose, purpose }) {
             </ul>
           );
 
-          case "plants":
-          return (
-            <ul className="list-disc pl-5 space-y-2">
-                <li>
-                  Stores and displays different plants grouped by similar moisture requirements, making it easy to identify which plants can be transferred or managed together
-                </li>     
-            </ul>
-          );
-
           case "valve_controls":
           return (
             <ul className="list-disc pl-5 space-y-2">
