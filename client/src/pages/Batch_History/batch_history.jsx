@@ -95,25 +95,37 @@ function Batch_History() {
     setSearchValue(e.target.value);
   };
 
-  const growthStages = ["All", "Seedling", "Vegetative", "Mature", "Harvest"];
-
+ 
+  const growthStages = ["All", "Sprout", "Seedling", "Vegetative", "Budding","Flowering","Fruiting","Ready To Harvest"];
 
   const getStageColor = (stage, isDark = false) => {
-  const lightColors = {
-    'Seedling': '#b0e892',
-    'Vegetative': '#7BA591',
-    'Mature': '#027c68',
-    'Harvest': '#2dc653'
-  };
+    // Light theme colors
+    const lightColors = {
+      'Sprout': '#b0e892',        // sancgc
+      'Seedling': '#92e6a7',      // ptl-greenb
+      'Vegetative': '#6ede8a',    // ptl-greenc
+      'Budding': '#2dc653',       // ptl-greend
+      'Flowering': '#25a244',     // ptl-greene
+      'Fruiting': '#208b3a',      // ptl-greenf
+      'Ready To Harvest': '#1a7431', // ptl-greeng
+      'All': '#7BA591'             // sage base
+    };
 
-  const darkColors = {
-    'Seedling': '#0f4420',
-    'Vegetative': '#1a5042',
-    'Mature': '#025047',
-    'Harvest': '#1a6b38'
-  };
+    // Dark theme colors
+    const darkColors = {
+      'Sprout': '#155d27',        // ptl-greenh
+      'Seedling': '#10451d',      // ptl-greenj
+      'Vegetative': '#5A8F73',    // sage-dark
+      'Budding': '#027c68',       // sancgb
+      'Flowering': '#003333',     // sancga
+      'Fruiting': '#009983',      // sancgd
+      'Ready To Harvest': '#1a6b38', // adjusted darker green
+      'All': '#5A8F73'            // fallback sage-dark
+      };
+
     return isDark ? darkColors[stage] || '#5A8F73' : lightColors[stage] || '#5A8F73';
   };
+
 
   const handleOpenInfosModalBatchHistory = () =>{
       setInfoModalPurpose("batch_history")

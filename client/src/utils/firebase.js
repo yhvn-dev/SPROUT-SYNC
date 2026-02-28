@@ -64,20 +64,18 @@ export const listenForMessages = () => {
 
     if (Notification.permission === "granted") {
       new Notification(title, {
-        body,
-        icon: "../../public/SPROUTSYNC LOGO.png",
-        badge: "../../public/SPROUTSYNC LOGO.png",
-        tag: "sprout-sync",
-        renotify: true,
-      });
+          body,
+          icon: "/SPROUTSYNC LOGO.png", 
+          badge: "/SPROUTSYNC LOGO.png",
+          tag: "sprout-sync",
+          renotify: true,
+        });
     } else {
       console.warn("Notification permission not granted for foreground message");
     }
     showInPageNotification(title, body);
   });
 };
-
-
 
 
 function showInPageNotification(title, body) {

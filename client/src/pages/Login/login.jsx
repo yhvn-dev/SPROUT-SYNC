@@ -15,59 +15,60 @@ function Login() {
   const { setUser } = useContext(UserContext);
   const navigate = useNavigate();
 
+
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const loginInput = loginInputRef.current.value.trim();
     const password = passwordRef.current.value.trim();
 
-    // Frontend validation
-    const errors = validate.loginValidation({ loginInput, password }) || {};
-    if (Object.keys(errors).length > 0) {
-      setErrorMsg(errors);
-      return;
-    }
+        // Reset messages first
+        setErrorMsg({});
+        setSuccessMsg("");
 
-    try {
-      setStatus("loggingIn");
+        // Frontend validation
+        const errors = validate.loginValidation({ loginInput, password }) || {};
+        if (Object.keys(errors).length > 0) {
+          setErrorMsg(errors);
+          return;
+        }
 
-      // Call backend service
-      const data = await loginUser({ loginInput, password });
-      localStorage.setItem("accessToken", data.accessToken);
-      const loggedUser = await fetchLoggedUser();
-      setUser(loggedUser);
+        try {
+          setStatus("loggingIn");
 
-      
-      setSuccessMsg("Login Successful!");
-      setErrorMsg({});
+          // 🔥 Call backend service
+          const data = await loginUser({ loginInput, password });
 
-      setTimeout(() => {
-        navigate("/dashboard");
-      }, 1500);
-    } catch (err) {
-      console.error(err);
+          // Save token
+          localStorage.setItem("accessToken", data.accessToken);
 
-      const formatted = {};
+          // Fetch logged user
+          const loggedUser = await fetchLoggedUser();
+          setUser(loggedUser);
 
-      if (err.response?.data?.errors) {
-        err.response.data.errors.forEach((e) => {
-          formatted[e.path] = e.msg;
-        });
-      } else if (err.response?.data?.message) {
-        formatted.server = err.response.data.message;
-      } else if (err.message) {
-        formatted.server = err.message;
-      } else {
-        formatted.server = "An unexpected error occurred";
-      }
+          // Success state
+          setSuccessMsg("Login Successful!");
+          setStatus("loggedIn");
 
-      setErrorMsg(formatted);
-      setSuccessMsg("");
-      setStatus("notLoggedIn");
+          setTimeout(() => {
+            navigate("/dashboard");
+          }, 1500);
 
-    }
-  };
+        } catch (err) {
+          console.error("Login Error:", err);
 
+          if (typeof err === "object") {
+            setErrorMsg(err);   // 🔥 DIRECT SET (cleanest solution)
+          } else {
+            setErrorMsg({ server: "An unexpected error occurred" });
+          }
+
+          setSuccessMsg("");
+          setStatus("notLoggedIn");
+        }
+      };
 
 
 

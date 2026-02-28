@@ -15,8 +15,7 @@ export const fetchAllBatchHistory = async () => {
 export const fetchAllBatchHistoryTotal = async () =>{
     try {
         const res = await api.get("/pbh/get/pbh/total");
-        const pbh = res.data
-        console.log("PLANT BATCH HISTORY TOTAL",pbh)
+        const pbh = res.data    
         return pbh
     } catch (error) {
         console.error("Error Fetching Plant Batch History Total",error);

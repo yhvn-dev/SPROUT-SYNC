@@ -52,6 +52,8 @@ export function Dashboard() {
         />
       )}
 
+
+
       {/* SIDEBAR */}
       <aside className={`${sidebarOpen ? "fixed inset-y-0 left-0 w-64 z-50" : "hidden"} md:static md:block md:row-span-full`}>
           <Sidebar
@@ -119,11 +121,11 @@ export function Dashboard() {
           onClose={() => setRegisterModalVisible(false)} // close modal locally
         />
        )}
-       
-
       {logoutOpen && (
         <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
       )}
+      
+      
     </section>
   );
 }

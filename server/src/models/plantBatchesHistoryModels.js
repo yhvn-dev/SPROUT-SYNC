@@ -4,7 +4,7 @@ import { query } from "../config/db.js";
 // ===== READ all history =====
 export const readPlantBatchHistory = async () => {
   try {
-    const sql = `SELECT * FROM plant_batch_history ORDER BY AND date_recorded DESC`;
+    const sql = `SELECT * FROM plant_batch_history ORDER BY date_recorded DESC`;
     const result = await query(sql);
     return result.rows;
   } catch (error) {

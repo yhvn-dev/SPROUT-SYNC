@@ -1,6 +1,4 @@
 import api from "../utils/api";
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000"
-
 
 
 export const fetchAllUsers = async () => {
@@ -148,32 +146,28 @@ export const deleteUsers = async (selectedUser) => {
 
 
 
-export const loginUser = async ({ loginInput, password }) => {
-  try {
-    const res = await api.post("/auth/login", { loginInput, password });    
-    return res.data;
-  } catch (err) {
- 
-    // if (err.response?.data?.errors) {
-    //     const formatted = {};
-    //     err.response.data.errors.forEach(e => {
-    //     formatted[e.path] = e.msg;
-    //     });
-    //     throw formatted; 
-    // } else if (err.response) {
-    //     throw { server: err.response.data.message || "Invalid username or password" };
-    // } else if (err.request) {
-    //     throw { server: "Login failed or server is not reachable!" };
-    // } else {
-    //     throw { server: "An Unexpected Error Occurred" };
-    // }
+    export const loginUser = async ({ loginInput, password }) => {
+    try {
+        const res = await api.post("/auth/login", { loginInput, password });    
+        return res.data;
+    } catch (err) {
     
-    const error = err.response.data
-    throw error  
-  }
-       
-
-};
+        if (err.response?.data?.errors) {
+            const formatted = {};
+            err.response.data.errors.forEach(e => {
+            formatted[e.path] = e.msg;
+            });
+            throw formatted; 
+        } else if (err.response) {
+            throw { server: err.response.data.message || "Invalid username or password" };
+        } else if (err.request) {
+            throw { server: "Login failed or server is not reachable!" };
+        } else {
+            throw { server: err };
+        }
+    }
+        
+    };
 
 
 

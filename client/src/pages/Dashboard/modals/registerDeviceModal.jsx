@@ -7,7 +7,6 @@ import { useState, useEffect, useContext } from "react";
 import { Img_Logo } from "../../../components/logo";
 import { UserContext } from "../../../hooks/userContext";
 
-
 function RegisterDeviceModal({ onClose, userData }) {
   const [isLoading, setIsLoading] = useState(false);
   const [deviceInfo, setDeviceInfo] = useState({});
@@ -43,7 +42,6 @@ function RegisterDeviceModal({ onClose, userData }) {
       await registerDevice(payload);
 
       setUser(prev => ({ ...prev, first_time_login: false }));
-
       setIsLoading(false);
       onClose();
     } catch (error) {

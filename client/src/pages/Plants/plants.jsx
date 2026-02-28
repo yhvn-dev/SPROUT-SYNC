@@ -10,8 +10,7 @@ import { LogoutModal } from "../../components/logoutModal.jsx";
 import {  CircleQuestionMark } from "lucide-react";
 import RegisterDeviceModal from "../Dashboard/modals/registerDeviceModal";
 import InfosModal from "../../components/infosModal.jsx";
-
-
+import {Notif_Modal} from "../../components/notifModal.jsx"
 
 
 /* ─── MOISTURE BAR ───────────────────────────────────────── */
@@ -46,7 +45,7 @@ function MoistureBar({ min, max, fillColor, trackColor, small = false }) {
 function PlantChildCard({ plant, onUpdate, onDelete }) {
   return (
     <div className="flex-shrink-0 w-44 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-     <a
+     <a 
         href={plant.reference_link}
         target="_blank"
         rel="noopener noreferrer"
@@ -124,16 +123,22 @@ function CategoryCard({ group, childPlants }) {
 
 /* ─── CATEGORY ROW ───────────────────────────────────────── */
 function CategoryRow({ group, childPlants, onAdd, onUpdate, onDelete }) {
+  const { user } = useContext(UserContext); 
   return (
     <div className="flex flex-col gap-4">
       <div className="flex items-center gap-3">
         <span className="text-sm font-semibold text-gray-700">{group.group_name}</span>
+
+       {user?.role === "admin" && (
         <button
           onClick={() => onAdd(group)}
           className="flex items-center gap-1 text-xs font-semibold bg-emerald-500 hover:bg-emerald-600 text-white px-3 py-1.5 rounded-full shadow-sm transition-colors"
         >
           + Add Plant
         </button>
+      )}
+
+
       </div>
 
       <div className="flex flex-col-reverse md:grid md:grid-cols-[7fr_3fr] gap-4 rounded-2xl">
@@ -345,6 +350,14 @@ export default function Plants() {
           purpose={infoModalPurpose}
         />
       )}
+
+      {notifOpen && (
+        <Notif_Modal
+          isOpen={notifOpen}
+          onClose={() => setNotifOpen(false)}
+        />
+      )}
+
 
 
     </section>

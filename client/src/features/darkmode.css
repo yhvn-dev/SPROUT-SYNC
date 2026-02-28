@@ -715,7 +715,7 @@ body.dark .batch_history_table::-webkit-scrollbar{
         @apply bg-transparent border-[1px] border-[var(--color-warning)];
     }
     body.dark .bh_growth_stage{
-        @apply text-[var(--metal-dark5)];
+        @apply text-white;
     }
     
 

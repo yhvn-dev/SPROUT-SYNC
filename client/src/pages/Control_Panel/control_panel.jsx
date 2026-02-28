@@ -88,7 +88,7 @@ function Control_panel() {
   return (
     <section className="control_panel con_main h-screen flex flex-col md:grid gap-4 md:grid-cols-[15fr_85fr] md:grid-rows-[auto_1fr] bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] font-sans overflow-hidden">
 
-      <button onClick={() => setSidebarOpen(true)} className="md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
+      <button onClick={() => setSidebarOpen(true)} className="menu_button md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
         <Menu size={22} />
       </button>
       {sidebarOpen && <div onClick={() => setSidebarOpen(false)} className="fixed inset-0 bg-black/40 z-40 md:hidden" />}
