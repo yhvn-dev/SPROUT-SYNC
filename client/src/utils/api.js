@@ -1,9 +1,10 @@
 import axios from 'axios'
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:5000',
+  baseURL: import.meta.env.VITE_DEV_URL || 'http://localhost:5000',
   withCredentials: true
 })
+
 
 let isRefreshing = false
 let refreshSubscribers = []
@@ -13,10 +14,12 @@ const onRefreshed = (newToken) => {
   refreshSubscribers = []
 }
 
+
+
+
+
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken')
-  
-  // 🔥 SKIP AUTH HEADER FOR PUBLIC ROUTES
   const publicRoutes = ['/auth/login', '/auth/register']
   if (publicRoutes.some(route => config.url.includes(route))) {
     return config
@@ -27,6 +30,9 @@ api.interceptors.request.use((config) => {
   }
   return config
 })
+
+
+
 
 api.interceptors.response.use(
   (response) => response,
