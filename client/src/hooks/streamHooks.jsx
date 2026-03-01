@@ -2,9 +2,7 @@
   import Hls from "hls.js";
   import { startStream, stopStream, getStreamsStatus } from "../data/streamServices";
 
-  const STREAM_URL = `${import.meta.env.VITE_API_URL}/streams/stream.m3u8`;
-
-
+  const STREAM_URL = `${import.meta.env.VITE_CAMERA_URL}/streams/stream.m3u8`;
 
   /* ===============================
     WAIT FOR VALID HLS SEGMENTS
