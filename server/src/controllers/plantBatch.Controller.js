@@ -3,6 +3,9 @@
 import * as plantBatchModels from "../models/plantBatchesModels.js"
 import * as trayModels from "../models/trayModels.js"
 import * as plantBatchHistoryModel from "../models/plantBatchesHistoryModels.js"
+import {notifyBatchCreated} from "./notifications.Controller.js"
+
+
 
 // ===== GET all plant batches =====
 export const getPlantBatches = async (req, res) => {
@@ -96,6 +99,7 @@ export const createPlantBatch = async (req, res) => {
     if (!existingTray) return res.status(404).json({ message: "Selected Tray not found" });
     const batch = await plantBatchModels.createPlantBatch(batchData)  
     res.status(201).json(batch);
+    await notifyBatchCreated(batch);
    
     console.log("PLANT BATCH CREATED:", batch);  
   } catch (err) {

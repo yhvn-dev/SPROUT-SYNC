@@ -4,12 +4,12 @@ import dotenv from "dotenv";
 import fs from "fs";
 import { fileURLToPath } from "url";
 
+
 /* ===============================
    FIX __dirname FOR ES MODULES
 ================================ */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 
 /* ===============================
    LOAD ENV VARIABLES
@@ -26,10 +26,8 @@ const rtspUrl = `rtsp://${process.env.IMOU_USER}:${process.env.IMOU_PASS}@${proc
 /* ===============================
    STREAMS DIRECTORY
 ================================ */
-
 const streamsDir = path.resolve(__dirname, "../../streams/");
 const outputPath = path.join(streamsDir, "stream.m3u8");
-
 
 // Ensure folder exists
 if (!fs.existsSync(streamsDir)) {
@@ -73,14 +71,12 @@ const killFFmpeg = () => {
     ffmpegPid = null;
 
     if (process.platform === "win32") {
-      // Windows — taskkill force kills the entire process tree
       exec(`taskkill /PID ${pid} /T /F`, (err) => {
         if (err) console.warn("taskkill warning:", err.message);
         else console.log(`🛑 FFmpeg process ${pid} killed (Windows)`);
         resolve();
       });
     } else {
-      // Linux / Mac
       try {
         process.kill(pid, "SIGKILL");
         console.log(`🛑 FFmpeg process ${pid} killed (Unix)`);
@@ -100,71 +96,112 @@ export const startStream = (req, res) => {
     return res.json({ message: "Stream already running ✅" });
   }
 
+  // Verify env vars are loaded
+  if (!process.env.IMOU_USER || !process.env.IMOU_PASS || !process.env.IMOU_IP) {
+    console.error("❌ Missing IMOU env variables!");
+    return res.status(500).json({ message: "Missing camera credentials in .env" });
+  }
+
+  console.log(`📡 Connecting to RTSP: rtsp://${process.env.IMOU_USER}:***@${process.env.IMOU_IP}:554/...`);
+  console.log(`📁 Output path: ${outputPath}`);
+
+  // Ensure streams dir exists (in case it was deleted)
+  if (!fs.existsSync(streamsDir)) {
+    fs.mkdirSync(streamsDir, { recursive: true });
+    console.log("📁 Streams directory recreated");
+  }
+
   cleanOldSegments();
 
   const ffmpegArgs = [
+    "-y",
     "-rtsp_transport", "tcp",
-    "-fflags", "+genpts",
+    "-fflags", "+genpts+discardcorrupt",
+    "-use_wallclock_as_timestamps", "1",
     "-i", rtspUrl,
     "-map", "0:v:0",
-    "-map", "0:a?",
-    "-c:v", "libopenh264",
-    "-g", "48",
-    "-c:a", "aac",
-    "-ar", "16000",
+    "-c:v", "libx264",
+    "-preset", "ultrafast",
+    "-tune", "zerolatency",
+    "-profile:v", "baseline",
+    "-level", "3.1",
+    "-g", "30",
+    "-keyint_min", "30",
+    "-sc_threshold", "0",
+    "-b:v", "1500k",
+    "-maxrate", "1500k",
+    "-bufsize", "3000k",
+    "-an",
     "-f", "hls",
     "-hls_time", "2",
     "-hls_list_size", "5",
-    "-hls_flags", "delete_segments+append_list",
-    outputPath
-  ];
+    "-hls_flags", "delete_segments+append_list+independent_segments",
+    "-hls_segment_filename", path.join(streamsDir, "segment%03d.ts"),
+    outputPath,
+];
 
-  //   const ffmpegArgs = [
-  //   "-rtsp_transport", "udp",        // faster than TCP
-  //   "-fflags", "+nobuffer+genpts",  // reduce buffering
-  //   "-i", rtspUrl,
-  //   "-map", "0:v:0",
-  //   "-map", "0:a?",
-  //   "-c:v", "libx264",
-  //   "-preset", "ultrafast",
-  //   "-tune", "zerolatency",
-  //   "-g", "48",
-  //   "-c:a", "aac",
-  //   "-ar", "16000",
-  //   "-f", "hls",
-  //   "-hls_time", "1",             
-  //   "-hls_list_size", "3",        
-  //   "-hls_flags", "delete_segments+append_list",
-  //   outputPath
-  // ];
-    
-  // Use spawn instead of exec — better process control
-  ffmpegProcess = spawn("ffmpeg", ffmpegArgs);
+
+  ffmpegProcess = spawn("ffmpeg", ffmpegArgs, {
+    detached: false,
+    stdio: ["ignore", "pipe", "pipe"],
+  });
+
   ffmpegPid = ffmpegProcess.pid;
+
+  if (!ffmpegPid) {
+    console.error("❌ FFmpeg failed to spawn — is ffmpeg installed?");
+    ffmpegProcess = null;
+    return res.status(500).json({ message: "FFmpeg failed to start. Is ffmpeg installed and in PATH?" });
+  }
 
   console.log(`✅ FFmpeg started with PID: ${ffmpegPid}`);
 
   ffmpegProcess.stdout?.on("data", (data) => {
-    console.log(`FFmpeg: ${data}`);
+    console.log(`[FFmpeg STDOUT]: ${data.toString().trim()}`);
   });
 
   ffmpegProcess.stderr?.on("data", (data) => {
-    console.log(`FFmpeg: ${data}`);
+    const msg = data.toString().trim();
+    console.log(`[FFmpeg STDERR]: ${msg}`);
+
+    // Detect common errors and log clearly
+    if (msg.includes("Connection refused")) {
+      console.error("❌ RTSP Connection refused — check camera IP and port");
+    } else if (msg.includes("401") || msg.includes("Unauthorized")) {
+      console.error("❌ RTSP Auth failed — check IMOU_USER and IMOU_PASS");
+    } else if (msg.includes("No such file or directory")) {
+      console.error("❌ Output path issue — check streams directory permissions");
+    } else if (msg.includes("Opening") && msg.includes(".m3u8")) {
+      console.log("✅ HLS playlist created successfully!");
+    } else if (msg.includes("segment")) {
+      console.log("📦 Segment being written...");
+    }
   });
 
   ffmpegProcess.on("close", (code) => {
-    console.log(`FFmpeg exited with code ${code}`);
+    console.log(`⚠️ FFmpeg exited with code: ${code}`);
+    if (code !== 0 && code !== null) {
+      console.error("❌ FFmpeg crashed — review STDERR logs above for the cause");
+    }
     ffmpegProcess = null;
     ffmpegPid = null;
   });
 
   ffmpegProcess.on("error", (err) => {
-    console.error("FFmpeg error:", err.message);
+    if (err.code === "ENOENT") {
+      console.error("❌ FFmpeg not found — install ffmpeg and make sure it's in your PATH");
+    } else {
+      console.error("FFmpeg spawn error:", err.message);
+    }
     ffmpegProcess = null;
     ffmpegPid = null;
   });
 
-  return res.json({ message: "Stream started ✅" });
+  return res.json({
+    message: "Stream started ✅",
+    pid: ffmpegPid,
+    outputPath,
+  });
 };
 
 /* ===============================
@@ -178,7 +215,6 @@ export const stopStream = async (req, res) => {
   try {
     await killFFmpeg();
 
-    // Wait a moment before cleaning files so FFmpeg fully releases them
     setTimeout(() => {
       cleanOldSegments();
       console.log("🧹 Stream files cleaned after stop");
@@ -194,13 +230,20 @@ export const stopStream = async (req, res) => {
 
 
 
-
 /* ===============================
    STREAM STATUS
 ================================ */
 export const streamStatus = (req, res) => {
+  const segmentFiles = fs.existsSync(streamsDir)
+    ? fs.readdirSync(streamsDir).filter((f) => f.endsWith(".ts"))
+    : [];
+
   return res.json({
     running: Boolean(ffmpegProcess),
+    pid: ffmpegPid || null,
+    segmentCount: segmentFiles.length,
+    segments: segmentFiles,
+    outputPath,
     message: ffmpegProcess ? "Stream is running ✅" : "Stream is stopped ❌",
   });
 };

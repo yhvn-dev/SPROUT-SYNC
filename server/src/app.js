@@ -44,7 +44,15 @@ app.use(cors({
 }))
 
 app.use(cookieParser());
-app.use("/streams", express.static(path.join(__dirname, "../streams")));
+app.use("/streams", express.static(path.resolve(__dirname, "../streams"), {
+  setHeaders: (res, filePath) => {
+    if (filePath.endsWith(".m3u8")) {
+      res.setHeader("Content-Type", "application/vnd.apple.mpegurl");
+    } else if (filePath.endsWith(".ts")) {
+      res.setHeader("Content-Type", "video/MP2T");
+    }
+  }
+}));
 
 // ===== ROUTES =====
 app.use('', userRoutes);
@@ -97,7 +105,6 @@ io.on("connection", (socket) => {
 
 
 
-
 // =====================================================
 // 🔌 RAW WEBSOCKET — ESP32 (UNCHANGED)
 // =====================================================
@@ -105,7 +112,6 @@ const wsServer = new WebSocketServer({
   httpServer: server,
   autoAcceptConnections: true  
 });
-
 
 
 export const clients = [];

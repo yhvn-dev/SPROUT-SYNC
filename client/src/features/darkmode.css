@@ -108,11 +108,10 @@
     --bar-ok: #22c55e;
     --bar-moderate: #eab308;
     --bar-low: #ef4444;
-
 }
 
 body {
-transition: 1s;
+    transition: 1s;
 }
 
 /* Default light mode background */
@@ -969,6 +968,9 @@ body.dark .hero{
     
         body.dark #notification-container{
             @apply bg-[var(--metal-dark2)] border-2 border-[var(--main-white)];
+        }
+        body.dark .notifIconBg{
+            @apply bg-[var(--metal-dark4)];
         }
 
         

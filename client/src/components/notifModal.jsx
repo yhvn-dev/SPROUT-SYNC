@@ -7,24 +7,6 @@ import { motion } from "framer-motion";
 import * as notifService from "./../data/notifsServices"
 
 
-
-
-  // --color-danger-a: hsl(355, 100%, 70%);
-  // --color-danger-b: hsl(355,100%, 85%);
-  // --color-danger-c:hsl(353, 40%, 90%);
-  // --color-warning: hsl(35, 80%, 70%);
-  // --color-warning-b: hsl(35, 80%, 90%);
-  // --color-warning-c: hsl(35, 80%, 95%);
-  // --color-success-a: hsl(125, 85%, 60%);
-  // --color-success-a-soft: hsl(110, 58%, 90%);
-  // --color-success-c: hsl(160,60%, 70%);
-  // --color-success-d:hsl(150, 80%, 80%);
- 
-    
-
-
-
-
     
 const getColorScheme = (type, status) => {
   switch (type.toLowerCase()) {
@@ -40,14 +22,14 @@ const getColorScheme = (type, status) => {
   case "warning":
     return { 
       bg: "hsl(35, 80%, 90%)",  // --color-warning-b
-      text: "hsl(35, 80%, 70%)", // --color-warning
+      text: "hsl(0, 1%, 25%)", // --color-warning
       icon: AlertTriangle,
       iconBg:"#fff"
     };
   case "info":
     return { 
-      bg: "hsl(210, 100%, 97%)",  
-      text: "hsl(220, 80%, 50%)",  
+      bg: "hsl(258, 44%, 93%)",  
+      text: "hsl(0, 1%, 25%)",  
       icon: Clock,
       iconBg:"#fff"
     };
@@ -127,7 +109,7 @@ export function Notif_Modal({ isOpen, onClose}) {
     exit={{ opacity: 0 }}
     transition={{ duration: 0.2 }}
     >
-      <div className="notif_box bg-white rounded-2xl w-96 max-h-[80vh] shadow-lg flex flex-col">
+      <div className="notif_box bg-white rounded-2xl w-auto md:w-96 max-h-[80vh] shadow-lg flex flex-col">
 
         {/* Header */}
         <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">

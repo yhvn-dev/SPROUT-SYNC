@@ -148,7 +148,7 @@ function Control_panel() {
           </div>
 
           {/* ── SPROUT-SYNC MONITORING ─────────────────────────────────────── */}
-          <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 hover:shadow-xl transition-all mb-6">
+          <div className="conb hidden bg-white rounded-3xl p-7 shadow-lg border border-gray-50 hover:shadow-xl transition-all mb-6">
 
             {/* Header */}
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
@@ -208,29 +208,29 @@ function Control_panel() {
               </div>
             </div>
 
-                
 
 
             <div
               className="relative w-full bg-gray-900 rounded-2xl overflow-hidden"
-              style={{ aspectRatio: "16/9", minHeight: "220px" }}>
+              style={{ aspectRatio: "16/9", minHeight: "220px" }}>     
+              {running && (
+                  <video
+                    key="live-video"
+                    ref={videoRef}
+                    muted
+                    autoPlay
+                    playsInline
+                    controls
+                    onCanPlay={(e) => {
+                      console.log("🎬 onCanPlay fired");
+                      e.target.play().catch(err => console.warn("onCanPlay play() failed:", err));
+                    }}
+                    onError={(e) => console.error("❌ Video element error:", e.target.error)}
+                    className="absolute inset-0 w-full h-full object-cover z-0"
+                  />
+                )}
 
                 
-              {/* ✅ VIDEO ONLY WHEN RUNNING */}
-              {running && (
-                <video
-                  key="live-video"
-                  ref={videoRef}
-                  muted
-                  autoPlay
-                  playsInline
-                  controls
-                  className="absolute inset-0 w-full h-full object-cover z-0"
-                />
-              )}
-
-
-
               {/* IDLE */}
               {!running && !loading && !error && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-center px-4  pointer-events-none">
@@ -244,7 +244,7 @@ function Control_panel() {
                 </div>
               )}
 
-              {/* LOADING */}
+              {/* LOADING */}                                             
               {loading && (
                 <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 z-10 pointer-events-none">
                   <Loader2 size={36} className="text-yellow-400 animate-spin" />
@@ -286,8 +286,6 @@ function Control_panel() {
                 </div>
               )}
             </div>
-
-
 
             {/* Footer */}
             <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 mt-3">

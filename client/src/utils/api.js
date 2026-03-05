@@ -16,8 +16,6 @@ const onRefreshed = (newToken) => {
 
 
 
-
-
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem('accessToken')
   const publicRoutes = ['/auth/login', '/auth/register']

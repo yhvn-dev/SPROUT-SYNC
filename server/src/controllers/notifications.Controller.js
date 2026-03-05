@@ -98,7 +98,7 @@ export const notifyReplantDate = async (req, res) => {
         await notificationModel.createNotif({
             user_id: null,
             batch_id: batch.batch_id,
-            type: "Info",
+            type: "warning",
             status: "Medium",
             message: `🌱 Harvest Reminder\n1 Day Remaining before harvest \n\nPlant: ${batch.plant_name}\nLocation: ${location}\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
           });
@@ -115,7 +115,6 @@ export const notifyReplantDate = async (req, res) => {
               )
             );
           }
-  
 
         notifiedBatches.push({
           batch_id: batch.batch_id,
@@ -138,6 +137,41 @@ export const notifyReplantDate = async (req, res) => {
       success: false,
       message: "Error sending harvest notifications"
     });
+  }
+};
+
+
+
+export const notifyBatchCreated = async (batch) => {
+  try {
+    const planted = toDateOnlyUTC(new Date(batch.date_planted));
+    const harvestDate = new Date(planted);
+    harvestDate.setUTCDate(harvestDate.getUTCDate() + Number(batch.expected_harvest_days));
+
+    await notificationModel.createNotif({
+      user_id: null,
+      batch_id: batch.batch_id,
+      type: "Info",
+      status: "Low",
+      message: `🌱 New Batch Added\n\nPlant: ${batch.plant_name}\nBatch: ${batch.batch_number}\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
+    });
+
+    const devices = await deviceTokenModel.getAllDeviceTokens();
+    if (devices.length > 0) {
+      await Promise.all(
+        devices.map(device =>
+          sendPushNotification(
+            device.push_token,
+            "Sprout Sync Notification",
+            `🌱 ${batch.plant_name}[${batch.batch_number}] batch has been added!`
+          )
+        )
+      );
+    }
+
+    console.log("✅ Batch created notification sent");
+  } catch (error) {
+    console.error("❌ notifyBatchCreated error:", error);
   }
 };
 

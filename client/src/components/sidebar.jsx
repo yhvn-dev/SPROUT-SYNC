@@ -141,8 +141,8 @@
             <div className="flex justify-start w-full">
               <button
                 onClick={handleRegisterModal}
-                className={`cursor-pointer text-sm
-                  flex items-center
+                className={`cursor-pointer text-sm hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)]
+                  flex items-center w-full
                   transition-all duration-300 rounded-[10px] my-2
                   ${isMobile ? 'w-12 h-12 justify-center' : 'gap-2 py-1 px-2'}
                 `}>
