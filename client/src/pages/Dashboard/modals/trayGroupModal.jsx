@@ -7,11 +7,12 @@ import * as trayGroupModels from "../../../data/trayGroupServices";
 
 export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup, setSuccessMsg, loadTrayGroups, reloadTrayGroups,}) {
 
+  
   if (!isOpen) return null;
   const plantOptions = [
-    { name: "Bokchoy", min: 50, max: 70 },       
-    { name: "Pechay", min: 65, max: 90 },  
-    { name: "Romaine", min: 50, max: 74 },      
+    { name: "Bokchoy", min: 50, max: 75 },       
+    { name: "Pechay", min: 50, max: 75 },  
+    { name: "Romaine", min: 50, max: 75 },      
     { name: "Mustasa", min: 60, max: 90 },     
     { name: "Lettuce", min: 50, max: 70 },      
     { name: "Spinach", min: 85, max: 95 },       
