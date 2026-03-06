@@ -2,9 +2,11 @@ import { Clock, AlertCircle, CheckCircle, AlertTriangle,Trash2 ,Bell} from "luci
 import { usePlantData } from "../hooks/plantContext";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-
+import {} from "../hooks/userContext"
 
 import * as notifService from "./../data/notifsServices"
+ const { user, skippedRegister} = useContext(UserContext);
+
 
 
     
@@ -120,13 +122,21 @@ export function Notif_Modal({ isOpen, onClose}) {
             <button onClick={onClose} className="text-gray-500 cursor-pointer hover:bg-[var(--main-white--)] rounded-lg p-2">
               ✕
             </button>
-            
-            <button onClick={removeAllNotifs} className="flex items-center gap-2 m-4 text-gray-500 cursor-pointer hover:bg-[var(--main-white--)] rounded-lg p-2">
-              <Trash2 
-                className="trash_logo w-4 h-4 stroke-var(--metal-dark4)" 
-              />
-              <span className="text-sm">Delete All</span>
-            </button> 
+
+
+                {user?.role === "admin" ? (
+                    <>
+                      <button onClick={removeAllNotifs} className="flex items-center gap-2 m-4 text-gray-500 cursor-pointer hover:bg-[var(--main-white--)] rounded-lg p-2">
+                        <Trash2 
+                          className="trash_logo w-4 h-4 stroke-var(--metal-dark4)" 
+                        />
+                        <span className="text-sm">Delete All</span>
+                      </button> 
+                    </>
+                  ) : null}
+                  
+
+                  
           </div>
         </div>
      
@@ -168,10 +178,19 @@ export function Notif_Modal({ isOpen, onClose}) {
                     <Clock size={12} className="clock_icon" /> {new Date(notif.created_at).toLocaleString()}
                   </div>
                 </div>
-                
-                <button type="submit" onClick={() => handleDelete(notif)}className="rounded-full p-2 h-5 w-5 cursor-pointer mx-2">
-                  <Trash2 className="delete_notif text-[var(--acc-darkc)]" size={16}/>
-                  </button>
+
+                {user?.role === "admin" ? (
+                    <>
+                      <button
+                        type="submit"
+                        onClick={() => handleDelete(notif)}
+                        className="rounded-full p-2 h-5 w-5 cursor-pointer mx-2"
+                      >
+                        <Trash2 className="delete_notif text-[var(--acc-darkc)]" size={16} />
+                      </button>
+                    </>
+                  ) : null}
+           
               </div>
 
 
