@@ -14,6 +14,10 @@ import { FloatSuccessMsg } from "../../components/sucessMsgs";
 import InfosModal from "../../components/infosModal";
 import AnalyticsModal from "./modal/analyticsModal";
 import RegisterDeviceModal from "../Dashboard/modals/registerDeviceModal";
+import { MessageContext } from "../../hooks/messageHooks.jsx";
+import { DeleteNotifModal } from "../../components/deleteNotifModal.jsx";
+
+
 
 export default function Analytics() {
   const { user, skippedRegister} = useContext(UserContext);
@@ -30,6 +34,8 @@ export default function Analytics() {
     loadAverageReadingsBySensor,
   } = usePlantData();
 
+  const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,deleteMode,
+          messageContext,setMessageContext} = useContext(MessageContext);
 
   const [isNotifOpen, setNotifOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
@@ -44,8 +50,9 @@ export default function Analytics() {
   const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
   
   const clearMsg = useCallback(() => {
-  setErrMsg("");
-  setScsMsg("");
+    setErrMsg("");
+    setScsMsg("");
+    setMessageContext("")
 }, []);
   
   useEffect(() => {
@@ -217,7 +224,6 @@ export default function Analytics() {
         />
       }
 
-
       {isModalOpen && 
         <AnalyticsModal
           setErrMsg={setErrMsg}
@@ -242,6 +248,21 @@ export default function Analytics() {
       </> 
       )}
 
+  
+      {messageContext && (
+        <FloatSuccessMsg  txt={messageContext} clearMsg={clearMsg} />
+      )}
+
+
+
+    {openDeleteNotifModal && (
+        <DeleteNotifModal 
+          isOpen={openDeleteNotifModal} 
+          selectedNotif={selectedNotif}
+          deleteMode={deleteMode} 
+          onClose={() => setOpenDeleteNotifModal(false)} 
+        />
+      )}
     
     {isRegisterModalVisible && (
       <RegisterDeviceModal

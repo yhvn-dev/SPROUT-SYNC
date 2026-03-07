@@ -1,6 +1,10 @@
-  import { useEffect, useState, useContext } from 'react';
+  import { useEffect, useState, useContext,useCallback} from 'react';
   import * as userService from "../../data/userService";
   import { UserContext } from '../../hooks/userContext';
+  import { MessageContext } from "../../hooks/messageHooks.jsx";
+
+
+
 
   import { Sidebar } from "../../components/sidebar";
   import { Db_Header } from "../../components/db_header";
@@ -9,6 +13,11 @@
   import { Notif_Modal } from '../../components/notifModal';
   import { LogoutModal } from '../../components/logoutModal';
   import  InfosModal  from "../../components/infosModal"
+  import { DeleteNotifModal } from "../../components/deleteNotifModal.jsx";
+  import { FloatSuccessMsg } from "../../components/sucessMsgs.jsx";
+
+
+
   import RegisterDeviceModal from '../Dashboard/modals/registerDeviceModal';
 
   import { Menu,CircleQuestionMark} from "lucide-react";
@@ -28,6 +37,12 @@
     const [infoModalPurpose,setInfoModalPurpose] = useState("");
     const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
         
+
+    const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,deleteMode,
+            messageContext,setMessageContext} = useContext(MessageContext);
+    
+
+
     const token = localStorage.getItem("accessToken");
     
     useEffect(() => {
@@ -39,7 +54,15 @@
         }
       }
     }, [user, skippedRegister]);
-    
+
+
+
+  
+    const clearMsg = useCallback(() => {
+      setMessageContext("")
+      }, []);
+      
+
     const fetchChartData = async () => {
       try {
         const [userCount, userCountByRole] = await Promise.all([
@@ -206,6 +229,16 @@
             }
           </main>
 
+  
+          {openDeleteNotifModal && (
+            <DeleteNotifModal 
+              isOpen={openDeleteNotifModal} 
+              selectedNotif={selectedNotif}
+              deleteMode={deleteMode} 
+              onClose={() => setOpenDeleteNotifModal(false)} 
+            />
+          )} 
+
           {/* ================= NOTIFICATION MODAL ================= */}
           {isNotifOpen && (
             <Notif_Modal
@@ -233,6 +266,12 @@
             onClose={() => setRegisterModalVisible(false)} // close modal locally
           />
         )}
+
+          {messageContext && (
+          <FloatSuccessMsg  txt={messageContext} clearMsg={clearMsg} />
+        )}
+
+
         </section>
     );
   }

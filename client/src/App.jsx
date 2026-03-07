@@ -1,6 +1,7 @@
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import {lazy, Suspense, useEffect} from "react";
 
+
 const Login = lazy(() => import("./pages/Login/login.jsx"));
 const Home = lazy(() => import("./pages/Home/home.jsx"));
 const Dashboard = lazy(() => import("./pages/Dashboard/dashboard.jsx"));
@@ -12,6 +13,7 @@ const Plants = lazy(() => import("./pages/Plants/plants.jsx"));
 
 import { Dashboard_Skeleton } from "./components/skeletons.jsx";
 import { ProtectedRoute } from "./routes/ProtectedRoutes/page.Routes.jsx";
+import { MessagesProvider } from "./hooks/messageHooks.jsx";
 import { PlantDataProvider } from "./hooks/plantContext.jsx";
 import { ESP32Provider } from "./hooks/esp32Hooks.jsx";
 import { ValveProvider } from "./hooks/valveContext.jsx";
@@ -27,9 +29,9 @@ function App() {
     init();
   }, []);
 
+  
   return (
     <BrowserRouter>
-      {/* 🔥 NOTIFICATION CONTAINER - FIXED LOCATION */}
       <div 
         id="notification-container"
         className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] hidden space-y-2 max-w-sm w-80 pointer-events-none"
@@ -48,74 +50,87 @@ function App() {
 
           {/* Protected routes */}
           <Route path='/dashboard' element={
-            <PlantDataProvider>
-              <ValveProvider>
-                <ESP32Provider>
-                  <ProtectedRoute allowedRoles={['admin', 'viewer']}>
-                    <Dashboard />
-                  </ProtectedRoute>
-                </ESP32Provider>
-              </ValveProvider>
-            </PlantDataProvider>
+            <MessagesProvider>
+              <PlantDataProvider>
+                <ValveProvider>
+                  <ESP32Provider>
+                    <ProtectedRoute allowedRoles={['admin', 'viewer']}>
+                      <Dashboard />
+                    </ProtectedRoute>
+                  </ESP32Provider>
+                </ValveProvider>
+              </PlantDataProvider>
+            </MessagesProvider>
           }/>
 
           <Route path='/users' element={
-            <PlantDataProvider>
-              <ValveProvider>
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <Users />
-                </ProtectedRoute>
-              </ValveProvider>
-            </PlantDataProvider>
+            <MessagesProvider>
+              <PlantDataProvider>
+                <ValveProvider>
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <Users />
+                  </ProtectedRoute>
+                </ValveProvider>
+              </PlantDataProvider>
+            </MessagesProvider>
           }/>
 
           <Route path='/analytics' element={
-            <PlantDataProvider>
-              <ValveProvider>
-                <ProtectedRoute allowedRoles={['admin', 'viewer']}>
-                  <Analytics />
-                </ProtectedRoute>
-              </ValveProvider>
-            </PlantDataProvider>
+            <MessagesProvider>
+              <PlantDataProvider>
+                <ValveProvider>
+                  <ProtectedRoute allowedRoles={['admin', 'viewer']}>
+                    <Analytics />
+                  </ProtectedRoute>
+                </ValveProvider>
+              </PlantDataProvider>
+            </MessagesProvider>
           }/>
 
           <Route path='/batch_history' element={
-            <PlantDataProvider>
-              <ValveProvider>
-                <ProtectedRoute allowedRoles={['admin']}>
-                  <Batch_History />
-                </ProtectedRoute>
-              </ValveProvider>
-            </PlantDataProvider>
+            <MessagesProvider>
+              <PlantDataProvider>
+                <ValveProvider>
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <Batch_History />
+                  </ProtectedRoute>
+                </ValveProvider>
+              </PlantDataProvider>
+            </MessagesProvider>
           }/>
 
           <Route path='/control_panel' element={
-            <PlantDataProvider>
-              <ValveProvider>
-                <ESP32Provider>
-                  <ProtectedRoute allowedRoles={['admin']}>
-                    <Control_Panel />
-                  </ProtectedRoute>
-                </ESP32Provider>
-              </ValveProvider>
-            </PlantDataProvider>
+             <MessagesProvider> 
+              <PlantDataProvider>
+                <ValveProvider>
+                  <ESP32Provider>
+                    <ProtectedRoute allowedRoles={['admin']}>
+                      <Control_Panel />
+                    </ProtectedRoute>
+                  </ESP32Provider>
+                </ValveProvider>
+              </PlantDataProvider>
+            </MessagesProvider>
           }/>
 
           <Route path='/plants' element={
-            <PlantDataProvider>
-              <ValveProvider>
-                <ESP32Provider>
-                  <ProtectedRoute allowedRoles={['admin', 'viewer']}>
-                    <Plants />
-                  </ProtectedRoute>
-                </ESP32Provider>
-              </ValveProvider>
-            </PlantDataProvider>
+            <MessagesProvider> 
+              <PlantDataProvider>
+                <ValveProvider>
+                  <ESP32Provider>
+                    <ProtectedRoute allowedRoles={['admin', 'viewer']}>
+                      <Plants />
+                    </ProtectedRoute>
+                  </ESP32Provider>
+                </ValveProvider>
+              </PlantDataProvider>
+            </MessagesProvider>
           }/>
         </Routes>
       </Suspense>
     </BrowserRouter>
   );
+  
 }
 
 export default App;

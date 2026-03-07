@@ -1,29 +1,43 @@
 // Dashboard.jsx
-import { useState, useContext,useEffect } from "react";
+import { useState, useContext,useEffect,useCallback} from "react";
 import { UserContext } from "../../hooks/userContext";
+import { MessageContext } from "../../hooks/messageHooks.jsx";
+
 import { Menu } from "lucide-react";
 
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
 import { Notif_Modal } from "../../components/notifModal.jsx";
 import { LogoutModal } from "../../components/logoutModal.jsx";
-import { usePlantData } from "../../hooks/plantContext.jsx";
+import { DeleteNotifModal } from "../../components/deleteNotifModal.jsx";
+import { FloatSuccessMsg } from "../../components/sucessMsgs.jsx";
 
+import { usePlantData } from "../../hooks/plantContext.jsx";
 import Nursery_Dashboard from "./nursery.jsx";
 import ManagePlants from "./manage_plants.jsx";
 import RegisterDeviceModal from "./modals/registerDeviceModal.jsx";
 
+
 export function Dashboard() {
   const { user, skippedRegister} = useContext(UserContext);
+  const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,
+         deleteMode,
+         messageContext,setMessageContext} = useContext(MessageContext);
 
-  if (!user) return <div>Loading...</div>; 
-
+    
   const [activeTab, setActiveTab] = useState("Overview");
   const [isNotifOpen, setNotifOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
   const { loadTrayGroups } = usePlantData();
+
+
+  const clearMsg = useCallback(() => {
+    setMessageContext("")
+    }, []);
+    
+
 
   useEffect(() => {
     if (user?.first_time_login && !skippedRegister) {
@@ -32,6 +46,9 @@ export function Dashboard() {
       setRegisterModalVisible(false);
     }
   }, [user?.first_time_login, skippedRegister]);
+
+  
+  if (!user) return <div>Loading...</div>;
 
 
   return (
@@ -110,6 +127,16 @@ export function Dashboard() {
         )}
       </main>
 
+  
+      {openDeleteNotifModal && (
+        <DeleteNotifModal 
+          isOpen={openDeleteNotifModal} 
+          selectedNotif={selectedNotif}
+          deleteMode={deleteMode} 
+          onClose={() => setOpenDeleteNotifModal(false)} 
+        />
+      )}
+    
       {/* MODALS */}
       {isNotifOpen && (
         <Notif_Modal isOpen={isNotifOpen} onClose={() => setNotifOpen(false)} />
@@ -118,13 +145,18 @@ export function Dashboard() {
       {isRegisterModalVisible && (
         <RegisterDeviceModal
           userData={user}
-          onClose={() => setRegisterModalVisible(false)} // close modal locally
+          onClose={() => setRegisterModalVisible(false)}
         />
        )}
+
       {logoutOpen && (
         <LogoutModal isOpen={logoutOpen} onClose={() => setLogoutOpen(false)} />
       )}
-      
+
+      {messageContext && (
+        <FloatSuccessMsg  txt={messageContext} clearMsg={clearMsg} />
+      )}
+
       
     </section>
   );
