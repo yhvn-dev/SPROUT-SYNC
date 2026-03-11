@@ -39,14 +39,13 @@ export function DeleteNotifModal({ isOpen,deleteMode,selectedNotif, onClose }) {
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center p-4"
-      style={{ backgroundColor: "rgba(0,0,0,0.35)" }}
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-transparent backdrop-blur-3xl"
       onClick={onClose}>
       <div
-        className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6"
+        className="conb bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-center w-12 h-12 rounded-full bg-red-50 mx-auto mb-4">
+        <div className="delete_notif_icon flex items-center justify-center w-12 h-12 rounded-full bg-red-50 mx-auto mb-4">
           <Trash2 className="w-6 h-6 text-red-500" />
         </div>
         <h3 className="text-center text-gray-800 font-semibold text-lg mb-1">
@@ -67,7 +66,7 @@ export function DeleteNotifModal({ isOpen,deleteMode,selectedNotif, onClose }) {
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">
+            className="delete_notif_cancel_btn flex-1 px-4 py-2.5 rounded-xl border border-gray-200 text-gray-600 text-sm font-medium hover:bg-gray-50 transition-colors">
             Cancel
           </button>
           <button

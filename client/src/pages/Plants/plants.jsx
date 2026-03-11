@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo, useContext } from "react";
+import { useEffect, useState, useMemo, useContext,useCallback} from "react";
 import { Menu } from "lucide-react";
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
@@ -7,10 +7,17 @@ import { usePlantData } from "../../hooks/plantContext.jsx";
 import { PlantModal } from "./modals/plantModal.jsx";
 import { UserContext } from "../../hooks/userContext.jsx";
 import { LogoutModal } from "../../components/logoutModal.jsx";
-import {  CircleQuestionMark } from "lucide-react";
+import { CircleQuestionMark } from "lucide-react";
+import { Notif_Modal } from "../../components/notifModal.jsx"
+import { FloatSuccessMsg } from "../../components/sucessMsgs.jsx";
+import { DeleteNotifModal } from '../../components/deleteNotifModal';
+import { MessageContext } from "../../hooks/messageHooks.jsx";
+
+
 import RegisterDeviceModal from "../Dashboard/modals/registerDeviceModal";
 import InfosModal from "../../components/infosModal.jsx";
-import {Notif_Modal} from "../../components/notifModal.jsx"
+
+
 
 
 /* ─── MOISTURE BAR ───────────────────────────────────────── */
@@ -19,8 +26,7 @@ function MoistureBar({ min, max, fillColor, trackColor, small = false }) {
     <div className={`w-full ${small ? "space-y-0.5" : "space-y-1"}`}>
       <div
         className={`relative w-full rounded-full overflow-hidden ${small ? "h-1.5" : "h-2"}`}
-        style={{ backgroundColor: trackColor ?? "#e5e7eb" }}
-      >
+        style={{ backgroundColor: trackColor ?? "#e5e7eb" }}>
         <div
           className="absolute top-0 h-full rounded-full"
           style={{
@@ -169,6 +175,11 @@ function CategoryRow({ group, childPlants, onAdd, onUpdate, onDelete }) {
 export default function Plants() {
   const { user } = useContext(UserContext);
   const { plants, plantGroups, loadPlantGroups, loadPlants } = usePlantData();
+    const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,
+         deleteMode,
+         messageContext,setMessageContext} = useContext(MessageContext);
+
+         
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
@@ -176,13 +187,20 @@ export default function Plants() {
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
   const [infoModalPurpose, setInfoModalPurpose] = useState("");
   const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
-
   const [modal, setModal] = useState({
     isOpen: false,
     mode: "insert",
     plantGroup: null,
     plant: null,
   });
+
+
+  
+  const clearMsg = useCallback(() => {
+      setMessageContext("")
+      }, []);
+    
+
 
   useEffect(() => {
     loadPlantGroups();
@@ -340,9 +358,15 @@ export default function Plants() {
         reloadPlants={loadPlants}
       />
 
-
-
-
+      {openDeleteNotifModal && (
+        <DeleteNotifModal 
+          isOpen={openDeleteNotifModal} 
+          selectedNotif={selectedNotif}
+          deleteMode={deleteMode} 
+          onClose={() => setOpenDeleteNotifModal(false)} 
+        />
+      )}
+  
       {isInfoModalOpen && (
         <InfosModal
           isInfosModalOpen={isInfoModalOpen}
@@ -356,6 +380,10 @@ export default function Plants() {
           isOpen={notifOpen}
           onClose={() => setNotifOpen(false)}
         />
+      )}
+      
+      {messageContext && (
+        <FloatSuccessMsg  txt={messageContext} clearMsg={clearMsg} />
       )}
 
 

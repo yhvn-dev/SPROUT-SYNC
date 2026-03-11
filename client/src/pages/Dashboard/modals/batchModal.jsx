@@ -39,6 +39,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
     const plantName = selectedTray.plant;
 
     if (batchModalMode === "update") {
+
       setFormData({
         tray_id: selectedBatch.tray_id,
         plant_name: selectedBatch.plant_name,
@@ -103,7 +104,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
           replanted_seedlings: formData.replanted_seedlings !== "" ? parseInt(formData.replanted_seedlings) : null,
           fully_grown_seedlings: formData.fully_grown_seedlings !== "" ? parseInt(formData.fully_grown_seedlings) : null,
           expected_harvest_days: formData.expected_harvest_days !== "" ? parseInt(formData.expected_harvest_days) : null,
-          growth_stage: formData.growth_stage || "Sprout" // default fallback
+          growth_stage: formData.growth_stage || "Sprout" 
         };
 
         console.log("Submitting payload:", payload);
@@ -136,11 +137,12 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
       }
     };
 
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+
+  
 
 
   
@@ -156,7 +158,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
         onClick={(e) => e.stopPropagation()}
         className="conb bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[90vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
         
-
 
         {/* HEADER */}
         <header className="pb_modal_header px-6 py-4 border-b border-gray-200 bg-[#E8F3ED]">
@@ -183,7 +184,9 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                 <p className="text-xs mt-0.5 text-[#5A8F73]">
                   {batchModalMode === "delete" 
                     ? `Are you sure you want to delete ${selectedBatch?.plant_name} batch?`
-                    : `Manage plant batch for ${selectedTray?.plant}`}
+                    : `Manage plant batch for 
+                    [${selectedBatch.batch_number}]
+                    ${selectedBatch?.plant_name}`}
                 </p>
               </div>
             </div>
@@ -224,8 +227,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
               </div>
             </>
           ) : (
-
-            
+          
             <div className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -234,8 +236,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                   type="text"
                   name="tray_id"
                   value={formData.tray_id}  
-                  className="py-2 rounded-lg hidden"
-                />
+                  className="py-2 rounded-lg hidden"/>
 
                 {/* PLANT NAME */}
                 <div className="md:col-span-2">
@@ -243,6 +244,8 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     <Sprout className="w-3 h-3 inline mr-1" /> 
                     Plant Name *
                   </label>
+
+         
                   <div className='flex gap-4'>
                     <input
                       disabled
@@ -257,7 +260,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                         Batch Number
                       </label>
                       <input
-                        disabled
+                 
                         type="number"
                         name="batch_number"
                         value={formData.batch_number}
@@ -303,7 +306,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     min="0"
                   />
                 </div>
-
 
 
                 {/* REPLANTED SEEDLINGS */}
@@ -429,14 +431,16 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                   <button
                     onClick={handleSubmit}
                     type='submit'
-                    className="cursor-pointer px-4 py-2 text-sm rounded-lg font-medium transition-colors text-white bg-[var(--purpluish)] hover:bg-[var(--white-blple)] shadow-lg"
-                  >
+                    className={`cursor-pointer px-4 py-2 text-sm rounded-lg font-medium transition-colors text-white 
+                    ${batchModalMode === "insert" ? "bg-[var(--sancgb)] hover:bg-[var(--sancgd)]" : "bg-[var(--purpluish)] hover:bg-[var(--white-blple)] "} shadow-lg`}>
                     {batchModalMode === "insert" ? "Create Batch" : "Update Batch"}
                   </button>
+                  
                 </div>
               </div>
 
             </div>
+            
           )}
         </main>
       </motion.div>

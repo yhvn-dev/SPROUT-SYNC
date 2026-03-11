@@ -100,7 +100,7 @@
     --fns-default-up4-2:4.23rem;
     --fns-default-up-6-8:6.84rem;
     
-        /* 1.618  */
+/* 1.618  */
     --dis-0-6:0.618rem;       
     --dis-1:1rem;
     --dis-1:0.8rem;
@@ -136,6 +136,17 @@
 ::-webkit-scrollbar-track{
     @apply bg-transparent;
 }
+
+.tray_groups_main_div::-webkit-scrollbar{
+   @apply bg-transparent;
+}
+.tray_groups_main_div::-webkit-scrollthumb{
+   @apply bg-white;
+}
+
+
+
+
 img{object-fit: cover;}
 button{
     transition: 0.4s;
@@ -167,6 +178,7 @@ button{
 
 .center{
     @apply flex items-center justify-center;
+
 }
 .center-tr{
       @apply flex items-start justify-start;
@@ -381,14 +393,11 @@ select{
     @apply  bg-[var(--color-danger-c)] rounded-2xl px-[0.3rem] py-[0.3rem] text-xs;
 }
 
-
-
 .sprout-sync-text{
     font-family: "Moonet";
     @apply text-[var(--main-white)];
 }
 /* NOTIFICATIONS */
-
 
 
 

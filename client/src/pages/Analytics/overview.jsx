@@ -68,12 +68,14 @@ const MoistureProgressBar = ({ average, isDark }) => {
 export const Overview = ({
   setDeleteModalMode,
   batchTotal,
+  readings,
   averageReadingsBySensor,
   setModalOpen,
 }) => {
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
   const [infoModalPurpose, setInfoModalPurpose] = useState("");
   const { user } = useContext(UserContext);
+
 
   // =====================
   // DARK MODE DETECTION
@@ -85,11 +87,12 @@ export const Overview = ({
 
   const avgMoisture =
     averageReadingsBySensor?.moisture?.average ?? 0;
+  const waterLevel = readings
+    .filter(r => r.sensor_id === 8)
+    .at(-1)?.value;
 
-  const waterLevel =
-    averageReadingsBySensor?.ultra_sonic?.average ?? 0;
+  const formattedWaterLevel = waterLevel ? Number(waterLevel).toFixed(1) : null;
 
-  
   // =====================
   // HANDLERS
   // =====================
@@ -107,13 +110,13 @@ export const Overview = ({
   };
 
 
+
+
+
   
   return (
-    <div className="h-full grid md:grid-cols-12 md:grid-rows- gap-4">
-      {/* =====================
-          STAT CARDS
-      ====================== */}
-      <div className="w-full col-start-1 row-end-8 col-span-7 md:col-span-full grid grid-cols-4 gap-4 md:grid-cols-4 row-start-1">
+    <div className="h-full grid md:grid-cols-12 md:grid-rows- gap-4"> 
+     <div className="w-full col-start-1 row-end-8 col-span-7 md:col-span-full grid grid-cols-4 gap-4 md:grid-cols-4 row-start-1">
         <StatCard
           label="Active Total Seedlings"
           value={batchTotal?.total_seedlings}
@@ -201,7 +204,7 @@ export const Overview = ({
                 fill="none"
                 stroke="#3d56a4"
                 strokeWidth="8"
-                strokeDasharray={`${(Number(waterLevel) / 100) * 282.7} 282.7`}
+                strokeDasharray={`${(Number(formattedWaterLevel) / 100) * 282.7} 282.7`}
                 strokeLinecap="round"
               />
             </svg>
@@ -209,7 +212,7 @@ export const Overview = ({
             <div className="absolute inset-0 flex flex-col items-center justify-center">
               <Droplets className="w-10 h-10 mb-2 text-[#3d56a4]" />
               <span className="text-4xl font-bold text-gray-800 dark:text-gray-100">
-                {waterLevel}
+                {formattedWaterLevel}
               </span>
               <span className="text-sm text-gray-600 dark:text-gray-400">%</span>
             </div>
@@ -220,6 +223,8 @@ export const Overview = ({
           </p>
         </div>
       </div>
+
+
 
       {/* =====================
           INFO MODAL

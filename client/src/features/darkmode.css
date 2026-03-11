@@ -972,6 +972,16 @@ body.dark .hero{
         body.dark .notifIconBg{
             @apply bg-[var(--metal-dark4)];
         }
+        body.dark .delete_notif_icon {
+            @apply bg-[var(--metal-dark4)];
+        }
+         body.dark .delete_notif_cancel_btn {
+            @apply text-[var(--main-white)];
+        }
+         body.dark .delete_notif_cancel_btn:hover {
+            @apply text-[var(--metal-dark5)];
+        }
+
 
         
 
@@ -1011,7 +1021,6 @@ body.dark .browser_window_main_container{
           @apply bg-[var(--metal-dark3)];
         box-shadow:5px 5px 5px 1px var(--shad-dark);        
     }
-
     body.dark .mockup_db_pb_header:hover{
        @apply bg-gradient-to-tr 
         from-[var(--metal-dark5)] 
@@ -1031,9 +1040,10 @@ body.dark .browser_window_main_container{
         }
 
     body.dark .plant_batch_div {
-          @apply bg-[var(--metal-dark1)];
-          box-shadow:5px 5px 5px 1px var(--shad-dark); 
+        @apply bg-[var(--metal-dark1)];
+        box-shadow:5px 5px 5px 1px var(--shad-dark); 
     }   
+ 
 
        body.dark .plant_batch_div {
           @apply bg-[var(--metal-dark1)];

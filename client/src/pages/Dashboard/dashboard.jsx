@@ -24,7 +24,6 @@ export function Dashboard() {
          deleteMode,
          messageContext,setMessageContext} = useContext(MessageContext);
 
-    
   const [activeTab, setActiveTab] = useState("Overview");
   const [isNotifOpen, setNotifOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
@@ -47,13 +46,11 @@ export function Dashboard() {
     }
   }, [user?.first_time_login, skippedRegister]);
 
-  
   if (!user) return <div>Loading...</div>;
 
 
   return (
     <section className="con_main w-full min-h-screen bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] flex flex-col md:grid md:grid-cols-[15fr_85fr] md:grid-rows-[auto_auto_1fr] gap-4 overflow-hidden relative">
-
       {/* MOBILE MENU */}
       <button
         onClick={() => setSidebarOpen(true)}
@@ -119,7 +116,7 @@ export function Dashboard() {
 
 
       {/* MAIN */}
-      <main className="flex-1 md:col-start-2 overflow-y-auto px-4 pb-4">
+      <main className="flex-1 md:col-start-2 overflow-y-auto  pb-4">
         {activeTab === "Overview" ? (
           <Nursery_Dashboard />
         ) : (

@@ -90,14 +90,14 @@ function NurseryDashboard() {
   };
 
   return (
-    <main className="flex flex-col items-center justify-start h-full w-full col-start-2 col-end-4 row-start-3 row-end-3 rounded-[10px]">
+    <main className=" flex flex-col items-center justify-start h-full w-full col-start-2 col-end-4 row-start-3 row-end-3 rounded-[10px]">
       <div className="w-full overflow-hidden">
         <div className="w-full max-w-full sm:max-w-7xl mx-auto space-y-4">
 
 
 
       <div className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm w-full max-w-full">
-  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-2 w-full">
+       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-2 w-full">
     
     {/* Title & Subtitle */}
     <div className="flex-1 min-w-0">

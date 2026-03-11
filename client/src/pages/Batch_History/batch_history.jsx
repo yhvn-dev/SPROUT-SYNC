@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from 'react';
+import { useEffect, useState, useContext,useCallback} from 'react';
 import { Menu, Trash2, Calendar, Sprout, TrendingUp, AlertCircle,FileText,CircleQuestionMark  } from "lucide-react";
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
@@ -9,9 +9,11 @@ import { UserContext } from '../../hooks/userContext';
 import { usePlantData } from '../../hooks/plantContext';
 import InfosModal from '../../components/infosModal';
 import {FloatSuccessMsg} from "../../components/sucessMsgs"
+import {getStageColor,getHarvestStatusColor} from "../../utils/colors"
+
 import RegisterDeviceModal from '../Dashboard/modals/registerDeviceModal';
-
-
+import { DeleteNotifModal } from '../../components/deleteNotifModal';
+import { MessageContext } from "../../hooks/messageHooks.jsx";
 
 // Stats Card Component
 const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
@@ -31,10 +33,13 @@ const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
 
 
 
-
-
 function Batch_History() {
   const { user, skippedRegister} = useContext(UserContext);
+  const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,
+          deleteMode,
+          messageContext,setMessageContext} = useContext(MessageContext);
+
+
   const {batchHistory,loadBatchHistory} = usePlantData()
   const [filteredData, setFilteredData] = useState(batchHistory);
   const [searchValue, setSearchValue] = useState("");
@@ -49,15 +54,25 @@ function Batch_History() {
   const [successMsg,setSuccessMsg] = useState(null);
   const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
 
-  
-  const clearMsg = () => setSuccessMsg("");
-
-  
+  const clearMsg = useCallback(() => {
+    setSuccessMsg(""),
+    setMessageContext("")
+  }, []);
+    
   useEffect(() =>{
     loadBatchHistory()
   },[])
   
-  // Calculate statistics
+
+  
+  useEffect(() => {
+    if (user?.first_time_login && !skippedRegister) {
+      setRegisterModalVisible(true);
+    } else {
+      setRegisterModalVisible(false);
+    }
+  }, [user?.first_time_login, skippedRegister]);
+  
   const stats = {
     totalRecords: batchHistory.length,
     totalBatches: new Set(batchHistory.map(h => h.batch_id)).size,
@@ -69,7 +84,10 @@ function Batch_History() {
       : 0
   };
 
-  // Filter data based on search and stage
+  
+
+
+  
   useEffect(() => {
     let filtered = batchHistory;
     if (searchValue) {
@@ -96,44 +114,15 @@ function Batch_History() {
   };
 
  
+
+
   const growthStages = ["All", "Sprout", "Seedling", "Vegetative", "Budding","Flowering","Fruiting","Ready To Harvest"];
-
-  const getStageColor = (stage, isDark = false) => {
-    // Light theme colors
-    const lightColors = {
-      'Sprout': '#b0e892',        // sancgc
-      'Seedling': '#92e6a7',      // ptl-greenb
-      'Vegetative': '#6ede8a',    // ptl-greenc
-      'Budding': '#2dc653',       // ptl-greend
-      'Flowering': '#25a244',     // ptl-greene
-      'Fruiting': '#208b3a',      // ptl-greenf
-      'Ready To Harvest': '#1a7431', // ptl-greeng
-      'All': '#7BA591'             // sage base
-    };
-
-    // Dark theme colors
-    const darkColors = {
-      'Sprout': '#155d27',        // ptl-greenh
-      'Seedling': '#10451d',      // ptl-greenj
-      'Vegetative': '#5A8F73',    // sage-dark
-      'Budding': '#027c68',       // sancgb
-      'Flowering': '#003333',     // sancga
-      'Fruiting': '#009983',      // sancgd
-      'Ready To Harvest': '#1a6b38', // adjusted darker green
-      'All': '#5A8F73'            // fallback sage-dark
-      };
-
-    return isDark ? darkColors[stage] || '#5A8F73' : lightColors[stage] || '#5A8F73';
-  };
-
-
   const handleOpenInfosModalBatchHistory = () =>{
       setInfoModalPurpose("batch_history")
       setInfoModalOpen(true)
   }
   
-
-
+ 
   return (
     <section className="con_main grid grid-cols-1 sm:grid-cols-[12fr_30fr_58fr] 
     grid-rows-[8vh_10vh_auto] 
@@ -253,12 +242,13 @@ function Batch_History() {
 
 
 
+
+
+
           {/* TABLE SECTION */}
           <div className="batch_history_table  rounde d-2xl shadow-lg 
                     h-[55vh] md:h-[57vh] 
                     overflow-y-auto">
-
-
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto overflow-y-auto">
               <table className="w-full f overflow-y-auto">
@@ -269,16 +259,16 @@ function Batch_History() {
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Total</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Grown</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Replanted</th>
-
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Dead</th>
                     <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Stage</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Harvest Stage</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Harvest Day/s</th>
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
 
 
-                
+                  
                 <tbody className="divide-y divide-gray-200">
                   {filteredData.map((record, index) => (
                     <tr
@@ -291,7 +281,7 @@ function Batch_History() {
                       <td className="px-4 py-3 text-sm text-center font-semibold">{record.total_seedlings}</td>
                     
 
-                     <td className="px-4 py-3 text-sm text-center">
+                      <td className="px-4 py-3 text-sm text-center">
                         <span className="fully_grown_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                           {record.fully_grown_seedlings}
                         </span>
@@ -308,7 +298,8 @@ function Batch_History() {
                          <span className="dead_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
                           {record.dead_seedlings}
                         </span> }                    
-                      </td>                                            
+                      </td>          
+                                                        
                       <td className="px-4 py-3 text-sm">
                         <span
                           className="bh_growth_stage inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white"
@@ -316,7 +307,13 @@ function Batch_History() {
                           {record.growth_stage}
                         </span>
                       </td>
+
                       <td className="px-4 py-3 text-sm text-center font-medium text-[#027c68]">
+                        <span className='bh_growth_stage inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white' style={{ backgroundColor: getHarvestStatusColor(record.harvest_status) }}>                        
+                          {record.harvest_status}    
+                        </span>
+                      </td>
+                        <td className="px-4 py-3 text-sm text-center font-medium text-[#027c68]">
                         {record.expected_harvest_days}
                       </td>
                     
@@ -324,11 +321,13 @@ function Batch_History() {
                         <button
                           onClick={() => handleDelete(record)}
                           className="inline-flex items-center p-2 hover:bg-red-100 rounded-full transition-colors group"
-                          title="Delete record"
-                        >
+                          title="Delete record">
                           <Trash2 size={16} className="text-gray-400 group-hover:text-red-600" />
                         </button>
                       </td>
+
+
+                      
                     </tr>
                   ))}
                 </tbody>
@@ -354,19 +353,24 @@ function Batch_History() {
                     </div>
                     <button
                       onClick={() => handleDelete(record)}
-                      className="p-2 hover:bg-red-100 rounded-full transition-colors"
-                    >
+                      className="p-2 hover:bg-red-100 rounded-full transition-colors">
                       <Trash2 size={16} className="text-red-600" />
                     </button>
                   </div>
 
-                  <div className="flex items-center gap-2 mb-2">
+
+                  <div className="flex items-center justify-start w-auto gap-2 mb-2">
                     <span
-                      className="bh_stage px-2 py-1 
-                      rounded-full text-xs font-semibold text-black"
-                      style={{ backgroundColor: getStageColor(record.growth_stage) }}
-                    >
-                    
+                      className="text-white bh_stage px-2 py-[1px]
+                      rounded-full text-xs font-semibold "
+                      style={{ backgroundColor: getStageColor(record.growth_stage) }}>    
+                      {record.growth_stage}               
+                    </span>
+                    <span
+                      className="text-white bh_stage px-2 py-[1px]
+                      rounded-full text-xs font-semibold "
+                      style={{ backgroundColor: getHarvestStatusColor(record.harvest_status) }}> 
+                      {record.harvest_status}                  
                     </span>
                     <span className="text-xs text-gray-600">{record.expected_harvest_days} days to harvest</span>
                   </div>
@@ -445,6 +449,29 @@ function Batch_History() {
       {successMsg && 
         <FloatSuccessMsg txt={successMsg} clearMsg={clearMsg}/>
       }
+
+
+      {openDeleteNotifModal && (
+        <DeleteNotifModal 
+          isOpen={openDeleteNotifModal} 
+          selectedNotif={selectedNotif}
+          deleteMode={deleteMode} 
+          onClose={() => setOpenDeleteNotifModal(false)} 
+        />
+      )}
+    
+
+
+      {isNotifOpen && (
+        <Notif_Modal isOpen={isNotifOpen} onClose={() => setNotifOpen(false)} />
+      )}
+
+      {messageContext && (
+        <FloatSuccessMsg  txt={messageContext} clearMsg={clearMsg} />
+      )}
+
+      
+
               
     </section>
   );

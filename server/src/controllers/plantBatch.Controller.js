@@ -99,9 +99,8 @@ export const createPlantBatch = async (req, res) => {
     if (!existingTray) return res.status(404).json({ message: "Selected Tray not found" });
     const batch = await plantBatchModels.createPlantBatch(batchData)  
     res.status(201).json(batch);
-    await notifyBatchCreated(batch);
-   
-    console.log("PLANT BATCH CREATED:", batch);  
+    await notifyBatchCreated(batch,"insert");
+    // console.log("PLANT BATCH CREATED:", batch);  
   } catch (err) {
     console.error("CONTROLLER: Error creating plant batch", err);
     res.status(500).json({ message: "Error creating plant batch", err });
@@ -126,13 +125,15 @@ export const updatePlantBatch = async (req, res) => {
 
     const updatedBatch = await plantBatchModels.updatePlantBatch(batchData, batch_id);
     res.status(200).json(updatedBatch);
-    console.log("PLANT BATCH UPDATED:", updatedBatch);
+    await notifyBatchCreated(updatedBatch,"update");
+    // console.log("PLANT BATCH UPDATED:", updatedBatch);
     
   } catch (err) {
     console.error("CONTROLLER: Error updating plant batch", err);
     res.status(500).json({ message: "Error updating plant batch", err });
   }
 };
+
 
 
 
@@ -150,7 +151,6 @@ export const updatePastHarvestStatus = async () => {
       const expected = new Date(batch.date_planted);
       expected.setDate(expected.getDate() + Number(batch.expected_harvest_days));
       expected.setHours(0, 0, 0, 0);
-
       if (batch.harvested_at) {
         newStatus = "Harvested";
       } else if (expected > today) {
@@ -165,10 +165,14 @@ export const updatePastHarvestStatus = async () => {
         console.log(`Batch ${batch.batch_id} harvest_status updated to '${newStatus}'`);
       }
     }
+
+    
   } catch (err) {
     console.error("Error updating harvest status:", err);
   }
 };
+
+
 
 
 
@@ -184,11 +188,10 @@ export const deletePlantBatch = async (req, res) => {
     await plantBatchHistoryModel.createHistoryRecord(existingBatch)
     const deletedBatch = await plantBatchModels.deletePlantBatch(batch_id);
     res.status(200).json({ message: "Plant batch deleted successfully", deletedBatch});
-    console.log("PLANT BATCH DELETED:", deletedBatch);
-
+    console.log("PLANT BATCH DELETED:", deletedBatch);                            
     
   } catch (err) {
-    console.error("CONTROLLER: Error deleting plant batch", err);
     res.status(500).json({ message: "Error deleting plant batch", err });
+    console.error("CONTROLLER: Error deleting plant batch", err);
   }
 };

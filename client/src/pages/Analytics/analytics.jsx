@@ -48,13 +48,13 @@ export default function Analytics() {
   const [errMsg,setErrMsg] = useState("");
   const [scsMsg,setScsMsg] = useState("");
   const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
-  
+    
   const clearMsg = useCallback(() => {
     setErrMsg("");
     setScsMsg("");
     setMessageContext("")
 }, []);
-  
+
   useEffect(() => {
     loadBatchTotal();
     loadBatchTotalHistory();

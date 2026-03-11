@@ -134,7 +134,7 @@ export function PlantModal({
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
 
             <div
-              className={`pointer-events-auto w-full bg-[var(--main-white--)] border border-gray-800 rounded-2xl overflow-hidden shadow-2xl ${
+              className={`pointer-events-auto w-full bg-[var(--main-white--)] rounded-2xl overflow-hidden shadow-2xl ${
                 isDelete ? "max-w-md" : "max-w-lg"
               }`}>
 

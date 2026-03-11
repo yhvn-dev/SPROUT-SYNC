@@ -1,8 +1,9 @@
-import { TrendingUp } from "lucide-react";
-
+import {TrendingUp } from "lucide-react";
+import {getStageColor,getHarvestStatusColor} from "../../utils/colors"
+import {formatDateOnly} from "../../utils/formatDates"
 
 function Plant_batches({ setMsg, batchesData, setSelectedBatches, setBatchModalOpen, setBatchModalMode }) {
-
+  
   const handleUpdateBatches = (batch) => {
     setSelectedBatches({ ...batch });
     setBatchModalMode("update");
@@ -21,37 +22,51 @@ function Plant_batches({ setMsg, batchesData, setSelectedBatches, setBatchModalO
     setBatchModalOpen(true);
   };
 
-  const formatDateOnly = (dateString) => {
-    if (!dateString) return "";
-    const date = new Date(dateString);
-    const yyyy = date.getFullYear();
-    const mm = String(date.getMonth() + 1).padStart(2, "0");
-    const dd = String(date.getDate()).padStart(2, "0");
-    return `${yyyy}-${mm}-${dd}`;
-  };
 
   return (
-    <div className="space-y-3">
+    <main className="space-y-3">
 
       {/* Header */}
-      <header className="flex py-4">
+      <header className="flex ">
         <div className="h-full w-1/2 flex items-center justify-start">
           <TrendingUp className="mr-4" size={24} />
           <p className="text-2xl">Batches</p>
         </div>
       </header>
 
-      <div className="pb_data_container h-[330px] overflow-y-auto pr-2 space-y-3">
+      <div className="pb_data_container h-[350px] overflow-y-auto pr-2 space-y-3">
+
+      <table className="w-full f overflow-y-auto">
+        <thead className="  overflow-y-auto">
+          <tr className="pb_tr">
+            <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Plant Name</th>             
+            <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Total</th>
+            <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Grown</th>
+            <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Replanted</th>
+            <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Dead</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Stage</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Harvest Stage</th>
+            <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Date Planted</th>
+            <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Harvest Day/s</th>
+            <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Actions</th>
+          </tr>
+        </thead>
 
         {batchesData.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-12 text-gray-400">
-            <TrendingUp size={48} className="mb-3 opacity-50" />
-            <p className="text-lg font-medium">No batches found</p>
-            <p className="text-sm">Create a batch to start tracking plants</p>
-          </div>
+          <tbody>
+            <tr>
+              <td colSpan="100%" className="py-12 text-center text-gray-400">
+                <div className="flex flex-col items-center justify-center">
+                  <TrendingUp size={48} className="mb-3 opacity-50" />
+                  <p className="text-lg font-medium">No batches found</p>
+                  <p className="text-sm">Create a batch to start tracking plants</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
         )}
 
-        {batchesData.length > 0 && batchesData.map((pb) => {
+        {batchesData.length > 0 && batchesData.map((pb,index) => {
 
           const formatBatchDisplay = (batch) => {
             const date = new Date(batch.date_planted);
@@ -60,86 +75,111 @@ function Plant_batches({ setMsg, batchesData, setSelectedBatches, setBatchModalO
             const dd = String(date.getDate()).padStart(2, "0");
             return `${yyyy}${mm}${dd}-${String(batch.batch_id).padStart(3, "0")}`;
           };
-
+          
           return (
-            <div
-              key={pb.batch_id}
-              className="pb_con rounded-2xl p-5 border shadow-lg border-gray-100 hover:shadow-xl transition-shadow bg-white">
+       
+            <tbody className="divide-y divide-gray-200">              
+                <tr 
+                  key={pb.batch_id}
+                  className={`hover:bg-[#E8F3ED] transition-colors ${
+                  index % 2 === 0 ? "bg-white" : "bg-[#f0f9f5]"
+                  }`}>
+                  <td className="px-4 py-3 text-sm font-medium text-[#027c68] flex"><p>[{pb.batch_number}]</p>{pb.plant_name}</td>
 
-              {/* Batch header */}
-              <div className="pb_name_div flex items-start justify-between mb-4 bg-[var(--sage-lighter)] rounded-2xl p-4 ">
-                <div className="flex items-center gap-3 ">
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#92e6a7] to-[#25a244] flex items-center justify-center">
-                    <TrendingUp className="w-5 h-5 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="text-lg font-semibold text-gray-900">
-                      [{pb.batch_number}]{pb.plant_name} Tray's Batch
-                    </h3>
-                    <p className="text-sm text-gray-500">Batch: {formatBatchDisplay(pb)}</p>
-                  </div>
-                </div>
+                  <td className="px-4 py-3 text-sm text-center font-semibold">{pb.total_seedlings}</td>
+              
+                  <td className="px-4 py-3 text-sm text-center">
+                    <span className="fully_grown_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      {pb.fully_grown_seedlings}
+                    </span>
+                  </td> 
 
-                <div className="flex flex-col items-end gap-2 lg:flex-row lg:items-center">
-                  <button
-                    onClick={() => handleUpdateBatches(pb)}
-                    className="mx-2 cursor-pointer text-xs px-2.5 py-1 rounded-md bg-[var(--purpluish--)] text-white shadow hover:shadow-md transition">
-                    UPDATE
-                  </button>
+                  <td className="px-4 py-3 text-sm text-center">
+                    <span className="replanted_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {pb.replanted_seedlings}
+                    </span>
+                  </td>            
+                    
+                  <td className="px-4 py-3 text-sm text-center">    
+                    {pb.dead_seedlings === null ? "" : 
+                      <span className="dead_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      {pb.dead_seedlings}
+                    </span> }                    
+                  </td>          
+                                                    
+                  <td className="px-4 py-3 text-sm">
+                    <span
+                      className="bh_growth_stage inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white"
+                      style={{ backgroundColor: getStageColor(pb.growth_stage) }}>
+                      {pb.growth_stage}
+                    </span>
+                  </td>
 
-                  <button
-                    onClick={() => handleDeleteBatches(pb)}
-                    className="mx-2 cursor-pointer text-xs px-2.5 py-1 rounded-md bg-[var(--color-danger-a)] text-white shadow hover:shadow-md transition">
-                    DELETE
-                  </button>
-                </div>
-              </div>
+                  <td className="px-4 py-3 text-sm text-center font-medium text-[#027c68]">
+                    <span className='bh_growth_stage inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold text-white' 
+                      style={{ backgroundColor: getHarvestStatusColor(pb.harvest_status) }}>                        
+                      {pb.harvest_status}    
+                    </span>
+                  </td>
+                   <td className="px-4 py-3 text-sm text-center font-medium text-[#027c68]">
+                    {formatDateOnly(pb.date_planted)}
+                   </td>
+                    <td className="px-4 py-3 text-sm text-center font-medium text-[#027c68]">
+                      {pb.expected_harvest_days}
+                   </td>
+                    <td className="flex gap-4 px-4 py-3 text-sm text-center font-medium text-[#027c68]">
 
-              {/* Batch details */}
-              <div className="grid grid-cols-4 gap-4 mb-4">
-                <div className="rounded-xl p-3">
-                  <p className="pb_data_label text-xs text-gray-500 mb-1">Date Planted</p>
-                  <p className="pb_data_text pb_date_planted text-sm font-semibold text-gray-900">{formatDateOnly(pb.date_planted)}</p>
-                </div>
-                <div className="rounded-xl p-3">
-                  <p className="pb_data_label text-xs text-gray-500 mb-1">Expected Harvest Days</p>
-                  <p className="pb_data_text pb_harvest_date text-sm font-semibold text-gray-900">{pb.expected_harvest_days}</p>
-                </div>
-                <div className="rounded-xl p-3">
-                  <p className="pb_data_label text-xs text-gray-500 mb-1">Growth Stage</p>
-                  <p className="pb_data_text pb_harvest_date text-sm font-semibold text-gray-900">{pb.growth_stage}</p>
-                </div>
-                <div className="rounded-xl p-3">
-                  <p className="pb_data_label text-xs text-gray-500 mb-1">Harvest Status</p>
-                  <p className="pb_data_text pb_harvest_date text-sm font-semibold text-gray-900">{pb.harvest_status}</p>
-                </div>
-              </div>
+                      <button
+                      onClick={() => handleUpdateBatches(pb)}
+                      className="
+                      cursor-pointer
+                      text-xs
+                      px-2.5 py-1
+                      rounded-md
+                      bg-[var(--purpluish--)]
+                    text-white
+                      shadow
+                      hover:shadow-md
+                      transition
+                      "
+                    >
+                      UPDATE
+                    </button>
+               
+              
+                    <button
+                      onClick={() => handleDeleteBatches(pb)}
+                      className="
+                        cursor-pointer
+                        text-xs
+                        px-2.5 py-1
+                        rounded-md
+                        bg-[var(--color-danger-a)]
+                        text-white
+                        shadow
+                        hover:shadow-md
+                        transition">
+                      DELETE
+                    </button>
+                               
+                               
+                   </td>
 
-              {/* Seedlings stats */}
-              <ul className="grid grid-cols-4 gap-3">
-                <li className="seedlings_stat_card total_seedlings_div bg-white rounded-xl p-3 text-center shadow-lg">
-                  <p className="pb_data_label text-xs text-gray-500 mb-1">Total Planted</p>
-                  <p className="pb_data_text pb_total_planted text-xl font-bold text-gray-900">{pb.total_seedlings}</p>
-                </li>
-                <li className="seedlings_stat_card fully_grown_seeedlings_div bg-white rounded-xl p-3 text-center shadow-lg">
-                  <p className="pb_data_label text-xs text-gray-500 mb-1">Fully Grown</p>
-                  <p className="text-xl font-bold text-[#25a244]">{pb.fully_grown_seedlings}</p>
-                </li>
-                <li className="seedlings_stat_card dead_seeedlings_div bg-white rounded-xl p-3 text-center shadow-lg">
-                  <p className="pb_data_label text-xs text-gray-500 mb-1">Dead</p>
-                  <p className="text-xl font-bold text-red-500">{pb.dead_seedlings}</p>
-                </li>
-                <li className="seedlings_stat_card replanted_seeedlings_div bg-white rounded-xl p-3 text-center shadow-lg">
-                  <p className="pb_data_label text-xs text-gray-500 mb-1">Replants</p>
-                  <p className="text-xl font-bold text-orange-500">{pb.replanted_seedlings}</p>
-                </li>
-              </ul>
 
-            </div>
+
+              </tr>            
+            </tbody>
+  
           );
         })}
+
+        </table>
+
+    
       </div>
-    </div>
+    </main>
+
+
   );
 }
 

@@ -60,6 +60,7 @@ export const markNotificationsAsRead = async (req, res) => {
 
 
 
+
 export const notifyReplantDate = async (req, res) => {
   try {
     const batchData = await plantBatchModel.readPlantBatches();
@@ -79,7 +80,6 @@ export const notifyReplantDate = async (req, res) => {
         (harvestDate.getTime() - today.getTime()) / msPerDay
       );
 
-      // 🔍 Debug
       console.log({
         batch_id: batch.batch_id,
         plant: batch.plant_name,
@@ -90,31 +90,35 @@ export const notifyReplantDate = async (req, res) => {
       });
 
       if (daysRemaining === 1) {
+
         const tray = await trayModel.readTrayById(batch.tray_id);
         const trayGroup = await trayGroupModel.readTrayGroupById(tray?.tray_group_id);
         const location = trayGroup?.location || "Unknown";
 
-
         await notificationModel.createNotif({
-            user_id: null,
-            batch_id: batch.batch_id,
-            type: "warning",
-            status: "Medium",
-            message: `🌱 Harvest Reminder\n1 Day Remaining before harvest \n\nPlant: ${batch.plant_name}\nLocation: ${location}\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
-          });
+          user_id: null,
+          batch_id: batch.batch_id,
+          type: "warning",
+          status: "Medium",
+          message: `🌱 Harvest Reminder\n1 Day Remaining before harvest \n\nPlant: ${batch.plant_name}\nLocation: ${location}\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
+        });
 
-        
-          const devices = await deviceTokenModel.getAllDeviceTokens();
-          console.log("📱 Device tokens count:", devices.length);
+        const devices = await deviceTokenModel.getAllDeviceTokens();
+        console.log("📱 Device tokens count:", devices.length);
 
-          if (devices.length > 0) {
-            const notifMessage = `${batch.plant_name}[${batch.batch_number}] harvest is tomorrow!`;
-            await Promise.all(
-              devices.map(device =>
-                sendPushNotification(device.push_token, "Sprout Sync Notification", notifMessage)
+        if (devices.length > 0) {
+          const notifMessage = `${batch.plant_name}[${batch.batch_number}] harvest is tomorrow!`;
+
+          await Promise.all(
+            devices.map(device =>
+              sendPushNotification(
+                device.push_token,
+                "Sprout Sync Notification",
+                notifMessage
               )
-            );
-          }
+            )
+          );
+        }
 
         notifiedBatches.push({
           batch_id: batch.batch_id,
@@ -124,52 +128,87 @@ export const notifyReplantDate = async (req, res) => {
       }
     }
 
-    res.status(200).json({
-      success: true,
-      message: notifiedBatches.length
-        ? `Batches notified: ${notifiedBatches.map(b => b.message).join(", ")}`
-        : "No batches need notification today"
-    });
+    if (res) {
+      res.status(200).json({
+        success: true,
+        message: notifiedBatches.length
+          ? `Batches notified: ${notifiedBatches.map(b => b.message).join(", ")}`
+          : "No batches need notification today"
+      });
+    }
 
   } catch (error) {
     console.error("❌ Harvest notification error:", error);
-    res.status(500).json({
-      success: false,
-      message: "Error sending harvest notifications"
-    });
+
+    if (res) {
+      res.status(500).json({
+        success: false,
+        message: "Error sending harvest notifications"
+      });
+    }
   }
 };
 
 
 
-export const notifyBatchCreated = async (batch) => {
+export const notifyBatchCreated = async (batch,mode) => {
   try {
     const planted = toDateOnlyUTC(new Date(batch.date_planted));
     const harvestDate = new Date(planted);
     harvestDate.setUTCDate(harvestDate.getUTCDate() + Number(batch.expected_harvest_days));
 
-    await notificationModel.createNotif({
-      user_id: null,
-      batch_id: batch.batch_id,
-      type: "Info",
-      status: "Low",
-      message: `🌱 New Batch Added\n\nPlant: ${batch.plant_name}\nBatch: ${batch.batch_number}\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
-    });
 
-    const devices = await deviceTokenModel.getAllDeviceTokens();
-    if (devices.length > 0) {
-      await Promise.all(
-        devices.map(device =>
-          sendPushNotification(
-            device.push_token,
-            "Sprout Sync Notification",
-            `🌱 ${batch.plant_name}[${batch.batch_number}] batch has been added!`
+    if(mode === "insert"){
+
+      await notificationModel.createNotif({
+        user_id: null,
+        batch_id: batch.batch_id,
+        type: "Info",
+        status: "Low",
+        message: `🌱 New Batch Added\n\nPlant: ${batch.plant_name}\nBatch: ${batch.batch_number}\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
+      });
+
+      const devices = await deviceTokenModel.getAllDeviceTokens();
+      if (devices.length > 0) {
+        await Promise.all(
+          devices.map(device =>
+            sendPushNotification(
+              device.push_token,
+              "Sprout Sync Notification",
+              `🌱 ${batch.plant_name}[${batch.batch_number}] batch has been added!`
+            )
           )
-        )
-      );
-    }
+        );
+      }
+  
 
-    console.log("✅ Batch created notification sent");
+    }else if(mode === "update"){
+
+      await notificationModel.createNotif({
+        user_id: null,
+        batch_id: batch.batch_id,
+        type: "Info",
+        status: "Low",
+        message: `🌱 Batch Updated\n\nPlant: [${batch.batch_number}]${batch.plant_name}\n\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
+      });
+
+      const devices = await deviceTokenModel.getAllDeviceTokens();
+      if (devices.length > 0) {
+        await Promise.all(
+          devices.map(device =>
+            sendPushNotification(
+              device.push_token,
+              "Sprout Sync Notification",
+              `🌱 ${batch.plant_name}[${batch.batch_number}] batch has been added!`
+            )
+          )
+        );
+      }
+
+      
+
+    }
+    
   } catch (error) {
     console.error("❌ notifyBatchCreated error:", error);
   }

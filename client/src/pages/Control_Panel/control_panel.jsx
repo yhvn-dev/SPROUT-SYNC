@@ -1,4 +1,4 @@
-import { useState, useContext, useEffect } from 'react';
+import { useState, useContext,useEffect,useCallback} from 'react';
 import { UserContext } from '../../hooks/userContext';
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
@@ -9,25 +9,37 @@ import InfosModal from '../../components/infosModal';
 import { ESP32Context } from "../../hooks/esp32Hooks";
 import { usePlantData } from '../../hooks/plantContext';
 import { useValve } from '../../hooks/valveContext';
-import * as closeValveServices from "../../data/closeValveServices";
 import { useStream } from '../../hooks/streamHooks';
+import { MessageContext } from "../../hooks/messageHooks.jsx";
+import { DeleteNotifModal } from '../../components/deleteNotifModal.jsx';
+import { FloatSuccessMsg } from '../../components/messages.jsx';
 
+import * as closeValveServices from "../../data/closeValveServices";
 import RegisterDeviceModal from '../Dashboard/modals/registerDeviceModal';
+
 
 function Control_panel() {
   const { user, skippedRegister} = useContext(UserContext);
+  const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,
+        deleteMode,
+        messageContext,setMessageContext} = useContext(MessageContext);
+
+         
   const { ESP32Status } = useContext(ESP32Context);
   const [ logoutOpen, setLogoutOpen ] = useState(false);
   const [ isInfoModalOpen, setInfoModalOpen ] = useState(false);
   const [ infoModalPurpose, setInfoModalPurpose ] = useState("");
   const [ isNotifOpen, setNotifOpen ] = useState(false);
-  const [sidebarOpen, setSidebarOpen ] = useState(false);
+  const [ sidebarOpen, setSidebarOpen ] = useState(false);
   const { valveMode, setValveMode } = useValve();
-  const { averageReadingsBySensor } = usePlantData();
-  const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
+  const { readings } = usePlantData();
+  const [ isRegisterModalVisible, setRegisterModalVisible] = useState(false);
   const { running, loading, error, videoRef, start, stop, refreshStatus } = useStream();
 
-
+  const clearMsg = useCallback(() => {
+     setMessageContext("")
+  }, []);
+    
   useEffect(() => {
   if (user?.first_time_login && !skippedRegister) {
     setRegisterModalVisible(true);
@@ -35,10 +47,6 @@ function Control_panel() {
     setRegisterModalVisible(false);
   }
 }, [user?.first_time_login, skippedRegister]);
-
-
-
-
 
   const isDark = typeof window !== "undefined" &&
     document.documentElement.classList.contains("dark");
@@ -83,8 +91,14 @@ function Control_panel() {
     setInfoModalOpen(true);
   };
 
-  const waterLevel = averageReadingsBySensor?.ultra_sonic?.average ?? 0;
+  const waterLevel = readings
+    .filter(r => r.sensor_id === 8)
+    .at(-1)?.value;
 
+  const formattedWaterLevel = waterLevel ? Number(waterLevel).toFixed(1) : null;
+
+
+  
   return (
     <section className="control_panel con_main h-screen flex flex-col md:grid gap-4 md:grid-cols-[15fr_85fr] md:grid-rows-[auto_1fr] bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] font-sans overflow-hidden">
 
@@ -305,11 +319,6 @@ function Control_panel() {
 
 
 
-
-
-
-
-
           {/* WATER LEVEL GAUGE */}
           <div className="conb flex flex-col justify-start items-start bg-white center rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl mb-6 min-h-[400px]">
             <div className="flex flex-col h-full items-center justify-center">
@@ -321,7 +330,7 @@ function Control_panel() {
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <Droplets className="w-10 h-10 mb-2 text-[#3d56a4]" />
-                  <span className="text-4xl font-bold text-gray-800 dark:text-gray-100">{waterLevel}</span>
+                  <span className="text-4xl font-bold text-gray-800 dark:text-gray-100">{formattedWaterLevel }</span>
                   <span className="text-sm text-gray-600 dark:text-gray-400">%</span>
                 </div>
               </div>
@@ -329,7 +338,11 @@ function Control_panel() {
             </div>
           </div>
 
-          {/* Valve Controls */}
+
+
+
+
+          {/* Valve Controls  ============================================= ========================================*/}
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 auto-rows-auto">
             <div className="conb bg-white rounded-3xl p-7 shadow-lg border border-gray-50 transition-all hover:shadow-xl col-span-full lg:col-span-full min-h-[400px]">
               <div className="flex justify-between items-center mb-6">
@@ -414,18 +427,36 @@ function Control_panel() {
           purpose={infoModalPurpose}
         />
       )}
-      
-      {isRegisterModalVisible && (
-        <RegisterDeviceModal
-          userData={user}
-          onClose={() => setRegisterModalVisible(false)} 
-        />
-       )}
+    
+    {isRegisterModalVisible && (
+      <RegisterDeviceModal
+        userData={user}
+        onClose={() => setRegisterModalVisible(false)} 
+      />
+      )}
 
+    {openDeleteNotifModal && (
+      <DeleteNotifModal 
+        isOpen={openDeleteNotifModal} 
+        selectedNotif={selectedNotif}
+        deleteMode={deleteMode} 
+        onClose={() => setOpenDeleteNotifModal(false)} 
+      />
+    )}
+        
+    {messageContext && (
+      <FloatSuccessMsg  txt={messageContext} clearMsg={clearMsg} />
+    )}
 
+        
 
     </section>
   );
+
+  
 }
+
+
+
 
 export default Control_panel;

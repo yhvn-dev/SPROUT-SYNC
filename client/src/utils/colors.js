@@ -85,3 +85,56 @@ export const setRoleColor = {
   viewerColor: colors.accDarkc,
 
 }
+
+
+export const getStageColor = (stage, isDark = false) => {
+  const lightColors = {
+    'Sprout': '#b0e892',        // sancgc
+    'Seedling': '#92e6a7',      // ptl-greenb
+    'Vegetative': '#6ede8a',    // ptl-greenc
+    'Budding': '#2dc653',       // ptl-greend
+    'Flowering': '#25a244',     // ptl-greene
+    'Fruiting': '#208b3a',      // ptl-greenf
+    'Ready To Harvest': '#1a7431', // ptl-greeng
+    'All': '#7BA591'             // sage base
+  };
+
+  // Dark theme colors
+  const darkColors = {
+    'Sprout': '#155d27',        // ptl-greenh
+    'Seedling': '#10451d',      // ptl-greenj
+    'Vegetative': '#5A8F73',    // sage-dark
+    'Budding': '#027c68',       // sancgb
+    'Flowering': '#003333',     // sancga
+    'Fruiting': '#009983',      // sancgd
+    'Ready To Harvest': '#1a6b38', // adjusted darker green
+    'All': '#5A8F73'            // fallback sage-dark
+    };
+
+  return isDark ? darkColors[stage] || '#5A8F73' : lightColors[stage] || '#5A8F73';
+};
+
+
+
+
+export  const getHarvestStatusColor = (stage, isDark = false) => {
+  const lightColors = {
+    'Not Ready': 'var(--metal-dark4)',       
+    'Due Now': '#92e6a7',     
+    'Harvested': '#208b3a',    
+    'Ready To Harvest': '#1a7431', 
+    'All': '#7BA591'          
+  };
+  // Dark theme colors
+  const darkColors = {    
+    'Not Ready': '#10451d',      
+    'Due Now': '#5A8F73',   
+    'Harvested': '#027c68',      
+    'Ready To Harvest': '#1a6b38',
+    'All': '#5A8F73'          
+    };
+  return isDark ? darkColors[stage] || '#5A8F73' : lightColors[stage] || '#5A8F73';
+};
+
+
+

@@ -112,7 +112,6 @@ export const readSeedlingGrowthByWeekAll = async () => {
 
 
 
-
 export const createHistoryRecord = async (batchData) => {
   const {
     batch_number,  
@@ -124,12 +123,13 @@ export const createHistoryRecord = async (batchData) => {
     replanted_seedlings = 0,
     fully_grown_seedlings = 0,
     growth_stage = "Seedling",
+    harvest_status = "Ready To Harvest",
     expected_harvest_days = null,
     notes = null
   } = batchData;
 
+  
   try {
-    // 1️⃣ Get the next history_number for this plant_name (or batch_number)
     const result = await query(
       `SELECT COALESCE(MAX(history_number), 0) + 1 AS next_number
        FROM plant_batch_history
@@ -145,9 +145,9 @@ export const createHistoryRecord = async (batchData) => {
         batch_number, history_number,
         tray_id, plant_name, date_recorded,
         total_seedlings, dead_seedlings, replanted_seedlings, fully_grown_seedlings,
-        growth_stage, expected_harvest_days, notes
+        growth_stage,harvest_status,expected_harvest_days, notes
       )
-      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
       RETURNING *
     `;
 
@@ -155,11 +155,12 @@ export const createHistoryRecord = async (batchData) => {
       batch_number, history_number,
       tray_id, plant_name, date_recorded,
       total_seedlings, dead_seedlings, replanted_seedlings, fully_grown_seedlings,
-      growth_stage, expected_harvest_days, notes
+      growth_stage,harvest_status,expected_harvest_days, notes
     ];
-
     const insert = await query(sql, values);
     return insert.rows[0];
+
+
 
   } catch (error) {
     throw error;
