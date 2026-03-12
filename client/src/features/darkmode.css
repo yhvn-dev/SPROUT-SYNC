@@ -673,6 +673,7 @@ body.dark .batch_history_table tr:nth-child(odd){
 body.dark .batch_history_table tr:nth-child(even){
     @apply bg-[var(--metal-dark3)];
 }
+
 body.dark .batch_history_table tr:hover{
      @apply bg-[var(--metal-dark3)];
 }   
@@ -690,8 +691,15 @@ body.dark .batch_history_table::-webkit-scrollbar{
      @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
     }
 
-
+    body.dark .batch_table tr:nth-child(odd){
+        @apply bg-[var(--metal-dark1)];
+    }
+    body.dark .batch_table tr:nth-child(even){
+        @apply bg-[var(--metal-dark4)];
+    }
     
+
+
 
 
     
@@ -1038,7 +1046,6 @@ body.dark .browser_window_main_container{
             body.dark .mockup_db_sensor_div span{
             @apply bg-transparent border-[1px];
         }
-
     body.dark .plant_batch_div {
         @apply bg-[var(--metal-dark1)];
         box-shadow:5px 5px 5px 1px var(--shad-dark); 

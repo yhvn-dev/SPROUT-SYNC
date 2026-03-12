@@ -180,7 +180,6 @@ export const PlantDataProvider = ({ children }) => {
   const loadPlantGroups = useCallback(async () => {
     try {
       const data = await plantGroupService.fetchAllPlantGroups();
-        console.log("PLANT GROUPS",plantGroups)
       setPlantGroups(data);
     } catch (error) {
       console.error("Error loading plant groups", error);
@@ -191,7 +190,6 @@ export const PlantDataProvider = ({ children }) => {
   const loadPlants = useCallback(async () => {
     try {
       const data = await plantService.fetchAllPlants();
-      console.log("PLANTS",data)
       setPlants(data);
     } catch (error) {
       console.error("Error loading plants", error);

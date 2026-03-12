@@ -66,8 +66,6 @@ export function Dashboard() {
         />
       )}
 
-
-
       {/* SIDEBAR */}
       <aside className={`${sidebarOpen ? "fixed inset-y-0 left-0 w-64 z-50" : "hidden"} md:static md:block md:row-span-full`}>
           <Sidebar
@@ -78,41 +76,39 @@ export function Dashboard() {
           />
       </aside>
 
-
       {/* HEADER */}
       <div className="md:col-start-2">
         <Db_Header setNotifOpen={setNotifOpen} />
       </div>
-      
-
-      
-        {/* TABS */}
-        {user.role === "admin" && (   
-        <nav className="dashboard_nav flex gap-2 px-4 md:px-0 md:col-start-2">
-            <button
-            onClick={() => setActiveTab("Overview")}
-            className={`db_nav_button cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
-              text-xs md:text-sm rounded-lg transition
-              ${activeTab === "Overview"
-                ? "conb active bg-white shadow-md text-[#5A8F73] dark:bg-[var(--metal-dark3)] dark:text-[#00ffe0] dark:shadow-md"
-                : "bg-white/50  text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark1)]"
-              }`}>
-            Overview
-          </button>
-          
+       
+       
+      {/* TABS */}
+      {user.role === "admin" && (   
+      <nav className="dashboard_nav flex gap-2 px-4 md:px-0 md:col-start-2">
           <button
-            onClick={() => setActiveTab("Manage Plants")}
-            className={`db_nav_button cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
-              text-xs md:text-sm rounded-lg transition bg-[var(-)]
-              ${activeTab === "Manage Plants"
-                ? "conb active bg-white shadow-md text-[#5A8F73] dark:bg-[var(--metal-dark3)] dark:text-white dark:shadow-md"
-                : "bg-white/50  text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-white dark:hover:bg-[var(--metal-dark1)]"
-              }`}>
-                Manage Plants
-          </button>
-                 
-        </nav>
-      )}
+          onClick={() => setActiveTab("Overview")}
+          className={`db_nav_button cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
+            text-xs md:text-sm rounded-lg transition
+            ${activeTab === "Overview"
+              ? "conb active bg-white shadow-md text-[var(--sancgb)] dark:bg-[var(--metal-dark3)] dark:text-[#00ffe0] dark:shadow-md"
+              : "bg-white/50  text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark1)]"
+            }`}>
+          Overview
+        </button>
+        
+        <button
+          onClick={() => setActiveTab("Manage Plants")}
+          className={`db_nav_button cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
+            text-xs md:text-sm rounded-lg transition bg-[var(-)]
+            ${activeTab === "Manage Plants"
+              ? "conb active bg-white shadow-md text-[var(--sancgb)] dark:bg-[var(--metal-dark3)] dark:text-white dark:shadow-md"
+              : "bg-white/50  text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-white dark:hover:bg-[var(--metal-dark1)]"
+            }`}>
+              Manage Plants
+        </button>
+                
+      </nav>
+    )}
 
 
       {/* MAIN */}

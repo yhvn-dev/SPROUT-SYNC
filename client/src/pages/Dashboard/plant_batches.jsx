@@ -33,12 +33,13 @@ function Plant_batches({ setMsg, batchesData, setSelectedBatches, setBatchModalO
           <p className="text-2xl">Batches</p>
         </div>
       </header>
+      <div className="batch_table h-[350px] overflow-y-auto pr-2 space-y-3">
 
-      <div className="pb_data_container h-[350px] overflow-y-auto pr-2 space-y-3">
 
-      <table className="w-full f overflow-y-auto">
+
+      <table className="batch_table w-full f overflow-y-auto">
         <thead className="  overflow-y-auto">
-          <tr className="pb_tr">
+          <tr className="">
             <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Plant Name</th>             
             <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Total</th>
             <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Grown</th>
@@ -68,21 +69,23 @@ function Plant_batches({ setMsg, batchesData, setSelectedBatches, setBatchModalO
 
         {batchesData.length > 0 && batchesData.map((pb,index) => {
 
-          const formatBatchDisplay = (batch) => {
-            const date = new Date(batch.date_planted);
-            const yyyy = date.getFullYear();
-            const mm = String(date.getMonth() + 1).padStart(2, "0");
-            const dd = String(date.getDate()).padStart(2, "0");
-            return `${yyyy}${mm}${dd}-${String(batch.batch_id).padStart(3, "0")}`;
-          };
+          // const formatBatchDisplay = (batch) => {
+          //   const date = new Date(batch.date_planted);
+          //   const yyyy = date.getFullYear();
+          //   const mm = String(date.getMonth() + 1).padStart(2, "0");
+          //   const dd = String(date.getDate()).padStart(2, "0");
+          //   return `${yyyy}${mm}${dd}-${String(batch.batch_id).padStart(3, "0")}`;
+          // };
           
           return (
        
             <tbody className="divide-y divide-gray-200">              
                 <tr 
-                  key={pb.batch_id}
-                  className={`hover:bg-[#E8F3ED] transition-colors ${
-                  index % 2 === 0 ? "bg-white" : "bg-[#f0f9f5]"
+                 key={pb.batch_id}
+                  className={`pb_tr hover:bg-[#E8F3ED] transition-colors
+                  ${index % 2 === 0 
+                    ? "bg-white dark:bg-[var(--metal-dark4)]" 
+                    : "bg-[#f0f9f5] dark:bg-[var(--metal-dark5)]"
                   }`}>
                   <td className="px-4 py-3 text-sm font-medium text-[#027c68] flex"><p>[{pb.batch_number}]</p>{pb.plant_name}</td>
 

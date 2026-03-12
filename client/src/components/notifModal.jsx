@@ -70,8 +70,6 @@ export function Notif_Modal({ isOpen, onClose}) {
     setOpenDeleteNotifModal(true);
     setDeleteMode("one_notif")
     setSelectedNotif(notifData);
-  
-
   };
   const handleOpenRemoveAllNotifs = async () => {
     setOpenDeleteNotifModal(true)

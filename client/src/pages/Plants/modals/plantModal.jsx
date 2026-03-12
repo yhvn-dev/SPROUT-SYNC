@@ -3,29 +3,23 @@ import { motion, AnimatePresence } from "framer-motion";
 import { X, Sprout, Trash2, AlertTriangle, Leaf, Link2, Droplets } from "lucide-react";
 import * as plantModels from "../../../data/plantServices";
 
-export function PlantModal({
-  isOpen,
-  onClose,
-  plantModalMode,
-  selectedPlantGroup,
-  selectedPlant,
-  setSuccessMsg,
-  reloadPlants,
-}) {
+export function PlantModal({isOpen,onClose,plantModalMode,selectedPlant,setSuccessMsg,reloadPlants}) {
   const [formData, setFormData] = useState({
-    group_id: 0,
     name: "",
     moisture_min: "",
     moisture_max: "",
     reference_link: "",
   });
   const [formErrors, setFormErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  
+
+  
 
   useEffect(() => {
     if (!isOpen) return;
     if (plantModalMode === "update" && selectedPlant) {
       setFormData({
-        group_id: selectedPlant.group_id,
         name: selectedPlant.name,
         moisture_min: selectedPlant.moisture_min,
         moisture_max: selectedPlant.moisture_max,
@@ -33,7 +27,6 @@ export function PlantModal({
       });
     } else if (plantModalMode === "insert") {
       setFormData({
-        group_id: selectedPlantGroup?.plant_group_id || 0,
         name: "",
         moisture_min: "",
         moisture_max: "",
@@ -41,7 +34,6 @@ export function PlantModal({
       });
     } else if (plantModalMode === "delete" && selectedPlant) {
       setFormData({
-        group_id: selectedPlant.group_id,
         name: selectedPlant.name,
         moisture_min: selectedPlant.moisture_min,
         moisture_max: selectedPlant.moisture_max,
@@ -49,44 +41,52 @@ export function PlantModal({
       });
     }
     setFormErrors({});
-  }, [isOpen, plantModalMode, selectedPlant, selectedPlantGroup]);
+  }, [isOpen, plantModalMode, selectedPlant?.plant_id]);
 
+  
+  
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (isLoading) return; 
+    setIsLoading(true);    
+
     try {
       if (plantModalMode === "insert") {
-        const newPlant = await plantModels.createPlant({
-          group_id: selectedPlantGroup.plant_group_id,
+          await plantModels.createPlant({
           name: formData.name,
           moisture_min: Number(formData.moisture_min),
           moisture_max: Number(formData.moisture_max),
           reference_link: formData.reference_link,
         });
+        onClose();
         setFormErrors({});
         setSuccessMsg(`${formData.name} Plant Added`);
       }
       if (plantModalMode === "update") {
-        const updatedPlant = await plantModels.updatePlant(selectedPlant.plant_id, {
-          group_id: selectedPlant.group_id,
+          await plantModels.updatePlant(selectedPlant.plant_id, {
+
           name: formData.name,
           moisture_min: Number(formData.moisture_min),
           moisture_max: Number(formData.moisture_max),
           reference_link: formData.reference_link,
         });
+      
         setFormErrors({});
         setSuccessMsg(`${selectedPlant.name} Plant Updated`);
       }
+      
       if (plantModalMode === "delete") {
         await plantModels.deletePlant(selectedPlant.plant_id);
         setFormErrors({});
         setSuccessMsg(`${selectedPlant.name} Plant Deleted`);
-      }
-      reloadPlants();
+      }   
       onClose();
+      reloadPlants();
+      
     } catch (error) {
       const rawErrors = error?.response?.data?.errors;
       if (Array.isArray(rawErrors)) {
@@ -98,7 +98,10 @@ export function PlantModal({
       } else {
         setFormErrors({ general: "Something went wrong." });
       }
+    }finally {
+      setIsLoading(false); 
     }
+    
   };
 
   const isDelete = plantModalMode === "delete";
@@ -134,7 +137,7 @@ export function PlantModal({
             className="fixed inset-0 z-50 flex items-center justify-center p-4 pointer-events-none">
 
             <div
-              className={`pointer-events-auto w-full bg-[var(--main-white--)] rounded-2xl overflow-hidden shadow-2xl ${
+              className={`pointer-events-auto w-full bg-white rounded-2xl overflow-hidden shadow-2xl ${
                 isDelete ? "max-w-md" : "max-w-lg"
               }`}>
 
@@ -142,8 +145,8 @@ export function PlantModal({
               <div
                 className={`conb flex items-start justify-between gap-3 px-6 py-5 border-b border-gray-800/60 ${
                   isDelete
-                    ? "bg-gradient-to-br from-red-950/40 to-gray-950"
-                    : "bg-gradient-to-br from-green-950/40 to-gray-950"
+                    ? "bg-gradient-to-br from-[var(--color-danger-c]  to-[var(--color-danger-a)]"
+                    : "bg-gradient-to-br from-[var(--sancga)] to-[var(--sancgb)]"
                 }`}>
                   
                 <div className="flex items-center gap-3">
@@ -151,7 +154,7 @@ export function PlantModal({
                     className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                       isDelete
                         ? "bg-red-500/10 border border-red-500/25"
-                        : "bg-green-500/10 border border-green-500/25"
+                        : "bg-white-500/10 border border-green-500/25"
                     }`}
                   >
                     {isDelete ? (
@@ -162,23 +165,25 @@ export function PlantModal({
                   </div>
                   
                   <div>
-                    <h2 className="text-sm font-semibold text-gray-100 tracking-tight">
+                    <h2 className={`text-sm font-semibold ${isDelete ? "text-[var(--metal-dark5)]" : "text-white"} tracking-tight`}>
                       {isDelete ? "Delete Plant" : isInsert ? "Add New Plant" : "Update Plant"}
                     </h2>
                     <p className="plant_group_name text-xs text-gray-500 mt-0.5">
                       {isDelete
                         ? `Removing: ${selectedPlant?.name}`
-                        : `Group: ${selectedPlantGroup?.group_name || selectedPlant?.group_name || "—"}`}
+                        : `${selectedPlant?.group_name || "—"}`}
                     </p>
                   </div>
                 </div>
 
+
                 <button
                   onClick={onClose}
-                  className="w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-gray-700 text-gray-500 hover:bg-white/10 hover:text-gray-200 transition-colors shrink-0"
-                >
+                  className="w-8 h-8 cursor-pointer flex items-center justify-center rounded-lg  text-gray-500 hover:bg-white/10 hover:text-gray-200 transition-colors shrink-0">
                   <X size={15} />
                 </button>
+
+
               </div>
 
               {/* ── DELETE MODE ── */}
@@ -195,26 +200,23 @@ export function PlantModal({
                     <button
                       type="button"
                       onClick={onClose}
-                      className="flex-1 px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 border border-gray-700 hover:bg-white/5 transition-colors"
-                    >
+                      className="flex-1 cursor-pointer  px-4 py-2.5 rounded-lg text-sm font-medium text-gray-400 border border-gray-700 hover:bg-white/5 transition-colors">
                       Cancel
                     </button>
                     <button
                       type="button"
                       onClick={handleSubmit}
-                      className="flex-1 flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-br from-red-600 to-red-700 border border-red-500/30 hover:opacity-85 transition-opacity"
-                    >
+                      className="flex-1 cursor-pointer  flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-lg text-sm font-semibold text-white bg-gradient-to-br from-red-600 to-red-700 border border-red-500/30 hover:opacity-85 transition-opacity">
                       <Trash2 size={14} />
                       Yes, Delete
                     </button>
                   </div>
                 </div>
+                
               ) : (
+          
 
-
-
-
-                /* ── INSERT / UPDATE MODE ── */
+                
                 <form onSubmit={handleSubmit} className="conb bg-[var(--main-white)]">
                   <div className=" px-6 pt-5 pb-1 space-y-4">
                     {/* Plant Name */}
@@ -354,8 +356,8 @@ export function PlantModal({
                       </button>
                       <button
                         type="submit"
-                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-br from-green-700 to-green-500 border border-green-500/30 hover:opacity-85 transition-opacity min-w-[110px] justify-center"
-                      >
+                        disabled={isLoading}
+                        className="flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold text-white bg-gradient-to-br from-green-700 to-green-500 border border-green-500/30 hover:opacity-85 transition-opacity min-w-[110px] justify-center">
                         <Sprout size={14} />
                         {isInsert ? "Add Plant" : "Save Changes"}
                       </button>
@@ -370,6 +372,9 @@ export function PlantModal({
     </AnimatePresence>
   );
 }
+
+
+
 
 /* ── FieldGroup Sub-component ── */
 function FieldGroup({ label, required, icon, error, children }) {

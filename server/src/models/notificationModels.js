@@ -5,7 +5,7 @@ import { io } from "../app.js";
 export const readNotif = async () => {
   try {
     const { rows } = await query(
-      "SELECT * FROM notifications ORDER BY created_at ASC"
+      "SELECT * FROM notifications ORDER BY created_at DESC"
     );
     
     return rows; 
@@ -14,7 +14,6 @@ export const readNotif = async () => {
     throw error;
   }
 };
-
 
 
 export const readNotifById = async (notification_id) =>{

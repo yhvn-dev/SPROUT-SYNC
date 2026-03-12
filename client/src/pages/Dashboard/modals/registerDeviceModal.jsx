@@ -73,7 +73,8 @@ function RegisterDeviceModal({ onClose, userData }) {
         <button
           onClick={handleSkip}
           disabled={isLoading}
-          className={`cursor-pointer absolute top-4 right-4 p-2 rounded-full hover:bg-black/5 transition ${
+          className={`cursor-pointer absolute right-4 top-4 w-8 h-8 
+            flex items-center justify-center rounded-lg bg-white/5 border border-gray-700 text-gray-500 hover:bg-white/10 hover:text-gray-200 transition-colors shrink-0 ${
             isLoading ? "opacity-50 cursor-not-allowed" : ""
           }`}>
 

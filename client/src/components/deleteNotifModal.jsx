@@ -4,25 +4,26 @@ import * as notifServices from "../data/notifsServices"
 import { useContext, useEffect } from "react";
 import { MessageContext } from "../hooks/messageHooks";
 import { usePlantData } from "../hooks/plantContext";
+import { motion } from "framer-motion";
 
 
 export function DeleteNotifModal({ isOpen,deleteMode,selectedNotif, onClose }) {
   const {setMessageContext} = useContext(MessageContext)
   const {loadNotifs} = usePlantData() 
 
-  if (!isOpen) return null;
 
   useEffect(() =>{
-    console.log("CURRENT DELETE MODE",deleteMode)
+    console.log("DELETE MODE",deleteMode)
   },[])
 
+  if (!isOpen) return null;
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       if (deleteMode === "one_notif") {
         await notifServices.deleteNotifs(selectedNotif.notification_id); // wait for deletion
         setMessageContext("Notification deleted successfully");
-      } else {
+      } else{
         await notifServices.deleteAllNotifs(); // wait for all deletion
         setMessageContext("All notifications have been deleted successfully");
       }
@@ -38,13 +39,17 @@ export function DeleteNotifModal({ isOpen,deleteMode,selectedNotif, onClose }) {
 
 
   return createPortal(
-    <div
+    <motion.div
       className="fixed inset-0 z-[9999] flex items-center justify-center p-4 bg-transparent backdrop-blur-3xl"
       onClick={onClose}>
-      <div
+      <motion.div
         className="conb bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6"
         onClick={(e) => e.stopPropagation()}
-      >
+        initial={{ scale: 0.9, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        exit={{ scale: 0.9, opacity: 0 }}
+        transition={{ duration: 0.4 }}>
+          
         <div className="delete_notif_icon flex items-center justify-center w-12 h-12 rounded-full bg-red-50 mx-auto mb-4">
           <Trash2 className="w-6 h-6 text-red-500" />
         </div>
@@ -52,17 +57,11 @@ export function DeleteNotifModal({ isOpen,deleteMode,selectedNotif, onClose }) {
           Delete Notification
         </h3>
         <p className="text-center text-gray-400 text-sm mb-6">
-            {selectedNotif ? (
-                <>  
-                Are you sure you want to delete this notification? This cannot be undone.
-                </>
-            ) : (
-               <>
-                 Are you sure you want delete all notifications? This cannot be undone.
-               </>
-            )}
-        
-        </p>
+            {deleteMode === "one_notif"
+              ? "Are you sure you want to delete this notification? This cannot be undone."
+              : "Are you sure you want to delete all notifications? This cannot be undone."
+            }
+          </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <button
             onClick={onClose}
@@ -75,8 +74,8 @@ export function DeleteNotifModal({ isOpen,deleteMode,selectedNotif, onClose }) {
             Yes, Delete
           </button>
         </div>
-      </div>
-    </div>,
+      </motion.div>
+    </motion.div>,
     document.body 
   );
 

@@ -14,7 +14,7 @@ export const toDateOnlyUTC = (date) =>
 
 
   
-cron.schedule("* * * * *", async () => { 
+cron.schedule("* 6 * * *", async () => { 
   console.log("⏰ Running daily harvest check:", new Date().toISOString());
   try {
     await plantBatchController.updatePastHarvestStatus?.()
