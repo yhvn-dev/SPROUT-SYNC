@@ -1,28 +1,19 @@
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
-import { X, Trash2, Sprout } from "lucide-react";
+import { X, Trash2, Group } from "lucide-react";
 import * as trayGroupModels from "../../../data/trayGroupServices";
 
 
 
-export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup, setSuccessMsg, loadTrayGroups, reloadTrayGroups,}) {
 
+export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup, setSuccessMsg, loadTrayGroups, reloadTrayGroups,plants}) {
   
   if (!isOpen) return null;
-  const plantOptions = [
-    { name: "Bokchoy", min: 50, max: 75 },       
-    { name: "Pechay", min: 50, max: 75 },  
-    { name: "Romaine", min: 50, max: 75 },      
-    { name: "Mustasa", min: 60, max: 90 },     
-    { name: "Lettuce", min: 50, max: 70 },      
-    { name: "Spinach", min: 85, max: 95 },       
-    { name: "Kangkong", min: 51.36, max: 55 },  
-    { name: "Basil", min: 81, max: 86 },         
-    { name: "Mint", min: 75, max: 85 },         
-    { name: "Tomato", min: 92, max: 95 },      
-    { name: "Cucumber", min: 95, max: 97 },     
-    { name: "Bell Pepper", min: 90, max: 94 }
-  ];
+ const plantOptions = (plants || []).map((p) => ({
+    name: p.name,
+    min: p.moisture_min,
+    max: p.moisture_max,
+  }));
   
   const [formData, setFormData] = useState({
     tray_group_name: "",
@@ -31,6 +22,8 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
     location: "",
     is_watering: false
   });
+
+    
 
   const [formErrors, setFormErrors] = useState({});
   // Initialize modal values only when modal opens
@@ -125,15 +118,9 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
       }
     }
   };
-
-
-
-
-
   
   return (
     <motion.div
-
 
       className="modal_backdrop fixed inset-0 flex items-center justify-center bg-tranparent backdrop-blur-2xl z-50">
       <motion.div
@@ -142,14 +129,13 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.4 }}
           
-        className={`conb bg-white rounded-xl shadow-xl p-6 relative ${
+        className={`conb bg-white rounded-2xl shadow-xl relative overflow-hidden ${
         tgModalMode === "delete" ? "w-[420px]" : "w-[600px]"}`}>
 
         {/* CLOSE BUTTON */}
         <button
           onClick={onClose}
-          className="close_button cursor-pointer absolute top-4 right-4 hover:bg-gray-100 p-2 rounded-lg"
-        >
+          className="close_button cursor-pointer absolute top-4 right-4 hover:bg-gray-100 p-2 rounded-lg">
           <X />
         </button>
 
@@ -179,24 +165,30 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
         ) : (
           <>
             {/* HEADER */}
-            <div className="flex items-center gap-3 mb-6">
-              <Sprout />
+            <header className={`tray_group_modal_header w-full h-full flex items-center overflow-hidden  p-6 gap-3 mb-6 
+               ${tgModalMode === "insert" ? "bg-[#E8F3ED]" : "bg-[var(--main-white)]" }`}>
+              
+              <label className={`p-2.5 rounded-lg ${TrayGroupModal === "delete" ? "bg-[var(--color-danger-a)]" : "bg-[var(--sancgb)]"}`}>
+                <Group  className="w-4 h-4 text-white" /> 
+              </label>
+
               <h2 className="text-xl font-semibold">
                 {tgModalMode === "insert" ? "Add Tray Group" : "Update Tray Group"}
               </h2>
-            </div>
+            </header>
+
+
 
             {/* FORM */}
-            <form onSubmit={onFormSubmit} className="space-y-4">
+            <form onSubmit={onFormSubmit} className="space-y-4 p-6">
               {/* Plant Type */}
               <div>
-                <label className="text-sm">Plant</label>
+                <label className="text-sm text-[var(--sancgb)]">Plant</label>
                 <select
                   name="tray_group_name"
                   value={formData.tray_group_name}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
-                >
+                  className="w-full p-2 border-2 border-[#C4DED0] text-[#5A8F73]  rounded-lg">
                   <option value="">Select a Plant</option>
                   {plantOptions.map((plant) => (
                     <option key={plant.name} value={plant.name}>
@@ -214,33 +206,33 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
               {/* Min/Max Moisture */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-sm">Min Moisture (%)</label>
+                  <label className="text-sm text-[var(--sancgb)]">Min Moisture (%)</label>
                   <input
                     type="number"
                     value={formData.min_moisture}
                     disabled
-                    className="w-full p-2 border rounded-lg"
+                    className="w-full p-2 border-2 border-[#C4DED0] text-[#5A8F73]  rounded-lg"
                   />
                 </div>
                 <div>
-                  <label className="text-sm">Max Moisture (%)</label>
+                  <label className="text-sm text-[var(--sancgb)] ">Max Moisture (%)</label>
                   <input
                     type="number"
                     value={formData.max_moisture}
                     disabled
-                    className="w-full p-2 border rounded-lg"
+                    className="w-full p-2 border-2 border-[#C4DED0] text-[#5A8F73] rounded-lg"
                   />
                 </div>
               </div>
 
               {/* Location */}
               <div>
-                <label className="text-sm">Location</label>
+                <label className="text-sm text-[var(--sancgb)]">Location</label>
                 <select
                   name="location"
                   value={formData.location}
                   onChange={handleChange}
-                  className="w-full p-2 border rounded-lg"
+                  className="w-full p-2 border-2 border-[#C4DED0] text-[#5A8F73]  rounded-lg"
                 >
                   <option value="">Select a Location</option>
                   <option value="Left 1">Left 1</option>
@@ -258,19 +250,20 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
               </div>
 
               <div className="flex items-center justify-end gap-3 pt-4">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="cursor-pointer px-5 py-2 border rounded-lg"
-                >
-                  Cancel
-                </button>
+                 <button
+                    onClick={onClose}
+                    type='button'
+                    className="cursor-pointer px-4 py-2 text-sm rounded-lg font-medium 
+                    transition-colors border-2 border-[#C4DED0] text-[#5A8F73] 
+                    hover:bg-[var(--main-white)]">
+                    Cancel
+                  </button>
                 <button
                   type="submit"
                   className={`cursor-pointer px-5 py-2 text-white rounded-lg ${
                     tgModalMode === "insert"
-                      ? "bg-[var(--sancgb)]"
-                      : "bg-[var(--purpluish--)]"
+                      ? "bg-[var(--sancgb)] hover:bg-[var(--sancgd)]"
+                      : "bg-[var(--purpluish--)] hover:bg-[var(--bluis--)]"
                   }`}
                 >
                   {tgModalMode === "insert" ? "Create Tray Group" : "Update Group"}

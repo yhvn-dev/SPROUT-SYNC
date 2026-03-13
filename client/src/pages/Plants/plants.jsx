@@ -113,14 +113,14 @@ export default function Plants() {
       </div>
 
 
-      <nav className="plants_nav flex my-4 gap-2 px-4 md:px-0 md:col-start-2">
+      <nav className=" plants_nav flex my-4 gap-2 px-4 md:px-0 md:col-start-2">
          <button
           onClick={() => setActiveTab("plant_inventory")}
           className={`db_nav_button cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
             text-xs md:text-sm rounded-lg transition
             ${activeTab === "plant_inventory"
               ? "conb active bg-white shadow-md text-[var(--sancgb)] dark:bg-[var(--metal-dark3)] dark:text-[#00ffe0] dark:shadow-md"
-              : "bg-white/50  text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark1)]"
+              : "bg-white/50  text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark5)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark5)]"
             }`}>
           Inventory
         </button>
@@ -139,11 +139,15 @@ export default function Plants() {
 
 
 
-      <main className=" col-start-2 row-start-3 row-span-full col-span-full">
+      <main className="col-start-1 md:col-start-2 row-start-3 col-span-full">
         {activeTab === "plant_inventory" ? (
           <Plant_Inventory setPlantModal={setPlantModal}/>
         ) : (
-          <PlantGroups setPlantGroupModal={setPlantGroupModal}/>
+          <PlantGroups 
+            setPlantGroupModal={setPlantGroupModal} 
+            setInfoModalOpen={setInfoModalOpen} 
+            setInfoModalPurpose={setInfoModalPurpose}
+          />
         )}    
       </main>
       

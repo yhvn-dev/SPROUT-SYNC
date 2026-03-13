@@ -166,13 +166,10 @@ function CategoryRow({ group, childPlants, onAdd, onUpdate, onDelete }) {
 
 
 /* ─── MAIN PAGE ──────────────────────────────────────────── */
-export function PlantGroups({setPlantGroupModal}) {
+export function PlantGroups({setPlantGroupModal,setInfoModalOpen,setInfoModalPurpose}) {
   const { user } = useContext(UserContext);
   const { plants, plantGroups, loadPlantGroups, loadPlants } = usePlantData();
-  const [isInfoModalOpen, setInfoModalOpen] = useState(false);
-  const [infoModalPurpose, setInfoModalPurpose] = useState("");
   const [successMsg,setSuccessMsg] = useState("");
-
 
   useEffect(() => {
     loadPlantGroups();
@@ -214,31 +211,21 @@ export function PlantGroups({setPlantGroupModal}) {
   };
   const openDeleteModal = (plant) => {
     const plantGroup = plantGroups.find((g) => g.plant_group_id === plant.group_id);
-  setPlantGroupModal({ isOpen: true, mode: "delete_for_groups", plantGroup: plantGroup ?? null, plant });
-}
-  
-  const closeModal = () =>
-    setCategoriesModal((prev) => ({ ...prev, isOpen: false }));
-
-   const handleOpenInfosPlants = () => {
-    setInfoModalPurpose("plants");
+    setPlantGroupModal({ isOpen: true, mode: "delete_for_groups", plantGroup: plantGroup ?? null, plant });
+  }
+ 
+  const handleOpenInfosPlants = () =>{
     setInfoModalOpen(true);
-  };
-
-
+    setInfoModalPurpose("plant_groups")
+  }
+  
   return (
-    <section className="con_main grid grid-cols-1 sm:grid-cols-[12fr_30fr_58fr]
-      grid-rows-[8vh_10vh_auto]
-      md:grid-rows-[8vh_10vh_82vh] gap-4 h-screen w-full overflow-x-hidden
-      overflow-y-auto md:overflow-hidden
-      relative bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
-
-      {/* MAIN CONTENT */}
-      <main className="plant_main_div col-start-1  col-span-full row-start-1 row-span-full
-        overflow-y-auto p-4 md:p-6">
-
+    
+  <section className="con_main w-full  overflow-y-auto relative bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
+    <main className="plant_main_div bg-white rounded-2xl flex-1 h-full md:max-h-[540px] md:overflow-y-auto p-4 md:p-6"> 
+    
         <div className="w-full flex items-center justify-start gap-4 mb-6"> 
-          <h1 className="plants-text text-3xl font-bold text-[var(--metal-dark5)] ">Plants</h1>
+          <h1 className="plants-text text-3xl font-bold text-[var(--metal-dark5)] ">Plants Groups</h1>
           <button 
             className='ml-2 mt-2s sm:ml-4 mt-2 sm:mt-0 flex-shrink-0' 
             onClick={handleOpenInfosPlants}>
@@ -246,8 +233,7 @@ export function PlantGroups({setPlantGroupModal}) {
           </button>
         </div>
      
-
-        <div className="flex flex-col gap-12">
+        <div className="flex flex-col gap-12h overflow-y-auto  md:h-full">
           {groupsWithPlants.map(({ group, childPlants }) => (
             <CategoryRow
               key={group.plant_group_id}
@@ -259,9 +245,9 @@ export function PlantGroups({setPlantGroupModal}) {
             />
           ))}
         </div>
-      </main>
 
-      
+
+      </main>
     </section>
   );
 

@@ -112,11 +112,12 @@ export function PlantModal({isOpen,onClose,plantModalMode,selectedPlant,setSucce
   const barLeft = Math.min(minVal, 100);
   const barWidth = Math.max(0, Math.min(maxVal, 100) - Math.min(minVal, 100));
 
+
+  
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          {/* Backdrop */}
           <motion.div
             key="backdrop"
             initial={{ opacity: 0 }}
@@ -186,6 +187,8 @@ export function PlantModal({isOpen,onClose,plantModalMode,selectedPlant,setSucce
 
               </div>
 
+
+
               {/* ── DELETE MODE ── */}
               {isDelete ? (
                 <div className="conb p-6">
@@ -217,7 +220,7 @@ export function PlantModal({isOpen,onClose,plantModalMode,selectedPlant,setSucce
           
 
                 
-                <form onSubmit={handleSubmit} className="conb bg-[var(--main-white)]">
+                <form onSubmit={handleSubmit} className="bg-white  conb ]">
                   <div className=" px-6 pt-5 pb-1 space-y-4">
                     {/* Plant Name */}
                     <FieldGroup label="Plant Name" required icon={<Leaf size={12} />} error={formErrors.name}>

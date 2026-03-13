@@ -88,8 +88,10 @@ export function PlantGroupsModal({isOpen, onClose, plantModalMode, selectedPlant
           reference_link: formData.reference_link,
         });
         setFormErrors({});
-        setSuccessMsg(`${formData.name} assigned to ${selectedPlantGroup?.group_name}`);
+        setSuccessMsg(`${formData.name} assigned to ${selectedPlantGroup?.group_name} Group`);
       }
+
+      
 
       if (plantModalMode === "update_for_groups") {
         // ✅ Update existing plant sa group

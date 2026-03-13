@@ -192,7 +192,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
             </div>
             <button
               onClick={onClose}
-              className="close_button w-8 h-8 flex items-center justify-center rounded-lg bg-white/5 border border-gray-700 text-gray-500 hover:bg-white/10 hover:text-gray-200 transition-colors shrink-0">
+              className="close_button w-8 h-8 flex items-center justify-center rounded-lg bg-white/5  hover:bg-white/10 hover:text-gray-200 transition-colors shrink-0">
               <X className="w-4 h-4" />
             </button>
           </div>

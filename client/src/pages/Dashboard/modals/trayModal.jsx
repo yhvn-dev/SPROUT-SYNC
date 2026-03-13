@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { X, Sprout, TrendingUp, Package, Trash2 } from "lucide-react";
+import { X, Sprout, TrendingUp, Trash2, Grid3x3} from "lucide-react";
 import * as trayModels from "../../../data/traysServices";
 
 export function TrayModal({
@@ -101,13 +101,14 @@ export function TrayModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.4 }}>
-
-          
+      
         {/* HEADER */}
-        <header className="tray_modal_header px-6 py-5 flex items-center justify-between">
+        <header className={`tray_modal_header px-6 py-5 flex items-center justify-between ${trayModalMode === "insert" ? "bg-[#E8F3ED]" : "bg-[var(--main-white)]"}`}>
           <div className="flex items-center gap-3">
-            <div className={`p-2.5 rounded-lg ${trayModalMode === "delete" ? "bg-red-600" : "bg-[var(--ptl-greenh)]"}`}>
-              {trayModalMode === "delete" ? <Trash2 className="w-5 h-5 text-white" /> : <Package className="w-5 h-5 text-white" />}
+            <div className={`p-2.5 rounded-lg ${trayModalMode === "delete" ? "bg-[var(--color-danger-a)]" : "bg-[var(--ptl-greenh)]"}`}>
+              {trayModalMode === "delete" ? 
+              <Trash2 className="w-5 h-5 text-white" /> :
+              <Grid3x3 className="w-5 h-5 text-white" />}
             </div>
             <div>
               <h2 className="text-xl font-bold text-[var(--metal-dark5)]">
@@ -121,13 +122,12 @@ export function TrayModal({
             </div>
           </div>
 
-          <button onClick={onClose} className="close_button p-2 rounded-lg hover:bg-gray-100">
+          <button onClick={onClose} className="cursor-pointer close_button p-2 rounded-lg hover:bg-gray-100">
             <X size={24} />
           </button>
-          
+
+
         </header>
-
-
 
 
         {/* DELETE MODE */}
@@ -137,8 +137,8 @@ export function TrayModal({
               <p className="text-gray-600">Delete <b>{selectedTray?.plant}</b> tray?</p>
             </div>
             <form onSubmit={handleSubmit} className="flex justify-end gap-3 p-6">
-              <button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg">Cancel</button>
-              <button type="submit" className="px-4 py-2 rounded-lg bg-red-600 text-white">Delete</button>
+              <button type="button" onClick={onClose} className="cursor-pointer px-4 py-2 border rounded-lg">Cancel</button>
+              <button type="submit" className="cursor-pointer px-4 py-2 rounded-lg bg-[var(--color-danger-a)] hover:bg-red-500 text-white">Delete</button>
             </form>
           </>
         ) : (
@@ -147,8 +147,8 @@ export function TrayModal({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
               {/* PLANT (auto-filled) */}
-              <div className="md:col-span-2 border rounded-xl p-4">
-                <label className="flex items-center gap-2 text-sm font-semibold mb-2">
+              <div className="md:col-span-2 border-2 border-[#C4DED0] text-[#5A8F73]  rounded-xl p-4">
+                <label className="flex items-center gap-2 text-sm text-[var(--sancgb)] font-semibold mb-2">
                   <Sprout className="w-4 h-4" /> Plant *
                 </label>
                 <input
@@ -156,21 +156,20 @@ export function TrayModal({
                   name="plant"
                   value={formData.plant}
                   disabled
-                  className="w-full px-3 py-2 border rounded-lg bg-gray-100 cursor-not-allowed"
+                  className="w-full px-3 py-2 border-2 border-[#C4DED0] text-[#5A8F73]  rounded-lg bg-gray-100 cursor-not-allowed"
                 />
               </div>
 
               {/* STATUS */}
-              <div className="border rounded-xl p-4">
-                <label className="flex items-center gap-2 text-sm font-semibold mb-2">
+              <div className="border-2 border-[#C4DED0] text-[#5A8F73] rounded-xl p-4">
+                <label className="flex items-center gap-2 text-sm  text-[var(--sancgb)] font-semibold mb-2">
                   <TrendingUp className="w-4 h-4" /> Status *
                 </label>
                 <select
                   name="status"
                   value={formData.status}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border rounded-lg bg-white"
-                >
+                  className="w-full px-3 py-2 border-2 border-[#C4DED0] text-[#5A8F73] rounded-lg bg-white">
                   <option value="">Select Status</option>
                   <option value="Available">Available</option>
                   <option value="Occupied">Occupied</option>
@@ -185,17 +184,29 @@ export function TrayModal({
               </div>
             </div>
 
+
+
+
             {/* FOOTER */}
-            <div className="border-t py-4 flex justify-between">
+            <div className="border-t  border-[#C4DED0] py-4 flex justify-between">
               <span className="text-sm text-gray-500">* Required fields</span>
               <div className="flex gap-3">
-                <button type="button" onClick={onClose} className="px-5 py-2 border rounded-lg">Cancel</button>
+               <button
+                    onClick={onClose}
+                    type='button'
+                    className="cursor-pointer px-4 py-2 text-sm rounded-lg font-medium 
+                    transition-colors border-2 border-[#C4DED0] text-[#5A8F73] 
+                    hover:bg-[var(--main-white)]">
+                    Cancel
+                  </button>
                 <button type="submit" 
                 className={`cursor-pointer px-5 py-2.5 text-white rounded-lg font-medium shadow-lg transition-all ${trayModalMode === "insert" ? "bg-[var(--sancgb)] hover:bg-[var(--ptl-greenf)]" : "bg-[var(--purpluish--)] hover:bg-[var(--bluis--)]"}`}>
                   {trayModalMode === "insert" ? "Create Tray" : "Update Tray"}
                 </button>
               </div>
             </div>
+
+
           </form>
         )}
       </motion.div>

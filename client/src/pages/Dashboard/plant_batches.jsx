@@ -69,14 +69,7 @@ function Plant_batches({ setMsg, batchesData, setSelectedBatches, setBatchModalO
 
         {batchesData.length > 0 && batchesData.map((pb,index) => {
 
-          // const formatBatchDisplay = (batch) => {
-          //   const date = new Date(batch.date_planted);
-          //   const yyyy = date.getFullYear();
-          //   const mm = String(date.getMonth() + 1).padStart(2, "0");
-          //   const dd = String(date.getDate()).padStart(2, "0");
-          //   return `${yyyy}${mm}${dd}-${String(batch.batch_id).padStart(3, "0")}`;
-          // };
-          
+      
           return (
        
             <tbody className="divide-y divide-gray-200">              
@@ -142,10 +135,8 @@ function Plant_batches({ setMsg, batchesData, setSelectedBatches, setBatchModalO
                       bg-[var(--purpluish--)]
                     text-white
                       shadow
-                      hover:shadow-md
-                      transition
-                      "
-                    >
+                      hover:bg-[var(--bluis--)]      
+                      ">
                       UPDATE
                     </button>
                
@@ -160,8 +151,7 @@ function Plant_batches({ setMsg, batchesData, setSelectedBatches, setBatchModalO
                         bg-[var(--color-danger-a)]
                         text-white
                         shadow
-                        hover:shadow-md
-                        transition">
+                        hover:bg-red-500">
                       DELETE
                     </button>
                                

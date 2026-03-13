@@ -162,7 +162,7 @@ function Trays({
                     bg-[var(--purpluish--)]
                     text-white
                     shadow
-                    hover:shadow-md
+                    hover:bg-[var(--bluis--)]     
                     transition
                   "
                 >
@@ -181,7 +181,7 @@ function Trays({
                       bg-[var(--color-danger-a)]
                       text-white
                       shadow
-                      hover:shadow-md
+                      hover:bg-red-500    
                       transition
                     "
                   >

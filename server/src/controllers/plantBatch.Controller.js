@@ -100,7 +100,6 @@ export const createPlantBatch = async (req, res) => {
     const batch = await plantBatchModels.createPlantBatch(batchData)  
     res.status(201).json(batch);
     await notifyBatchCreated(batch,"insert");
-    // console.log("PLANT BATCH CREATED:", batch);  
   } catch (err) {
     console.error("CONTROLLER: Error creating plant batch", err);
     res.status(500).json({ message: "Error creating plant batch", err });
@@ -136,7 +135,6 @@ export const updatePlantBatch = async (req, res) => {
 
 
 
-
 // ===== CHECK and UPDATE batches past harvest =====
 export const updatePastHarvestStatus = async () => {
   try {
@@ -165,8 +163,6 @@ export const updatePastHarvestStatus = async () => {
         console.log(`Batch ${batch.batch_id} harvest_status updated to '${newStatus}'`);
       }
     }
-
-    
   } catch (err) {
     console.error("Error updating harvest status:", err);
   }

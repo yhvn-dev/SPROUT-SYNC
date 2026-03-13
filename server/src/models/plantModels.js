@@ -34,13 +34,14 @@ export const createPlant = async (
 ========================= */
 export const getAllPlants = async () => {
   try {
-    const { rows } = await query(`SELECT * FROM plants ORDER BY created_at DESC`);
+    const { rows } = await query(`SELECT * FROM plants ORDER BY created_at ASC`);
     return rows;
   } catch (err) {
     console.error("MODELS: Error fetching plants", err);
     throw err;
   }
 };
+
 
 /* =========================
    GET PLANT BY ID

@@ -36,14 +36,15 @@ export const SeedlingStats = ({ activeTab, growthOvertime, batchHistoryTotal }) 
     setInfoModalOpen(true);
   };
 
+
   // ================= DARK MODE =================
   const isDark = typeof window !== "undefined" && document.documentElement.classList.contains("dark");
   const axisColor = isDark ? "#e5e7eb" : "#374151";
   const gridColor = isDark ? "#374151" : "#e5e7eb";
 
+  
   return (
-    <div className="w-full h-full grid gap-4 md:grid-cols-[6fr_4fr] md:grid-rows-[2fr_1fr] overflow-x-hidden">
-
+    <div className="w-full h-full grid gap-4 grid-rows-[1fr_1fr_1fr] md:grid-cols-[6fr_4fr] md:grid-rows-[2fr_1fr] overflow-x-hidden">
       {/* ================= GROWTH OVER TIME ================= */}
       <div className="conb col-span-full md:col-span-1 bg-white dark:bg-gray-900 rounded-xl shadow-sm hover:shadow-md transition-shadow p-4 flex flex-col h-[360px] sm:h-auto md:h-full">
         <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-100 mb-2 flex items-center">

@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, use } from 'react';
+import { useEffect, useState, useCallback, use, useContext } from 'react';
 import { Sprout, LayoutGrid, TrendingUp } from 'lucide-react';
 
 import Tray_groups from './tray_groups';
@@ -15,9 +15,11 @@ import * as batches from "../../data/batchesData";
 import { TrayGroupModal } from './modals/trayGroupModal';
 import { TrayModal } from "./modals/trayModal";
 import { BatchModal } from './modals/batchModal';
+import { usePlantData } from '../../hooks/plantContext';
 
 
 const ManagePlants = ({ reloadTrayGroups }) => {
+  const {plants} =  usePlantData()
   const [activeTab, setActiveTab] = useState('trayGroups');
   const [successMsg, setSuccessMsg] = useState("");
   const [msg,setMsg] = useState("");
@@ -188,6 +190,7 @@ const ManagePlants = ({ reloadTrayGroups }) => {
           setSuccessMsg={setSuccessMsg}
           loadTrayGroups={loadTrayGroups}
           reloadTrayGroups={reloadTrayGroups}
+          plants={plants}
         />
       )}
 

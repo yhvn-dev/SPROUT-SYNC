@@ -90,8 +90,6 @@
     --sz-8-96:8.96rem;
     --szd-11-08:11.08rem;
 
-
-
     --status-ok-bg: #ecfdf5;
     --status-ok-text: #047857;
 
@@ -395,14 +393,16 @@ body.dark .manage_plants_nav button:hover{
         body.dark .tg_data_container::-webkit-scrollbar{
             @apply bg-[var(--metal-dark1)];
         }
-          body.dark .tg_data_container::-webkit-scrollbar-thumb {
+        body.dark .tg_data_container::-webkit-scrollbar-thumb {
             @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
-         }
+        }
+         body.dark .tray_group_modal_header{
+            @apply bg-[var(--sancga)];
+         }  
 
          
 
-        
-         
+ 
         
         /* TRAYS */
     body.dark .trays_conb {
@@ -508,7 +508,7 @@ body.dark .pb_con{
         border:0px solid;
     }
     body.dark .seedlings_stat_card{
-          @apply bg-[var(--metal-dark2)];
+        @apply bg-[var(--metal-dark2)];
     }
 
 
@@ -1046,10 +1046,14 @@ body.dark .browser_window_main_container{
             body.dark .mockup_db_sensor_div span{
             @apply bg-transparent border-[1px];
         }
-    body.dark .plant_batch_div {
-        @apply bg-[var(--metal-dark1)];
-        box-shadow:5px 5px 5px 1px var(--shad-dark); 
-    }   
+         body.dark .plant_batch_div {
+            @apply bg-[var(--metal-dark1)];
+            box-shadow:5px 5px 5px 1px var(--shad-dark); 
+      }   
+        body.dark .pb_tr td{
+            @apply text-[var(--main-white--)];
+        }   
+ 
  
 
        body.dark .plant_batch_div {
@@ -1232,6 +1236,10 @@ body.dark .browser_window_main_container{
         body.dark .plant_main_div::-webkit-scrollbar{
               @apply bg-[var(--metal-dark5)];
         }
+        body.dark .plants_nav button{
+              @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
+
+        }
 
         body.dark .plant_main_div::-webkit-scrollbar-thumb{
            @apply bg-[var(--metal-dark4)] border-4 rounded-2xl border-[var(--metal-dark5)] cursor-pointer;
@@ -1240,5 +1248,19 @@ body.dark .browser_window_main_container{
             @apply text-[var(--main-white)];
         }
         body.dark .plant_group_name{
-                 @apply text-[var(--main-white)];
+            @apply text-[var(--main-white)];
         }
+        body.dark .plant_invent_tb_header th{
+            @apply  bg-[var(--sancga)]  text-[var(--main-white)] font-bold;
+        }
+           body.dark .pi_table tr td{
+            @apply text-[var(--main-white)];
+        }
+        
+        body.dark .pi_table tr:nth-child(odd) {
+            @apply bg-[var(--metal-dark1)]
+        }
+        body.dark .pi_table tr:nth-child(even) {
+            @apply bg-[var(--metal-dark3)] text-[var(--sancgc)];;
+        }
+        

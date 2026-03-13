@@ -87,10 +87,8 @@ export default function Analytics() {
       md:grid-rows-[auto_auto_1fr]
       gap-4
       overflow-hidden
-      relative
-    ">
+      relative">
 
- 
     {/* MOBILE MENU BUTTON */}
     <button
         onClick={() => setSidebarOpen(true)}

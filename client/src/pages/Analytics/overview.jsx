@@ -10,8 +10,7 @@ const StatCard = ({ label, value, gradient, color }) => (
   <div
     className={`stat_card w-full h-full rounded-xl shadow-lg hover:shadow-xl transition-shadow
     flex flex-col items-center justify-center p-3 bg-gradient-to-tr ${gradient}
-    dark:from-gray-900 dark:to-gray-800`}
-  >
+    dark:from-gray-900 dark:to-gray-800`}>
     <p className="text-xs text-gray-500 dark:text-gray-400">{label}</p>
     <h2 className="text-3xl font-bold" style={{ color }}>
       {value ?? 0}
@@ -41,8 +40,6 @@ const MoistureProgressBar = ({ average, isDark }) => {
       <p className="mb-2 text-2xl font-bold text-gray-900 dark:text-gray-200">
         {value}%
       </p>
-
-      {/* Progress Bar Container */}
       <div
         className={`w-full h-4 rounded-full overflow-hidden ${
           isDark ? "bg-gray-700" : "bg-gray-200"
@@ -110,13 +107,11 @@ export const Overview = ({
   };
 
 
-
-
-
   
   return (
-    <div className="h-full grid md:grid-cols-12 md:grid-rows- gap-4"> 
-     <div className="w-full col-start-1 row-end-8 col-span-7 md:col-span-full grid grid-cols-4 gap-4 md:grid-cols-4 row-start-1">
+     <div className="h-full w-full grid grid-cols-4 md:grid-cols-12 md:gap-4">
+
+       <div className="w-[100%]  col-span-full grid grid-cols-2 sm:grid-cols-4 gap-4 mb-4 md:mb-0">
         <StatCard
           label="Active Total Seedlings"
           value={batchTotal?.total_seedlings}
@@ -146,14 +141,14 @@ export const Overview = ({
       {/* =====================
           MOISTURE PROGRESS BAR
       ====================== */}
-      <div className="conb col-span-7 bg-white py-2 row-span-9 dark:bg-gray-900 rounded-xl shadow-lg px-6 flex flex-col items-start justify-start gap-4">
+      <div className="conb col-span-7 bg-white py-2 row-span-9 dark:bg-gray-900 rounded-xl 
+      shadow-lg px-6 flex flex-col items-start justify-start gap-4 mb-4 md:mb-0">
         <div className="flex my-4 items-center justify-between w-full">
           <p className="font-semibold my-2">Average Moisture (%)</p>
           {user?.role === "admin" && (
             <button
               onClick={handleOpenDeleteMoistureModal}
-              className="flex text-xs cursor-pointer bg-[var(--sancga)] rounded-2xl shadow-lg px-4 py-2 text-[var(--main-white)] hover:bg-[var(--sancgb)]"
-            >
+              className="flex text-xs cursor-pointer bg-[var(--sancga)] rounded-2xl shadow-lg px-4 py-2 text-[var(--main-white)] hover:bg-[var(--sancgb)]">
               <Trash2 className="trash_logo w-3 h-3 mr-2 my-[1px]" />
               Clear Readings
             </button>
@@ -184,6 +179,9 @@ export const Overview = ({
               Clear Readings
             </button>
           )}
+
+
+          
         </div>
 
         <div className="flex flex-col justify-center items-center h-full">

@@ -199,7 +199,7 @@ export const notifyBatchCreated = async (batch,mode) => {
             sendPushNotification(
               device.push_token,
               "Sprout Sync Notification",
-              `🌱 ${batch.plant_name}[${batch.batch_number}] batch has been added!`
+              `🌱 ${batch.plant_name}[${batch.batch_number}] batch has been updated!`
             )
           )
         );

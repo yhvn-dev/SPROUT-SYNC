@@ -246,8 +246,8 @@ function Batch_History() {
 
 
           {/* TABLE SECTION */}
-          <div className="batch_history_table  rounde d-2xl shadow-lg 
-                    h-[55vh] md:h-[57vh] 
+          <div className="batch_history_table rounded-2xl shadow-lg 
+                    h-full md:h-[57vh] 
                     overflow-y-auto">
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto overflow-y-auto">
@@ -335,11 +335,12 @@ function Batch_History() {
 
 
 
+
             {/* Mobile Table - Simple List */}
-            <div className="md:hidden"> {filteredData.map((record) => (
+            <div className="h-full md:hidden"> {filteredData.map((record) => (
                 <div
                   key={record.history_id}
-                  className="batch_history_table_mobile_box border-b border-gray-200 p-4 hover:bg-[#E8F3ED] transition-colors">
+                  className="batch_history_table_mobile_box h-full border-b border-gray-200 p-4 hover:bg-[#E8F3ED] transition-colors">
                   <div className="flex justify-between items-start mb-2">
                     <div>
                       <p className="text-xs text-gray-600">Batch #{record.batch_id}</p>

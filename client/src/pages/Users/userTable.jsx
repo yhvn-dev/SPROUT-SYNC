@@ -147,37 +147,31 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
                   onClick={() => {
                     setSelectedUser(u);
                     setOpen(true);
-                    setMode("update");
-                  }}
-                  className="
+                    setMode("update");}}
+                    className="
                     cursor-pointer
                     text-xs
                     px-2.5 py-1
                     rounded-md
                     bg-[var(--purpluish--)]
-                  text-white
-                    shadow
-                    hover:shadow-md
-                    transition"
-                >
+                  text-white shadow 
+                    hover:shadow transition">
                   UPDATE
                 </button> 
-
-                {u.role.toLowerCase() === "viewer" && (
+                
+           
                   <button
                     onClick={() => {
                       setSelectedUser(u);
                       setOpen(true);
                       setMode("delete");
                     }}
-                    className="cursor-pointer text-xs px-2.5 py-1 rounded-md bg-[var(--color-danger-a)] text-white shadow hover:shadow-md transition"
-                  >
+                    className="cursor-pointer text-xs px-2.5 py-1 rounded-md bg-blue-500 text-white shadow hover:bg-red-500">
                     DELETE
                   </button>
-                )}
-
       
-              </div>
+      
+            </div>
 
 
             </div>

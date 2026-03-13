@@ -139,7 +139,7 @@ export function Modal({
                 {/* Left Column */}
                 <div className="space-y-5">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                    <label className="block text-sm text-[var(--sancgb)] font-medium  mb-2">Username</label>
                     <input
                       type="text"
                       value={username}
@@ -152,7 +152,7 @@ export function Modal({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
+                    <label className="block text-sm text-[var(--sancgb)]  font-medium mb-2">Full Name</label>
                     <input
                       type="text"
                       value={fullname}
@@ -164,7 +164,7 @@ export function Modal({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <label className="block text-sm  text-[var(--sancgb)] font-medium  mb-2">Email</label>
                     <input
                       type="text"
                       value={email}
@@ -182,7 +182,7 @@ export function Modal({
                 {/* Right Column */}
                 <div className="space-y-5">
                   <div className=""> 
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                    <label className="block text-sm text-[var(--sancgb)] font-medium mb-2">Phone Number</label>
                     <input
                       type="text"
                       value={phoneNumber}
@@ -194,7 +194,7 @@ export function Modal({
 
 
                   <div >
-                    <label className="flex  text-sm font-medium text-gray-700 mb-2">
+                    <label className="flex text-sm text-[var(--sancgb)] font-medium  mb-2">
                       Password {mode === "update" && <p className="text-gray-400 text-xs mx-2 mt-[2px]">(leave blank to keep current)</p>}
                     </label>
 
@@ -230,7 +230,7 @@ export function Modal({
 
 
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Role</label>
+                    <label className="block text-sm text-[var(--sancgb)] font-medium mb-2">Role</label>
                     <select
                       value={role}
                       onChange={(e) => setRole(e.target.value)}
@@ -255,7 +255,7 @@ export function Modal({
                 <button
                   type="submit"
                   className={`cursor-pointer px-6 py-2.5 text-white rounded-xl transition-colors duration-200 font-medium 
-                    ${mode === "update" ? "bg-[var(--white-blple--)] hover:bg-[var(--bluis--)]" : "bg-green-600 hover:bg-green-700"}`}>
+                    ${mode === "update" ? "bg-[var(--white-blple--)] hover:bg-[var(--bluis--)]" : "bg-[var(--sancgb)] hover:bg-[var(--sancgd)]"}`}>
                   {mode === "update" ? "Save Changes" : "Add User"}
                 </button>
               </div>
