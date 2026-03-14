@@ -85,10 +85,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
   }, [isOpen, selectedTray, selectedBatch, batchModalMode]);
 
 
-
-
-
-  
     const handleSubmit = async (e) => {
       e.preventDefault();
       setFormErrors({});
@@ -142,8 +138,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
   };
 
 
-  
-
 
   
   return (
@@ -164,7 +158,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div 
-                className={`p-2 rounded-xl shadow-sm ${
+                className={`p-4 rounded-xl shadow-sm ${
                   batchModalMode === "delete" ? 'bg-red-500' : 'bg-[#208b3a]'
                 }`}>
                 {batchModalMode === "delete" ? (

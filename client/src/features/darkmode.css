@@ -288,9 +288,9 @@ body.dark .navs-btn {
          body.dark .conb li{
             @apply text-[var(--main-white)];
         }
-        body.dark .nursery_data_div{
-                background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
-        }
+
+        
+
 
     
 
@@ -365,20 +365,6 @@ body.dark .batch_div {
 
 
 /* MANAGE PLANTS ============================== ============================================= =====*/
-body.dark .manage_plants_page_wrapper{
-      @apply bg-[var(--metal-dark1)] border-0;
-}
-body.dark .manage_plants_nav{
-     @apply bg-[var(--metal-dark1)] border-0;
-}
-body.dark .manage_plants_nav button{
-     @apply text-[var(--main-white)];
-}
-body.dark .manage_plants_nav button{
-     @apply text-[var(--main-white)];
-}
-
-
 
 body.dark .manage_plants_nav button:hover{
      @apply bg-[var(--sancgb)];
@@ -390,6 +376,9 @@ body.dark .manage_plants_nav button:hover{
         box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
         border:0px solid;
     }    
+        body.dark .tg_data_main:hover{
+             @apply bg-[var(--metal-dark2)];
+        }
         body.dark .tg_data_container::-webkit-scrollbar{
             @apply bg-[var(--metal-dark1)];
         }
@@ -399,6 +388,9 @@ body.dark .manage_plants_nav button:hover{
          body.dark .tray_group_modal_header{
             @apply bg-[var(--sancga)];
          }  
+         body.dark .no_trays_div{
+            @apply bg-[var(--metal-dark1)];
+         }
 
          
 

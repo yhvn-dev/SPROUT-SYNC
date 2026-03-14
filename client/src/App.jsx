@@ -5,6 +5,7 @@ import {lazy, Suspense, useEffect} from "react";
 const Login = lazy(() => import("./pages/Login/login.jsx"));
 const Home = lazy(() => import("./pages/Home/home.jsx"));
 const Dashboard = lazy(() => import("./pages/Dashboard/dashboard.jsx"));
+const Manage_Plants = lazy(() => import("./pages/Manage_Plants/manage_plants.jsx"))
 const Users = lazy(() => import("./pages/Users/users.jsx"));
 const Analytics = lazy(() => import('./pages/Analytics/analytics.jsx'));
 const Batch_History = lazy(() => import("./pages/Batch_History/batch_history.jsx"));
@@ -19,6 +20,7 @@ import { ESP32Provider } from "./hooks/esp32Hooks.jsx";
 import { ValveProvider } from "./hooks/valveContext.jsx";
 import { listenForMessages } from "./utils/firebase.js";
 import './styles.css';
+
 
 function App() {
   useEffect(() => {
@@ -62,6 +64,20 @@ function App() {
               </PlantDataProvider>
             </MessagesProvider>
           }/>
+
+
+         <Route path='/manage_plants' element={
+            <MessagesProvider>
+              <PlantDataProvider>
+                <ValveProvider>
+                  <ProtectedRoute allowedRoles={['admin']}>
+                    <Manage_Plants/>
+                  </ProtectedRoute>
+                </ValveProvider>
+              </PlantDataProvider>
+            </MessagesProvider>
+          }/>
+    
 
           <Route path='/users' element={
             <MessagesProvider>

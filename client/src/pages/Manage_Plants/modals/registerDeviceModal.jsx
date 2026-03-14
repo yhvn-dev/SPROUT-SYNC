@@ -55,9 +55,6 @@ function RegisterDeviceModal({ onClose, userData }) {
     onClose();                
   };
 
-
-  
-
   return (
     <motion.div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 backdrop-blur-2xl"
@@ -154,6 +151,7 @@ function RegisterDeviceModal({ onClose, userData }) {
     </motion.div>
   );
 }
+
 
 
 export default RegisterDeviceModal;

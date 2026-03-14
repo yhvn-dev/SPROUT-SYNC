@@ -315,7 +315,7 @@ function Batch_History() {
                       <td className="px-4 py-3 text-sm text-center">
                         <button
                           onClick={() => handleDelete(record)}
-                          className="inline-flex items-center p-2 hover:bg-red-100 rounded-full transition-colors group"
+                          className="cursor-pointer inline-flex items-center p-2 hover:bg-red-100 rounded-full transition-colors group"
                           title="Delete record">
                           <Trash2 size={16} className="text-gray-400 group-hover:text-red-600" />
                         </button>

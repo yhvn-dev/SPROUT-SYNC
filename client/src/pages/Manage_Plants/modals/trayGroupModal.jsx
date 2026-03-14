@@ -23,8 +23,11 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
     is_watering: false
   });
 
-    
 
+  useEffect(() =>{
+    console.log("TG MODAL MODE",tgModalMode)
+  },[tgModalMode])
+    
   const [formErrors, setFormErrors] = useState({});
   // Initialize modal values only when modal opens
   useEffect(() => {
@@ -129,7 +132,7 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.4 }}
           
-        className={`conb bg-white rounded-2xl shadow-xl relative overflow-hidden ${
+        className={`conb bg-white rounded-2xl shadow-xl  relative overflow-hidden ${
         tgModalMode === "delete" ? "w-[420px]" : "w-[600px]"}`}>
 
         {/* CLOSE BUTTON */}
@@ -141,7 +144,9 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
 
         {tgModalMode === "delete" ? (
           <>
-            <div className="flex items-center gap-3">
+          <div className="p-6">
+
+              <div className="flex items-center gap-3">
               <Trash2 className="text-red-600" />
               <h2 className="text-xl font-semibold">Delete Tray Group</h2>
             </div>
@@ -151,16 +156,18 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
             </p>
 
             <form onSubmit={onFormSubmit} className="flex justify-end mt-8 gap-3">
-              <button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg">
+              <button type="button" onClick={onClose} className="cursor-pointer px-4 py-2 border rounded-lg">
                 Cancel
               </button>
               <button
                 type="submit"
-                className="px-4 py-2 rounded-lg bg-[var(--color-danger-a)] text-white"
-              >
+                className="cursor-pointer px-4 py-2 rounded-lg bg-[var(--color-danger-a)] text-white">
                 Delete
               </button>
             </form>
+                
+          </div>
+     
           </>
         ) : (
           <>

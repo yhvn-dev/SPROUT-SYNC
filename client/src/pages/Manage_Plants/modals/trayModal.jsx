@@ -103,7 +103,13 @@ export function TrayModal({
         transition={{ duration: 0.4 }}>
       
         {/* HEADER */}
-        <header className={`tray_modal_header px-6 py-5 flex items-center justify-between ${trayModalMode === "insert" ? "bg-[#E8F3ED]" : "bg-[var(--main-white)]"}`}>
+        <header className={`tray_modal_header px-6 py-5 flex items-center justify-between 
+            ${trayModalMode === "insert" ? "bg-[#E8F3ED]" :
+             trayModalMode === "update" ?
+            "bg-[var(--main-white)]" :
+            "bg-[var(--color-danger-c)]"}`}>
+
+              
           <div className="flex items-center gap-3">
             <div className={`p-2.5 rounded-lg ${trayModalMode === "delete" ? "bg-[var(--color-danger-a)]" : "bg-[var(--ptl-greenh)]"}`}>
               {trayModalMode === "delete" ? 

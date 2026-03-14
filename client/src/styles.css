@@ -133,6 +133,8 @@
     font-family: 'Inter', sans-serif;
 }
 
+
+
 ::-webkit-scrollbar-track{
     @apply bg-transparent;
 }
