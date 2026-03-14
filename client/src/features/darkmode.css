@@ -507,6 +507,11 @@ body.dark .pb_con{
         box-shadow: 5px 5px 5px 1px var(--shad-dark-e);
         border:0px solid;
     }
+    body.dark .batch_table_main div::-webkit-scrollbar {
+        @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+       
+    }
+
     body.dark .seedlings_stat_card{
         @apply bg-[var(--metal-dark2)];
     }
@@ -535,6 +540,7 @@ body.dark .pb_con{
     body.dark .replanted_seeedlings_div{
         @apply bg-[var(--metal-dark2)];
     }
+
 
 
 
@@ -667,13 +673,18 @@ body.dark .owner_color {
 
 
 /* BATCH HISTORY */
+body.dark .batch_history_table td span{
+    @apply text-[var(--main-white)]
+}
+body.dark .batch_history_table_mobile_box span{
+     @apply text-[var(--main-white)]
+}
 body.dark .batch_history_table tr:nth-child(odd){
     @apply bg-[var(--metal-dark1)];
 }
 body.dark .batch_history_table tr:nth-child(even){
     @apply bg-[var(--metal-dark3)];
 }
-
 body.dark .batch_history_table tr:hover{
      @apply bg-[var(--metal-dark3)];
 }   
@@ -683,22 +694,24 @@ body.dark .batch_history_table_mobile_box:hover{
 body.dark .batch_history_table::-webkit-scrollbar{
  @apply bg-[var(--metal-dark1)];
 }
-
     body.dark .batch_history_table::-webkit-scrollbar{
         @apply bg-[var(--metal-dark1)];
     }
     body.dark .batch_history_table::-webkit-scrollbar-thumb {
      @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
     }
-
     body.dark .batch_table tr:nth-child(odd){
         @apply bg-[var(--metal-dark1)];
     }
     body.dark .batch_table tr:nth-child(even){
         @apply bg-[var(--metal-dark4)];
     }
-    
-
+    body.dark .bh_message_box{
+        @apply bg-[var(--metal-dark4)];
+    }
+    body.dark .bh_plant_name_modal{
+         @apply text-white;
+    }
 
 
 
@@ -1234,16 +1247,19 @@ body.dark .browser_window_main_container{
             @apply text-[var(--main-white--)];
         }
         body.dark .plant_main_div::-webkit-scrollbar{
-              @apply bg-[var(--metal-dark5)];
+              @apply bg-[var(--metal-dark5)];    
         }
+        body.dark .plant_main_div::-webkit-scrollbar-thumb{
+           @apply bg-[var(--metal-dark4)] border-4 rounded-2xl border-[var(--metal-dark5)] cursor-pointer;
+        }
+        
+
         body.dark .plants_nav button{
               @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
 
         }
 
-        body.dark .plant_main_div::-webkit-scrollbar-thumb{
-           @apply bg-[var(--metal-dark4)] border-4 rounded-2xl border-[var(--metal-dark5)] cursor-pointer;
-        }
+      
         body.dark .plants-text {
             @apply text-[var(--main-white)];
         }

@@ -1,12 +1,10 @@
-// plantModels.js
-import { query } from '../config/db.js'; // adjust path to your db file
+import { query } from '../config/db.js'; 
 
 /* =========================
    CREATE PLANT
 ========================= */
 export const createPlant = async (
   name,
-  description,
   reference_link,
   moisture_min,
   moisture_max,
@@ -16,11 +14,11 @@ export const createPlant = async (
     const { rows } = await query(
       `
       INSERT INTO plants 
-        (name, description, reference_link, moisture_min, moisture_max, group_id)
-      VALUES ($1, $2, $3, $4, $5, $6)
+        (name, reference_link, moisture_min, moisture_max, group_id)
+      VALUES ($1, $2, $3, $4, $5)
       RETURNING *;
       `,
-      [name, description, reference_link, moisture_min, moisture_max, group_id]
+      [name,reference_link, moisture_min, moisture_max, group_id]
     );
     return rows[0];
   } catch (err) {
@@ -62,7 +60,6 @@ export const getPlantById = async (plant_id) => {
 export const updatePlant = async (
   plant_id,
   name,
-  description,
   reference_link,
   moisture_min,
   moisture_max,
@@ -74,23 +71,21 @@ export const updatePlant = async (
       UPDATE plants
       SET 
         name = $1,
-        description = $2,
-        reference_link = $3,
-        moisture_min = $4,
-        moisture_max = $5,
-        group_id = $6
-      WHERE plant_id = $7
+        reference_link = $2,
+        moisture_min = $3,
+        moisture_max = $4,
+        group_id = $5
+      WHERE plant_id = $6
       RETURNING *;
       `,
-      [name, description, reference_link, moisture_min, moisture_max, group_id, plant_id]
+      [name, reference_link, moisture_min, moisture_max, group_id, plant_id]
     );
-    return rows[0];
+  return rows[0] || null;
   } catch (err) {
     console.error("MODELS: Error updating plant", err);
     throw err;
   }
 };
-
 
 
 
@@ -103,7 +98,7 @@ export const deletePlant = async (plant_id) => {
       `DELETE FROM plants WHERE plant_id = $1 RETURNING *;`,
       [plant_id]
     );
-    return rows[0];
+    return rows[0] || null; 
   } catch (err) {
     console.error("MODELS: Error deleting plant", err);
     throw err;

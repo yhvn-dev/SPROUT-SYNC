@@ -174,6 +174,15 @@ function InfosModal({ isInfosModalOpen, onClose, purpose }) {
                 </li>     
             </ul>
           );
+     
+        case "plant_groups":
+          return (
+            <ul className="list-disc pl-5 space-y-2">
+                <li>
+                   Assigns and displays different plants grouped by similar moisture requirements, making it easy to identify which plants can be transferred or managed together.  
+                </li>     
+            </ul>
+          );
 
 
 

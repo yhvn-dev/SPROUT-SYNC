@@ -268,10 +268,32 @@ export const getSeedlingGrowthByWeekAll = async () => {
 // ===== DELETE a plant batch =====
 export const deletePlantBatch = async (batch_id) => {
   try {
-    const sql = `DELETE FROM plant_batches WHERE batch_id = $1 RETURNING *`;
-    const result = await query(sql, [batch_id]);
-    return result.rows[0];        
+    const deletedBatch = await query(
+      `SELECT plant_name, batch_number FROM plant_batches WHERE batch_id = $1`,
+      [batch_id]
+    );
+    
+    if (!deletedBatch.rows[0]) return null;
+
+    const plantName = deletedBatch.rows[0].plant_name;
+
+    await query(`DELETE FROM plant_batches WHERE batch_id = $1`, [batch_id]);
+    await query(`
+      UPDATE plant_batches 
+      SET batch_number = new_batch_number
+      FROM (
+        SELECT batch_id, 
+               ROW_NUMBER() OVER (PARTITION BY plant_name ORDER BY batch_number) as new_batch_number
+        FROM plant_batches 
+        WHERE plant_name = $1
+      ) AS numbered
+      WHERE plant_batches.batch_id = numbered.batch_id 
+      AND plant_batches.plant_name = $1
+    `, [plantName]);
+
+    return { success: true, deleted_plant: plantName };
   } catch (error) {
+    console.error("Error deleting batch:", error);
     throw error;
   }
 };

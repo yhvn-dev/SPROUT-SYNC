@@ -1,16 +1,30 @@
 // plantBatchHistory.model.js
 import { query } from "../config/db.js";
 
-// ===== READ all history =====
+
+// ===== READ all history WITH DISPLAY ID =====
 export const readPlantBatchHistory = async () => {
   try {
-    const sql = `SELECT * FROM plant_batch_history ORDER BY date_recorded DESC`;
+    const sql = `
+      SELECT 
+        *,
+        CASE 
+          WHEN batch_id IS NOT NULL THEN 
+            CONCAT(plant_name, ' #', batch_number, '.H', history_number)
+          ELSE 
+            CONCAT(plant_name, ' #', batch_number, '.H', history_number)
+        END AS display_id
+      FROM plant_batch_history 
+      ORDER BY date_recorded DESC
+    `;
     const result = await query(sql);
     return result.rows;
   } catch (error) {
     throw error;
   }
 };
+
+
 
 // ===== READ history by history_id =====
 export const readHistoryById = async (history_id) => {

@@ -222,7 +222,7 @@ export function PlantGroups({setPlantGroupModal,setInfoModalOpen,setInfoModalPur
   return (
     
   <section className="con_main w-full  overflow-y-auto relative bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0]">
-    <main className="plant_main_div bg-white rounded-2xl flex-1 h-full md:max-h-[540px] md:overflow-y-auto p-4 md:p-6"> 
+    <main className="conb plant_main_div bg-white rounded-2xl flex-1 h-full md:max-h-[540px] md:overflow-y-auto p-4 md:p-6"> 
     
         <div className="w-full flex items-center justify-start gap-4 mb-6"> 
           <h1 className="plants-text text-3xl font-bold text-[var(--metal-dark5)] ">Plants Groups</h1>

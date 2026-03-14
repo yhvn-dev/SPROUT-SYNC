@@ -89,7 +89,7 @@ export const setRoleColor = {
 
 export const getStageColor = (stage, isDark = false) => {
   const lightColors = {
-    'Sprout': '#b0e892',        // sancgc
+    'Sprout': '#79a490',        // SAGE LIGHT
     'Seedling': '#92e6a7',      // ptl-greenb
     'Vegetative': '#6ede8a',    // ptl-greenc
     'Budding': '#2dc653',       // ptl-greend
@@ -101,7 +101,7 @@ export const getStageColor = (stage, isDark = false) => {
 
   // Dark theme colors
   const darkColors = {
-    'Sprout': '#155d27',        // ptl-greenh
+    'Sprout': '#79a490',        // SAGE LIGHT
     'Seedling': '#10451d',      // ptl-greenj
     'Vegetative': '#5A8F73',    // sage-dark
     'Budding': '#027c68',       // sancgb

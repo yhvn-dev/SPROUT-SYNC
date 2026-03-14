@@ -10,9 +10,6 @@ export function Plant_Inventory({setPlantModal}) {
     const [searchValue, setSearchValue] = useState("");
     const [sortBy, setSortBy] = useState("");
 
-    useEffect(() =>{
-      console.log("LOGGED USER",user)
-    },[])
     
     const handleOpenAddPlants = () => {
         setPlantModal(prev => {
@@ -53,16 +50,16 @@ export function Plant_Inventory({setPlantModal}) {
   return (
     <>
       {/* TABLE SECTION */}
-      <div className="conb rounded-2xl shadow-lg  h-full md:h-[95%] bg-white overflow-y-auto">
+      <div className="plant_main_div rounded-2xl shadow-lg  h-full md:h-[95%] bg-white overflow-y-auto">
 
-        <div className="hidden md:block overflow-x-auto overflow-y-auto">
+        <div className="conb  hidden md:block overflow-x-auto overflow-y-auto">
          <div className="conb plant_invent_header w-full p-4 flex items-center justify-start">
             <div className="w-1/2">
-                <span className="text-2xl">Plants Inventory</span>
+                <span className="plants-text text-3xl font-bold text-[var(--metal-dark5)]">Plants Inventory</span>
             </div>
 
-            <div className="flex items-center justify-end w-1/2 gap-2">
 
+            <div className="flex items-center justify-end w-1/2 gap-2">
                 {/* SEARCH */}
                 <div className="relative">
                     <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
@@ -102,7 +99,10 @@ export function Plant_Inventory({setPlantModal}) {
             </div>
          </div>
 
-          <table className="pi_table  w-full overflow-y-auto">
+
+         
+
+          <table className="conb pi_table w-full overflow-y-auto">
             <thead className="plant_invent_tb_header overflow-y-auto">
               <tr>
                 <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">
@@ -127,7 +127,7 @@ export function Plant_Inventory({setPlantModal}) {
               </tr>            
             </thead>
 
-            <tbody className="divide-y divide-gray-200">
+            <tbody className="conb divide-y divide-gray-200">
                 {filteredPlants.map((p, index) => (
                     <tr
                     key={p.plant_id}
@@ -169,6 +169,10 @@ export function Plant_Inventory({setPlantModal}) {
             </tbody>    
           </table>
         </div>
+
+
+
+        
 
         {/* ── MOBILE LIST ────────────────────────────────────── */}
         <div className="md:hidden">
@@ -234,7 +238,7 @@ export function Plant_Inventory({setPlantModal}) {
 
         {/* ── EMPTY STATE ────────────────────────────────────── */}
         {filteredPlants.length === 0 && (
-          <div className="text-center flex items-center flex-col justify-center py-12 text-gray-500">
+          <div className="conb h-full  flex items-center flex-col justify-center  text-gray-500">
             <Sprout size={48} className="mx-auto mb-4 opacity-50" />
             <p className="text-lg">No plants found</p>
             <p className="text-sm">Try adjusting your search or filters</p>

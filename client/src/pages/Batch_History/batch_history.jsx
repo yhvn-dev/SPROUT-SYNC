@@ -32,13 +32,11 @@ const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
 );
 
 
-
 function Batch_History() {
   const { user, skippedRegister} = useContext(UserContext);
   const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,
           deleteMode,
           messageContext,setMessageContext} = useContext(MessageContext);
-
 
   const {batchHistory,loadBatchHistory} = usePlantData()
   const [filteredData, setFilteredData] = useState(batchHistory);
@@ -63,7 +61,7 @@ function Batch_History() {
     loadBatchHistory()
   },[])
   
-
+  
   
   useEffect(() => {
     if (user?.first_time_login && !skippedRegister) {
@@ -83,6 +81,7 @@ function Batch_History() {
           batchHistory.reduce((sum, h) => sum + h.total_seedlings, 0)) * 100).toFixed(1)
       : 0
   };
+
 
   
 
@@ -114,8 +113,6 @@ function Batch_History() {
   };
 
  
-
-
   const growthStages = ["All", "Sprout", "Seedling", "Vegetative", "Budding","Flowering","Fruiting","Ready To Harvest"];
   const handleOpenInfosModalBatchHistory = () =>{
       setInfoModalPurpose("batch_history")
@@ -172,9 +169,6 @@ function Batch_History() {
           setNotifOpen={setNotifOpen}
         />
       </div>
-
-
-
 
 
       {/* MAIN CONTENT */}
@@ -249,6 +243,7 @@ function Batch_History() {
           <div className="batch_history_table rounded-2xl shadow-lg 
                     h-full md:h-[57vh] 
                     overflow-y-auto">
+                      
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto overflow-y-auto">
               <table className="w-full f overflow-y-auto">
@@ -266,8 +261,6 @@ function Batch_History() {
                     <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
-
-
                   
                 <tbody className="divide-y divide-gray-200">
                   {filteredData.map((record, index) => (
@@ -276,11 +269,13 @@ function Batch_History() {
                       className={`pbh_tr hover:bg-[#E8F3ED] transition-colors ${
                         index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
                       }`}>
-                      <td className="px-4 py-3 text-sm font-medium text-[#027c68] flex"><p>[{record.batch_number}-{record.history_number}]</p>{record.plant_name}</td>
+                      <td className="px-4 py-3 flex items-center justify-center text-sm font-medium text-[#027c68] ">           
+                        <span>
+                            {record.display_id}
+                        </span>
+                     </td>
                       <td className="date_planted_data px-4 py-3 text-sm text-gray-600 whitespace-nowrap">{new Date(record.date_recorded).toLocaleDateString()}</td>
                       <td className="px-4 py-3 text-sm text-center font-semibold">{record.total_seedlings}</td>
-                    
-
                       <td className="px-4 py-3 text-sm text-center">
                         <span className="fully_grown_seedlings_data inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
                           {record.fully_grown_seedlings}
@@ -342,10 +337,12 @@ function Batch_History() {
                   key={record.history_id}
                   className="batch_history_table_mobile_box h-full border-b border-gray-200 p-4 hover:bg-[#E8F3ED] transition-colors">
                   <div className="flex justify-between items-start mb-2">
-                    <div>
-                      <p className="text-xs text-gray-600">Batch #{record.batch_id}</p>
-                      <h3 className="text-base font-bold text-[#027c68]">[{record.batch_number}]{record.plant_name}</h3>
-
+                    <div>      
+                      <h3 className="text-base font-bold text-[#027c68]">
+                        <span>
+                          {record.display_id}
+                        </span>
+                      </h3>
                       <p className="text-xs text-gray-500">{new Date(record.date_recorded).toLocaleDateString()}</p>
                     </div>
                     <button
