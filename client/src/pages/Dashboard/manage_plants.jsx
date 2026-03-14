@@ -1,3 +1,6 @@
+// NEED TO REMOVE THHIS AND RE CUZTOMIZE
+
+
 import { useEffect, useState, useCallback, use, useContext } from 'react';
 import { Sprout, LayoutGrid, TrendingUp } from 'lucide-react';
 
