@@ -113,14 +113,14 @@ export default function Plants() {
       </div>
 
 
-      <nav className=" plants_nav flex my-4 gap-2 px-4 md:px-0 md:col-start-2">
+      <nav className="plants_nav flex my-4 gap-2 px-4 md:px-0 md:col-start-2">
          <button
           onClick={() => setActiveTab("plant_inventory")}
           className={`db_nav_button cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
             text-xs md:text-sm rounded-lg transition
             ${activeTab === "plant_inventory"
-              ? "conb active bg-white shadow-md text-[var(--sancgb)] dark:bg-[var(--metal-dark3)] dark:text-[#00ffe0] dark:shadow-md"
-              : "bg-white/50  text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark5)] dark:text-[#a0f0d5] dark:hover:bg-[var(--metal-dark5)]"
+              ? "bg-white text-[#027c68] shadow-md active"
+              : "bg-white/50 hover:bg-white text-[#5A8F73] dark:bg-metal-dark5 dark:hover:bg-[var(--metal-dark4)]"
             }`}>
           Inventory
         </button>
@@ -130,8 +130,8 @@ export default function Plants() {
           className={`db_nav_button cursor-pointer flex-1 md:flex-none px-4 md:px-6 py-2
             text-xs md:text-sm rounded-lg transition bg-[var(-)]
             ${activeTab === "categories"
-              ? "conb active bg-white shadow-md text-[var(--sancgb)] dark:bg-[var(--metal-dark3)] dark:text-white dark:shadow-md"
-              : "bg-white/50  text-[#5A8F73] hover:bg-white/70 dark:bg-[var(--metal-dark2)] dark:text-white dark:hover:bg-[var(--metal-dark1)]"
+              ? "bg-white text-[#027c68] shadow-md active"
+              : "bg-white/50 hover:bg-white text-[#5A8F73] dark:hover:bg-[var(--metal-dark4)]"
             }`}>
              Categories
         </button>            

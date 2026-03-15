@@ -9,6 +9,7 @@ const router = express.Router();
     router.post("/post/closePechayGroup",verifyAccessToken,esp32Controller.closePechayGroup)
     router.post("/post/closeMustasaGroup",verifyAccessToken,esp32Controller.closeMustasaGroup)
     router.post("/post/closeAllGroups",verifyAccessToken,esp32Controller.closeAllGroups)
+    router.post("/post/forceOFF_ON_System",verifyAccessToken,esp32Controller.systemPower)
 
 
 export default router;

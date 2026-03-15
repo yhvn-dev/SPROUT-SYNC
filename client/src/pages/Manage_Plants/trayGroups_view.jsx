@@ -3,7 +3,6 @@ import { Sprout, ChevronDown, ChevronUp, Plus, Pencil, Trash2, Droplet, Wifi } f
 
 function TrayGroups_View({
   sortedTrayGroups,
-  getGroupMoistureStatus,
   expandedZones,
   toggleZone,
   trays,
@@ -75,12 +74,12 @@ function TrayGroups_View({
                 <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
                   <button
                     onClick={(e) => handleAddTray(e, group)}
-                    className="cursor-pointer flex items-center gap-1 px-3 py-1.5 rounded-lg bg-gradient-to-br from-[#A8C7B8] to-[#7BA591] text-white text-xs font-semibold shadow hover:opacity-90 transition">
+                    className="cursor-pointer flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--sage)] hover:bg-[var(--sancgb)] text-white text-xs font-semibold shadow hover:opacity-90 transition">
                     <Plus size={12} /> Tray
                   </button>
                   <button
                     onClick={(e) => handleUpdateTrayGroup(e, group)}
-                    className="cursor-pointer flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--purpluish--,#7c6fcd)] text-white text-xs font-semibold shadow hover:opacity-90 transition">
+                    className="cursor-pointer flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--purpluish--)]  hover:bg-[var(--bluis--)] text-white text-xs font-semibold shadow hover:opacity-90 transition">
                     <Pencil size={12} /> Update
                   </button>
 
@@ -88,12 +87,13 @@ function TrayGroups_View({
                   {!groupHasSensors(group.tray_group_id) && (
                     <button
                       onClick={(e) => handleDeleteTrayGroup(e, group)}
-                      className="cursor-pointer flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--color-danger-a,#e53935)] text-white text-xs font-semibold shadow hover:opacity-90 transition">
+                      className="cursor-pointer flex items-center gap-1 px-3 py-1.5 rounded-lg bg-[var(--color-danger-a)] hover:bg-red-500 text-white text-xs font-semibold shadow hover:opacity-90 transition">
                       <Trash2 size={12} /> Delete
                     </button>
                   )}
+                  
 
-                  <div className="w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center ml-1">
+                  <div className="traygroups-dropdown w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center ml-1">
                     {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-600" /> : <ChevronDown className="w-4 h-4 text-gray-600" />}
                   </div>
                 </div>
@@ -109,7 +109,7 @@ function TrayGroups_View({
                     <p className="text-sm font-medium">No trays yet</p>
                     <button
                       onClick={(e) => handleAddTray(e, group)}
-                      className="cursor-pointer mt-3 flex items-center gap-1 px-4 py-1.5 rounded-lg bg-[#7BA591] text-white text-xs font-semibold shadow hover:opacity-90 transition">
+                      className="cursor-pointer mt-3 flex items-center gap-1 px-4 py-1.5 rounded-lg bg-[#7BA591] hover:bg-[var(--sancgb)] text-white text-xs font-semibold shadow hover:opacity-90 transition">
                       <Plus size={12} /> Add Tray
                     </button>
                   </div>
@@ -141,7 +141,7 @@ function TrayGroups_View({
                               <button
                                 onClick={() => handleUpdateTray(tray)}
                                 title="Update Tray"
-                                className="cursor-pointer p-1.5 rounded-lg bg-[var(--purpluish--,#7c6fcd)] text-white shadow hover:opacity-90 transition">
+                                className="cursor-pointer p-1.5 rounded-lg bg-[var(--purpluish--)] hover:bg-[var(--bluis--)] text-white shadow hover:opacity-90 transition">
                                 <Pencil size={12} />
                               </button>
 
@@ -150,7 +150,7 @@ function TrayGroups_View({
                                 <button
                                   onClick={() => handleDeleteTray(tray)}
                                   title="Delete Tray"
-                                  className="cursor-pointer p-1.5 rounded-lg bg-[var(--color-danger-a,#e53935)] text-white shadow hover:opacity-90 transition">
+                                  className="cursor-pointer p-1.5 rounded-lg bg-[var(--color-danger-a)] hover:bg-[var(--color-danger-b)] text-white shadow hover:opacity-90 transition">
                                   <Trash2 size={12} />
                                 </button>
                               )}
@@ -166,18 +166,17 @@ function TrayGroups_View({
 
                                 // Status based on group thresholds
                                 const getStatus = () => {
-                                  if (!isActive) return { label: "Inactive", color: "#9CA3AF", emoji: "⚫" };
-                                  if (rawValue === null) return { label: "No Reading", color: "#9CA3AF", emoji: "📡" };
+                                  if (!isActive) return { label: "Inactive", color: "#9CA3AF"};
+                                  if (rawValue === null) return { label: "No Reading", color: "#9CA3AF"};
                                   if (sensor.sensor_type === "moisture") {
-                                    if (rawValue < group.min_moisture) return { label: "Dry", color: "#EF4444", emoji: "🏜️" };
-                                    if (rawValue > group.max_moisture) return { label: "Wet", color: "#F59E0B", emoji: "💦" };
+                                    if (rawValue < group.min_moisture) return { label: "Dry", color: "#EF4444" };
+                                    if (rawValue > group.max_moisture) return { label: "Wet", color: "#F59E0B" };
                                     return { label: "Optimal", color: "#22C55E", emoji: "🌿" };
                                   }
                                   return { label: "Active", color: "#3B82F6", emoji: "✅" };
                                 };
 
                                 const status = getStatus();
-
                                 // Droplet icon color follows moisture status
                                 const getMoistureIconColor = () => {
                                   if (sensor.sensor_type !== "moisture") return "#6B7280";

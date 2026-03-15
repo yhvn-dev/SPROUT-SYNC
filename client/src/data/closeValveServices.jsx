@@ -1,6 +1,8 @@
 import api from "../utils/api";
 
 
+
+
 export const closeAllGroups = async (action) =>{
     try {
         const res = await api.post("esp32/post/closeAllGroups",{action:action});

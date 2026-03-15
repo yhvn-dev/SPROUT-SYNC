@@ -1,116 +1,102 @@
-// plant.Controller.js
-import * as plantModel from '../models/plantModels.js';
+import { query } from '../config/db.js'; 
 
 /* =========================
    CREATE PLANT
 ========================= */
-export const createPlant = async (req, res) => {
+export const createPlant = async (
+  name,
+  moisture_min,
+  moisture_max,
+  group_id
+) => {
   try {
-    const { name, description, reference_link, moisture_min, moisture_max, group_id } = req.body;
-
-    if (!name || moisture_min === undefined || moisture_max === undefined) {
-      return res.status(400).json({
-        success: false,
-        message: "Missing required fields",
-      });
-    }
-
-    const plant = await plantModel.createPlant(
-      name,
-      description || null,
-      reference_link || null,
-      moisture_min,
-      moisture_max,
-      group_id || null
+    const { rows } = await query(
+      `
+      INSERT INTO plants 
+        (name, moisture_min, moisture_max, group_id)
+      VALUES ($1, $2, $3, $4)
+      RETURNING *;
+      `,
+      [name, moisture_min, moisture_max, group_id]
     );
-
-    res.status(200).json({
-      success: true,
-      message: "Plant created successfully",
-      plant,
-    });
+    return rows[0];
   } catch (err) {
-    console.error("CONTROLLER: Error creating plant", err);
-    res.status(500).json({ success: false, message: err.message });
+    console.error("MODELS: Error Creating Plant", err);
+    throw err;
   }
 };
 
 /* =========================
    GET ALL PLANTS
 ========================= */
-export const getAllPlants = async (req, res) => {
+export const getAllPlants = async () => {
   try {
-    const plants = await plantModel.getAllPlants();
-    res.status(200).json({ success: true, plants });
+    const { rows } = await query(`SELECT * FROM plants ORDER BY created_at ASC`);
+    return rows;
   } catch (err) {
-    console.error("CONTROLLER: Error fetching plants", err);
-    res.status(500).json({ success: false, message: err.message });
+    console.error("MODELS: Error fetching plants", err);
+    throw err;
   }
 };
 
 /* =========================
    GET PLANT BY ID
 ========================= */
-export const getPlantById = async (req, res) => {
+export const getPlantById = async (plant_id) => {
   try {
-    const { plant_id } = req.params;
-    const plant = await plantModel.getPlantById(plant_id);
-
-    if (!plant) {
-      return res.status(404).json({ success: false, message: "Plant not found" });
-    }
-
-    res.status(200).json({ success: true, plant });
+    const { rows } = await query(`SELECT * FROM plants WHERE plant_id = $1`, [plant_id]);
+    return rows[0];
   } catch (err) {
-    console.error("CONTROLLER: Error fetching plant by ID", err);
-    res.status(500).json({ success: false, message: err.message });
+    console.error("MODELS: Error fetching plant by ID", err);
+    throw err;
   }
 };
+
 
 /* =========================
    UPDATE PLANT
 ========================= */
-export const updatePlant = async (req, res) => {
+export const updatePlant = async (
+  plant_id,
+  name,
+  moisture_min,
+  moisture_max,
+  group_id
+) => {
   try {
-    const { plant_id } = req.params;
-    const { name, description, reference_link, moisture_min, moisture_max, group_id } = req.body;
-
-    const plant = await plantModel.updatePlant(
-      plant_id,
-      name,
-      description,
-      reference_link,
-      moisture_min,
-      moisture_max,
-      group_id
+    const { rows } = await query(
+      `
+      UPDATE plants
+      SET 
+        name = $1,
+        moisture_min = $2,
+        moisture_max = $3,
+        group_id = $4
+      WHERE plant_id = $5
+      RETURNING *;
+      `,
+      [name, moisture_min, moisture_max, group_id, plant_id]
     );
-
-    if (!plant) {
-      return res.status(404).json({ success: false, message: "Plant not found" });
-    }
-
-    res.status(200).json({ success: true, message: "Plant updated successfully", plant });
+    return rows[0] || null;
   } catch (err) {
-    console.error("CONTROLLER: Error updating plant", err);
-    res.status(500).json({ success: false, message: err.message });
+    console.error("MODELS: Error updating plant", err);
+    throw err;
   }
 };
+
 
 /* =========================
    DELETE PLANT
 ========================= */
-export const deletePlant = async (req, res) => {
+export const deletePlant = async (plant_id) => {
   try {
-    const { plant_id } = req.params;
-    const plant = await plantModel.deletePlant(plant_id);
-
-    if (!plant) {
-      return res.status(404).json({ success: false, message: "Plant not found" });
-    }
-
-    res.status(200).json({ success: true, message: "Plant deleted successfully", plant });
+    const { rows } = await query(
+      `DELETE FROM plants WHERE plant_id = $1 RETURNING *;`,
+      [plant_id]
+    );
+    return rows[0] || null;
   } catch (err) {
-    console.error("CONTROLLER: Error deleting plant", err);
-    res.status(500).json({ success: false, message: err.message });
+    console.error("MODELS: Error deleting plant", err);
+    throw err;
   }
 };

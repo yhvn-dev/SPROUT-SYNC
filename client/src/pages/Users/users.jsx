@@ -181,7 +181,7 @@
                     mr-2
                     ${activeTab === "Overview"
                       ? "bg-white text-[#027c68] shadow-md active"  
-                      : "bg-white/50 text-[#5A8F73] dark:bg-metal-dark5 hover:bg-white/70"
+                      : "bg-white/50 hover:bg-white text-[#5A8F73] dark:bg-metal-dark5 dark:hover:bg-[var(--metal-dark4)] "
                     }
                   `}>
                   Overview
@@ -195,7 +195,7 @@
                     ml-2
                     ${activeTab === "User Insights"
                       ? "bg-white text-[#027c68] shadow-md active" 
-                      : "bg-white/50 text-[#5A8F73] dark:bg-metal-dark5 hover:bg-white/70"
+                      : "bg-white/50 hover:bg-white text-[#5A8F73] dark:bg-metal-dark5 dark:hover:bg-[var(--metal-dark4)]"
                     }
                   `}>
                   User Insights

@@ -1,8 +1,8 @@
 import {Sprout, TrendingUp, Pencil, Trash2, Calendar, Clock} from "lucide-react";
 
-function Batches_View({batchesDataList,
-    handleUpdateBatch,handleDeleteBatch}) {
+function Batches_View({batchesDataList,handleUpdateBatch,handleDeleteBatch}) {
 
+    
   return (
     <section className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm w-full">
         <div className="flex items-center gap-3 mb-5">
@@ -25,6 +25,9 @@ function Batches_View({batchesDataList,
                 <div className="flex items-start justify-between mb-3">
                 <h3 className="text-sm font-semibold text-gray-900">[{batch.batch_number}] {batch.plant_name}</h3>
                 <div className="flex gap-1.5 ml-2 flex-shrink-0">
+
+                  
+
                     <button
                     onClick={() => handleUpdateBatch(batch)}
                     className="cursor-pointer hover:bg-[var(--bluis--)] p-1.5 rounded-lg bg-[var(--purpluish--,#7c6fcd)] text-white shadow hover:opacity-90 transition">

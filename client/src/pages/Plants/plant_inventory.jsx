@@ -6,11 +6,10 @@ import { Sprout, Search } from "lucide-react";
 /* ─────────────────────────────────────────────────────────── */
 export function Plant_Inventory({setPlantModal}) {
     const {user} = useContext(UserContext)     
-    const {plants} = usePlantData();
+    const {plants,sensors} = usePlantData();
     const [searchValue, setSearchValue] = useState("");
     const [sortBy, setSortBy] = useState("");
 
-    
     const handleOpenAddPlants = () => {
         setPlantModal(prev => {
             if (prev.isOpen) return prev; 
@@ -47,20 +46,20 @@ export function Plant_Inventory({setPlantModal}) {
         return 0;
     });
 
+
+
+    
   return (
     <>
-      {/* TABLE SECTION */}
-      <div className="plant_main_div rounded-2xl shadow-lg  h-full md:h-[95%] bg-white overflow-y-auto">
+      <div className="plant_main_div rounded-2xl shadow-lg  h-full md:h-[95%] overflow-y-auto">
 
-        <div className="conb  hidden md:block overflow-x-auto overflow-y-auto">
+        <div className="conb hidden md:flex items-center  rounded-2xl justify-center flex-col overflow-x-auto overflow-y-auto">
          <div className="conb plant_invent_header w-full p-4 flex items-center justify-start">
             <div className="w-1/2">
                 <span className="plants-text text-3xl font-bold text-[var(--metal-dark5)]">Plants Inventory</span>
             </div>
 
-
             <div className="flex items-center justify-end w-1/2 gap-2">
-                {/* SEARCH */}
                 <div className="relative">
                     <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input
@@ -72,7 +71,7 @@ export function Plant_Inventory({setPlantModal}) {
                     />
                 </div>
 
-                {/* SORT/FILTER */}
+
                 <select 
                     value={sortBy} 
                     onChange={(e) => setSortBy(e.target.value)}
@@ -97,6 +96,7 @@ export function Plant_Inventory({setPlantModal}) {
                     Add Plants
                 </button>
             </div>
+
          </div>
 
 
@@ -164,21 +164,18 @@ export function Plant_Inventory({setPlantModal}) {
                     
                 </tr>
                 ))}
-
-
             </tbody>    
           </table>
         </div>
 
 
 
-        
 
         {/* ── MOBILE LIST ────────────────────────────────────── */}
-        <div className="md:hidden">
+        <div className="conb md:hidden">
 
             {/* Mobile Search + Sort */}
-            <div className="p-4 flex flex-col gap-2">
+            <div className=" p-4 flex flex-col gap-2">
                 <div className="relative">
                     <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400" />
                     <input

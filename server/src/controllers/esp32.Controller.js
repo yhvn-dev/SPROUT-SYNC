@@ -115,7 +115,6 @@ export const closeAllGroups = async (req, res) => {
     }
 
     const suffix = action === "FORCE_OFF" ? "OFF" : "AUTO";
-
     const commands = [
       `BOKCHOY_${suffix}`,
       `PECHAY_${suffix}`,
@@ -134,5 +133,27 @@ export const closeAllGroups = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error sending command to ESP32" });
+  }
+};
+
+
+
+export const systemPower = async (req, res) => {
+  try {
+    const action = req.body.action?.toUpperCase();
+
+    if (action !== "ON" && action !== "OFF") {
+      return res.status(400).json({ message: "Invalid action. Use ON or OFF" });
+    }
+
+    sendToESP32(`SYSTEM_${action}`);
+    res.status(200).json({
+      success: true,
+      message: `System is now ${action}`
+    });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error sending power command to ESP32" });
   }
 };

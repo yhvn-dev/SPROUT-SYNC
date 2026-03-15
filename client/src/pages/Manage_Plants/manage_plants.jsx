@@ -11,6 +11,7 @@ import { LogoutModal } from "../../components/logoutModal.jsx";
 import { DeleteNotifModal } from "../../components/deleteNotifModal.jsx";
 import { FloatSuccessMsg, SucessMsgs } from "../../components/sucessMsgs.jsx";
 import { FloatErrorMsg } from "../../components/messages.jsx";
+import {CheckSession} from "../../components/loaders.jsx"
 
 import { usePlantData } from "../../hooks/plantContext.jsx";
 
@@ -21,6 +22,7 @@ import { BatchModal } from './modals/batchModal';
 import Batches_View from "./batches_view.jsx";
 import TrayGroups_View from "./trayGroups_view.jsx";
 import RegisterDeviceModal from "./modals/registerDeviceModal.jsx";
+
 
 
 export function Manage_Plants() {
@@ -137,6 +139,7 @@ export function Manage_Plants() {
       }
     });
 
+    
   // TrayGroup Handlers
   const handleAddTrayGroup = () => {
     setSelectedTrayGroup({});
@@ -199,11 +202,9 @@ export function Manage_Plants() {
   };
 
   if (!user) return <div>Loading...</div>;
-
+  
   return (
     <section className="con_main w-full h-screen bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] flex flex-col md:grid md:grid-cols-[15fr_85fr] md:grid-rows-[auto_1fr] gap-4 overflow-hidden relative">
-
-      {/* MOBILE MENU */}
       <button
         onClick={() => setSidebarOpen(true)}
         className="cursor-pointer menu_button md:hidden fixed top-4 left-4 z-40 bg-white p-2.5 rounded-lg shadow-lg">
@@ -256,7 +257,7 @@ export function Manage_Plants() {
                     onClick={() => setActiveView("traygroups")}
                     className={`cursor-pointer px-4 py-2 text-xs font-semibold transition
                       ${activeView === "traygroups"
-                        ? "bg-[#7BA591] text-white"
+                        ? "bg-[var(--sancgb)] text-white"
                         : "bg-white text-gray-500 hover:bg-gray-50"}`}>
                     Tray Groups
                   </button>
@@ -264,7 +265,7 @@ export function Manage_Plants() {
                     onClick={() => setActiveView("batches")}
                     className={`cursor-pointer px-4 py-2 text-xs font-semibold transition
                       ${activeView === "batches"
-                        ? "bg-[#25a244] text-white"
+                        ? "bg-[var(--sancgb)] text-white"
                         : "bg-white text-gray-500 hover:bg-gray-50"}`}>
                     Batches
                   </button>
@@ -288,14 +289,14 @@ export function Manage_Plants() {
               <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3 flex-wrap">
 
                 {/* Search by name */}
-                <div className="relative flex-1 min-w-[160px]">
+                <div className="relative flex-1 min-w-[160px] ">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                   <input
                     type="text"
                     placeholder="Search group name..."
                     value={filters.search}
                     onChange={e => setFilters(f => ({ ...f, search: e.target.value }))}
-                    className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#7BA591] bg-gray-50"
+                    className="search_input w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-[#7BA591] bg-gray-50"
                   />
                 </div>
 
@@ -313,8 +314,6 @@ export function Manage_Plants() {
                   </select>
                 </div>
 
-
-
                 {/* Filter by live moisture status */}
                 <div className="relative min-w-[170px]">
                   <Droplet className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
@@ -331,6 +330,7 @@ export function Manage_Plants() {
                 </div>
 
 
+
                 {/* Sort */}
                 <div className="relative min-w-[150px]">
                   <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
@@ -345,6 +345,7 @@ export function Manage_Plants() {
                   </select>
                 </div>
 
+
                 {/* Clear filters — only show when something is active */}
                 {(filters.search || filters.location || filters.moisture) && (
                   <button
@@ -357,11 +358,11 @@ export function Manage_Plants() {
             )}
           </div>
 
+
           {/* TRAY GROUPS VIEW */}
           {activeView === "traygroups" && (
             <TrayGroups_View
               sortedTrayGroups={filteredTrayGroups}
-              getGroupMoistureStatus={getGroupMoistureStatus}
               toggleZone={toggleZone}
               expandedZones={expandedZones}
               trays={trays}

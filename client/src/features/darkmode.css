@@ -289,93 +289,22 @@ body.dark .navs-btn {
             @apply text-[var(--main-white)];
         }
 
+
+
         
-
-
     
 
-body.dark .tray_group_div:hover {
-  @apply bg-[var(--metal-dark1)];
-}
-    body.dark .main_tray_group_div{
-        box-shadow: 2px 3px 2px 1px var(--shad-dark-b);
-    }
-        body.dark .dropdown_nursery{
-        @apply bg-[var(--metal-dark1)];
-        box-shadow: 2px 3px 2px 1px var(--shad-dark-b);
-        }
-
-
-
-        
-        
-body.dark .tray_groups_main_div::-webkit-scrollbar{
-    @apply bg-[var(--metal-dark1)];
-}
-body.dark .tray_groups_main_div::-webkit-scrollbar-thumb{
-    @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
-}
-body.dark .tray_list_div{
-    background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
-    box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
-    border:0px;
-}
-    body.dark .sensor_div{
-        background: linear-gradient(to bottom right, var(--sancgb), var(--sancga));
-    }
-
-
-
-
-
-
-
-body.dark .batch_div {
-    background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
-    box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
-    border:0px solid;
-}
-    body.dark .batch_scroll_div::-webkit-scrollbar {
-        @apply bg-[var(--metal-dark1)]
-    }
-    body.dark .batch_scroll_div::-webkit-scrollbar-thumb {
-        @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
-    }
-        
-    body.dark .batch_div .fully_grown_seedlings_text {
-       @apply text-green-500;
-    }
-    body.dark  .batch_div .dead_seedlings_text{
-        @apply text-red-500;
-    }
-    body.dark .batch_div .replanted_seedlings_text{
-        @apply text-[var(--color-warning)];
-    }
-    body.dark .batch_modal_main::-webkit-scrollbar {
-        @apply bg-[var(--metal-dark1)];
-    }
-    body.dark .batch_modal_main::-webkit-scrollbar-thumb {
-        @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
-    }
-
-
-
-
-
-
-
 /* MANAGE PLANTS ============================== ============================================= =====*/
-
-body.dark .manage_plants_nav button:hover{
-     @apply bg-[var(--sancgb)];
-}
-
     /* Tray groups */
     body.dark .tg_conb {
         background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
         box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
         border:0px solid;
     }    
+
+        body.dark .search_input{
+            @apply bg-[var(--metal-dark1)];
+        }
         body.dark .tg_data_main:hover{
              @apply bg-[var(--metal-dark2)];
         }
@@ -460,8 +389,6 @@ body.dark .manage_plants_nav button:hover{
         }
 
 
-
-            
         body.dark .total_seedlings{
              @apply text-[var(--sancgb)];
         }
@@ -478,8 +405,88 @@ body.dark .manage_plants_nav button:hover{
         
         
 
+        
 
 
+    
+
+body.dark .tray_group_div:hover {
+  @apply bg-[var(--metal-dark1)];
+}
+    body.dark .main_tray_group_div{
+        box-shadow: 2px 3px 2px 1px var(--shad-dark-b);
+    }
+        body.dark .dropdown_nursery{
+        @apply bg-[var(--metal-dark1)];
+        box-shadow: 2px 3px 2px 1px var(--shad-dark-b);
+        }
+        body.dark .traygroups-dropdown{
+        @apply bg-[var(--metal-dark1)]; 
+             box-shadow: 2px 3px 2px 1px var(--shad-dark-b);
+        }
+
+        
+
+
+        
+        
+body.dark .tray_groups_main_div::-webkit-scrollbar{
+    @apply bg-[var(--metal-dark1)];
+}
+body.dark .tray_groups_main_div::-webkit-scrollbar-thumb{
+    @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+}
+body.dark .tray_list_div{
+    background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
+    box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
+    border:0px;
+}
+    body.dark .sensor_div{
+        background: linear-gradient(to bottom right, var(--sancgb), var(--sancga));
+    }
+
+
+
+
+
+body.dark .batch_div {
+    background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
+    box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
+    border:0px solid;
+}
+    body.dark .batch_scroll_div::-webkit-scrollbar {
+        @apply bg-[var(--metal-dark1)]
+    }
+    body.dark .batch_scroll_div::-webkit-scrollbar-thumb {
+        @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+    }
+        
+    body.dark .batch_div .fully_grown_seedlings_text {
+       @apply text-green-500;
+    }
+    body.dark  .batch_div .dead_seedlings_text{
+        @apply text-red-500;
+    }
+    body.dark .batch_div .replanted_seedlings_text{
+        @apply text-[var(--color-warning)];
+    }
+    body.dark .batch_modal_main::-webkit-scrollbar {
+        @apply bg-[var(--metal-dark1)];
+    }
+    body.dark .batch_modal_main::-webkit-scrollbar-thumb {
+        @apply bg-[var(--metal-dark4)] border-4 border-[var(--metal-dark1)] rounded-2xl;
+    }
+
+
+
+
+
+
+
+        
+
+
+/* ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== */
 body.dark .pb_con{
     background: linear-gradient(to bottom right, var(--metal-dark3), var(--metal-dark2));
     box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
@@ -536,7 +543,7 @@ body.dark .pb_con{
 
 
 
-/* USERS ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== */
+/* USERS ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ====================*/
 body.dark .user_table_div::-webkit-scrollbar{
     @apply bg-[var(--metal-dark1)];
 }
@@ -551,15 +558,16 @@ body.dark .user_table_div::-webkit-scrollbar{
     }
 
     
-  body.dark .users_nav button {
-        @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
+    body.dark .users_nav button {
+        @apply bg-[var(--metal-dark5)] text-[var(--main-white)];       
         box-shadow: none;
     }
     body.dark .users_nav button:hover{
          @apply bg-[var(--metal-dark2)];
     }
+    
     body.dark .users_nav button.active {
-        @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
+        @apply bg-[var(--metal-dark2)] text-[var(--main-white)];
         box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
     }
 
@@ -584,16 +592,19 @@ body.dark .user_table_div::-webkit-scrollbar{
 
     /* DARK MODE – default (inactive tab) */
     body.dark .analytics_nav button {
-        @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
+        @apply bg-[var(--metal-dark5)] text-[var(--main-white)];       
         box-shadow: none;
     }
     body.dark .analytics_nav button:hover{
          @apply bg-[var(--metal-dark2)];
     }
     body.dark .analytics_nav button.active {
-        @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
+        @apply bg-[var(--metal-dark2)] text-[var(--main-white)];
         box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
     }
+
+
+
 
 
         body.dark .stat_card {
@@ -649,7 +660,7 @@ body.dark .owner_color {
 
 
 
-
+    
 
 
 /* ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====  */
@@ -1204,18 +1215,18 @@ body.dark .browser_window_main_container{
 
     /* STATUS BADGES */
     .status-ok {
-    background-color: var(--status-ok-bg);
-    color: var(--status-ok-text);
+        background-color: var(--status-ok-bg);
+        color: var(--status-ok-text);
     }
 
     .status-moderate {
-    background-color: var(--status-moderate-bg);
-    color: var(--status-moderate-text);
+        background-color: var(--status-moderate-bg);
+        color: var(--status-moderate-text);
     }
 
     .status-low {
-    background-color: var(--status-low-bg);
-    color: var(--status-low-text);
+        background-color: var(--status-low-bg);
+        color: var(--status-low-text);
     }
 
     .status-unknown {
@@ -1247,8 +1258,14 @@ body.dark .browser_window_main_container{
         
 
         body.dark .plants_nav button{
-              @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
-
+            @apply bg-[var(--metal-dark5)] text-[var(--main-white)];       
+        } 
+         body.dark .plants_nav button:hover{
+         @apply bg-[var(--metal-dark2)];
+    }
+        body.dark .plants_nav button.active{
+            @apply bg-[var(--metal-dark1)] text-[var(--main-white)];      
+            box-shadow: 5px 5px 5px 1px rgba(0,0,0,0.5);
         }
 
       

@@ -84,6 +84,14 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
 
   }, [isOpen, selectedTray, selectedBatch, batchModalMode]);
 
+    const handleMarkReplantedAsGrown = () => {
+    setFormData(prev => ({
+        ...prev,
+        fully_grown_seedlings: Number(prev.fully_grown_seedlings) + Number(prev.replanted_seedlings),
+        replanted_seedlings: 0
+    }))
+    }
+    
 
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -301,12 +309,29 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                   />
                 </div>
 
-
                 {/* REPLANTED SEEDLINGS */}
                 <div>
-                  <label className="block text-xs font-semibold mb-1.5 text-[#155d27]">
-                    Replanted Seedlings
-                  </label>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-semibold text-[#155d27]">
+                      Replanted Seedlings
+                    </label>
+                    {/* MARK AS GROWN BUTTON — show only on update mode */}
+                    {batchModalMode === "update" && (
+                      <button
+                        type="button"
+                        onClick={handleMarkReplantedAsGrown}
+                        disabled={Number(formData.replanted_seedlings) === 0}
+                        className={`cursor-pointer text-xs px-2 py-1 rounded-lg font-medium transition-all flex items-center gap-1
+                          ${Number(formData.replanted_seedlings) === 0
+                            ? "bg-gray-500 text-white cursor-not-allowed"
+                            : "bg-[#208b3a] text-white hover:bg-[#155d27] cursor-pointer"
+                          }`}
+                      >
+                        <Sprout className="w-3 h-3" />
+                        Mark Replants as Grown
+                      </button>
+                    )}
+                  </div>
                   <input
                     type="number"
                     name="replanted_seedlings"
@@ -317,6 +342,9 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     min="0"
                   />
                 </div>
+
+
+
 
 
                   
@@ -356,8 +384,6 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     <option value="Ready To Harvest">Ready To Harvest</option>
                   </select>
                 </div>
-
-
 
 
                 {/* DATE PLANTED */}

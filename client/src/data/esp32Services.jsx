@@ -10,3 +10,16 @@ export const getESP32Status = async () =>{
     }
 }
 
+export const systemPowerOn = async (action) =>{
+    try {
+        const res = await api.post("esp32/post/forceOFF_ON_System",{action:action});
+        console.log("SYSTEM ON-OFF",res)
+        return res
+    } catch (error) {     
+        throw error
+    }
+}
+
+
+
+
