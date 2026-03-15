@@ -2,7 +2,6 @@
 import {ArrowBigDown} from 'lucide-react';
 import { useState, useEffect } from 'react';
 
-
 export function InstallButton() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [visible, setVisible] = useState(false);

@@ -27,11 +27,18 @@ import "./home.css";
 
 
 
+
+
 export function InstallButton() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+    // ✅ Force show sa localhost para ma-test
+    if (window.location.hostname === 'localhost') {
+      setVisible(true);
+    }
+
     const handler = (e) => {
       e.preventDefault();
       setDeferredPrompt(e);
@@ -47,7 +54,10 @@ export function InstallButton() {
   }, []);
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
+    if (!deferredPrompt) {
+      alert("Install prompt not available sa localhost. Sa production (HTTPS) lalabas na ito.");
+      return;
+    }
 
     deferredPrompt.prompt();
     const choice = await deferredPrompt.userChoice;
@@ -72,6 +82,7 @@ export function InstallButton() {
     </button>
   );
 }
+
 
 function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -114,6 +125,7 @@ function Home() {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [mobileMenuOpen]);
 
+  
   
 
   return (
@@ -164,9 +176,9 @@ function Home() {
 
 
                 {/* Mobile Menu Button */}
-                <div className="flex items-center justify-end w-full md:hidden">
+                <div className="flex items-center justify-end w-full md:hidden " >
                   <button
-                    className="header-button border-white rounded-2xl text-[#003333] hadow-lg p-2 hover:bg-[var(--metal-dark4)] transition-colors"
+                    className="cursor-pointer header-button border-white rounded-2xl text-[#003333] hadow-lg p-2 hover:bg-[var(--metal-dark4)] transition-colors"
                     onClick={(e) => {
                       e.stopPropagation();
                       setMobileMenuOpen(!mobileMenuOpen);
@@ -175,8 +187,6 @@ function Home() {
                     {mobileMenuOpen ? <X size={24} /> : <Menu className='text-white' size={24} />}
                   </button>
                 </div>
-
-
 
                 {/* Mobile Navigation Menu */}
                 {mobileMenuOpen && (
@@ -419,8 +429,7 @@ function Home() {
            </Suspense>        
         </section>
 
-       
-
+      
         </>
       )}
     </div>

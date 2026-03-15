@@ -104,11 +104,7 @@ export default function Dashboard_Mockup() {
               <SidebarItem icon={LogOut} label="Logout" />
             </nav>
           </aside>
-
-          {/* Mobile menu button */}
-          <button className="md:hidden absolute top-4 left-4 z-30 p-2 bg-white rounded-lg shadow" onClick={() => setSidebarOpen(true)}>
-            ☰
-          </button>
+      
 
           {/* ================= CONTENT ================= */}
           <main className="flex-1 p-2 md:p-6 overflow-y-auto">
