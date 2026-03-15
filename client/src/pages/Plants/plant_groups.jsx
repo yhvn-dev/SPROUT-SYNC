@@ -38,13 +38,10 @@ function PlantChildCard({ plant, onUpdate, onDelete}) {
   const {user} = useContext(UserContext);    
   return (
     <div className="flex-shrink-0 w-44 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
-     <a 
-        href={plant.reference_link}
-        target="_blank"
-        rel="noopener noreferrer"
+     <div 
         className="cursor-pointer h-24 bg-gradient-to-br from-green-50 to-emerald-100 flex items-center justify-center text-3xl">
         🌿
-      </a>
+      </div>
       <div className="conb p-3 flex flex-col gap-2 flex-1">
         <p className="text-sm font-semibold text-gray-800 truncate">{plant.name}</p>
         <div>
