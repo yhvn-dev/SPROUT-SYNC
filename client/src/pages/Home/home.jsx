@@ -55,7 +55,6 @@ export function InstallButton() {
 
   const handleInstall = async () => {
     if (!deferredPrompt) {
-      alert("Install prompt not available sa localhost. Sa production (HTTPS) lalabas na ito.");
       return;
     }
 
