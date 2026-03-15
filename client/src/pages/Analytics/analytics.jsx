@@ -48,6 +48,18 @@ export default function Analytics() {
   const [errMsg,setErrMsg] = useState("");
   const [scsMsg,setScsMsg] = useState("");
   const [isRegisterModalVisible, setRegisterModalVisible] = useState(false);
+
+
+        
+    useEffect(() => {
+    if (user?.first_time_login && !skippedRegister) {
+      setRegisterModalVisible(true);
+    } else {
+      setRegisterModalVisible(false);
+    }
+  }, [user?.first_time_login, skippedRegister]);
+
+  
     
   const clearMsg = useCallback(() => {
     setErrMsg("");
