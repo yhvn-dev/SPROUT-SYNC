@@ -55,6 +55,7 @@ export function InstallButton() {
 
   const handleInstall = async () => {
     if (!deferredPrompt) {
+
       return;
     }
 

@@ -91,12 +91,10 @@ export const io = new SocketIOServer(server, {
 
 io.on("connection", (socket) => {
   console.log("🟢 User socket connected:", socket.id);
-
   socket.on("join", (userId) => {
     socket.join(`user_${userId}`);
     console.log(`👤 User ${userId} joined room`);
   });
-
   socket.on("disconnect", () => {
     console.log("🔴 User socket disconnected:", socket.id);
   });
