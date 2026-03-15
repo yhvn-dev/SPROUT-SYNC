@@ -55,7 +55,7 @@ export function InstallButton() {
 
   const handleInstall = async () => {
     if (!deferredPrompt) {
-
+      alert("Install prompt not available sa localhost. Sa production (HTTPS) lalabas na ito.");
       return;
     }
 
@@ -360,65 +360,74 @@ function Home() {
 
           </section>
 
-          {/* Install Button */}
-          <InstallButton />
+        {/* Install Button */}
+        <InstallButton />
 
-        
-          {/* Features Section */}
-          <section id="features" className="w-full">
-            <Suspense fallback={<div className="text-center py-8"><Features_Skeleton/></div>}>
-              <FeatureSection />
-            </Suspense>
-          </section>
+         
+         {/* Features Section */}
+        <section id="features" className="w-full">
+          <Suspense fallback={<div className="text-center py-8">
+            <Features_Skeleton/>
+          </div>}>
+            <FeatureSection />
+          </Suspense>
+        </section>
 
-          {/* Dashboard Section */}
-          <section className='w-full flex justify-center' id="dashboard_mockup">
-            <Suspense fallback={<Dashboard_Mockup_Skeleton/>}>
-              <Dashboard_Mockup />
-            </Suspense>
-          </section>
-
-          {/* Farm Info Section */}
-          <section id="farm" className="w-full">
-            <Suspense fallback={<div className="text-center py-8"><Farm_Info_Skeleton/></div>}>
-              <Farm_Info_Section />
-            </Suspense>
-          </section>
-
-          {/* Benefits Section */}
-          <section className="w-full">
-            <Suspense fallback={<div className="text-center py-8"><BenefitSection_Skeleton/></div>}>
-              <BenefitSection />
-            </Suspense>
-          </section>
-
-          {/* Logo Section */}
-          <section className="w-full">
-            <Suspense fallback={<div className="text-center py-8"><Logo_Page_Skeleton/></div>}>
-              <Logo_Page />
-            </Suspense>
-          </section>
-  
-          {/* Logo Section */}
-          <section className="w-full">
-            
+      
+        {/* Dashboard Section */}
+        <section className='w-full flex justify-center' id="dashboard_mockup">
             <Suspense fallback={
-              <div className="text-center py-8">     
-                  <Logo_Page_Skeleton/>
+            <Dashboard_Mockup_Skeleton/>
+          }>       
+          </Suspense> 
+       
+          <Dashboard_Mockup />   
+        </section>
+
+
+        {/* Farm Info Section */}
+        <section id="farm" className="w-full">
+          <Suspense fallback={
+              <div className="text-center py-8">
+              <Farm_Info_Skeleton/>
               </div>}>
-              <Logo_Page />
+          </Suspense>
+          <Farm_Info_Section />
+        </section>
+
+
+
+        {/* Benefits Section */}
+        <section className="w-full">
+          <Suspense fallback={<div className="text-center py-8 ">
+             <BenefitSection_Skeleton/>
+          </div>}>
+          </Suspense>
+
+           <BenefitSection />
+        </section>
+
+
+        {/* Logo Section */}
+        <section className="w-full">
           
-            </Suspense>
-          </section>
-
-
-          <section className='w-full p-8'>
-            <Suspense fallback={<div className="text-center py-8">
-              <Footer_Skeleton/>
+          <Suspense fallback={
+            <div className="text-center py-8">     
+                 <Logo_Page_Skeleton/>
             </div>}>
-                <Footer />  
-            </Suspense>        
-          </section>
+            <Logo_Page />
+        
+          </Suspense>
+        </section>
+
+
+        <section className='w-full p-8'>
+          <Suspense fallback={<div className="text-center py-8">
+            <Footer_Skeleton/>
+          </div>}>
+              <Footer />  
+           </Suspense>        
+        </section>
 
       
         </>

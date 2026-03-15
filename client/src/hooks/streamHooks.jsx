@@ -1,6 +1,6 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { startStream, stopStream, getStreamsStatus } from "../data/streamServices";
 import Hls from "hls.js";
+import { startStream, stopStream, getStreamsStatus } from "../data/streamServices";
 
 const STREAM_URL = `${import.meta.env.VITE_CAMERA_URL}/streams/stream.m3u8`;
 

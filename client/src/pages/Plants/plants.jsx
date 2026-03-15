@@ -23,7 +23,7 @@ import {Plant_Inventory} from "./plant_inventory.jsx"
 
 /* ─── MAIN PAGE ──────────────────────────────────────────── */
 export default function Plants() {
-  const { user,skippedRegister } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const {plants,loadPlantGroups, loadPlants } = usePlantData();
   const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,
         deleteMode,setMessageContext} = useContext(MessageContext);
@@ -49,15 +49,7 @@ export default function Plants() {
     plantGroup:null,
     plant: null,
   });
-
-      
-  useEffect(() => {
-    if (user?.first_time_login && !skippedRegister) {
-      setRegisterModalVisible(true);
-    } else {
-      setRegisterModalVisible(false);
-    }
-  }, [user?.first_time_login, skippedRegister]);    
+  
   
   const clearMsg = useCallback(() => {
       setMessageContext("")
