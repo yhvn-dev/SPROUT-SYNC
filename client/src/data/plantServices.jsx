@@ -7,7 +7,6 @@ import api from '../utils/api';
 export const createPlant = async (plantData) => {
   try {
     const res = await api.post('plants/post/plants', plantData)
-    console.log("CREATED PLANTS",res)
     return res.data;
   } catch (error) {
     console.error('Error creating plant', error);
@@ -22,7 +21,7 @@ export const createPlant = async (plantData) => {
 export const fetchAllPlants = async () => {
   try {
     const res = await api.get('plants/get/plants');
-    return res.data.plants;
+    return res.data.data
   } catch (error) {
     console.error('Error fetching all plants', error);
     throw error;

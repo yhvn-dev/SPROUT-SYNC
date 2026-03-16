@@ -1,102 +1,96 @@
-import { query } from '../config/db.js'; 
+import * as plantModel from "../models/plantModels.js"
 
 /* =========================
    CREATE PLANT
 ========================= */
-export const createPlant = async (
-  name,
-  moisture_min,
-  moisture_max,
-  group_id
-) => {
+export const createPlant = async (req, res) => {
   try {
-    const { rows } = await query(
-      `
-      INSERT INTO plants 
-        (name, moisture_min, moisture_max, group_id)
-      VALUES ($1, $2, $3, $4)
-      RETURNING *;
-      `,
-      [name, moisture_min, moisture_max, group_id]
-    );
-    return rows[0];
+    const { name, moisture_min, moisture_max, group_id } = req.body;
+
+    const plant = await  plantModel.createPlant(name, moisture_min, moisture_max, group_id);
+    return res.status(201).json({ success: true, data: plant });
   } catch (err) {
-    console.error("MODELS: Error Creating Plant", err);
-    throw err;
+    console.error("CONTROLLER: Error creating plant", err);
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
 /* =========================
    GET ALL PLANTS
 ========================= */
-export const getAllPlants = async () => {
+export const getAllPlants = async (req, res) => {
   try {
-    const { rows } = await query(`SELECT * FROM plants ORDER BY created_at ASC`);
-    return rows;
+    const plants = await  plantModel.getAllPlants();
+    return res.status(200).json({ success: true, data: plants });
   } catch (err) {
-    console.error("MODELS: Error fetching plants", err);
-    throw err;
+    console.error("CONTROLLER: Error fetching plants", err);
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
 
 /* =========================
    GET PLANT BY ID
 ========================= */
-export const getPlantById = async (plant_id) => {
+export const getPlantById = async (req, res) => {
   try {
-    const { rows } = await query(`SELECT * FROM plants WHERE plant_id = $1`, [plant_id]);
-    return rows[0];
+    const { plant_id } = req.params;
+
+    const plant = await  plantModel.getPlantById(plant_id);
+    if (!plant) {
+      return res.status(404).json({ success: false, message: "Plant not found" });
+    }
+
+    return res.status(200).json({ success: true, data: plant });
   } catch (err) {
-    console.error("MODELS: Error fetching plant by ID", err);
-    throw err;
+    console.error("CONTROLLER: Error fetching plant by ID", err);
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-
 
 /* =========================
    UPDATE PLANT
 ========================= */
-export const updatePlant = async (
-  plant_id,
-  name,
-  moisture_min,
-  moisture_max,
-  group_id
-) => {
+export const updatePlant = async (req, res) => {
   try {
-    const { rows } = await query(
-      `
-      UPDATE plants
-      SET 
-        name = $1,
-        moisture_min = $2,
-        moisture_max = $3,
-        group_id = $4
-      WHERE plant_id = $5
-      RETURNING *;
-      `,
-      [name, moisture_min, moisture_max, group_id, plant_id]
-    );
-    return rows[0] || null;
+    const { plant_id } = req.params;
+    const { name, moisture_min, moisture_max, group_id } = req.body;
+
+    if (!name || !moisture_min || !moisture_max || !group_id) {
+      return res.status(400).json({ success: false, message: "All fields are required" });
+    }
+
+    const plant = await  plantModel.updatePlant(plant_id, name, moisture_min, moisture_max, group_id);
+    if (!plant) {
+      return res.status(404).json({ success: false, message: "Plant not found" });
+    }
+
+    return res.status(200).json({ success: true, data: plant });
   } catch (err) {
-    console.error("MODELS: Error updating plant", err);
-    throw err;
+    console.error("CONTROLLER: Error updating plant", err);
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
+
+
+
+
 
 
 /* =========================
    DELETE PLANT
 ========================= */
-export const deletePlant = async (plant_id) => {
+export const deletePlant = async (req, res) => {
   try {
-    const { rows } = await query(
-      `DELETE FROM plants WHERE plant_id = $1 RETURNING *;`,
-      [plant_id]
-    );
-    return rows[0] || null;
+    const { plant_id } = req.params;
+
+    const plant = await plantModel.deletePlant(plant_id);
+    if (!plant) {
+      return res.status(404).json({ success: false, message: "Plant not found" });
+    }
+
+    return res.status(200).json({ success: true, data: plant });
   } catch (err) {
-    console.error("MODELS: Error deleting plant", err);
-    throw err;
+    console.error("CONTROLLER: Error deleting plant", err);
+    return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };

@@ -1,5 +1,5 @@
 // plant.Routes.js
-import express from 'express';
+import express from 'express'; 
 import * as plantController from '../../controllers/plant.Controller.js';
 import { validatePlants } from "../../middlewares/plantsMiddleware.js"; 
 import { verifyAccessToken } from "../../middlewares/authMiddleware.js";

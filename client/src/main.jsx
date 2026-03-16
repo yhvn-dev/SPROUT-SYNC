@@ -7,7 +7,10 @@ import { UserProvider } from './hooks/userContext.jsx'
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
-      .then(() => console.log('✅ SW registered'))
+      .then((reg) => {
+        reg.update() 
+        console.log('✅ SW registered')
+      })
       .catch((err) => console.log('❌ SW failed', err));
   });
 }

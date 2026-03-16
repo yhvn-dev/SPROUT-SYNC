@@ -1,7 +1,6 @@
 import { query } from '../config/db.js'; 
 
 
-
 /* =========================
    CREATE PLANT
 ========================= */

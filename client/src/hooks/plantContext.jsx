@@ -149,6 +149,8 @@ export const PlantDataProvider = ({ children }) => {
     }
   }, []);
 
+
+  
   const loadNotifs = useCallback(async () => {
     try {
       const data = await notifService.fetchAllNotifs();
@@ -157,6 +159,8 @@ export const PlantDataProvider = ({ children }) => {
       console.error("Error loading notifications", error);
     }
   }, []);
+
+
 
   const loadNotifsCount = useCallback(async () => {
     try {
@@ -167,6 +171,9 @@ export const PlantDataProvider = ({ children }) => {
     }
   }, []);
 
+
+
+
   const markNotifsAsRead = useCallback(async () => {
     try {
       const data = await notifService.markNotifAsRead();
@@ -175,6 +182,9 @@ export const PlantDataProvider = ({ children }) => {
       console.error("Error marking notifications as read", error);
     }
   }, []);
+
+
+
 
   // NEW: Load plant groups
   const loadPlantGroups = useCallback(async () => {
@@ -186,6 +196,8 @@ export const PlantDataProvider = ({ children }) => {
     }
   }, []);
 
+
+  
   // NEW: Load plants
   const loadPlants = useCallback(async () => {
     try {

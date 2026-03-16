@@ -381,10 +381,8 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     <option value="Budding">Budding</option>
                     <option value="Flowering">Flowering</option>
                     <option value="Fruiting">Fruiting</option>
-                    <option value="Ready To Harvest">Ready To Harvest</option>
                   </select>
                 </div>
-
 
                 {/* DATE PLANTED */}
                 <div>
