@@ -1,5 +1,5 @@
-// trayGroups_view.jsx
 import { Sprout, ChevronDown, ChevronUp, Plus, Pencil, Trash2, Droplet, Wifi } from "lucide-react";
+import { getSensorStatus } from "../../utils/colors";
 
 function TrayGroups_View({
   sortedTrayGroups,
@@ -52,7 +52,7 @@ function TrayGroups_View({
 
             {/* TG Header */}
             <div
-              className="tg_data_main p-4 sm:p-5 cursor-pointer hover:bg-gray-50 transition-colors"
+              className="tg_data_main p-4 sm:p-5 cursor-pointer hover:bg-gray-50 transition-colors "
               onClick={() => toggleZone(group.tray_group_id)}>          
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                 <div className="flex items-center gap-3">
@@ -91,14 +91,24 @@ function TrayGroups_View({
                       <Trash2 size={12} /> Delete
                     </button>
                   )}
-                  
+                                      
+                    <div
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        toggleZone(group.tray_group_id);
+                      }}
+                      className="cursor-pointer traygroups-dropdown w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center ml-1 hover:bg-gray-200 transition">
+                      {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-600" /> : <ChevronDown className="w-4 h-4 text-gray-600" />}
+                    </div>
 
-                  <div className="traygroups-dropdown w-8 h-8 rounded-xl bg-gray-100 flex items-center justify-center ml-1">
-                    {isExpanded ? <ChevronUp className="w-4 h-4 text-gray-600" /> : <ChevronDown className="w-4 h-4 text-gray-600" />}
-                  </div>
+
                 </div>
               </div>
             </div>
+
+
+
+
 
             {/* Trays List */}
             {isExpanded && (

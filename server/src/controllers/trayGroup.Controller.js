@@ -76,20 +76,19 @@ export const updateTrayGroup = async (req, res) => {
 
 
 
-// ===== DELETE a tray group =====
-export const deleteTrayGroup = async (req, res) => {
-  try {
-    const {tray_group_id} = req.params
+  // ===== DELETE a tray group =====
+  export const deleteTrayGroup = async (req, res) => {
+    try {
+      const {tray_group_id} = req.params
 
-    const existingGroup = await trayGroupModels.readTrayGroupById(tray_group_id)
-    if (!existingGroup) return res.status(404).json({ message: "Tray group not found" });
+      const existingGroup = await trayGroupModels.readTrayGroupById(tray_group_id)
+      if (!existingGroup) return res.status(404).json({ message: "Tray group not found" });
 
-    const deletedGroup = await trayGroupModels.deleteTrayGroups(tray_group_id);
-    res.status(200).json({ message: "Tray group deleted successfully", deletedGroup });
-    console.log("TRAY GROUP DELETED:", deletedGroup);
 
-  } catch (err) {
-    console.error("CONTROLLER: Error deleting tray group", err);
-    res.status(500).json({ message: "Error deleting tray group", err });
-  }
-};
+      const deletedGroup = await trayGroupModels.deleteTrayGroups(tray_group_id);
+      res.status(200).json({ message: "Tray group deleted successfully", deletedGroup });
+    } catch (err) {
+      console.error("CONTROLLER: Error deleting tray group", err);
+      res.status(500).json({ message: "Error deleting tray group", err });
+    }
+  };

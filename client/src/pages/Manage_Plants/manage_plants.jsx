@@ -2,7 +2,7 @@
 import { useState, useContext, useEffect, useCallback, useMemo } from "react";
 import { UserContext } from "../../hooks/userContext";
 import { MessageContext } from "../../hooks/messageHooks.jsx";
-import { Menu, Plus, LayoutGrid, Search, MapPin, Droplet, X, ArrowUpDown } from "lucide-react";
+import { Menu, Plus, LayoutGrid, Search, MapPin, Droplet, X, ArrowUpDown,Sprout} from "lucide-react";
 
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
@@ -242,8 +242,7 @@ export function Manage_Plants() {
           <div className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm w-full">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 flex items-center gap-2">
-                  <LayoutGrid className="w-6 h-6 text-[#7BA591]" />
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 flex items-center gap-2">             
                   Manage Plants
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-500 mt-1">
@@ -330,7 +329,6 @@ export function Manage_Plants() {
                 </div>
 
 
-
                 {/* Sort */}
                 <div className="relative min-w-[150px]">
                   <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
@@ -350,11 +348,12 @@ export function Manage_Plants() {
                 {(filters.search || filters.location || filters.moisture) && (
                   <button
                     onClick={() => setFilters({ search: "", location: "", moisture: "" })}
-                    className="cursor-pointer flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-500 hover:bg-gray-50 transition bg-white">
+                    className="clear-search-btn cursor-pointer flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs  hover:bg-gray-50 transition bg-white">
                     <X size={12} /> Clear
                   </button>
                 )}
               </div>
+              
             )}
           </div>
 
@@ -427,7 +426,10 @@ export function Manage_Plants() {
           selectedTray={selectedTray}
           setSuccessMsg={setSuccessMsg}
           reloadTray={loadTrays}
+          reloadBatches={loadBatches}
+          trayGroups={trayGroups}
         />
+        
       )}
 
       {isBatchModalOpen && (

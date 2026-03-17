@@ -278,6 +278,43 @@ export const updatePlantBatch = async (batchData, batch_id) => {
 
 
 
+
+
+export const deletePlantBatchesByTrayId = async (tray_id) => {
+  try {
+    // Get all batches linked to this tray
+    const batches = await query(
+      `SELECT batch_id FROM plant_batches WHERE tray_id = $1`,
+      [tray_id]
+    );
+
+    if (batches.rows.length === 0) return null;
+
+    // Delete all batches under this tray
+    await query(`DELETE FROM plant_batches WHERE tray_id = $1`, [tray_id]);
+
+    // Re-number remaining batches per plant_name
+    await query(`
+      UPDATE plant_batches 
+      SET batch_number = new_batch_number
+      FROM (
+        SELECT batch_id, 
+               ROW_NUMBER() OVER (PARTITION BY plant_name ORDER BY batch_number) as new_batch_number
+        FROM plant_batches
+      ) AS numbered
+      WHERE plant_batches.batch_id = numbered.batch_id
+    `);
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting batches by tray_id:", error);
+    throw error;
+  }
+};
+
+
+
+
 // ===== DELETE a plant batch =====
 export const deletePlantBatch = async (batch_id) => {
   try {

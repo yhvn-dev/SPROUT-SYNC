@@ -4,19 +4,18 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
     <div className=" w-full">
 
       {/* ================= DESKTOP TABLE VIEW ================= */}
-      <div className="user_table_div hidden md:block max-h-[70vh] overflow-y-auto overflow-x-auto ">
+      <div className="hidden md:block max-h-[70vh] overflow-y-auto overflow-x-auto ">
         <table className="w-full text-base">
-          <thead>
+          <thead className="bg-[var(--sancgb)]">
             <tr>
-              <th className="p-3 bg-[var(--sage)] text-white text-left">Username</th>
-              <th className="p-3 bg-[var(--sage)] text-white text-left">Fullname</th>
-              <th className="p-3 bg-[var(--sage)] text-white text-left">Email</th>
-              <th className="p-3 bg-[var(--sage)] text-white text-left">Phone Number</th>
-              <th className="p-3 bg-[var(--sage)] text-white text-left">Role</th>
-              <th className="p-3 bg-[var(--sage)] text-white text-center">Action</th>
+              <th className="p-3  text-white text-left">Username</th>
+              <th className="p-3  text-white text-left">Fullname</th>
+              <th className="p-3  text-white text-left">Email</th>
+              <th className="p-3  text-white text-left">Phone Number</th>
+              <th className="p-3  text-white text-left">Role</th>
+              <th className="p-3  text-white text-center">Action</th>
             </tr>
           </thead>
-
           
           <tbody className="userTbody">
             {users.map((u) => (
@@ -34,8 +33,6 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
                     {u.role}
                   </p>
                 </td>
-                
-
                 
                 <td className="u_td">
                   <div className="flex items-center justify-center gap-2">
@@ -84,8 +81,6 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
 
       {/* ================= MOBILE CARD VIEW (SCROLLABLE) ================= */}
       <div className="conb md:hidden w-full">
-
-
         
         {/* SCROLL CONTAINER */}
         <div className="conb max-h-[70vh]  pr-1">

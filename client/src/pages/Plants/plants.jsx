@@ -59,7 +59,6 @@ export default function Plants() {
   useEffect(() => {
     loadPlantGroups();
   }, [loadPlantGroups, loadPlants]);
-
   
   useEffect(() => {
     if (!successMsg) return;
@@ -68,11 +67,11 @@ export default function Plants() {
   }, [successMsg]);
 
   
-   const handleOpenInfosPlants = () => {
+  const handleOpenInfosPlants = () => {
     setInfoModalPurpose("plants");
     setInfoModalOpen(true);
   };
-
+  
   return (
     <section className="con_main grid grid-cols-1 sm:grid-cols-[12fr_30fr_58fr]
       grid-rows-[8vh_auto_auto]
@@ -93,7 +92,9 @@ export default function Plants() {
           className="md:hidden fixed inset-0 bg-black/50 z-40"
           onClick={() => setSidebarOpen(false)}
         />)}
+        
 
+        
       {/* SIDEBAR */}
       <aside
         className={`${

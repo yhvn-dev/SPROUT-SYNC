@@ -51,6 +51,8 @@ export function TrayGroupModal({ isOpen, onClose, tgModalMode, selectedTrayGroup
   }, [isOpen]);
 
   
+
+  
   // Auto-update min/max moisture based on selected plant
   useEffect(() => {
     const selectedPlant = plantOptions.find(

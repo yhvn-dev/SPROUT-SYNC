@@ -240,29 +240,29 @@ function Batch_History() {
 
 
           {/* TABLE SECTION */}
-          <div className="batch_history_table rounded-2xl shadow-lg 
+          <div className=" rounded-2xl shadow-lg 
                     h-full md:h-[57vh] 
                     overflow-y-auto">
                       
             {/* Desktop Table */}
             <div className="hidden md:block overflow-x-auto overflow-y-auto">
               <table className="w-full f overflow-y-auto">
-                <thead className="  overflow-y-auto">
+                <thead className="bg-[var(--sancgb)] overflow-y-auto">
                   <tr>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Plant Name</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Date Planted</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Total</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Grown</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Replanted</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Dead</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Stage</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">Harvest Stage</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Harvest Day/s</th>
-                    <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">Actions</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Plant Name</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Date Planted</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Total</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Grown</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Replanted</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Dead</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Stage</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">Harvest Stage</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Harvest Day/s</th>
+                    <th className="px-4 py-3 text-center text-xs font-semibold text-white uppercase tracking-wider">Actions</th>
                   </tr>
                 </thead>
                   
-                <tbody className="divide-y divide-gray-200">
+                <tbody className="batch_history_table divide-y divide-gray-200">
                   {filteredData.map((record, index) => (
                     <tr
                       key={record.history_id}

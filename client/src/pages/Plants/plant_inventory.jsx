@@ -55,7 +55,7 @@ export function Plant_Inventory({setPlantModal}) {
       <div className="plant_main_div rounded-2xl shadow-lg  h-full md:h-[95%] overflow-y-auto">
 
         <div className="conb hidden md:flex items-center  rounded-2xl justify-center flex-col overflow-x-auto overflow-y-auto">
-         <div className="conb plant_invent_header w-full p-4 flex items-center justify-start">
+         <div className="conb plant_invent_header  bg-white w-full p-4 flex items-center justify-start">
             <div className="w-1/2">
                 <span className="plants-text text-3xl font-bold text-[var(--metal-dark5)]">Plants Inventory</span>
             </div>
@@ -104,23 +104,23 @@ export function Plant_Inventory({setPlantModal}) {
          
 
           <table className="conb pi_table w-full overflow-y-auto">
-            <thead className="plant_invent_tb_header overflow-y-auto">
+            <thead className="bg-[var(--sancgb)] plant_invent_tb_header overflow-y-auto">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--main-white)] uppercase tracking-wider">
                   Plant Name
                 </th>
-                <th className="px-4 py-3 text-left text-xs font-semibold text-[#027c68] uppercase tracking-wider">
+                <th className="px-4 py-3 text-left text-xs font-semibold text-[var(--main-white)] uppercase tracking-wider">
                    Minimum Moisture
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">
+                <th className="px-4 py-3 text-center text-xs font-semibold text-[var(--main-white)] uppercase tracking-wider">
                     Maximum Moisture
                 </th>
-                <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">
+                <th className="px-4 py-3 text-center text-xs font-semibold text-[var(--main-white)] uppercase tracking-wider">
                     Created At
                 </th>           
 
                 {user?.role === "admin" && (                 
-                <th className="px-4 py-3 text-center text-xs font-semibold text-[#027c68] uppercase tracking-wider">
+                <th className="px-4 py-3 text-center text-xs font-semibold text-[var(--main-white)] uppercase tracking-wider">
                     Actions
                 </th>         
                 )}   

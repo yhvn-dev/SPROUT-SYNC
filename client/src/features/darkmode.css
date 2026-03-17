@@ -8,6 +8,7 @@
     --mainblue: hsl(225, 46%, 44%);
     --gainsbro: hsl(0, 0%, 96%);
     --blue-white: hsl(195, 44%, 86%);
+    
 
     /* Moon Phases */
     --moon-phases-a: hsl(204, 19%, 15%);
@@ -89,24 +90,9 @@
     --szd-6-8:6.84rem;
     --sz-8-96:8.96rem;
     --szd-11-08:11.08rem;
-
-    --status-ok-bg: #ecfdf5;
-    --status-ok-text: #047857;
-
-    --status-moderate-bg: #fffbeb;
-    --status-moderate-text: #b45309;
-
-    --status-low-bg: #fef2f2;
-    --status-low-text: #b91c1c;
-
-    --status-unknown-bg: #f3f4f6;
-    --status-unknown-text: #4b5563;
-
-    /* PROGRESS BARS */
-    --bar-ok: #22c55e;
-    --bar-moderate: #eab308;
-    --bar-low: #ef4444;
 }
+
+
 
 body {
     transition: 1s;
@@ -301,10 +287,14 @@ body.dark .navs-btn {
         box-shadow: 5px 5px 10px 1px var(--shad-dark-b);
         border:0px solid;
     }    
-
-        body.dark .search_input{
-            @apply bg-[var(--metal-dark1)];
+        body.dark .clear-search-btn{
+           @apply bg-[var(--metal-dark1)];
         }
+        body.dark .search_input{
+            @apply bg-[var(--metal-dark1)] text-[var(--main-white-)];
+        }
+
+        
         body.dark .tg_data_main:hover{
              @apply bg-[var(--metal-dark2)];
         }
@@ -444,7 +434,6 @@ body.dark .tray_list_div{
     body.dark .sensor_div{
         background: linear-gradient(to bottom right, var(--sancgb), var(--sancga));
     }
-
 
 
 

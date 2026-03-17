@@ -179,7 +179,6 @@ export const deletePlantBatch = async (req, res) => {
     const existingBatch = await plantBatchModels.readPlantBatchById(batch_id);
     if (!existingBatch) return res.status(404).json({ message: "Plant batch not found" });
 
-    console.log("EXISTING BATCH",existingBatch)
 
     await plantBatchHistoryModel.createHistoryRecord(existingBatch)
     const deletedBatch = await plantBatchModels.deletePlantBatch(batch_id);

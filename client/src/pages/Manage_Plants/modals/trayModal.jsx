@@ -10,15 +10,27 @@ export function TrayModal({
   selectedTrayGroup,
   selectedTray,
   setSuccessMsg,
-  reloadTray
+  reloadTray,
+  reloadBatches,
+  trayGroups, 
 }) {
   const [formData, setFormData] = useState({ tray_group_id: 0, plant: "", status: "Available" });
   const [formErrors, setFormErrors] = useState({});
 
-  if (!isOpen) return null;
+  // ✅ FIX: for insert, use selectedTrayGroup. For update/delete,
+  //    find the matching group from trayGroups array using the tray's tray_group_id
+  const resolvedGroup =
+    trayModalMode === "insert"
+      ? selectedTrayGroup
+      : (trayGroups || []).find(
+          (g) => g.tray_group_id === selectedTray?.tray_group_id
+        );
 
-  // Initialize form
+  const resolvedGroupId = resolvedGroup?.tray_group_id;
+  const resolvedGroupName = resolvedGroup?.tray_group_name ?? "Unknown";
+
   useEffect(() => {
+    if (!isOpen) return;
     if (trayModalMode === "update" && selectedTray) {
       setFormData({
         tray_group_id: selectedTray.tray_group_id,
@@ -27,8 +39,8 @@ export function TrayModal({
       });
     } else if (trayModalMode === "insert") {
       setFormData({
-        tray_group_id: selectedTrayGroup?.tray_group_id || 0,
-        plant: selectedTrayGroup?.tray_group_name || "", // automatically set plant to tray group name
+        tray_group_id: resolvedGroupId || 0,
+        plant: resolvedGroupName !== "Unknown" ? resolvedGroupName : "",
         status: "Available",
       });
     } else if (trayModalMode === "delete" && selectedTray) {
@@ -38,7 +50,9 @@ export function TrayModal({
         status: selectedTray.status,
       });
     }
-  }, [trayModalMode, selectedTray, selectedTrayGroup]);
+  }, [trayModalMode, selectedTray, selectedTrayGroup, isOpen]);
+
+  if (!isOpen) return null;
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -50,7 +64,7 @@ export function TrayModal({
     try {
       if (trayModalMode === "insert") {
         const newTray = await trayModels.insertTray({
-          tray_group_id: selectedTrayGroup.tray_group_id,
+          tray_group_id: resolvedGroupId,
           plant: formData.plant,
           status: formData.status,
         });
@@ -60,9 +74,9 @@ export function TrayModal({
       if (trayModalMode === "update") {
         const updatedTray = await trayModels.updateTray(
           {
-            tray_group_id: selectedTrayGroup.tray_group_id,
+            tray_group_id: resolvedGroupId,
             plant: formData.plant,
-            status: formData.status
+            status: formData.status,
           },
           selectedTray.tray_id
         );
@@ -74,8 +88,8 @@ export function TrayModal({
         setFormErrors({});
         setSuccessMsg(`${selectedTray.plant} Tray Deleted`);
       }
-
       reloadTray();
+      reloadBatches();
       onClose();
     } catch (error) {
       const rawErrors = error?.response?.data?.errors;
@@ -92,8 +106,7 @@ export function TrayModal({
   };
 
   return (
-    <motion.div 
-
+    <motion.div
       className="tray_modal fixed inset-0 bg-transparent backdrop-blur-2xl flex items-center justify-center p-4 z-50">
       <motion.div
         className={`conb bg-white rounded-2xl shadow-2xl ${trayModalMode === "delete" ? "w-[450px] h-[250px]" : "w-[750px]"} overflow-hidden flex flex-col`}
@@ -101,7 +114,7 @@ export function TrayModal({
         animate={{ scale: 1, opacity: 1 }}
         exit={{ scale: 0.9, opacity: 0 }}
         transition={{ duration: 0.4 }}>
-      
+
         {/* HEADER */}
         <header className={`tray_modal_header px-6 py-5 flex items-center justify-between 
             ${trayModalMode === "insert" ? "bg-[#E8F3ED]" :
@@ -109,10 +122,9 @@ export function TrayModal({
             "bg-[var(--main-white)]" :
             "bg-[var(--color-danger-c)]"}`}>
 
-              
           <div className="flex items-center gap-3">
             <div className={`p-2.5 rounded-lg ${trayModalMode === "delete" ? "bg-[var(--color-danger-a)]" : "bg-[var(--ptl-greenh)]"}`}>
-              {trayModalMode === "delete" ? 
+              {trayModalMode === "delete" ?
               <Trash2 className="w-5 h-5 text-white" /> :
               <Grid3x3 className="w-5 h-5 text-white" />}
             </div>
@@ -123,7 +135,7 @@ export function TrayModal({
               <p className="text-sm text-[var(--acc-darkc)]">
                 {trayModalMode === "delete"
                   ? `Are you sure you want to delete ${selectedTray?.plant}?`
-                  : `Tray group: ${selectedTrayGroup?.tray_group_name || selectedTray?.tray_group_name}`}
+                  : `Tray group: ${resolvedGroupName}`}
               </p>
             </div>
           </div>
@@ -131,10 +143,7 @@ export function TrayModal({
           <button onClick={onClose} className="cursor-pointer close_button p-2 rounded-lg hover:bg-gray-100">
             <X size={24} />
           </button>
-
-
         </header>
-
 
         {/* DELETE MODE */}
         {trayModalMode === "delete" ? (
@@ -153,7 +162,7 @@ export function TrayModal({
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
 
               {/* PLANT (auto-filled) */}
-              <div className="md:col-span-2 border-2 border-[#C4DED0] text-[#5A8F73]  rounded-xl p-4">
+              <div className="md:col-span-2 border-2 border-[#C4DED0] text-[#5A8F73] rounded-xl p-4">
                 <label className="flex items-center gap-2 text-sm text-[var(--sancgb)] font-semibold mb-2">
                   <Sprout className="w-4 h-4" /> Plant *
                 </label>
@@ -162,13 +171,13 @@ export function TrayModal({
                   name="plant"
                   value={formData.plant}
                   disabled
-                  className="w-full px-3 py-2 border-2 border-[#C4DED0] text-[#5A8F73]  rounded-lg bg-gray-100 cursor-not-allowed"
+                  className="w-full px-3 py-2 border-2 border-[#C4DED0] text-[#5A8F73] rounded-lg bg-gray-100 cursor-not-allowed"
                 />
               </div>
 
               {/* STATUS */}
               <div className="border-2 border-[#C4DED0] text-[#5A8F73] rounded-xl p-4">
-                <label className="flex items-center gap-2 text-sm  text-[var(--sancgb)] font-semibold mb-2">
+                <label className="flex items-center gap-2 text-sm text-[var(--sancgb)] font-semibold mb-2">
                   <TrendingUp className="w-4 h-4" /> Status *
                 </label>
                 <select
@@ -190,34 +199,27 @@ export function TrayModal({
               </div>
             </div>
 
-
-
-
             {/* FOOTER */}
-            <div className="border-t  border-[#C4DED0] py-4 flex justify-between">
+            <div className="border-t border-[#C4DED0] py-4 flex justify-between">
               <span className="text-sm text-gray-500">* Required fields</span>
               <div className="flex gap-3">
-               <button
-                    onClick={onClose}
-                    type='button'
-                    className="cursor-pointer px-4 py-2 text-sm rounded-lg font-medium 
-                    transition-colors border-2 border-[#C4DED0] text-[#5A8F73] 
-                    hover:bg-[var(--main-white)]">
-                    Cancel
-                  </button>
-                <button type="submit" 
-                className={`cursor-pointer px-5 py-2.5 text-white rounded-lg font-medium shadow-lg transition-all ${trayModalMode === "insert" ? "bg-[var(--sancgb)] hover:bg-[var(--ptl-greenf)]" : "bg-[var(--purpluish--)] hover:bg-[var(--bluis--)]"}`}>
+                <button
+                  onClick={onClose}
+                  type="button"
+                  className="cursor-pointer px-4 py-2 text-sm rounded-lg font-medium 
+                  transition-colors border-2 border-[#C4DED0] text-[#5A8F73] 
+                  hover:bg-[var(--main-white)]">
+                  Cancel
+                </button>
+                <button type="submit"
+                  className={`cursor-pointer px-5 py-2.5 text-white rounded-lg font-medium shadow-lg transition-all ${trayModalMode === "insert" ? "bg-[var(--sancgb)] hover:bg-[var(--ptl-greenf)]" : "bg-[var(--purpluish--)] hover:bg-[var(--bluis--)]"}`}>
                   {trayModalMode === "insert" ? "Create Tray" : "Update Tray"}
                 </button>
               </div>
             </div>
-
-
           </form>
         )}
       </motion.div>
     </motion.div>
   );
-
-  
 }

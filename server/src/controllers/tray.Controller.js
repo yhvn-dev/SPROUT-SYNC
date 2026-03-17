@@ -1,6 +1,7 @@
 // trays.controller.js
 import * as trayGroupModels from "../models/trayGroupsModel.js"
 import * as trayModels from "../models/trayModels.js";
+import {deletePlantBatchesByTrayId} from "../models/plantBatchesModels.js";
 
 // ===== GET all trays =====
 export const getTrays = async (req, res) => {
@@ -66,7 +67,7 @@ export const updateTray = async (req, res) => {
   try {
     const { tray_id } = req.params;
     const trayData = req.body;
-    const {tray_group_id,batch_id} = trayData
+    const {tray_group_id} = trayData
     
     const existingTrayGroup = await trayGroupModels.readTrayGroupById(tray_group_id)
     if(!existingTrayGroup ) return res.status(404).json({ message: "Tray group not found" });
@@ -87,16 +88,18 @@ export const updateTray = async (req, res) => {
 
 
 // ===== DELETE a tray =====
+
 export const deleteTray = async (req, res) => {
   try {
     const { tray_id } = req.params;
 
+    // Check if tray exists
     const existingTray = await trayModels.readTrayById(tray_id);
     if (!existingTray) return res.status(404).json({ message: "Tray not found" });
-
+    await deletePlantBatchesByTrayId(tray_id);
     const deletedTray = await trayModels.deleteTray(tray_id);
-    res.status(200).json({ message: "Tray deleted successfully", deletedTray });
-    console.log("TRAY DELETED:", deletedTray);
+    res.status(200).json({ message: "Tray and its plant batches deleted successfully", deletedTray });
+
   } catch (err) {
     console.error("CONTROLLER: Error deleting tray", err);
     res.status(500).json({ message: "Error deleting tray", err });

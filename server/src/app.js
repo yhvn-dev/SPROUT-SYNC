@@ -88,7 +88,6 @@ export const io = new SocketIOServer(server, {
     credentials: true}
 });
 
-
 io.on("connection", (socket) => {
   console.log("🟢 User socket connected:", socket.id);
   socket.on("join", (userId) => {
@@ -107,6 +106,7 @@ const wsServer = new WebSocketServer({
   httpServer: server,
   autoAcceptConnections: true  
 });
+
 
 
 export const clients = [];
