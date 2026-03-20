@@ -360,6 +360,7 @@ function Home() {
 
           </section>
 
+
         {/* Install Button */}
         <InstallButton />
 
@@ -374,52 +375,30 @@ function Home() {
         </section>
 
       
+
         {/* Dashboard Section */}
-        <section className='w-full flex justify-center' id="dashboard_mockup">
-            <Suspense fallback={
-            <Dashboard_Mockup_Skeleton/>
-          }>       
-          </Suspense> 
-       
-          <Dashboard_Mockup />   
-        </section>
+        <Suspense fallback={<Dashboard_Mockup_Skeleton/>}>
+           <Dashboard_Mockup />      
+  1     </Suspense>
 
-
-        {/* Farm Info Section */}
-        <section id="farm" className="w-full">
-          <Suspense fallback={
-              <div className="text-center py-8">
-              <Farm_Info_Skeleton/>
-              </div>}>
-          </Suspense>
-          <Farm_Info_Section />
-        </section>
-
-
+        <Suspense fallback={<Farm_Info_Skeleton/>}>
+          <Farm_Info_Section />     
+        </Suspense>
 
         {/* Benefits Section */}
-        <section className="w-full">
-          <Suspense fallback={<div className="text-center py-8 ">
-             <BenefitSection_Skeleton/>
-          </div>}>
-          </Suspense>
-
-           <BenefitSection />
-        </section>
-
+         <Suspense fallback={<BenefitSection_Skeleton/>}>
+          <BenefitSection />       
+        </Suspense>
 
         {/* Logo Section */}
-        <section className="w-full">
-          
+        <section className="w-full">     
           <Suspense fallback={
             <div className="text-center py-8">     
                  <Logo_Page_Skeleton/>
             </div>}>
             <Logo_Page />
-        
           </Suspense>
         </section>
-
 
         <section className='w-full p-8'>
           <Suspense fallback={<div className="text-center py-8">
@@ -428,12 +407,12 @@ function Home() {
               <Footer />  
            </Suspense>        
         </section>
-
-      
         </>
       )}
     </div>
   );
+
+  
 }
 
 export default Home;
