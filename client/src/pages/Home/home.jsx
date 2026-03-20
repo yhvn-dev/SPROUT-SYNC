@@ -360,10 +360,8 @@ function Home() {
 
           </section>
 
-
         {/* Install Button */}
         <InstallButton />
-
          
          {/* Features Section */}
         <section id="features" className="w-full">
