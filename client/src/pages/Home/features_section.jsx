@@ -16,7 +16,6 @@ export default function FeatureSection(){
             </p>
           </div>
 
-
           <div className=" grid md:grid-cols-2 lg:grid-cols-2 gap-8 ">
             {[
               {

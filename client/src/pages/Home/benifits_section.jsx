@@ -2,7 +2,7 @@ import { Droplets, Shield, Bell, Gauge, Database } from 'lucide-react';
 
 export default function BenefitSection() {
   return (
-    <section className="benefits_section p-8 sm:py-20 lg:py-24 ">
+    <section className="benefits_section p-2 md:p-8 sm:py-20 lg:py-24 ">
       <div className=" max-w-7xl mx-auto px-4 sm:px-6">
         
         {/* Header */}
@@ -99,7 +99,7 @@ export default function BenefitSection() {
               Manual & Remote Control
             </h3>
             <p className="text-sm text-[var(--metal-dark2)]">
-              Override via physical buttons or Node.js dashboard
+              Take full control of your valves anytime, anywhere
             </p>
           </div>
 
@@ -117,22 +117,19 @@ export default function BenefitSection() {
                 <Database className="w-6 h-6 text-[#009983]" />
               </div>
               <h3 className="text-xl sm:text-2xl font-bold text-[#003333]">
-                Data Logging
+                Data Logging 
               </h3>
             </div>
             <p className="text-sm sm:text-base text-[var(--metal-dark2)] leading-relaxed">
-              Track moisture and water levels over time with comprehensive analytics and insights
+               Track your latest and average moisture levels, and monitor water levels over time
             </p>
           </div>
-
-
-
 
           {/* Stats */}
           <div className=" grid grid-cols-1 sm:grid-cols-3 gap-4 md:col-start-3 md:col-end-5 md:row-start-3">
             {[
-              { value: "25%", title: "Yield Increase", desc: "Optimal growing conditions lead to healthier, more productive plants" },
-              { value: "50%", title: "Time Saved", desc: "Automation reduces manual monitoring and irrigation tasks" },
+              { value: "Better", title: "Yield Quality", desc: "Optimal growing conditions lead to healthier, more productive plants" },
+              { value: "Less", title: "Manual Work", desc: "Automation reduces manual monitoring and irrigation tasks" },
               { value: "24/7", title: "Monitoring", desc: "Continuous system oversight ensures your plants never go without care" },
             ].map((item, i) => (
               <div key={i} className="benefits_grid hover:scale-102 hover:shadow-md

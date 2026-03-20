@@ -5,7 +5,7 @@ export function Header({isScrolled,navChildren}) {
 
     <nav
       className={`header_nav fixed top-0  w-full z-50 transition-all duration-300 ${
-        isScrolled ? 'scrolling bg-white  shadow-2xl' : 'bg-transparent'
+        isScrolled ? 'scrolling bg-[var(--sancgb)] shadow-2xl' : 'bg-transparent'
       }`}>
       <div className="rounded-[10px h-full w-full max-w-full mx-auto px-6 py-2">
         <div className="flex items-center justify-between rounded-[10px] ">

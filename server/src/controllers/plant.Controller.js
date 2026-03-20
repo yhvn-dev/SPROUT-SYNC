@@ -55,10 +55,6 @@ export const updatePlant = async (req, res) => {
     const { plant_id } = req.params;
     const { name, moisture_min, moisture_max, group_id } = req.body;
 
-    if (!name || !moisture_min || !moisture_max || !group_id) {
-      return res.status(400).json({ success: false, message: "All fields are required" });
-    }
-
     const plant = await  plantModel.updatePlant(plant_id, name, moisture_min, moisture_max, group_id);
     if (!plant) {
       return res.status(404).json({ success: false, message: "Plant not found" });
@@ -70,10 +66,6 @@ export const updatePlant = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal server error" });
   }
 };
-
-
-
-
 
 
 /* =========================

@@ -5,7 +5,7 @@ export default function Farm_Info_Section() {
     <>
       <section
         id="farm"
-        className="farm_info_section  p-8  bg-gradient-to-b from-[#E8F3ED] to-white"
+        className="farm_info_section p-2 md:p-8  bg-gradient-to-b from-[#E8F3ED] to-white"
       >
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid md:grid-cols-2 gap-16 items-center">
