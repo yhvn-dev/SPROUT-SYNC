@@ -28,7 +28,7 @@ export const PlantDataProvider = ({ children }) => {
   const [latestReadings, setLatestReadings] = useState([]);
   const [averageReadingsBySensor, setAverageReadingsBySensor] = useState({});
   const [notifs, setNotifs] = useState([]);
-  const [notifsCount, setNotifCount] = useState([]);
+  const [notifsCount, setNotifCount] = useState(0);
   const [readNotifs, setReadNotifs] = useState([]);
 
   // NEW: Plant groups and plants
@@ -150,21 +150,22 @@ export const PlantDataProvider = ({ children }) => {
   }, []);
 
 
-  
   const loadNotifs = useCallback(async () => {
     try {
       const data = await notifService.fetchAllNotifs();
       setNotifs(data);
+      console.log("NOTIFS",data)
+    
     } catch (error) {
       console.error("Error loading notifications", error);
     }
   }, []);
 
 
-
   const loadNotifsCount = useCallback(async () => {
     try {
       const data = await notifService.fetchNotifsCount();
+
       setNotifCount(data);
     } catch (error) {
       console.error("Error loading notifications count", error);
@@ -316,7 +317,6 @@ export const PlantDataProvider = ({ children }) => {
     </PlantDataContext.Provider>
   );
 };
-
 
 
 export const usePlantData = () => {

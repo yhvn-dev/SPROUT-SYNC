@@ -1,0 +1,33 @@
+const SOUNDS = {
+  // by TYPE
+  critical: '/sounds/CRITICAL_NOTIF.mp3',
+  danger:   '/sounds/DANGER NOTIF.mp3',
+  alert:    '/sounds/DANGER NOTIF.mp3',
+  warning:  '/sounds/NORMAL_NOTIF 2.mp3',
+  info:     '/sounds/INFO_notif.mp3',
+  success:  '/sounds/SUCCESS_NOTIF.mp3',
+  optimal:  '/sounds/SUCCESS_NOTIF.mp3',
+  normal:   '/sounds/NORMAL_NOTIF 2.mp3',
+  default:  '/sounds/default.mp3',
+};
+
+const STATUS_OVERRIDE = {
+  high:   '/sounds/CRITICAL_NOTIF.mp3',
+  medium: '/sounds/NORMAL_NOTIF 2.mp3',
+  low:    '/sounds/INFO_notif.mp3',
+};
+
+
+export function playNotifSound(type = 'default', status = null) {
+  const isMuted = localStorage.getItem('soundMuted') === 'true';
+  if (isMuted) return;
+
+  // Status override — kung critical yung status, alarming agad
+  const src = status === 'high'
+    ? STATUS_OVERRIDE.high
+    : SOUNDS[type?.toLowerCase()] ?? SOUNDS.default;
+
+  const audio = new Audio(src);
+  audio.volume = 0.5;
+  audio.play().catch(() => {});
+}

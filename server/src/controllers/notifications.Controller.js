@@ -204,9 +204,6 @@ export const notifyBatchCreated = async (batch,mode) => {
           )
         );
       }
-
-      
-
     }
     
   } catch (error) {

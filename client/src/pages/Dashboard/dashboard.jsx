@@ -48,8 +48,6 @@ export function Dashboard() {
   } = usePlantData();
   
   
-
-
   const clearMsg = useCallback(() => {
     setMessageContext("");
   }, []);
@@ -110,6 +108,10 @@ export function Dashboard() {
   };
 
   if (!user) return <div>Loading...</div>;
+
+
+
+
 
   return (
     <section className="con_main w-full min-h-screen bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] flex flex-col md:grid md:grid-cols-[15fr_85fr] md:grid-rows-[auto_1fr] gap-4 overflow-hidden relative">
@@ -376,6 +378,9 @@ export function Dashboard() {
           </div>
         </div>
       </div>
+
+
+
 
       {/* MODALS */}
       {openDeleteNotifModal && (

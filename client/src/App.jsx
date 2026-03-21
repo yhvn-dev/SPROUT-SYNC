@@ -21,7 +21,6 @@ import { ValveProvider } from "./hooks/valveContext.jsx";
 import { listenForMessages } from "./utils/firebase.js";
 import './styles.css';
 
-
 function App() {
   useEffect(() => {
     const init = async () => {

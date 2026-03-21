@@ -52,6 +52,9 @@ const getColorScheme = (type, status) => {
 }
 };
 
+
+
+
 export function Notif_Modal({ isOpen, onClose}) {
   const {notifs,markNotifsAsRead} = usePlantData() 
   const {setOpenDeleteNotifModal,setSelectedNotif,setDeleteMode} = useContext(MessageContext);
