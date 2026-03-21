@@ -16,12 +16,11 @@ export default function Footer() {
               <Img_Logo/>
             </div>
 
-
             <p className="text-[#A8C7B8] mb-6 max-w-md">
               Committed to sustainable solutions and environmental innovation. Building a greener future, one step at a time.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="w-9 h-9 rounded-full bg-[#027c68] hover:bg-[#009983] flex items-center justify-center transition-colors">
+              <a href="https://www.facebook.com/fdaltcopc2012" className="w-9 h-9 rounded-full bg-[#027c68] hover:bg-[#009983] flex items-center justify-center transition-colors">
                 <Facebook className="w-4 h-4" />
               </a>
   
@@ -39,14 +38,16 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href="#" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors flex items-center gap-2 group">
+
+                
+                <a href="#benefits" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors flex items-center gap-2 group">
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                   Services
                 </a>
               </li>
              
               <li>
-                <a href="#footer" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors flex items-center gap-2 group">
+                <a href="#contacts" className="text-[#A8C7B8] hover:text-[#b0e892] transition-colors flex items-center gap-2 group">
                   <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
                   Contact
                 </a>

@@ -7,11 +7,15 @@ import {
   Calendar,
   TrendingUp,
   LayoutDashboard,
-  Leaf,
+  Plug,
   FileText,
   User,
   LogOut,
+  Flower2,
 } from 'lucide-react';
+
+
+
 
 export default function Dashboard_Mockup() {
   const [expandedZones, setExpandedZones] = useState({});
@@ -25,32 +29,44 @@ export default function Dashboard_Mockup() {
     {
       tray_group_id: 1,
       group_number: '1',
-      tray_group_name: 'Cucumber',
-      location: 'Left Section',
-      min_moisture: 60,
-      max_moisture: 80,
+      tray_group_name: 'Bokchoy',
+      location: 'Right 3',
+      min_moisture: 50,
+      max_moisture: 70,
       trays: [
-        { tray_id: 1, tray_number: '1', plant: 'Cucumber', hasSensor: true },
-        { tray_id: 2, tray_number: '2', plant: 'Cucumber', hasSensor: false }
+        { tray_id: 1, tray_number: '1', plant: 'Bokchoy', hasSensor: true },
+        { tray_id: 2, tray_number: '2', plant: 'Bokchoy', hasSensor: false }
       ]
     },
     {
       tray_group_id: 2,
       group_number: '2',
-      tray_group_name: 'Lettuce',
-      location: 'Right Section',
+      tray_group_name: 'Pechay',
+      location: 'Right 2',
       min_moisture: 50,
       max_moisture: 70,
       trays: [
         { tray_id: 3, tray_number: '1', plant: 'Lettuce', hasSensor: true }
       ]
+    },
+      {
+      tray_group_id: 2,
+      group_number: '2',
+      tray_group_name: 'Mustasa',
+      location: 'Right 1 ',
+      min_moisture: 60,
+      max_moisture: 90,
+      trays: [
+        { tray_id: 3, tray_number: '1', plant: 'Lettuce', hasSensor: true }
+      ]
     }
+   
   ];
 
   const batches = [
     {
       batch_id: 1,
-      plant_name: 'Cucumber',
+      plant_name: 'Bokchoy',
       date_planted: new Date(),
       expected_harvest_days: 45,
       total_seedlings: 120,
@@ -59,9 +75,15 @@ export default function Dashboard_Mockup() {
     }
   ];
 
+
+
+
+
+  
+
   return (
-    <div className="flex flex-col md:flex-row items-center justify-center min-h-screen w-[90%]  p-2 md:p-0">
-      {/* ================= BROWSER WINDOW CONTAINER ================= */}
+    <section className="flex flex-col md:flex-row items-center justify-center min-h-screen w-[90%]  p-2 md:p-0">
+
       <div className="browser_window_main_container flex-1 w-full max-w-[1600px] h-[90vh] bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden border border-gray-300">
 
         {/* ================= APPLE-STYLE TOP BAR ================= */}
@@ -75,7 +97,7 @@ export default function Dashboard_Mockup() {
 
           {/* Fake URL bar */}
           <div className="flex-1 h-6 bg-gray-200/50 backdrop-blur-sm rounded-full flex items-center px-3 text-gray-700 text-sm mx-2 md:mx-4">
-            https://nursery-dashboard.local
+             https://sprout-sync-phi.vercel.app/
           </div>
 
           {/* Right placeholder */}
@@ -95,16 +117,24 @@ export default function Dashboard_Mockup() {
               <button onClick={() => setSidebarOpen(false)}>✕</button>
             </div>
 
-            <h1 className="text-lg font-semibold hidden md:block">🌱 SPROUTSYNC</h1>
+            <h1 className="text-lg font-semibold hidden md:block">🌱SPROUTSYNC</h1>
+
             <nav className="space-y-4">
               <SidebarItem icon={LayoutDashboard} label="Dashboard" active />
+              <SidebarItem icon={Sprout} label="Manage Plants"/>
               <SidebarItem icon={User} label="Users" />
               <SidebarItem icon={TrendingUp} label="Analytics" />
-               <SidebarItem icon={FileText } label="Batch History" />
+              <SidebarItem icon={FileText } label="Batch History" />
+              <SidebarItem icon={Plug } label="Control Panel" />
+              <SidebarItem icon={Flower2} label="Plants" />
               <SidebarItem icon={LogOut} label="Logout" />
             </nav>
+            
+
           </aside>
       
+
+  
 
           {/* ================= CONTENT ================= */}
           <main className="flex-1 p-2 md:p-6 overflow-y-auto">
@@ -206,7 +236,7 @@ export default function Dashboard_Mockup() {
           </main>
         </div>
       </div>
-    </div>
+    </section>
   );
 }
 

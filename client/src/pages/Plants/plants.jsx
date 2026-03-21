@@ -93,7 +93,6 @@ export default function Plants() {
           onClick={() => setSidebarOpen(false)}
         />)}
         
-
         
       {/* SIDEBAR */}
       <aside
@@ -112,7 +111,6 @@ export default function Plants() {
       <div className="col-start-1 col-span-full md:col-start-2">
         <Db_Header notifOpen={notifOpen} setNotifOpen={setNotifOpen} />
       </div>
-
 
       <nav className="plants_nav flex my-4 gap-2 px-4 md:px-0 md:col-start-2">
          <button

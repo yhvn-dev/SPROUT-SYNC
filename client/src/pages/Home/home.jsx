@@ -170,7 +170,7 @@ function Home() {
                 {/* Mobile Menu Button */}
                 <div className="flex items-center justify-end w-full md:hidden">
                   <button
-                    className="cursor-pointer header-button border-white rounded-2xl text-[#003333] shadow-lg p-2 hover:bg-[var(--metal-dark4)] transition-colors"
+                    className={` ${isScrolled ? "bg-[var(--metal-dark4)]" : "bg-[var(--metal-dark4)]" } cursor-pointer header-button border-white rounded-2xl text-[#003333] shadow-lg p-2 hover:bg-[var(--metal-dark4)] transition-colors`}
                     onClick={(e) => {
                       e.stopPropagation();
                       setMobileMenuOpen(!mobileMenuOpen);
@@ -219,12 +219,6 @@ function Home() {
               </div>
             }
           />
-
-
-
-
-
-
 
 
           {/* Hero Section */}
@@ -293,6 +287,8 @@ function Home() {
 
 
 
+
+
           {/* Install Button */}
           <InstallButton />
 
@@ -335,9 +331,6 @@ function Home() {
               <Footer />
             </Suspense>
           </section>
-
-          
-
 
         </>
       )}

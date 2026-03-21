@@ -15,9 +15,11 @@ export default function BenefitSection() {
           </p>
         </div>
 
+
+
+
         {/* Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-12 ">
-
           {/* Automatic Irrigation */}
           <div className="
           hover:scale-102 hover:shadow-md
@@ -125,6 +127,9 @@ export default function BenefitSection() {
             </p>
           </div>
 
+
+
+
           {/* Stats */}
           <div className=" grid grid-cols-1 sm:grid-cols-3 gap-4 md:col-start-3 md:col-end-5 md:row-start-3">
             {[
@@ -147,11 +152,11 @@ export default function BenefitSection() {
             ))}
           </div>
 
-
-
-
         </div>
       </div>
+
+
+
     </section>
   );
 }

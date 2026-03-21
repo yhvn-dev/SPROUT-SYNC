@@ -163,7 +163,7 @@ export function PlantGroupsModal({isOpen, onClose, plantModalMode, selectedPlant
               {/* HEADER */}
               <div className={`conb flex items-start justify-between gap-3 px-6 py-5 border-b border-gray-800/60 ${
                 isDelete
-                  ? "bg-gradient-to-br from-[var(--color-danger-c)] to-[var(--color-danger-a)]"
+                  ? "bg-gradient-to-br from-[var(--color-danger-a)] to-[var(--color-danger-a)]"
                   : "bg-gradient-to-br from-[var(--sancga)] to-[var(--sancgb)]"
               }`}>
                 <div className="flex items-center gap-3">

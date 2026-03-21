@@ -124,7 +124,7 @@ export function PlantModal({isOpen, onClose, plantModalMode, selectedPlant, setS
               {/* ── HEADER ── */}
               <div className={`conb flex items-start justify-between gap-3 px-6 py-5 border-b border-gray-800/60 ${
                 isDelete
-                  ? "bg-gradient-to-br from-[var(--color-danger-c)] to-[var(--color-danger-a)]"
+                  ? "bg-red-500"
                   : "bg-gradient-to-br from-[var(--sancga)] to-[var(--sancgb)]"
               }`}>
                 <div className="flex items-center gap-3">
@@ -163,11 +163,12 @@ export function PlantModal({isOpen, onClose, plantModalMode, selectedPlant, setS
                 <div className="conb p-6">
                   <div className="flex gap-3 items-start bg-red-500/8 border border-red-500/20 rounded-xl p-4 mb-6">
                     <AlertTriangle size={16} className="text-red-400 shrink-0 mt-0.5" />
-                    <p className="text-sm text-red-300 leading-relaxed">
-                      <span className="font-semibold text-red-400">{selectedPlant?.name}</span> will be
+                    <p className="text-sm  text-red-500">
+                      <span className="font-semibold text-[var(--color-danger-a)]">{selectedPlant?.name}</span> will be
                       permanently deleted. This action cannot be undone.
                     </p>
                   </div>
+                  
                   <div className="flex gap-2.5">
                     <button
                       type="button"
@@ -337,4 +338,6 @@ function FieldGroup({ label, required, icon, error, children }) {
       </AnimatePresence>
     </div>
   );
+
+  
 }
