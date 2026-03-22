@@ -17,8 +17,8 @@ export function TrayModal({
   const [formData, setFormData] = useState({ tray_group_id: 0, plant: "", status: "Available" });
   const [formErrors, setFormErrors] = useState({});
 
+  
   // ✅ FIX: for insert, use selectedTrayGroup. For update/delete,
-  //    find the matching group from trayGroups array using the tray's tray_group_id
   const resolvedGroup =
     trayModalMode === "insert"
       ? selectedTrayGroup

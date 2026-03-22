@@ -273,7 +273,6 @@ export const updateHarvestStatus = async (harvest_status, batch_id) => {
 
 
 
-
 export const deletePlantBatchesByTrayId = async (tray_id) => {
   try {
     // Get all batches linked to this tray

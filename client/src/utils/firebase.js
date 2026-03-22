@@ -41,8 +41,9 @@ export const showInPageNotification = (title, body) => {
     if (container.children.length === 0) {
       container.classList.add("hidden");
     }
-  }, 6000);
+  }, 10000);
 };
+
 
 export const getPushToken = async () => {
   try {

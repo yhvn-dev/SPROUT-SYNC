@@ -389,6 +389,7 @@ export function Manage_Plants() {
               batchesDataList={batches}
               handleUpdateBatch={handleUpdateBatch}
               handleDeleteBatch={handleDeleteBatch}
+              trays={trays}
             />
           )}
 

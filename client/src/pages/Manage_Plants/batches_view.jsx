@@ -1,7 +1,13 @@
 import {Sprout, TrendingUp, Pencil, Trash2, Calendar, Clock} from "lucide-react";
+import { useEffect } from "react";
 
-function Batches_View({batchesDataList,handleUpdateBatch,handleDeleteBatch}) {
+function Batches_View({batchesDataList,handleUpdateBatch,handleDeleteBatch,trays}) {
 
+
+  useEffect(() =>{
+        console.log("TRAY DATALIST",trays)
+        console.log("BATCH DATALIST",batchesDataList)
+  },[])
     
   return (
     <section className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm w-full">

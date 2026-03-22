@@ -44,21 +44,24 @@ export function Sidebar({ user, setRegisterModalVisible = null, setLogoutOpen })
           {!isMobile && <p className="text-sm mr-2 whitespace-nowrap">Dashboard</p>}
         </NavLink>
 
+     
         {/* Manage Plants */}
-        <NavLink
-          to="/manage_plants"
-          className={({ isActive }) =>
-            `flex justify-center items-center ${isMobile ? 'w-full h-12' : 'gap-2 py-1 px-2 justify-start'} transition-all duration-300 rounded-[10px] my-2 w-full
-            ${isActive
-              ? "text-white bg-[var(--sancgb)] shadow-lg"
-              : "hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)]"
-            }`
-          }>
-          <Sprout strokeWidth={1.5} size={isMobile ? 18 : 18} />
-          {!isMobile && <p className="text-sm mr-2 whitespace-nowrap">Manage Plants</p>}
-        </NavLink>
+         {user?.role === "admin" &&
+            <NavLink
+              to="/manage_plants"
+              className={({ isActive }) =>
+                `flex justify-center items-center ${isMobile ? 'w-full h-12' : 'gap-2 py-1 px-2 justify-start'} transition-all duration-300 rounded-[10px] my-2 w-full
+                ${isActive
+                  ? "text-white bg-[var(--sancgb)] shadow-lg"
+                  : "hover:bg-[var(--sage-light)] hover:text-[var(--acc-darkb)]"
+                }`
+              }>
+              <Sprout strokeWidth={1.5} size={isMobile ? 18 : 18} />
+              {!isMobile && <p className="text-sm mr-2 whitespace-nowrap">Manage Plants</p>}
+            </NavLink>
+        }
 
-        {/* Users - Admin only */}
+        {/* Users */}
         {user?.role === "admin" &&
           <NavLink
             to="/users"

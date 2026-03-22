@@ -84,20 +84,23 @@ export function Plant_Inventory({setPlantModal}) {
                     <option value="created_at">Date Added</option>
                 </select>
 
-                <button
-                    onClick={handleOpenAddPlants}
-                    className="cursor-pointer
-                    rounded-lg sm:rounded-xl
-                    px-3 py-1.5 sm:px-4 sm:py-2
-                    text-xs sm:text-sm
-                    shadow-md
-                    bg-[var(--sancgb)]
-                    text-[var(--main-white)]
-                    whitespace-nowrap">
-                    Add Plants
-                </button>
-            </div>
 
+                 {user?.role === "admin" && (              
+                    <button
+                        onClick={handleOpenAddPlants}
+                        className="cursor-pointer
+                        rounded-lg sm:rounded-xl
+                        px-3 py-1.5 sm:px-4 sm:py-2
+                        text-xs sm:text-sm
+                        shadow-md
+                        bg-[var(--sancgb)]
+                        text-[var(--main-white)]
+                        whitespace-nowrap">
+                        Add Plants
+                    </button>
+                )}
+
+            </div>
          </div>
 
 
@@ -200,11 +203,17 @@ export function Plant_Inventory({setPlantModal}) {
                     <option value="max_moisture">Max Moisture</option>
                     <option value="created_at">Date Added</option>
                 </select>
-                <button
-                    onClick={handleOpenAddPlants}
-                    className="cursor-pointer rounded-lg px-3 py-1.5 text-sm shadow-md bg-[var(--sancgb)] text-[var(--main-white)] w-full">
-                    Add Plants
-                </button>
+
+                {user?.role === "admin" && (
+                    <button
+                        onClick={handleOpenAddPlants}
+                        className="cursor-pointer rounded-lg px-3 py-1.5 text-sm shadow-md bg-[var(--sancgb)] text-[var(--main-white)] w-full">
+                        Add Plants
+                    </button>
+                )}
+
+                                   
+
             </div>
 
           {filteredPlants.map((p, index) => (

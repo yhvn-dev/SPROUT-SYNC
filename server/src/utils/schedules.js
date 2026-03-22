@@ -8,7 +8,7 @@ export const toDateOnlyUTC = (date) =>
     date.getUTCMonth(),
     date.getUTCDate()
   ));
-
+  
 
 // 0 23
 cron.schedule("* * * * *", async () => { 

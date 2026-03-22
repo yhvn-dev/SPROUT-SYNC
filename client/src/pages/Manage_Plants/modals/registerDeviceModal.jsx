@@ -147,10 +147,14 @@ function RegisterDeviceModal({ onClose, userData }) {
             You can always register your device later in settings.
           </p>
         </div>
+
       </motion.div>
     </motion.div>
+
   );
+  
 }
+
 
 
 
