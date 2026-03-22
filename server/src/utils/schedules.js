@@ -1,7 +1,6 @@
 import cron from "node-cron";
 import { updatePastHarvestStatus } from "../controllers/plantBatch.Controller.js";
 
-
 // ===== Helper function =====
 export const toDateOnlyUTC = (date) =>
   new Date(Date.UTC(  

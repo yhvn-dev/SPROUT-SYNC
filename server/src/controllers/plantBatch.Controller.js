@@ -107,9 +107,8 @@ export const getSeedlingGrowthOverTime = async (req, res) => {
 
 
 
-
-
-  export const updatePastHarvestStatus = async (forceBatchId = null, forceUpdate = false) => {  
+  
+export const updatePastHarvestStatus = async (forceBatchId = null, forceUpdate = false) => {  
   try {
     const allBatches = await plantBatchModels.readPlantBatches();
     
@@ -122,11 +121,10 @@ export const getSeedlingGrowthOverTime = async (req, res) => {
     const tomorrow = new Date(today);
     tomorrow.setUTCDate(tomorrow.getUTCDate() + 1);
 
-    // ✅ Fixed — LOCAL getters kapag Date object (pg DATE type returns local midnight)
     const parseUTCDate = (dateStr) => {
       if (dateStr instanceof Date) {
         return new Date(Date.UTC(
-          dateStr.getFullYear(),  // ← LOCAL, hindi UTC
+          dateStr.getFullYear(),
           dateStr.getMonth(),
           dateStr.getDate()
         ));
@@ -139,15 +137,13 @@ export const getSeedlingGrowthOverTime = async (req, res) => {
     for (const batch of batches) {
       if (!batch.date_planted || batch.expected_harvest_days == null) continue;
 
-      const expected = parseUTCDate(batch.date_planted);
-      expected.setUTCDate(expected.getUTCDate() + Number(batch.expected_harvest_days));
-
       const planted = parseUTCDate(batch.date_planted);
       const harvestDate = new Date(planted);
       harvestDate.setUTCDate(harvestDate.getUTCDate() + Number(batch.expected_harvest_days));
 
-      let newStatus;
+      const expected = harvestDate;
 
+      let newStatus;
       if (batch.harvested_at) {
         newStatus = "Harvested";
       } else if (expected.getTime() === today.getTime()) {
@@ -161,42 +157,57 @@ export const getSeedlingGrowthOverTime = async (req, res) => {
       }
 
       const statusChanged = batch.harvest_status !== newStatus;
-      const isForced = forceUpdate; 
 
-      if (statusChanged || isForced) {
+      // ✅ Update status — kapag nagbago lang
+      if (statusChanged || forceUpdate) {
         await plantBatchModels.updateHarvestStatus(newStatus, batch.batch_id);
+      }
 
-        if (newStatus === "Due Tomorrow") {
-          await createNotif({
-            type: "Warning",
-            status: "Medium",
-            message: `Harvest Reminder\n1 Day Remaining before harvest\n\nPlant: [${batch.batch_number}] ${batch.plant_name}\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
-          });
-        } else if (newStatus === "Due Now") {
-          await createNotif({
-            type: "Success",
-            status: "Low",
-            message: `Harvest Day!\nIt's time to harvest today!\n\nPlant: [${batch.batch_number}] ${batch.plant_name}\nPlanted: ${planted.toISOString().slice(0, 10)}\nHarvest Date: ${harvestDate.toISOString().slice(0, 10)}`
-          });
-        } else if (newStatus === "Past Due") {
-          await createNotif({
-            type: "Critical",
-            status: "High",
-            message: `Overdue Harvest!\nThis batch is past its harvest date!\n\nPlant: [${batch.batch_number}] ${batch.plant_name}\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
-          });
-        } else if (newStatus === "Harvested") {
-          await createNotif({
-            type: "Success",
-            status: "Low",
-            message: `Batch Harvested!\n[${batch.batch_number}] ${batch.plant_name} is Successfully Harvested\nPlanted: ${planted.toISOString().slice(0, 10)}\nHarvested: ${harvestDate.toISOString().slice(0, 10)}`
-          });
-        }
+      // ✅ FOR TESTING — notify every cron run, hindi na naka-depende sa statusChanged
+      const plantedStr = planted.toISOString().slice(0, 10);
+      const harvestStr = harvestDate.toISOString().slice(0, 10);
+
+      if (newStatus === "Due Tomorrow") {
+        console.log(`📢 Notifying: Due Tomorrow — ${batch.batch_number}`);
+        await createNotif({
+          type: "Warning",
+          status: "Medium",
+          message: `Harvest Reminder\n1 Day Remaining before harvest\n\nPlant: [${batch.batch_number}] ${batch.plant_name}\nPlanted: ${plantedStr}\nExpected Harvest: ${harvestStr}`
+        });
+      } else if (newStatus === "Due Now") {
+        console.log(`📢 Notifying: Due Now — ${batch.batch_number}`);
+        await createNotif({
+          type: "Success",
+          status: "Low",
+          message: `Harvest Day!\nIt's time to harvest today!\n\nPlant: [${batch.batch_number}] ${batch.plant_name}\nPlanted: ${plantedStr}\nHarvest Date: ${harvestStr}`
+        });
+      } else if (newStatus === "Past Due") {
+        console.log(`📢 Notifying: Past Due — ${batch.batch_number}`);
+        await createNotif({
+          type: "Critical",
+          status: "High",
+          message: `Overdue Harvest!\nThis batch is past its harvest date!\n\nPlant: [${batch.batch_number}] ${batch.plant_name}\nPlanted: ${plantedStr}\nExpected Harvest: ${harvestStr}`
+        });
+      } else if (newStatus === "Harvested") {
+        console.log(`📢 Notifying: Harvested — ${batch.batch_number}`);
+        await createNotif({
+          type: "Success",
+          status: "Low",
+          message: `Batch Harvested!\n[${batch.batch_number}] ${batch.plant_name} is Successfully Harvested\nPlanted: ${plantedStr}\nHarvested: ${harvestStr}`
+        });
+      } else {
+
+        console.log(`⏭️ No notify for ${batch.batch_number} — status: ${newStatus}`);
       }
     }
   } catch (err) {
     console.error("Error updating harvest status:", err);
   }
 };
+
+
+
+
 
 
 
