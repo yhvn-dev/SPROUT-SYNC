@@ -1,6 +1,5 @@
 import cron from "node-cron";
-import * as notifyController from "../controllers/notifications.Controller.js";
-import * as plantBatchController from "../controllers/plantBatch.Controller.js"; // <-- import update function
+import { updatePastHarvestStatus } from "../controllers/plantBatch.Controller.js";
 
 
 // ===== Helper function =====
@@ -11,14 +10,10 @@ export const toDateOnlyUTC = (date) =>
     date.getUTCDate()
   ));
 
-
-
-  
-cron.schedule("* 6 * * *", async () => { 
+cron.schedule("* * * * *", async () => { 
   console.log("⏰ Running daily harvest check:", new Date().toISOString());
   try {
-    await plantBatchController.updatePastHarvestStatus?.()
-    await notifyController.notifyReplantDate();
+    await updatePastHarvestStatus();
   } catch (error) {
     console.error("❌ Error running daily harvest check:", error);
   }

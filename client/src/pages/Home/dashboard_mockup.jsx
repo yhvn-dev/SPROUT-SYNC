@@ -1,21 +1,5 @@
-import React, { useState } from 'react';
-import {
-  Droplet,
-  ChevronDown,
-  ChevronUp,
-  Sprout,
-  Calendar,
-  TrendingUp,
-  LayoutDashboard,
-  Plug,
-  FileText,
-  User,
-  LogOut,
-  Flower2,
-} from 'lucide-react';
-
-
-
+import { useState } from 'react';
+import { Droplet, ChevronDown, ChevronUp, Sprout, Calendar, TrendingUp, LayoutDashboard, Plug, FileText, User, LogOut, Flower2 } from 'lucide-react';
 
 export default function Dashboard_Mockup() {
   const [expandedZones, setExpandedZones] = useState({});
@@ -50,7 +34,7 @@ export default function Dashboard_Mockup() {
       ]
     },
       {
-      tray_group_id: 2,
+      tray_group_id: 3,
       group_number: '2',
       tray_group_name: 'Mustasa',
       location: 'Right 1 ',
@@ -63,6 +47,7 @@ export default function Dashboard_Mockup() {
    
   ];
 
+  
   const batches = [
     {
       batch_id: 1,
@@ -203,6 +188,8 @@ export default function Dashboard_Mockup() {
                   );
                 })}
               </section>
+
+
 
               {/* ================= BATCHES ================= */}
               <aside className="space-y-4">

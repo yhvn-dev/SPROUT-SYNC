@@ -1,5 +1,4 @@
 const SOUNDS = {
-  // by TYPE
   critical: '/sounds/CRITICAL_NOTIF.mp3',
   danger:   '/sounds/DANGER NOTIF.mp3',
   alert:    '/sounds/DANGER NOTIF.mp3',
@@ -21,13 +20,19 @@ const STATUS_OVERRIDE = {
 export function playNotifSound(type = 'default', status = null) {
   const isMuted = localStorage.getItem('soundMuted') === 'true';
   if (isMuted) return;
+  
+  const normalizedStatus = status?.toLowerCase();
+  const normalizedType   = type?.toLowerCase();
 
-  // Status override — kung critical yung status, alarming agad
-  const src = status === 'high'
-    ? STATUS_OVERRIDE.high
-    : SOUNDS[type?.toLowerCase()] ?? SOUNDS.default;
+  const src =
+    STATUS_OVERRIDE[normalizedStatus] ??
+    SOUNDS[normalizedType] ??
+    SOUNDS.default;
 
   const audio = new Audio(src);
   audio.volume = 0.5;
-  audio.play().catch(() => {});
+
+  audio.play().catch((err) => {
+    console.warn('Notification sound blocked:', err.message);
+  });
 }

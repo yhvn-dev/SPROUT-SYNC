@@ -1,7 +1,7 @@
 import { useState, useContext, useEffect,useCallback } from "react";
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
-import { UserContext } from "../../hooks/userContext";
+import { useUser } from "../../hooks/userContext";
 import { usePlantData } from "../../hooks/plantContext";
 import { Notif_Modal } from "../../components/notifModal";
 import { LogoutModal } from "../../components/logoutModal";
@@ -20,7 +20,7 @@ import { DeleteNotifModal } from "../../components/deleteNotifModal.jsx";
 
 
 export default function Analytics() {
-  const { user, skippedRegister} = useContext(UserContext);
+  const { user, skippedRegister} = useUser()
   const {
     batchTotal,
     loadBatchTotal,
@@ -32,6 +32,7 @@ export default function Analytics() {
     loadReadings,
     averageReadingsBySensor,
     loadAverageReadingsBySensor,
+    loadNotifs,
   } = usePlantData();
 
   const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,deleteMode,
@@ -54,6 +55,16 @@ export default function Analytics() {
     setScsMsg("");
     setMessageContext("")
 }, []);
+
+
+  useEffect(() => {
+    if (user?.first_time_login && !skippedRegister) {
+      setRegisterModalVisible(true);
+    } else {
+      setRegisterModalVisible(false);
+    }
+  }, [user?.first_time_login, skippedRegister]);
+  
 
   useEffect(() => {
     loadBatchTotal();
@@ -258,6 +269,7 @@ export default function Analytics() {
           selectedNotif={selectedNotif}
           deleteMode={deleteMode} 
           onClose={() => setOpenDeleteNotifModal(false)} 
+          loadNotifs={loadNotifs}
         />
       )}
     

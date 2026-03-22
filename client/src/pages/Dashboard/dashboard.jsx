@@ -1,6 +1,6 @@
 // Dashboard.jsx
 import { useState, useContext, useEffect, useCallback, useMemo } from "react";
-import { UserContext } from "../../hooks/userContext";
+import { useUser } from "../../hooks/userContext";
 import { MessageContext } from "../../hooks/messageHooks.jsx";
 
 import { Menu, Droplet, ChevronDown, ChevronUp, Sprout, Calendar, Wifi, WifiOff, TrendingUp, Clock, CircleQuestionMark } from "lucide-react";
@@ -19,7 +19,7 @@ import RegisterDeviceModal from "./modals/registerDeviceModal.jsx";
 
 
 export function Dashboard() {
-  const { user, skippedRegister } = useContext(UserContext);
+  const { user, skippedRegister } = useUser();
   const { openDeleteNotifModal, setOpenDeleteNotifModal, selectedNotif, deleteMode, messageContext, setMessageContext } = useContext(MessageContext);
   const { ESP32Status } = useContext(ESP32Context);
 
@@ -44,7 +44,8 @@ export function Dashboard() {
     loadTrayGroupsWithCount,
     loadBatches,
     loadSensors,
-    loadLatestReadings
+    loadLatestReadings,
+    loadNotifs
   } = usePlantData();
   
   
@@ -380,8 +381,6 @@ export function Dashboard() {
       </div>
 
 
-
-
       {/* MODALS */}
       {openDeleteNotifModal && (
         <DeleteNotifModal
@@ -389,6 +388,7 @@ export function Dashboard() {
           selectedNotif={selectedNotif}
           deleteMode={deleteMode}
           onClose={() => setOpenDeleteNotifModal(false)}
+          loadNotifs={loadNotifs}  
         />
       )}
 

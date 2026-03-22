@@ -1,12 +1,11 @@
 "use client";
-import { useEffect, useState, useMemo, useContext,useCallback} from "react";
+import { useEffect, useState, useContext,useCallback} from "react";
 import { Menu } from "lucide-react";
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
 import { usePlantData } from "../../hooks/plantContext.jsx";
-import { UserContext } from "../../hooks/userContext.jsx";
+import { useUser } from "../../hooks/userContext.jsx";
 import { LogoutModal } from "../../components/logoutModal.jsx";
-import { CircleQuestionMark } from "lucide-react";
 import { Notif_Modal } from "../../components/notifModal.jsx"
 import { FloatSuccessMsg } from "../../components/sucessMsgs.jsx";
 import { DeleteNotifModal } from '../../components/deleteNotifModal';
@@ -23,10 +22,11 @@ import {Plant_Inventory} from "./plant_inventory.jsx"
 
 /* ─── MAIN PAGE ──────────────────────────────────────────── */
 export default function Plants() {
-  const { user } = useContext(UserContext);
-  const {plants,loadPlantGroups, loadPlants } = usePlantData();
-  const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,
-        deleteMode,setMessageContext} = useContext(MessageContext);
+  const { user, skippedRegister} = useUser()
+  const {plants,loadPlantGroups, loadPlants,loadNotifs} = usePlantData();
+    const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,
+          deleteMode,
+          messageContext,setMessageContext} = useContext(MessageContext);
 
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -42,7 +42,7 @@ export default function Plants() {
     plant: null,
   });
   
-  
+ 
   const [plantGroupModal, setPlantGroupModal] = useState({
     isOpen: false,
     mode: "insert",
@@ -55,7 +55,18 @@ export default function Plants() {
       setMessageContext("")
       },
   []);
-    
+
+
+  useEffect(() => {
+    if (user?.first_time_login && !skippedRegister) {
+      setRegisterModalVisible(true);
+    } else {
+      setRegisterModalVisible(false);
+    }
+  }, [user?.first_time_login, skippedRegister]);
+
+  
+
   useEffect(() => {
     loadPlantGroups();
   }, [loadPlantGroups, loadPlants]);
@@ -200,8 +211,10 @@ export default function Plants() {
         selectedNotif={selectedNotif}
         deleteMode={deleteMode} 
         onClose={() => setOpenDeleteNotifModal(false)} 
-      />
+        loadNotifs={loadNotifs}
+      />  
     )}
+
 
     {isInfoModalOpen && (
       <InfosModal
@@ -222,6 +235,9 @@ export default function Plants() {
       <FloatSuccessMsg  txt={successMsg} clearMsg={clearMsg} />
     )}
 
+    {messageContext && (
+      <FloatSuccessMsg  txt={messageContext} clearMsg={clearMsg} />
+    )}
 
 
     </section>

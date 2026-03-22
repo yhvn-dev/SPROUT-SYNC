@@ -60,6 +60,32 @@ export const markNotificationsAsRead = async (req, res) => {
 
 
 
+export const createNotifController = async (req, res) => {
+  try {
+    const { type, message, status } = req.body;
+
+    // Validation
+    if (!type || !message || !status) {
+      return res.status(400).json({ 
+        error: "type, message, and status are required" 
+      });
+    }
+
+    const notif = await notificationModel.createNotif({ 
+      type, 
+      message, 
+      status 
+    });
+
+    return res.status(201).json(notif);
+
+  } catch (error) {
+    console.error("Error creating notification:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 
 export const notifyReplantDate = async (req, res) => {
   try {
@@ -98,7 +124,7 @@ export const notifyReplantDate = async (req, res) => {
         await notificationModel.createNotif({
           user_id: null,
           batch_id: batch.batch_id,
-          type: "warning",
+          type: "Warning",
           status: "Medium",
           message: `🌱 Harvest Reminder\n1 Day Remaining before harvest \n\nPlant: ${batch.plant_name}\nLocation: ${location}\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
         });
@@ -151,19 +177,19 @@ export const notifyReplantDate = async (req, res) => {
 
 
 
+
+
 export const notifyBatchCreated = async (batch,mode) => {
   try {
     const planted = toDateOnlyUTC(new Date(batch.date_planted));
     const harvestDate = new Date(planted);
     harvestDate.setUTCDate(harvestDate.getUTCDate() + Number(batch.expected_harvest_days));
 
-
     if(mode === "insert"){
 
       await notificationModel.createNotif({
-        user_id: null,
         batch_id: batch.batch_id,
-        type: "Info",
+        type: "info",
         status: "Low",
         message: `🌱 New Batch Added\n\nPlant: ${batch.plant_name}\nBatch: ${batch.batch_number}\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
       });
@@ -185,9 +211,8 @@ export const notifyBatchCreated = async (batch,mode) => {
     }else if(mode === "update"){
 
       await notificationModel.createNotif({
-        user_id: null,
         batch_id: batch.batch_id,
-        type: "Info",
+        type: "info",
         status: "Low",
         message: `🌱 Batch Updated\n\nPlant: [${batch.batch_number}]${batch.plant_name}\n\nPlanted: ${planted.toISOString().slice(0, 10)}\nExpected Harvest: ${harvestDate.toISOString().slice(0, 10)}`
       });
@@ -206,12 +231,11 @@ export const notifyBatchCreated = async (batch,mode) => {
       }
     }
     
+    
   } catch (error) {
     console.error("❌ notifyBatchCreated error:", error);
   }
 };
-
-
 
 
 

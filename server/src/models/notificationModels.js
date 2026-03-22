@@ -51,7 +51,6 @@ export const exists = async ({ batch_id, type }) => {
 };
 
 
-
 // Mark ALL unread notifications as read (clears the count)
 export const markAllNotificationsAsRead = async () => {
     try {
@@ -65,7 +64,12 @@ export const markAllNotificationsAsRead = async () => {
 
 
 export const createNotif = async (notificationData) => {
-  const { type, message, related_sensor, status} = notificationData;
+  const { 
+    type, 
+    message, 
+    related_sensor = null, 
+    status 
+  } = notificationData;
 
   const { rows } = await query(`
     INSERT INTO notifications 

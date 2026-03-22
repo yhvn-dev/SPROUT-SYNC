@@ -5,7 +5,7 @@ import { Modal } from "./modal"
 import { User} from "react-feather"
 import { SucessMsgs} from "../../components/sucessMsgs"
 import * as userService from "../../data/userService"
-import { UserContext } from "../../hooks/userContext"
+import { useUser } from "../../hooks/userContext"
 
 
 
@@ -36,7 +36,7 @@ export function Workspace({refreshChart,searchValue,userCount,statusData,refresh
   const [sucessMsg,setSucessMsg] = useState("");
   const [backendError,setBackendError] = useState("");
   const [selectedUser,setSelectedUser] = useState(null)
-  const {allUsers,setAllUsers} = useContext(UserContext);
+  const {allUsers,setAllUsers} = useUser();
   const [filtered,setFiltered] = useState([]) 
  
 

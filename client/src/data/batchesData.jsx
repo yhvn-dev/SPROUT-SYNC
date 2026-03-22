@@ -34,7 +34,6 @@ export const fetchSeedlingsGrowthOvertime = async () =>{
 }
 
 
-
 export const insertBatches = async (batchesData) =>{
     try {
         const data = await api.post("/pb/post/pb",batchesData)
@@ -48,7 +47,6 @@ export const insertBatches = async (batchesData) =>{
 
 
 export const updateBatches = async (batchData,batch_id) =>{
-    console.log("PASSED BATCHES DATA:",batchData)
     try {
         const data = await api.put(`/pb/put/pb/${batch_id}`,batchData)
         const pb = data.data
@@ -58,6 +56,20 @@ export const updateBatches = async (batchData,batch_id) =>{
         throw error
     }
 }
+
+
+export const updateHarvestStatus = async (batch_id,harvest_status) =>{
+    try {
+        const pb = await api.put(`/pb/put/pb/harvest_status/${batch_id}`,{harvest_status})
+        console.log("PLANTBATCHES",pb)
+        return pb      
+    } catch (error) {
+        console.error(error)    
+        throw error
+    }
+}
+
+
 
 
 export const deleteBatches = async (batch_id) =>{

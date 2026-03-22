@@ -189,7 +189,7 @@ export const handleMoistureNotifications = async (existingSensor, value) => {
   if (moisture < min) {
     return {
       type: "Alert",
-      status: "HIGH",
+      status: "High",
       message: `💧 [${group_number}] ${tray_group_name} soil is TOO DRY! Needs watering (${moisture.toFixed(
         1
       )}%)`
@@ -199,7 +199,7 @@ export const handleMoistureNotifications = async (existingSensor, value) => {
   if (moisture > max) {
     return {
       type: "Alert",
-      status: "HIGH",
+      status: "High",
       message: `💧 [${group_number}] ${tray_group_name} soil is TOO WET! Do not water (${moisture.toFixed(
         1
       )}%)`
@@ -220,7 +220,7 @@ export const handleUltrasonicNotifications = async (sensor_id, value) => {
   if (waterLevel <= 20) {
     return {
       type: "Alert",
-      status: "HIGH",
+      status: "High",
       message: `🚨 Water level is CRITICALLY LOW (${waterLevel}%)`
     };
   }
@@ -228,7 +228,7 @@ export const handleUltrasonicNotifications = async (sensor_id, value) => {
   if (waterLevel <= 30) {
     return {
       type: "Warning",
-      status: "MEDIUM",
+      status: "Medium",
       message: `⚠️ Water level is LOW (${waterLevel}%)`
     };
   }

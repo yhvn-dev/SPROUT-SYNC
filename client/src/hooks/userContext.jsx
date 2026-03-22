@@ -1,7 +1,7 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import * as userService from "../data/userService";
 
-export const UserContext = createContext();
+export const UserContext = createContext(null); // ← dagdag ng null
 
 export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -21,13 +21,18 @@ export function UserProvider({ children }) {
     }
   }
 
-  
   return (
     <UserContext.Provider
-      value={{user,setUser,allUsers,setAllUsers,skippedRegister,setSkippedRegister}}>
+      value={{ user, setUser, allUsers, setAllUsers, skippedRegister, setSkippedRegister }}>
       {children}
     </UserContext.Provider>
   );
-
-
 }
+
+
+// ← Custom hook para safe ang access
+export const useUser = () => {
+  const context = useContext(UserContext);
+  if (!context) throw new Error("useUser must be used within UserProvider");
+  return context;
+};

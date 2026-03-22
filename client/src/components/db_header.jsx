@@ -1,13 +1,12 @@
-import { useContext, useState, useEffect } from "react";
-import { UserContext } from "../hooks/userContext";
+import {  useEffect } from "react";
+import { useUser} from "../hooks/userContext";
 import { usePlantData } from "../hooks/plantContext";
-import Pfp from "../assets/Images/Default Profile Picture 2.jpg";
 
 import { Bell } from "lucide-react";
 import { Darkmode } from "../features/darkmode";
 
 export function Db_Header({ input, setNotifOpen}) {
-  const { user } = useContext(UserContext);
+  const { user } = useUser();
   const { notifsCount, loadNotifsCount } = usePlantData();
   
   useEffect(() => {

@@ -1,7 +1,7 @@
 import { Droplets, CircleQuestionMark, Trash2 } from "lucide-react";
 import InfosModal from "../../components/infosModal";
-import { useState, useContext, useEffect } from "react";
-import { UserContext } from "../../hooks/userContext";
+import { useState} from "react";
+import { useUser } from "../../hooks/userContext";
 
 // =====================
 // STAT CARD
@@ -71,7 +71,7 @@ export const Overview = ({
 }) => {
   const [isInfoModalOpen, setInfoModalOpen] = useState(false);
   const [infoModalPurpose, setInfoModalPurpose] = useState("");
-  const { user } = useContext(UserContext);
+  const { user } = useUser();
 
 
   // =====================

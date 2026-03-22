@@ -161,17 +161,15 @@ export function UserTable({ users, setOpen, setMode, setSelectedUser }) {
                       setOpen(true);
                       setMode("delete");
                     }}
-                    className="cursor-pointer text-xs px-2.5 py-1 rounded-md bg-[var(--color-danger-a)] text-white shadow hover:bg-red-500">
+                    className="cursor-pointer text-xs px-2.5 py-1 rounded-md bg-red-500 text-white shadow hover:bg-red-500">
                     DELETE
                   </button>
-      
-      
             </div>
-
-
             </div>
           ))}
         </div>
+
+
 
       </div>
     </div>

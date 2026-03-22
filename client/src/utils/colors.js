@@ -1,3 +1,7 @@
+
+import { Clock, AlertCircle, CheckCircle, AlertTriangle, Trash2, BellOff } from "lucide-react";
+
+
 export const colors = {
   // Foundations
   mainWhite: 'hsl(258, 44%, 93%)',
@@ -97,6 +101,8 @@ export const getStageColor = (stage, isDark = false) => {
   return isDark ? darkColors[stage] || '#5A8F73' : lightColors[stage] || '#5A8F73';
 };
 
+
+
 export const getHarvestStatusColor = (stage, isDark = false) => {
   const lightColors = {
     'Not Ready': 'var(--metal-dark4)',
@@ -114,6 +120,10 @@ export const getHarvestStatusColor = (stage, isDark = false) => {
   };
   return isDark ? darkColors[stage] || '#5A8F73' : lightColors[stage] || '#5A8F73';
 };
+
+
+
+
 
 // ✅ Same pattern as getStageColor — isDark flag, returns inline style objects
 export function getSensorStatus(sensor, rawValue, isActive, group, isDark = false) {
@@ -182,3 +192,90 @@ export function getSensorStatus(sensor, rawValue, isActive, group, isDark = fals
     iconStyle: { color: palette.active.text },
   };
 }
+
+
+
+
+
+
+export const getColorByStatus = (status, type) => {
+
+  switch (status?.toLowerCase()) {
+    case "high":
+      return {
+        bg: "hsl(353, 40%, 93%)",
+        border: "hsl(353, 60%, 80%)",
+        iconColor: "hsl(353, 70%, 45%)",
+        iconBg: "hsl(353, 60%, 87%)",
+        text: "hsl(353, 50%, 28%)",
+        badge: { bg: "#E24B4A", text: "#FCEBEB", label: "HIGH" },
+      };
+    case "medium":
+      return {
+        bg: "hsl(35, 80%, 93%)",
+        border: "hsl(35, 70%, 78%)",
+        iconColor: "hsl(35, 80%, 38%)",
+        iconBg: "hsl(35, 75%, 87%)",
+        text: "hsl(35, 40%, 22%)",
+        badge: { bg: "#BA7517", text: "#FAEEDA", label: "MEDIUM" },
+      };
+    case "low":
+    default:
+
+
+
+
+
+      switch (type?.toLowerCase()) {
+        case "success":
+        case "optimal":
+          return {
+            bg: "hsl(152, 40%, 93%)",
+            border: "hsl(152, 45%, 78%)",
+            iconColor: "hsl(152, 55%, 32%)",
+            iconBg: "hsl(152, 45%, 87%)",
+            text: "hsl(180, 100%, 10",
+            badge: { bg: "#1D9E75", text: "#E1F5EE", label: "LOW" },
+          };
+        case "info":
+          return {
+            bg: "hsl(258, 44%, 95%)",
+            border: "hsl(258, 40%, 82%)",
+            iconColor: "hsl(258, 55%, 48%)",
+            iconBg: "hsl(258, 44%, 88%)",
+            text: "hsl(258, 30%, 25%)",
+            badge: { bg: "#378ADD", text: "#E6F1FB", label: "LOW" },
+          };
+        default:
+          return {
+            bg: "hsl(210, 15%, 95%)",
+            border: "hsl(210, 15%, 82%)",
+            iconColor: "hsl(210, 20%, 42%)",
+            iconBg: "hsl(210, 15%, 88%)",
+            text: "hsl(210, 15%, 22%)",
+            badge: { bg: "#888780", text: "#F1EFE8", label: "LOW" },
+          };
+      }
+  }
+};
+
+
+
+export const getIconByType = (type) => {
+  switch (type?.toLowerCase()) {
+    case "critical":
+    case "danger":
+    case "alert":
+      return AlertCircle;
+    case "warning":
+      return AlertTriangle;
+    case "success":
+    case "optimal":
+      return CheckCircle;
+    case "info":
+    case "normal":
+    default:
+      return Clock;
+  }
+};
+

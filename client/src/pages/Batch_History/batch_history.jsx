@@ -1,19 +1,24 @@
 import { useEffect, useState, useContext,useCallback} from 'react';
 import { Menu, Trash2, Calendar, Sprout, TrendingUp, AlertCircle,FileText,CircleQuestionMark  } from "lucide-react";
+import {getStageColor,getHarvestStatusColor} from "../../utils/colors"
+
+
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
 import { Notif_Modal } from '../../components/notifModal';
 import { Batch_History_Modal } from "./modal"
 import { LogoutModal } from '../../components/logoutModal';
-import { UserContext } from '../../hooks/userContext';
+import { useUser } from '../../hooks/userContext';
 import { usePlantData } from '../../hooks/plantContext';
 import InfosModal from '../../components/infosModal';
-import {FloatSuccessMsg} from "../../components/sucessMsgs"
-import {getStageColor,getHarvestStatusColor} from "../../utils/colors"
+
 
 import RegisterDeviceModal from '../Dashboard/modals/registerDeviceModal';
 import { DeleteNotifModal } from '../../components/deleteNotifModal';
 import { MessageContext } from "../../hooks/messageHooks.jsx";
+import { FloatSuccessMsg } from "../../components/sucessMsgs"
+
+
 
 // Stats Card Component
 const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
@@ -32,13 +37,15 @@ const StatsCard = ({ icon: Icon, title, value, subtitle, color }) => (
 );
 
 
+
+
 function Batch_History() {
-  const { user, skippedRegister} = useContext(UserContext);
+  const { user, skippedRegister} = useUser();
   const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,
           deleteMode,
           messageContext,setMessageContext} = useContext(MessageContext);
 
-  const {batchHistory,loadBatchHistory} = usePlantData()
+  const {batchHistory,loadBatchHistory,loadNotifs} = usePlantData()
   const [filteredData, setFilteredData] = useState(batchHistory);
   const [searchValue, setSearchValue] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -60,7 +67,6 @@ function Batch_History() {
   useEffect(() =>{
     loadBatchHistory()
   },[])
-  
   
   
   useEffect(() => {
@@ -454,7 +460,8 @@ function Batch_History() {
           selectedNotif={selectedNotif}
           deleteMode={deleteMode} 
           onClose={() => setOpenDeleteNotifModal(false)} 
-        />
+          loadNotifs={loadNotifs}
+        />  
       )}
     
 

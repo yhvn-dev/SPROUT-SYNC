@@ -11,10 +11,12 @@ router.get("/get/pb/total",verifyAccessToken,plantBatchController.getPlantBatchT
 router.get("/get/pb/growthbyweek",verifyAccessToken,plantBatchController.getSeedlingGrowthOverTime)
 router.get("/get/pb/:batch_id",verifyAccessToken,plantBatchController.getPlantBatchById);
 
-
 router.post("/post/pb",verifyAccessToken,validatePlantBatch, plantBatchController.createPlantBatch);
 router.put("/put/pb/:batch_id",verifyAccessToken,validatePlantBatch, plantBatchController.updatePlantBatch);
+router.put("/put/pb/harvest_status/:batch_id",plantBatchController.markBatchAsHarvested);
 router.delete("/delete/pb/:batch_id",verifyAccessToken,plantBatchController.deletePlantBatch);
+
+
 
 
 export default router;

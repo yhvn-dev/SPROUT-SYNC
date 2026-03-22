@@ -260,15 +260,9 @@ export const updatePlantBatch = async (batchData, batch_id) => {
 
 
   
-  export const updateHarvestStatus = async (batch_id, harvest_status) => {
+export const updateHarvestStatus = async (harvest_status, batch_id) => {
   try {
-    const sql = `
-      UPDATE plant_batches
-      SET harvest_status = $1
-      WHERE batch_id = $2
-      RETURNING *
-    `;
-
+    const sql = `UPDATE plant_batches SET harvest_status = $1 WHERE batch_id = $2 RETURNING *`;
     const result = await query(sql, [harvest_status, batch_id]);
     return result.rows[0];
   } catch (error) {

@@ -1,9 +1,8 @@
   import { useEffect, useState, useContext,useCallback} from 'react';
   import * as userService from "../../data/userService";
-  import { UserContext } from '../../hooks/userContext';
+  import { useUser } from '../../hooks/userContext';
+  import { usePlantData } from '../../hooks/plantContext.jsx';
   import { MessageContext } from "../../hooks/messageHooks.jsx";
-
-
 
 
   import { Sidebar } from "../../components/sidebar";
@@ -16,16 +15,15 @@
   import { DeleteNotifModal } from "../../components/deleteNotifModal.jsx";
   import { FloatSuccessMsg } from "../../components/sucessMsgs.jsx";
 
-
+  
 
   import RegisterDeviceModal from '../Dashboard/modals/registerDeviceModal';
-
   import { Menu,CircleQuestionMark} from "lucide-react";
-
   import "./users.css";
 
+
   function Users() {
-    const { user, skippedRegister} = useContext(UserContext);
+    const { user, skippedRegister} = useUser();
     const [chartData, setChartData] = useState({ count: { total_users: 0 }, roleCount: [] });
     const [statusData, setStatusData] = useState([]);
     const [searchValue, setSearchValue] = useState("");
@@ -40,6 +38,7 @@
 
     const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,deleteMode,
             messageContext,setMessageContext} = useContext(MessageContext);
+    const {loadNotifs} = usePlantData()
     
 
 
@@ -235,7 +234,8 @@
               isOpen={openDeleteNotifModal} 
               selectedNotif={selectedNotif}
               deleteMode={deleteMode} 
-              onClose={() => setOpenDeleteNotifModal(false)} 
+              onClose={() => setOpenDeleteNotifModal(false)}
+              loadNotifs={loadNotifs} 
             />
           )} 
 

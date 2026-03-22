@@ -12,7 +12,7 @@
     --blue-white: hsl(195, 44%, 86%);
     --color-dark--blue: hsl(225, 15%, 25%);
 
-    /* [PL2]Accueil1 */;
+
     --acc-darka: #232a28;
     --acc-darkb: hsl(180, 3%, 29%);
     --acc-darkc: #6b7070;
@@ -33,8 +33,8 @@
     --sage-dark: #5A8F73;
     --sage-medium: #C4DED0;
     
-    --sancga:#003333;
-    --sancgb:#027c68;
+    --sancga:hsl(180, 100%, 10%);
+    --sancgb:hsl(170, 97%, 25%);
     --sancgc:#b0e892;
     --sancgd:#009983;
 

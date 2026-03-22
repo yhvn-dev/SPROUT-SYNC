@@ -1,5 +1,5 @@
-import { useState, useRef, useContext } from "react";
-import { UserContext } from "../../hooks/userContext.jsx";
+import { useState, useRef} from "react";
+import { useUser } from "../../hooks/userContext";
 import { Link, useNavigate } from "react-router-dom";
 import  { Form } from "./form.jsx";
 import { Header } from "../../components/header.jsx";
@@ -12,7 +12,7 @@ function Login() {
   const [errorMsg, setErrorMsg] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
   const [status, setStatus] = useState("notLoggedIn");
-  const { setUser } = useContext(UserContext);
+  const { user, setUser } = useUser();
   const navigate = useNavigate();
 
 

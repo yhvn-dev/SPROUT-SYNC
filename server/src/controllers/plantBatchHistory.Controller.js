@@ -1,13 +1,15 @@
 // plantBatchHistory.controller.js
 import * as historyModels from "../models/plantBatchesHistoryModels.js";
-import * as batchModels from "../models/plantBatchesModels.js";
+
+
+
+
 
 // ===== GET all history records =====
 export const getPlantBatchHistory = async (req, res) => {
   try {
     const history = await historyModels.readPlantBatchHistory();
     res.status(200).json(history);
-    console.log("PLANT BATCH HISTORY:", history);
   } catch (err) {
     console.error("CONTROLLER: Error getting plant batch history", err);
     res.status(500).json({ message: "Error getting plant batch history", err });

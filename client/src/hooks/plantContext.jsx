@@ -1,5 +1,5 @@
 // PlantDataContext.jsx
-import { createContext, useContext, useEffect, useState, useCallback } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useRef} from "react";
 import * as trayGroupService from "../data/trayGroupServices";
 import * as traysService from "../data/traysServices";
 import * as plantBatches from "../data/batchesData";
@@ -9,6 +9,7 @@ import * as readingsService from "../data/readingsServices";
 import * as notifService from "../data/notifsServices";
 import * as plantGroupService from "../data/plantGroupServices";
 import * as plantService from "../data/plantServices";
+import { playNotifSound } from "../utils/notificationSounds";
 
 
 const PlantDataContext = createContext(null);
@@ -150,16 +151,37 @@ export const PlantDataProvider = ({ children }) => {
   }, []);
 
 
+  const prevNotifsRef = useRef([]);
+
   const loadNotifs = useCallback(async () => {
-    try {
-      const data = await notifService.fetchAllNotifs();
-      setNotifs(data);
-      console.log("NOTIFS",data)
-    
-    } catch (error) {
-      console.error("Error loading notifications", error);
+  try {
+    const data = await notifService.fetchAllNotifs();
+
+    // Compare by ID, not array length — safer if items are deleted too
+    const prevIds = new Set(prevNotifsRef.current.map((n) => n.notification_id));
+    const newNotifs = data.filter((d) => !prevIds.has(d.notification_id));
+
+    if (newNotifs.length > 0) {
+      const priority = ['critical', 'danger', 'alert', 'warning', 'info', 'success', 'optimal', 'normal'];
+
+      const highestPriority = [...newNotifs].sort((a, b) => {
+        const ai = priority.indexOf(a.type?.toLowerCase() ?? '');
+        const bi = priority.indexOf(b.type?.toLowerCase() ?? '');
+        // -1 means unknown type — push to end
+        return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
+      })[0];
+
+      playNotifSound(highestPriority?.type, highestPriority?.status);
     }
-  }, []);
+
+    prevNotifsRef.current = data;
+    setNotifs(data);
+  } catch (error) {
+    console.error('Error loading notifications', error);
+  }
+}, []);
+
+
 
 
   const loadNotifsCount = useCallback(async () => {
@@ -171,8 +193,6 @@ export const PlantDataProvider = ({ children }) => {
       console.error("Error loading notifications count", error);
     }
   }, []);
-
-
 
 
   const markNotifsAsRead = useCallback(async () => {
@@ -215,7 +235,7 @@ export const PlantDataProvider = ({ children }) => {
   useEffect(() => {
     loadTrayGroups();
     loadTrays();
-    loadTrayGroupsWithCount(),
+    loadTrayGroupsWithCount();
     loadBatches();
     loadBatchTotal();
     loadBatchHistory();

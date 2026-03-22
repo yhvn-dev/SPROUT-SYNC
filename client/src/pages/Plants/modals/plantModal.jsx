@@ -91,12 +91,13 @@ export function PlantModal({isOpen, onClose, plantModalMode, selectedPlant, setS
 
   const isDelete = plantModalMode === "delete";
   const isInsert = plantModalMode === "insert";
-
   const minVal = Number(formData.moisture_min) || 0;
   const maxVal = Number(formData.moisture_max) || 0;
   const barLeft = Math.min(minVal, 100);
   const barWidth = Math.max(0, Math.min(maxVal, 100) - Math.min(minVal, 100));
 
+
+  
   return (
     <AnimatePresence>
       {isOpen && (
@@ -108,8 +109,7 @@ export function PlantModal({isOpen, onClose, plantModalMode, selectedPlant, setS
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             onClick={onClose}
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"
-          />
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40"/>
 
           <motion.div
             key="modal"
@@ -124,21 +124,23 @@ export function PlantModal({isOpen, onClose, plantModalMode, selectedPlant, setS
               {/* ── HEADER ── */}
               <div className={`conb flex items-start justify-between gap-3 px-6 py-5 border-b border-gray-800/60 ${
                 isDelete
-                  ? "bg-red-500"
+                  ? "bg-gradient-to-br from-[var(--color-danger-b)] via-[var(--color-danger-b) to-[var(--color-danger-b)]"
                   : "bg-gradient-to-br from-[var(--sancga)] to-[var(--sancgb)]"
               }`}>
                 <div className="flex items-center gap-3">
                   <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${
                     isDelete
-                      ? "bg-red-500/10 border border-red-500/25"
+                      ? "bg-red-500/10 border border-white"
                       : "bg-white-500/10 border border-green-500/25"
                   }`}>
                     {isDelete ? (
-                      <Trash2 size={18} className="text-red-400" />
+                      <Trash2 size={18} className="text-white" />
                     ) : (
                       <Sprout size={18} className="text-green-400" />
                     )}
                   </div>
+
+                  
                   <div>
                     <h2 className={`text-sm font-semibold ${isDelete ? "text-[var(--metal-dark5)]" : "text-white"} tracking-tight`}>
                       {isDelete ? "Delete Plant" : isInsert ? "Add New Plant" : "Update Plant"}

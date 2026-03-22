@@ -1,12 +1,12 @@
 import { usePlantData } from "../../hooks/plantContext"
-import { useContext, useState } from "react"
-import { UserContext } from "../../hooks/userContext";
+import { useState } from "react"
+import { useUser } from "../../hooks/userContext";
 import { Sprout, Search } from "lucide-react";
 
 /* ─────────────────────────────────────────────────────────── */
 export function Plant_Inventory({setPlantModal}) {
-    const {user} = useContext(UserContext)     
-    const {plants,sensors} = usePlantData();
+    const {user} = useUser()
+    const {plants} = usePlantData();
     const [searchValue, setSearchValue] = useState("");
     const [sortBy, setSortBy] = useState("");
 
@@ -149,7 +149,7 @@ export function Plant_Inventory({setPlantModal}) {
                        {new Date(p.created_at).toLocaleDateString()}
                     </td>
                     {user.role === "admin" && (        
-                      <span className="flex items-center justify-center gap-4 mt-2">
+                      <div className="flex items-center justify-center gap-4 mt-2">
                         <button
                             onClick={() => handleOpenUpdatePlants(p)}
                             className="cursor-pointer text-xs px-2.5 py-1 rounded-md bg-[var(--purpluish--)] text-white shadow hover:shadow-md transition">
@@ -160,7 +160,7 @@ export function Plant_Inventory({setPlantModal}) {
                           className="cursor-pointer text-xs px-2.5 py-1 rounded-md bg-[var(--color-danger-a)] text-white shadow hover:shadow-md transition">
                           DELETE
                         </button>
-                      </span>               
+                      </div>               
                     )}     
                     
                 </tr>
@@ -168,6 +168,9 @@ export function Plant_Inventory({setPlantModal}) {
             </tbody>    
           </table>
         </div>
+
+
+
 
 
 
@@ -233,6 +236,7 @@ export function Plant_Inventory({setPlantModal}) {
             </div>
           ))}
         </div>
+
 
         {/* ── EMPTY STATE ────────────────────────────────────── */}
         {filteredPlants.length === 0 && (

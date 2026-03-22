@@ -1,8 +1,8 @@
 // manage_plants.jsx
 import { useState, useContext, useEffect, useCallback, useMemo } from "react";
-import { UserContext } from "../../hooks/userContext";
+import { useUser } from "../../hooks/userContext.jsx";
 import { MessageContext } from "../../hooks/messageHooks.jsx";
-import { Menu, Plus, LayoutGrid, Search, MapPin, Droplet, X, ArrowUpDown,Sprout} from "lucide-react";
+import { Menu, Plus, MapPin, Droplet, X, ArrowUpDown,Sprout,Search} from "lucide-react";
 
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
@@ -24,9 +24,8 @@ import TrayGroups_View from "./trayGroups_view.jsx";
 import RegisterDeviceModal from "./modals/registerDeviceModal.jsx";
 
 
-
 export function Manage_Plants() {
-  const { user, skippedRegister } = useContext(UserContext);
+  const { user, skippedRegister } = useUser();
   const { openDeleteNotifModal, setOpenDeleteNotifModal, selectedNotif, deleteMode, messageContext, setMessageContext } = useContext(MessageContext);
   const {
     trayGroups,
@@ -38,6 +37,7 @@ export function Manage_Plants() {
     loadBatches,
     sensors,
     latestReadings,
+    loadNotifs
   } = usePlantData();
   
   const [isNotifOpen, setNotifOpen] = useState(false);
@@ -76,6 +76,8 @@ export function Manage_Plants() {
     setMessageContext("");
   }, [setMessageContext]);
 
+
+
   useEffect(() => {
     if (user?.first_time_login && !skippedRegister) {
       setRegisterModalVisible(true);
@@ -84,6 +86,8 @@ export function Manage_Plants() {
     }
   }, [user?.first_time_login, skippedRegister]);
 
+
+  
   const toggleZone = (zoneId) => {
     setExpandedZones(prev => ({ ...prev, [zoneId]: !prev[zoneId] }));
   };
@@ -96,6 +100,8 @@ export function Manage_Plants() {
     );
   }, [trayGroups]);
 
+
+  
   // Get live moisture status of a group based on actual sensor readings vs thresholds
   const getGroupMoistureStatus = (group) => {
     const groupTrays = trays.filter(t => t.tray_group_id === group.tray_group_id);
@@ -396,6 +402,7 @@ export function Manage_Plants() {
           selectedNotif={selectedNotif}
           deleteMode={deleteMode}
           onClose={() => setOpenDeleteNotifModal(false)}
+          loadNotifs={loadNotifs}  
         />
       )}
 

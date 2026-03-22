@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useState, useMemo, useContext,useCallback} from "react";
 import { usePlantData } from "../../hooks/plantContext.jsx";
-import { UserContext } from "../../hooks/userContext.jsx";
+import { UserContext, useUser } from "../../hooks/userContext.jsx";
 import { CircleQuestionMark } from "lucide-react";
 import { MessageContext } from "../../hooks/messageHooks.jsx";
 
@@ -35,7 +35,8 @@ function MoistureBar({ min, max, fillColor, trackColor, small = false }) {
 
 /* ─── PLANT CHILD CARD ───────────────────────────────────── */
 function PlantChildCard({ plant, onUpdate, onDelete}) {
-  const {user} = useContext(UserContext);    
+  const {user} = useUser()
+     
   return (
     <div className="flex-shrink-0 w-44 bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col">
      <div 
@@ -71,6 +72,8 @@ function PlantChildCard({ plant, onUpdate, onDelete}) {
     </div>
   );
 }
+
+
 
 /* ─── CATEGORY CARD ──────────────────────────────────────── */
 function CategoryCard({ group, childPlants }) {

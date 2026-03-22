@@ -1,5 +1,5 @@
 import { useState, useContext,useEffect,useCallback} from 'react';
-import { UserContext } from '../../hooks/userContext';
+import { useUser } from '../../hooks/userContext';
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
 import { Droplets, Wifi, WifiOff, Power, Sprout, CircleQuestionMark, Menu, Video, VideoOff, Radio, Loader2, AlertTriangle } from 'lucide-react';
@@ -19,7 +19,7 @@ import RegisterDeviceModal from '../Dashboard/modals/registerDeviceModal';
 
 
 function Control_panel() {
-  const { user, skippedRegister} = useContext(UserContext);
+  const { user, skippedRegister} = useUser();
   const {openDeleteNotifModal,setOpenDeleteNotifModal,selectedNotif,
         deleteMode,
         messageContext,setMessageContext} = useContext(MessageContext);
@@ -32,7 +32,7 @@ function Control_panel() {
   const [ isNotifOpen, setNotifOpen ] = useState(false);
   const [ sidebarOpen, setSidebarOpen ] = useState(false);
   const { valveMode, setValveMode } = useValve();
-  const { readings } = usePlantData();
+  const { readings,loadNotifs } = usePlantData();
   const [ isRegisterModalVisible, setRegisterModalVisible] = useState(false);
   const { running, loading, error, videoRef, start, stop, refreshStatus } = useStream();
 
@@ -440,10 +440,11 @@ function Control_panel() {
 
     {openDeleteNotifModal && (
       <DeleteNotifModal 
-        isOpen={openDeleteNotifModal} 
+        isOpen={openDeleteNotifModal}
         selectedNotif={selectedNotif}
-        deleteMode={deleteMode} 
-        onClose={() => setOpenDeleteNotifModal(false)} 
+        deleteMode={deleteMode}
+        onClose={() => setOpenDeleteNotifModal(false)}
+        loadNotifs={loadNotifs}  
       />
     )}
         
