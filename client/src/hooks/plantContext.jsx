@@ -14,6 +14,9 @@ import { playNotifSound } from "../utils/notificationSounds";
 
 const PlantDataContext = createContext(null);
 
+
+
+
 export const PlantDataProvider = ({ children }) => {
   // ------------------- STATES -------------------
   const [trayGroups, setTrayGroups] = useState([]);
@@ -152,47 +155,31 @@ export const PlantDataProvider = ({ children }) => {
 
 
 
+
   const prevNotifsRef = useRef([]);
   const isFirstLoad = useRef(true); 
-
   const loadNotifs = useCallback(async () => {
-  try {
-    const data = await notifService.fetchAllNotifs();
+    try {
+      const data = await notifService.fetchAllNotifs();
 
-    const prevIds = new Set(prevNotifsRef.current.map((n) => n.notification_id));
-    const newNotifs = data.filter((d) => !prevIds.has(d.notification_id));
+      const prevIds = new Set(prevNotifsRef.current.map((n) => n.notification_id));
+      const newNotifs = data.filter((d) => !prevIds.has(d.notification_id));
 
-    // ✅ Hindi mag-play sa first load — user hindi pa nag-iinteract
-    if (newNotifs.length > 0 && !isFirstLoad.current) {
-      const priority = ['critical', 'danger', 'alert', 'warning', 'info', 'success', 'optimal', 'normal'];
+      if (newNotifs.length > 0 && !isFirstLoad.current) {
+        console.log("🔔 New notifs detected:", newNotifs.length);
+        playNotifSound();
+      }
 
-      const highestPriority = [...newNotifs].sort((a, b) => {
-        const ai = priority.indexOf(a.type?.toLowerCase() ?? '');
-        const bi = priority.indexOf(b.type?.toLowerCase() ?? '');
-        return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
-      })[0];
-
-      console.log("🔔 New notif:", highestPriority?.type, highestPriority?.status);
-      playNotifSound(highestPriority?.type, highestPriority?.status);
+      isFirstLoad.current = false; 
+      prevNotifsRef.current = data;
+      setNotifs(data);
+    } catch (error) {
+      console.error('Error loading notifications', error);
     }
-
-    isFirstLoad.current = false; 
-    prevNotifsRef.current = data;
-    setNotifs(data);
-  } catch (error) {
-    console.error('Error loading notifications', error);
-  }
-}, []);
+  }, []);
 
 
-
-
-
-
-
-
-
-
+  
 
 
 

@@ -255,10 +255,23 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
                     Plant Name *
                   </label>
                   <div className='flex gap-4'>
-                    <input disabled type="text" name="plant_name" value={formData.plant_name} className="py-2 rounded-lg text-sm w-full" />
+                    <input
+                      disabled
+                      readOnly
+                      type="text"
+                      name="plant_name"
+                      value={formData.plant_name}
+                      className="py-2 rounded-lg text-sm w-full"
+                    />
                     <div className='hidden'>
                       <label className="block text-xs font-semibold mb-1.5 text-[#155d27]">Batch Number</label>
-                      <input type="number" name="batch_number" value={formData.batch_number} className="py-2 rounded-lg text-sm w-full" />
+                      <input
+                        readOnly
+                        type="number"
+                        name="batch_number"
+                        value={formData.batch_number}
+                        className="py-2 rounded-lg text-sm w-full"
+                      />
                     </div>
                   </div>
                 </div>
