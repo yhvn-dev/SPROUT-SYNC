@@ -234,7 +234,7 @@ export const getColorByStatus = (status, type) => {
             border: "hsl(152, 45%, 78%)",
             iconColor: "hsl(152, 55%, 32%)",
             iconBg: "hsl(152, 45%, 87%)",
-            text: "hsl(180, 100%, 10",
+            text: "hsl(152, 40%, 22%)",
             badge: { bg: "#1D9E75", text: "#E1F5EE", label: "LOW" },
           };
         case "info":

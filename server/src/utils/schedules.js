@@ -9,6 +9,8 @@ export const toDateOnlyUTC = (date) =>
     date.getUTCDate()
   ));
 
+
+// 0 23
 cron.schedule("* * * * *", async () => { 
   console.log("⏰ Running daily harvest check:", new Date().toISOString());
   try {

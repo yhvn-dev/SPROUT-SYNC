@@ -151,35 +151,47 @@ export const PlantDataProvider = ({ children }) => {
   }, []);
 
 
+
   const prevNotifsRef = useRef([]);
+  const isFirstLoad = useRef(true); 
 
   const loadNotifs = useCallback(async () => {
   try {
     const data = await notifService.fetchAllNotifs();
 
-    // Compare by ID, not array length — safer if items are deleted too
     const prevIds = new Set(prevNotifsRef.current.map((n) => n.notification_id));
     const newNotifs = data.filter((d) => !prevIds.has(d.notification_id));
 
-    if (newNotifs.length > 0) {
+    // ✅ Hindi mag-play sa first load — user hindi pa nag-iinteract
+    if (newNotifs.length > 0 && !isFirstLoad.current) {
       const priority = ['critical', 'danger', 'alert', 'warning', 'info', 'success', 'optimal', 'normal'];
 
       const highestPriority = [...newNotifs].sort((a, b) => {
         const ai = priority.indexOf(a.type?.toLowerCase() ?? '');
         const bi = priority.indexOf(b.type?.toLowerCase() ?? '');
-        // -1 means unknown type — push to end
         return (ai === -1 ? 999 : ai) - (bi === -1 ? 999 : bi);
       })[0];
 
+      console.log("🔔 New notif:", highestPriority?.type, highestPriority?.status);
       playNotifSound(highestPriority?.type, highestPriority?.status);
     }
 
+    isFirstLoad.current = false; 
     prevNotifsRef.current = data;
     setNotifs(data);
   } catch (error) {
     console.error('Error loading notifications', error);
   }
 }, []);
+
+
+
+
+
+
+
+
+
 
 
 
@@ -284,11 +296,19 @@ export const PlantDataProvider = ({ children }) => {
     return () => clearInterval(interval);
   }, [loadReadings, loadLatestReadings, loadAverageReadingsBySensor]);
 
+
+
+  
   // ------------------- NOTIFICATIONS WHEN READINGS CHANGE -------------------
   useEffect(() => {
-    loadNotifs();
-    loadNotifsCount();
-  }, [readings, latestReadings]);
+    const notifInterval = setInterval(() => {
+      loadNotifs();
+      loadNotifsCount();
+    }, 5000); 
+    return () => clearInterval(notifInterval);
+  }, [loadNotifs, loadNotifsCount]);
+
+
 
 
 

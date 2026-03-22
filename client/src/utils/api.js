@@ -19,7 +19,6 @@ api.interceptors.request.use((config) => {
   if (publicRoutes.some(route => config.url.includes(route))) {
     return config
   }
-  
   if (token) {
     config.headers.Authorization = `Bearer ${token}`
   }
@@ -32,7 +31,6 @@ api.interceptors.response.use(
     const originalRequest = error.config
     const originalUrl = originalRequest?.url || ''
 
-    // 🔥 SKIP REFRESH FOR PUBLIC & REFRESH ROUTES
     const skipRefreshRoutes = [
       '/auth/login', 
       '/auth/register', 
@@ -77,14 +75,15 @@ api.interceptors.response.use(
         refreshSubscribers.forEach((cb) => cb(null))
         refreshSubscribers = []
         localStorage.removeItem('accessToken')
-        window.location.href = '/login'
+        
+     
+        
+        window.location.replace('/login') // ← replace, hindi href
         return Promise.reject(err)
       }
     }
     return Promise.reject(error)
   }
 )
-
-
 
 export default api

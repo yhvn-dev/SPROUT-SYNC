@@ -1,5 +1,6 @@
 import {BrowserRouter, Routes, Route} from "react-router-dom";
-import {lazy, Suspense, useEffect} from "react";
+import {lazy, Suspense, useEffect, useState} from "react";
+
 
 
 const Login = lazy(() => import("./pages/Login/login.jsx"));
@@ -19,9 +20,42 @@ import { PlantDataProvider } from "./hooks/plantContext.jsx";
 import { ESP32Provider } from "./hooks/esp32Hooks.jsx";
 import { ValveProvider } from "./hooks/valveContext.jsx";
 import { listenForMessages } from "./utils/firebase.js";
+import { markAudioUnlocked } from './utils/notificationSounds'; 
+
 import './styles.css';
 
 function App() {
+
+
+    useEffect(() => {
+    const unlock = () => {
+      const audio = new Audio('/sounds/NORMAL_NOTIF.mp3');
+      audio.volume = 0;
+      audio.play()
+        .then(() => {
+          markAudioUnlocked();
+          console.log("🔊 Audio unlocked");
+        })
+        .catch((err) => {
+          console.warn("Silent play failed:", err.message);
+          markAudioUnlocked();
+          console.log("🔊 Audio unlocked (fallback)");
+        });
+    };
+
+    window.addEventListener('click', unlock, { once: true });
+    window.addEventListener('keydown', unlock, { once: true });
+
+    return () => {
+      window.removeEventListener('click', unlock);
+      window.removeEventListener('keydown', unlock);
+    };
+    
+  }, []);
+
+
+
+
   useEffect(() => {
     const init = async () => {
       console.log("🚀 Starting SPROUT-SYNC notifications...");
@@ -29,6 +63,7 @@ function App() {
     };
     init();
   }, []);
+
 
   
   return (
@@ -48,8 +83,6 @@ function App() {
           {/* Public routes */}
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<Login />} />
-
-          {/* Protected routes */}
           <Route path='/dashboard' element={
             <MessagesProvider>
               <PlantDataProvider>
@@ -64,7 +97,6 @@ function App() {
             </MessagesProvider>
           }/>
 
-
          <Route path='/manage_plants' element={
             <MessagesProvider>
               <PlantDataProvider>
@@ -77,7 +109,6 @@ function App() {
             </MessagesProvider>
           }/>
     
-
           <Route path='/users' element={
             <MessagesProvider>
               <PlantDataProvider>
@@ -145,7 +176,9 @@ function App() {
       </Suspense>
     </BrowserRouter>
   );
-  
 }
+
+
+
 
 export default App;
