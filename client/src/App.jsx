@@ -56,7 +56,6 @@ function App() {
 
   useEffect(() => {
     const init = async () => {
-      console.log("🚀 Starting SPROUT-SYNC notifications...");
       listenForMessages();
     };
     init();

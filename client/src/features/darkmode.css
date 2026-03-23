@@ -9,7 +9,6 @@
     --gainsbro: hsl(0, 0%, 96%);
     --blue-white: hsl(195, 44%, 86%);
     
-
     /* Moon Phases */
     --moon-phases-a: hsl(204, 19%, 15%);
     --moon-phases-b: hsl(210, 19%, 22%);
@@ -97,7 +96,6 @@
 body {
     transition: 1s;
 }
-
 /* Default light mode background */
 body.light {
     @apply bg-[var(--gainsbro)] text-[var(--metal-dark1)];
@@ -211,8 +209,8 @@ body.dark .close_button:hover{
 
 
 
-/* DASHBOARD ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== */    
-     body.dark .dashboard_nav button {
+/* DASHBOARD ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== ===== =====  */    
+    body.dark .dashboard_nav button {
         @apply bg-[var(--metal-dark1)] text-[var(--main-white)];       
         box-shadow: none;
     }
@@ -223,7 +221,8 @@ body.dark .close_button:hover{
         @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
         box-shadow: 4px 4px 3px 1px var(--shad-dark-b);
     }
-
+ 
+    
     
 body.dark .navs-btn {
     @apply bg-[var(--metal-dark3)] text-[var(--main-white)];
@@ -276,6 +275,8 @@ body.dark .navs-btn {
         }
 
 
+
+        
 
         
     

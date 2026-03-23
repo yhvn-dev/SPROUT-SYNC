@@ -1,4 +1,5 @@
 import { initializeApp } from "firebase/app";
+import {getColorByStatus} from "../utils/colors";
 import { getMessaging, getToken, onMessage } from "firebase/messaging";
 
 const VAPID_KEY = "BME4hG6VTr7JC24lIO_p1H5hMw4DT3Ba35Mg_5D5z-hqL1EskJTF1Rw8KXfTCqejukY8bhDGWSZHk0X_GUdw9kk";
@@ -16,22 +17,84 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 
-export const showInPageNotification = (title, body) => {
+
+
+
+
+export const showInPageNotification = (title, body, type = "info", status = "Low", isDark = false) => {
   const container = document.getElementById("notification-container");
   if (!container) {
     console.warn("❌ Notification container not found!");
     return;
   }
 
-  container.classList.remove("hidden");
-  
+  container.classList.remove("hidden");  
+
+  const colors = getColorByStatus(status, type, isDark);
+
+  // ✅ Icon mapping
+  const iconMap = {
+    high: '🔴', medium: '🟡', low: '🟢',
+    warning: '⚠️', error: '❌', success: '✅', info: 'ℹ️'
+  };
+  const iconEmoji = iconMap[status?.toLowerCase()] || iconMap[type?.toLowerCase()] || '🌱';
+
   const notif = document.createElement("div");
-  notif.className = "p-4 mb-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl shadow-xl border-l-4 border-green-400";
+  notif.style.cssText = `
+    padding: 16px 20px;
+    margin-bottom: 8px;
+    background: ${colors.bg};
+    border: 1px solid ${colors.border};
+    color: ${colors.text};
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    max-width: 400px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  `;
+  
   notif.innerHTML = `
-    <div class="font-bold text-lg mb-1 flex items-center">
-      🌱 <span class="ml-2">${title}</span>
+    <div style="
+      width: 40px;
+      height: 40px;
+      background: ${colors.iconBg};
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 20px;
+    ">
+      ${iconEmoji}
     </div>
-    <div class="text-sm">${body}</div>
+    <div style="flex: 1; min-width: 0;">
+      <div style="
+        font-weight: 600;
+        font-size: 16px;
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;">
+        <span>${title}</span>
+      
+      </div>
+      <div style="font-size: 14px; opacity: 0.95; margin-bottom: 4px;">
+        ${body}
+      </div>
+     
+    </div>
+    <button onclick="this.parentElement.remove()" style="
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: ${colors.text};
+      opacity: 0.7;
+      padding: 4px;
+      flex-shrink: 0;
+    ">×</button>
   `;
   
   container.appendChild(notif);
@@ -43,6 +106,11 @@ export const showInPageNotification = (title, body) => {
     }
   }, 10000);
 };
+
+
+
+
+
 
 
 export const getPushToken = async () => {
@@ -78,14 +146,16 @@ export const listenForMessages = () => {
   onMessage(messaging, (payload) => {
     console.log("🚨 RAW PAYLOAD:", JSON.stringify(payload, null, 2));
     console.log("📱 DATA:", payload.data);
-    console.log("📱 NOTIFICATION:", payload.notification);
     
+    // ✅ Extract type, status, title, body
+    const type = payload.data?.type || "info";
+    const status = payload.data?.status || "Low";
     const title = payload.data?.title || payload.notification?.title || "SPROUT-SYNC";
     const body = payload.data?.body || payload.notification?.body || "New notification";
     
-    console.log("🎯 SHOWING:", { title, body });
-    showInPageNotification(title, body);
+    console.log("🎯 SHOWING:", { title, body, type, status });
+    
+    showInPageNotification(title, body, type, status);
   });
   
-  console.log("✅ Listener ACTIVE!");
 };

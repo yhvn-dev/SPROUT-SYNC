@@ -7,7 +7,6 @@ if (!admin.apps.length) {
   });
 }
 
-
 export const sendPushNotification = async (pushToken, title, body, type = "info", status = "Low", data = {}) => {
   try {
     const dataMessage = {

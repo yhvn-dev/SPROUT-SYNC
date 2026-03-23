@@ -35,7 +35,7 @@
     
     --sancga:hsl(180, 100%, 10%);
     --sancgb:hsl(170, 97%, 25%);
-    --sancgc:#b0e892;
+    --sancgc:hsl(99, 65%, 74%);
     --sancgd:#009983;
 
         /* [PAL2] PALLETA GREEN */
@@ -61,10 +61,10 @@
 
 
     /* SIGNS */
-    --color-danger-a: #ff6673;
+    --color-danger-a: hsl(355, 100%, 70%);
     --color-danger-b: #ffb3b9;
     --color-danger-c:hsl(353, 40%, 90%);
-    --color-warning: #f0bd75;
+    --color-warning: hsl(35, 80%, 70%);
     --color-success-a: hsl(125, 85%, 60%);
     --color-success-a-soft: hsl(110, 58%, 90%);
     --color-success-c: hsl(160,60%, 70%);

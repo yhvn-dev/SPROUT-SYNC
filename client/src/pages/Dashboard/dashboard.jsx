@@ -2,6 +2,8 @@
 import { useState, useContext, useEffect, useCallback, useMemo } from "react";
 import { useUser } from "../../hooks/userContext";
 import { MessageContext } from "../../hooks/messageHooks.jsx";
+import { getHarvestStatusColor, getStageColor,getSensorStatus,getTrayStatusColor} from "../../utils/colors.js";
+import { useDarkMode } from "../../hooks/useDarkmode.jsx";
 
 import { Menu, Droplet, ChevronDown, ChevronUp, Sprout, Calendar, Wifi, WifiOff, TrendingUp, Clock, CircleQuestionMark } from "lucide-react";
 
@@ -18,10 +20,12 @@ import InfosModal from '../../components/infosModal';
 import RegisterDeviceModal from "./modals/registerDeviceModal.jsx";
 
 
+
 export function Dashboard() {
   const { user, skippedRegister } = useUser();
   const { openDeleteNotifModal, setOpenDeleteNotifModal, selectedNotif, deleteMode, messageContext, setMessageContext } = useContext(MessageContext);
   const { ESP32Status } = useContext(ESP32Context);
+  const isDark = useDarkMode(); 
 
   const [isNotifOpen, setNotifOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
@@ -47,8 +51,7 @@ export function Dashboard() {
     loadLatestReadings,
     loadNotifs
   } = usePlantData();
-  
-  
+
   const clearMsg = useCallback(() => {
     setMessageContext("");
   }, []);
@@ -112,8 +115,7 @@ export function Dashboard() {
 
 
 
-
-
+  
   return (
     <section className="con_main w-full min-h-screen bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] flex flex-col md:grid md:grid-cols-[15fr_85fr] md:grid-rows-[auto_1fr] gap-4 overflow-hidden relative">
 
@@ -193,9 +195,9 @@ export function Dashboard() {
             </div>
           </div>
 
-
           {/* Grid — Tray Groups + Batches */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 overflow-hidden">
+
             {/* LEFT — Tray Groups */}
             <div className="tray_groups_main_div lg:col-span-2 space-y-4 overflow-y-auto max-h-[calc(100vh-200px)] w-full">
               {trayGroups.length === 0 && (
@@ -260,41 +262,71 @@ export function Dashboard() {
                             const readingsArray = Array.isArray(latestReadings) ? latestReadings : [];
                             const latestMoistureReading = sensor ? readingsArray.find(r => r.sensor_id === sensor.sensor_id) : null;
                             const moistureValue = latestMoistureReading ? Number(latestMoistureReading.value) : 0;
-                            const moistureStatus = getMoistureStatus(moistureValue, group.min_moisture, group.max_moisture);
+
+                              
+                            const trayStatusColors = getTrayStatusColor(tray.status, isDark);
+                            const sensorStatus = getSensorStatus(sensor, moistureValue, !!sensor, group, isDark);
 
                             return (
-                              <div key={tray.tray_id} className="con_c tray_list_div bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] rounded-2xl p-4 hover:shadow-md transition-shadow w-full">
-                                <div className="flex items-start justify-between mb-3">
-                                  <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">
-                                      Tray {index + 1} [{tray.tray_number}] {tray.plant}
-                                    </h3>
-                                    <p className="text-xs text-gray-600">{tray.status}</p>
-                                  </div>
+                            <div key={tray.tray_id} className="con_c tray_list_div bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] rounded-2xl p-4 hover:shadow-md transition-shadow w-full">
+                              <div className="flex items-start justify-between mb-3">
+                                
+                                <div className="flex items-center justify-between w-full">
+                                  <h3 className="text-lg font-semibold text-gray-900">
+                                    Tray {index + 1} [{tray.tray_number}] {tray.plant}
+                                  </h3>
+                                <span 
+                                className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1"
+                                style={{ 
+                                  backgroundColor: trayStatusColors.bg,
+                                  color: trayStatusColors.text,
+                                  border: `1px solid ${trayStatusColors.border}`
+                                }}>
+                                {tray.status}
+                              </span>
                                 </div>
 
-                                {sensor && (
-                                  <div className="sensor_div bg-white rounded-xl p-4 shadow-sm w-full">
-                                    <div className="flex items-center justify-between">
-                                      <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ backgroundColor: `${moistureStatus.color}15` }}>
-                                        <Droplet className="w-10 h-8" style={{ color: moistureStatus.color }} />
-                                      </div>
-                                      <div className="flex-1 mx-4">
-                                        <p className="text-xs text-gray-500 uppercase tracking-wide">Moisture Sensor</p>
-                                        <p className="text-2xl font-bold text-gray-900">{moistureValue}%</p>
-                                      </div>
-                                      <div className="flex">
-                                        <div className="px-3 py-1 rounded-full text-xs font-medium" style={{ backgroundColor: `${moistureStatus.color}15`, color: moistureStatus.color }}>
-                                          {moistureStatus.label}
-                                        </div>
+                              </div>
+
+
+
+
+                              {sensor && (
+                                <div className="sensor_div bg-white rounded-xl p-4 shadow-sm w-full">
+                                  <div className="flex items-center justify-between">
+                        
+                                    <div 
+                                      className="w-10 h-10 rounded-xl flex items-center justify-center" 
+                                      style={sensorStatus.bgStyle}>
+                                      <Droplet 
+                                        className="w-10 h-8" 
+                                        style={sensorStatus.iconStyle}
+                                      />
+                                    </div>
+                                    
+                                    <div className="flex-1 mx-4">
+                                      <p className="text-xs text-gray-500 uppercase tracking-wide">Moisture Sensor</p>
+                                      <p className="text-2xl font-bold text-gray-900">{moistureValue}%</p>
+                                    </div>
+                                    
+                                    <div className="flex">
+                                      <div 
+                                        className="px-3 py-1 rounded-full text-xs font-medium flex items-center gap-1"
+                                        style={{ 
+                                          backgroundColor: `${sensorStatus.iconStyle.color}15`, 
+                                          color: sensorStatus.iconStyle.color 
+                                        }}>
+                                        {sensorStatus.label}
                                       </div>
                                     </div>
                                   </div>
-                                )}
+                                </div>
+                              )}
+                            </div>
+                          );
 
-                                
-                              </div>
-                            );
+
+                            
                           })}
                         </div>
                       </div>
@@ -303,6 +335,10 @@ export function Dashboard() {
                 );
               })}
             </div>
+
+
+
+
 
             {/* RIGHT — Batches */}
             <div className="conb bg-[var(--main-whiteb)] rounded-3xl p-4 sm:p-6 shadow-sm w-full">
@@ -326,60 +362,89 @@ export function Dashboard() {
                     <p className="text-sm">Assign a batch to each tray to start tracking plants</p>
                   </div>
                 ) : (
-                  batches.map(batch => (
-                    <div key={batch.batch_id} className="batch_div bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-4 border border-gray-100 w-full">
-                      <div className="flex items-start justify-between mb-3">
-                        <h3 className="text-base font-semibold text-gray-900">[{batch.batch_number}] {batch.plant_name}</h3>
-                      </div>
+                  batches.map(batch => {
+                
+                    const stageColors   = getStageColor(batch.growth_stage, isDark);
+                    const harvestColors = getHarvestStatusColor(batch.harvest_status, isDark);
 
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 text-xs">
-                          <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                          <span className="text-gray-600">Planted: {new Date(batch.date_planted).toLocaleDateString()}</span>
+                    return (
+                      <div key={batch.batch_id} className="batch_div bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-4 border border-gray-100 w-full">
+                        <div className="flex items-start justify-between mb-3">
+                          <h3 className="text-base font-semibold text-gray-900">[{batch.batch_number}] {batch.plant_name}</h3>
                         </div>
-                        <div className="flex items-center gap-2 text-xs">
-                          <Calendar className="w-3.5 h-3.5 text-gray-400" />
-                          <span className="text-gray-600">
-                            Harvest at: {batch.expected_harvest_days} {batch.expected_harvest_days === 1 ? "day" : "days"}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs">
-                          <Sprout className="w-3.5 h-3.5 text-gray-400" />
-                          <span className="text-gray-600">Growth Stage: {batch.growth_stage}</span>
-                        </div>
-                        <div className="flex items-center gap-2 text-xs">
-                          <Clock className="w-3.5 h-3.5 text-gray-400" />
-                          <span className="text-gray-600">Harvest Status: {batch.harvest_status}</span>
-                        </div>
-                      </div>
 
-                      <div className="active_plant_batches_nursery_data grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-200">
-                        <div className="text-center">
-                          <p className="text-xs text-gray-500">Seedlings</p>
-                          <p className="total_seedlings_text text-lg font-bold text-[#25a244]">{batch.total_seedlings}</p>
+                        <div className="space-y-2">
+                          <div className="flex items-center gap-2 text-xs">
+                            <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                            <span className="text-gray-600">Planted: {new Date(batch.date_planted).toLocaleDateString()}</span>
+                          </div>
+                          <div className="flex items-center gap-2 text-xs">
+                            <Calendar className="w-3.5 h-3.5 text-gray-400" />
+                            <span className="text-gray-600">
+                              Harvest at: {batch.expected_harvest_days} {batch.expected_harvest_days === 1 ? "day" : "days"}
+                            </span>
+                          </div>
+
+                          {/* Growth Stage — pill with bg + border from your color system */}
+                          <div className="flex items-center gap-2 text-xs">
+                            <Sprout className="w-3.5 h-3.5 text-gray-400" />
+                            <span className="text-gray-500">Growth Stage:</span>
+                            <span
+                              className="px-2 py-0.5 rounded-2xl font-medium"
+                              style={{
+                                backgroundColor: stageColors.bg,
+                                color: stageColors.text,
+                                border: `1px solid ${stageColors.border}`,
+                              }}
+                            >
+                              {batch.growth_stage}
+                            </span>
+                          </div>
+
+                          {/* Harvest Status — dot + text from your color system */}
+                          <div className="flex items-center gap-2 text-xs">
+                            <Clock className="w-3.5 h-3.5 text-gray-400" />
+                            <span className="text-gray-500">Harvest Status:</span>
+                            <span
+                              className="flex flex-row items-center gap-1 font-medium"
+                              style={{ color: harvestColors.text }}
+                            >
+                              <span
+                                className="inline-block w-2 h-2 rounded-full flex-shrink-0"
+                                style={{ backgroundColor: harvestColors.dot }}
+                              />
+                              {batch.harvest_status}
+                            </span>
+                          </div>
                         </div>
-                        <div className="text-center">
-                          <p className="text-xs text-gray-500">Grown</p>
-                          <p className="fully_grown_seedlings_text text-lg font-bold text-[#208b3a]">{batch.fully_grown_seedlings}</p>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-xs text-gray-500">Dead</p>
-                          <p className="dead_seedlings_text text-lg font-bold text-[var(--color-danger-b)]">{batch.dead_seedlings}</p>
-                        </div>
-                        <div className="text-center">
-                          <p className="text-xs text-gray-500">Replants</p>
-                          <p className="replanted_seedlings_text text-lg font-bold text-[var(--color-warning)]">{batch.replanted_seedlings}</p>
+
+                        <div className="active_plant_batches_nursery_data grid grid-cols-3 gap-2 mt-4 pt-4 border-t border-gray-200">
+                          <div className="text-center">
+                            <p className="text-xs text-gray-500">Seedlings</p>
+                            <p className="total_seedlings_text text-lg font-bold text-[#25a244]">{batch.total_seedlings}</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-gray-500">Grown</p>
+                            <p className="fully_grown_seedlings_text text-lg font-bold text-[#208b3a]">{batch.fully_grown_seedlings}</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-gray-500">Dead</p>
+                            <p className="dead_seedlings_text text-lg font-bold text-[var(--color-danger-b)]">{batch.dead_seedlings}</p>
+                          </div>
+                          <div className="text-center">
+                            <p className="text-xs text-gray-500">Replants</p>
+                            <p className="replanted_seedlings_text text-lg font-bold text-[var(--color-warning)]">{batch.replanted_seedlings}</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))
+                    );
+                  })
                 )}
               </div>
             </div>
           </div>
         </div>
       </div>
-
 
       {/* MODALS */}
       {openDeleteNotifModal && (
@@ -388,7 +453,7 @@ export function Dashboard() {
           selectedNotif={selectedNotif}
           deleteMode={deleteMode}
           onClose={() => setOpenDeleteNotifModal(false)}
-          loadNotifs={loadNotifs}  
+          loadNotifs={loadNotifs}
         />
       )}
 

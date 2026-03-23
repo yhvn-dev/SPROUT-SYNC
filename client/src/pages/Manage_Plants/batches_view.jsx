@@ -1,12 +1,9 @@
 import {Sprout, TrendingUp, Pencil, Trash2, Calendar, Clock, LayoutGrid} from "lucide-react";
-import { useEffect } from "react";
+import { getHarvestStatusColor,getStageColor} from '../../utils/colors'; 
+import { useDarkMode } from "../../hooks/useDarkmode";
 
 function Batches_View({batchesDataList, handleUpdateBatch, handleDeleteBatch, trays}) {
-
-  useEffect(() => {
-    console.log("TRAY DATALIST", trays)
-    console.log("BATCH DATALIST", batchesDataList)
-  }, [])
+  const isDark = useDarkMode()
 
   const getTrayInfo = (tray_id) => {
     const tray = trays.find(t => t.tray_id === tray_id);
@@ -14,9 +11,7 @@ function Batches_View({batchesDataList, handleUpdateBatch, handleDeleteBatch, tr
     return `${tray.plant} #${tray.tray_number ?? tray.tray_id} tray`;
   };
     
-
-
-
+ 
 
   return (
     <section className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm w-full">
@@ -37,6 +32,9 @@ function Batches_View({batchesDataList, handleUpdateBatch, handleDeleteBatch, tr
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {batchesDataList.map(batch => {
             const trayInfo = getTrayInfo(batch.tray_id);
+
+            const stageColors   = getStageColor(batch.growth_stage, isDark);
+            const harvestColors = getHarvestStatusColor(batch.harvest_status, isDark);
 
             return (
               <div key={batch.batch_id} className="conc batch_div bg-gradient-to-br from-[#E8F3ED] to-white rounded-2xl p-4 border border-gray-100 shadow-sm">
@@ -83,13 +81,35 @@ function Batches_View({batchesDataList, handleUpdateBatch, handleDeleteBatch, tr
                       Harvest at: {batch.expected_harvest_days} {batch.expected_harvest_days === 1 ? "day" : "days"}
                     </span>
                   </div>
-                  <div className="flex items-center gap-2 text-xs">
-                    <Sprout className="w-3.5 h-3.5 text-gray-400" />
-                    <span className="text-gray-600">Stage: {batch.growth_stage}</span>
-                  </div>
+
+
+                <div className="flex items-center gap-2 text-xs">
+                  <Sprout className="w-3.5 h-3.5 text-gray-400" />
+                  <span
+                    className="px-[2px]  rounded-2xl font-medium"
+                    style={{
+                      backgroundColor: stageColors.bg,
+                      color: stageColors.text,
+                      border: `1px solid ${stageColors.border}`,
+                    }}>
+                    {batch.growth_stage}
+                  </span>
+                </div>
+
+
+                  {/* harvest stattus */}
                   <div className="flex items-center gap-2 text-xs">
                     <Clock className="w-3.5 h-3.5 text-gray-400" />
-                    <span className="text-gray-600">Harvest: {batch.harvest_status}</span>
+            
+                      <span className="text-gray-500">Harvest:</span>
+                      <span className="flex flex-row-reverse items-center gap-1 font-medium" style={{ color: harvestColors.text }}>
+                        <span 
+                          className="w-2 h-2 rounded-full inline-block flex-shrink-0  harvest-status-txt" 
+                          style={{ backgroundColor: harvestColors.text }} 
+                        />
+                        {batch.harvest_status}
+                      </span>
+                
                   </div>
                 </div>
 
