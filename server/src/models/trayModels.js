@@ -147,6 +147,13 @@ export const updateTray = async (trayData, tray_id) => {
 };
 
 
+export const updateTrayStatus = async (tray_id, status) => {
+  const result = await query(
+    "UPDATE trays SET status = $1 WHERE tray_id = $2 RETURNING *",
+    [status, tray_id]
+  );
+  return result.rows[0];
+};
 
 
 // ===== DELETE a tray =====

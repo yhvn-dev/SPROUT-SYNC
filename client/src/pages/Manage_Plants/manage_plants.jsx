@@ -2,7 +2,7 @@
 import { useState, useContext, useEffect, useCallback, useMemo } from "react";
 import { useUser } from "../../hooks/userContext.jsx";
 import { MessageContext } from "../../hooks/messageHooks.jsx";
-import { Menu, Plus, MapPin, Droplet, X, ArrowUpDown,Sprout,Search} from "lucide-react";
+import { Menu, Plus, MapPin, Droplet, X, ArrowUpDown, Sprout, Search } from "lucide-react";
 
 import { Sidebar } from "../../components/sidebar";
 import { Db_Header } from "../../components/db_header";
@@ -11,7 +11,7 @@ import { LogoutModal } from "../../components/logoutModal.jsx";
 import { DeleteNotifModal } from "../../components/deleteNotifModal.jsx";
 import { FloatSuccessMsg, SucessMsgs } from "../../components/sucessMsgs.jsx";
 import { FloatErrorMsg } from "../../components/messages.jsx";
-import {CheckSession} from "../../components/loaders.jsx"
+import { CheckSession } from "../../components/loaders.jsx";
 
 import { usePlantData } from "../../hooks/plantContext.jsx";
 
@@ -39,7 +39,7 @@ export function Manage_Plants() {
     latestReadings,
     loadNotifs
   } = usePlantData();
-  
+
   const [isNotifOpen, setNotifOpen] = useState(false);
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -66,17 +66,19 @@ export function Manage_Plants() {
   const [batchModalMode, setBatchModalMode] = useState("");
   const [selectedBatch, setSelectedBatch] = useState({});
 
-  // Filter + Sort state
+  // TrayGroup Filter + Sort
   const [filters, setFilters] = useState({ search: "", location: "", moisture: "" });
-  const [sortBy, setSortBy] = useState("name_asc");
+  const [tgSortBy, setTgSortBy] = useState("name_asc");
+
+  // Batch Filter + Sort
+  const [batchFilters, setBatchFilters] = useState({ plant: "", harvest_status: "" });
+  const [pbSortBy, setPbSortBy] = useState("urgency");
 
   const clearMsg = useCallback(() => {
     setSuccessMsg("");
     setMsg("");
     setMessageContext("");
   }, [setMessageContext]);
-
-
 
   useEffect(() => {
     if (user?.first_time_login && !skippedRegister) {
@@ -86,8 +88,6 @@ export function Manage_Plants() {
     }
   }, [user?.first_time_login, skippedRegister]);
 
-
-  
   const toggleZone = (zoneId) => {
     setExpandedZones(prev => ({ ...prev, [zoneId]: !prev[zoneId] }));
   };
@@ -100,9 +100,6 @@ export function Manage_Plants() {
     );
   }, [trayGroups]);
 
-
-  
-  // Get live moisture status of a group based on actual sensor readings vs thresholds
   const getGroupMoistureStatus = (group) => {
     const groupTrays = trays.filter(t => t.tray_group_id === group.tray_group_id);
     const readings = groupTrays.flatMap(tray => {
@@ -121,31 +118,52 @@ export function Manage_Plants() {
   };
 
 
-  
-  // Filter + Sort
-  const filteredTrayGroups = sortedTrayGroups
-    .filter(group => {
-      if (filters.search && !group.tray_group_name.toLowerCase().includes(filters.search.toLowerCase()))
-        return false;
-      if (filters.location && group.location !== filters.location)
-        return false;
-      if (filters.moisture && getGroupMoistureStatus(group) !== filters.moisture)
-        return false;
-      return true;
-    })
-    .sort((a, b) => {
-      switch (sortBy) {
-        case "name_asc":   return a.tray_group_name.localeCompare(b.tray_group_name);
-        case "name_desc":  return b.tray_group_name.localeCompare(a.tray_group_name);
-        case "trays_desc": return trays.filter(t => t.tray_group_id === b.tray_group_id).length
-                                - trays.filter(t => t.tray_group_id === a.tray_group_id).length;
-        case "trays_asc":  return trays.filter(t => t.tray_group_id === a.tray_group_id).length
-                                - trays.filter(t => t.tray_group_id === b.tray_group_id).length;
-        default: return 0;
-      }
-    });
 
-    
+
+  // TrayGroup Filter + Sort
+  const filteredTrayGroups = useMemo(() => {
+    return sortedTrayGroups
+      .filter(group => {
+        if (filters.search && !group.tray_group_name.toLowerCase().includes(filters.search.toLowerCase()))
+          return false;
+        if (filters.location && group.location !== filters.location)
+          return false;
+        if (filters.moisture && getGroupMoistureStatus(group) !== filters.moisture)
+          return false;
+        return true;
+      })
+      .sort((a, b) => {
+        switch (tgSortBy) {
+          case "name_asc":   return a.tray_group_name.localeCompare(b.tray_group_name);
+          case "name_desc":  return b.tray_group_name.localeCompare(a.tray_group_name);
+          case "trays_desc": return trays.filter(t => t.tray_group_id === b.tray_group_id).length
+                                  - trays.filter(t => t.tray_group_id === a.tray_group_id).length;
+          case "trays_asc":  return trays.filter(t => t.tray_group_id === a.tray_group_id).length
+                                  - trays.filter(t => t.tray_group_id === b.tray_group_id).length;
+          default: return 0;
+        }
+      });
+  }, [sortedTrayGroups, filters, tgSortBy, trays]);
+
+  const urgencyOrder = { "Past Due": 1, "Due Now": 2, "Due Tomorrow": 3, "Not Ready": 4, "Harvested": 5 };
+
+  const filteredBatches = useMemo(() => {
+    return [...batches]
+      .filter(b => {
+        if (batchFilters.plant && b.plant_name !== batchFilters.plant) return false;
+        if (batchFilters.harvest_status && b.harvest_status !== batchFilters.harvest_status) return false;
+        return true;
+      })
+      .sort((a, b) => {
+        switch (pbSortBy) {
+          case "urgency": return (urgencyOrder[a.harvest_status] ?? 99) - (urgencyOrder[b.harvest_status] ?? 99);
+          case "newest":  return new Date(b.date_planted) - new Date(a.date_planted);
+          case "oldest":  return new Date(a.date_planted) - new Date(b.date_planted);
+          default: return 0;
+        }
+      });
+  }, [batches, batchFilters, pbSortBy]);
+
   // TrayGroup Handlers
   const handleAddTrayGroup = () => {
     setSelectedTrayGroup({});
@@ -208,7 +226,7 @@ export function Manage_Plants() {
   };
 
   if (!user) return <div>Loading...</div>;
-  
+
   return (
     <section className="con_main w-full h-screen bg-gradient-to-br from-[#E8F3ED] to-[#C4DED0] flex flex-col md:grid md:grid-cols-[15fr_85fr] md:grid-rows-[auto_1fr] gap-4 overflow-hidden relative">
       <button
@@ -217,12 +235,10 @@ export function Manage_Plants() {
         <Menu size={22} />
       </button>
 
-      {/* OVERLAY */}
       {sidebarOpen && (
         <div className="md:hidden fixed inset-0 bg-black/50 z-40" onClick={() => setSidebarOpen(false)} />
       )}
 
-      {/* SIDEBAR */}
       <aside className={`${sidebarOpen ? "fixed inset-y-0 left-0 w-64 z-50" : "hidden"} md:static md:block md:row-span-full`}>
         <Sidebar
           user={user}
@@ -232,13 +248,10 @@ export function Manage_Plants() {
         />
       </aside>
 
-      {/* RIGHT COLUMN */}
       <div className="md:col-start-2 flex flex-col gap-4 overflow-y-auto h-full pb-4">
 
-        {/* HEADER */}
         <Db_Header setNotifOpen={setNotifOpen} />
 
-        {/* MAIN CONTENT */}
         <div className="w-full max-w-full sm:max-w-7xl mx-auto space-y-4 px-4 sm:px-0">
 
           <SucessMsgs txt={successMsg} clearMsg={clearMsg} />
@@ -248,7 +261,7 @@ export function Manage_Plants() {
           <div className="conb bg-white rounded-3xl p-4 sm:p-6 shadow-sm w-full">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <div>
-                <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 flex items-center gap-2">             
+                <h1 className="text-xl sm:text-2xl md:text-3xl font-semibold text-gray-900 flex items-center gap-2">
                   Manage Plants
                 </h1>
                 <p className="text-xs sm:text-sm text-gray-500 mt-1">
@@ -279,7 +292,7 @@ export function Manage_Plants() {
                 {activeView === "traygroups" && (
                   <button
                     onClick={handleAddTrayGroup}
-                    className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl 
+                    className="cursor-pointer flex items-center gap-2 px-4 py-2 rounded-xl
                     bg-gradient-to-br from-[var(--sancgb)] to-[var(--sancgd)]
                     text-white text-xs font-semibold shadow hover:shadow-lg">
                     <Plus size={14} />
@@ -290,11 +303,11 @@ export function Manage_Plants() {
             </div>
 
             {/* FILTER BAR */}
-            {activeView === "traygroups" && (
+            {activeView === "traygroups" ? (
               <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3 flex-wrap">
 
                 {/* Search by name */}
-                <div className="relative flex-1 min-w-[160px] ">
+                <div className="relative flex-1 min-w-[160px]">
                   <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                   <input
                     type="text"
@@ -319,7 +332,7 @@ export function Manage_Plants() {
                   </select>
                 </div>
 
-                {/* Filter by live moisture status */}
+                {/* Filter by moisture */}
                 <div className="relative min-w-[170px]">
                   <Droplet className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                   <select
@@ -334,13 +347,12 @@ export function Manage_Plants() {
                   </select>
                 </div>
 
-
-                {/* Sort */}
+                {/* TG Sort */}
                 <div className="relative min-w-[150px]">
                   <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
                   <select
-                    value={sortBy}
-                    onChange={e => setSortBy(e.target.value)}
+                    value={tgSortBy}
+                    onChange={e => setTgSortBy(e.target.value)}
                     className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#7BA591] bg-gray-50 appearance-none cursor-pointer">
                     <option value="name_asc">Name A–Z</option>
                     <option value="name_desc">Name Z–A</option>
@@ -349,20 +361,73 @@ export function Manage_Plants() {
                   </select>
                 </div>
 
-
-                {/* Clear filters — only show when something is active */}
                 {(filters.search || filters.location || filters.moisture) && (
                   <button
                     onClick={() => setFilters({ search: "", location: "", moisture: "" })}
-                    className="clear-search-btn cursor-pointer flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs  hover:bg-gray-50 transition bg-white">
+                    className="clear-search-btn cursor-pointer flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs hover:bg-gray-50 transition bg-white">
                     <X size={12} /> Clear
                   </button>
                 )}
               </div>
-              
+
+            ) : (
+
+              /* BATCH FILTER BAR */
+              <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col sm:flex-row gap-3 flex-wrap">
+
+                {/* Filter by plant name */}
+                <div className="relative min-w-[150px]">
+                  <Sprout className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                  <select
+                    value={batchFilters.plant}
+                    onChange={e => setBatchFilters(f => ({ ...f, plant: e.target.value }))}
+                    className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#7BA591] bg-gray-50 appearance-none cursor-pointer">
+                    <option value="">All Plants</option>
+                    {[...new Set(batches.map(b => b.plant_name).filter(Boolean))].map(p => (
+                      <option key={p} value={p}>{p}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {/* Filter by harvest status */}
+                <div className="relative min-w-[160px]">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                  <select
+                    value={batchFilters.harvest_status}
+                    onChange={e => setBatchFilters(f => ({ ...f, harvest_status: e.target.value }))}
+                    className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#7BA591] bg-gray-50 appearance-none cursor-pointer">
+                    <option value="">All Statuses</option>
+                    <option value="Past Due">🔴 Past Due</option>
+                    <option value="Due Now">🟠 Due Now</option>
+                    <option value="Due Tomorrow">🟡 Due Tomorrow</option>
+                    <option value="Not Ready">🟢 Not Ready</option>
+                    <option value="Harvested">✅ Harvested</option>
+                  </select>
+                </div>
+
+                {/* Batch Sort */}
+                <div className="relative min-w-[150px]">
+                  <ArrowUpDown className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+                  <select
+                    value={pbSortBy}
+                    onChange={e => setPbSortBy(e.target.value)}
+                    className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#7BA591] bg-gray-50 appearance-none cursor-pointer">
+                    <option value="urgency">🚨 By Urgency</option>
+                    <option value="newest">Newest Planted</option>
+                    <option value="oldest">Oldest Planted</option>
+                  </select>
+                </div>
+
+                {(batchFilters.plant || batchFilters.harvest_status) && (
+                  <button
+                    onClick={() => setBatchFilters({ plant: "", harvest_status: "" })}
+                    className="clear-search-btn cursor-pointer flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 text-xs hover:bg-gray-50 transition bg-white">
+                    <X size={12} /> Clear
+                  </button>
+                )}
+              </div>
             )}
           </div>
-
 
           {/* TRAY GROUPS VIEW */}
           {activeView === "traygroups" && (
@@ -386,7 +451,7 @@ export function Manage_Plants() {
 
           {activeView === "batches" && (
             <Batches_View
-              batchesDataList={batches}
+              batchesDataList={filteredBatches}
               handleUpdateBatch={handleUpdateBatch}
               handleDeleteBatch={handleDeleteBatch}
               trays={trays}
@@ -403,7 +468,7 @@ export function Manage_Plants() {
           selectedNotif={selectedNotif}
           deleteMode={deleteMode}
           onClose={() => setOpenDeleteNotifModal(false)}
-          loadNotifs={loadNotifs}  
+          loadNotifs={loadNotifs}
         />
       )}
 
@@ -437,7 +502,6 @@ export function Manage_Plants() {
           reloadBatches={loadBatches}
           trayGroups={trayGroups}
         />
-        
       )}
 
       {isBatchModalOpen && (
@@ -449,6 +513,7 @@ export function Manage_Plants() {
           selectedBatch={selectedBatch}
           setSuccessMsg={setSuccessMsg}
           reloadBatches={loadBatches}
+          reloadTrays={loadTrays}
         />
       )}
 

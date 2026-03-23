@@ -189,7 +189,6 @@ export function TrayModal({
                   <option value="Available">Available</option>
                   <option value="Occupied">Occupied</option>
                   <option value="Maintenance">Maintenance</option>
-                  <option value="Disabled">Disabled</option>
                 </select>
                 {formErrors.status && (
                   <p className="text-sm text-[var(--color-danger-a)] mt-1">

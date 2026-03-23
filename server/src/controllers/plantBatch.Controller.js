@@ -316,6 +316,8 @@ export const createPlantBatch = async (req, res) => {
     if (!existingTray) return res.status(404).json({ message: "Selected Tray not found" });
 
     const batch = await plantBatchModels.createPlantBatch(batchData);
+    await trayModels.updateTrayStatus(tray_id, "Occupied")
+
     res.status(201).json(batch);
 
     await notifyBatchCreated(batch, "insert");
@@ -328,7 +330,6 @@ export const createPlantBatch = async (req, res) => {
 
 
 
-
 // ===== DELETE a plant batch =====
 export const deletePlantBatch = async (req, res) => {
   try {
@@ -336,12 +337,13 @@ export const deletePlantBatch = async (req, res) => {
     const existingBatch = await plantBatchModels.readPlantBatchById(batch_id);
     if (!existingBatch) return res.status(404).json({ message: "Plant batch not found" });
 
-
-    await plantBatchHistoryModel.createHistoryRecord(existingBatch)
+    await plantBatchHistoryModel.createHistoryRecord(existingBatch);
     const deletedBatch = await plantBatchModels.deletePlantBatch(batch_id);
-    res.status(200).json({ message: "Plant batch deleted successfully", deletedBatch});
 
-    
+    await trayModels.updateTrayStatus(existingBatch.tray_id, "Available");
+
+    res.status(200).json({ message: "Plant batch deleted successfully", deletedBatch });
+
   } catch (err) {
     res.status(500).json({ message: "Error deleting plant batch", err });
     console.error("CONTROLLER: Error deleting plant batch", err);

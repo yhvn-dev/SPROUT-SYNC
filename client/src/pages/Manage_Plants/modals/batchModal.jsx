@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { X, Sprout, Calendar, TrendingUp, Trash2, AlertCircle, Leaf } from 'lucide-react';
 import * as batchModels from "../../../data/batchesData"
 
-export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, selectedBatch, setSuccessMsg, reloadBatches }) {
+export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, selectedBatch, setSuccessMsg, reloadBatches,reloadTrays}) {
    
   const [formData, setFormData] = useState({
     tray_id: 0,
@@ -160,6 +160,7 @@ export function BatchModal({ isOpen, onClose, batchModalMode, selectedTray, sele
 
       setTimeout(() => {
         reloadBatches();
+        reloadTrays();
       }, 500);
 
     } catch (error) {

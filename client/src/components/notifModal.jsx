@@ -137,7 +137,7 @@ export function Notif_Modal({ isOpen, onClose }) {
                   <button
                     type="button"
                     onClick={() => handleOpenDelete(notif)}
-                    className="flex-shrink-0 rounded-full p-1.5 cursor-pointer hover:bg-black/10 transition-colors"
+                    className="curoor-flex-shrink-0 rounded-full p-1.5 cursor-pointer hover:bg-black/10 transition-colors"
                   >
                     <Trash2 size={15} color={colors.iconColor} />
                   </button>
@@ -156,6 +156,10 @@ export function Notif_Modal({ isOpen, onClose }) {
             Close
           </button>
         </div>
+
+
+
+
       </main>
     </motion.div>
   );

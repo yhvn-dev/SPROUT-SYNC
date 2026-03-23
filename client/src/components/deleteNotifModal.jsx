@@ -46,8 +46,8 @@ export function DeleteNotifModal({ isOpen, deleteMode, selectedNotif, onClose, l
           
          <button
             onClick={onClose}
-            className="cursor-pointer absolute right-4 top-4  text-gray-500 hover:bg-gray-100 px-1 rounded-xl font-bold text-lg" >
-            X
+            className="cursor-pointer absolute right-4 top-4  text-gray-500 hover:bg-gray-100 px-1 rounded-xl  text-lg" >
+            x
           </button>
 
         <div className="delete_notif_icon flex items-center justify-center w-12 h-12 rounded-full bg-red-50 mx-auto mb-4">
@@ -70,7 +70,7 @@ export function DeleteNotifModal({ isOpen, deleteMode, selectedNotif, onClose, l
           </button>
           <button
             onClick={handleSubmit}
-            className="flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold transition-colors">
+            className="cursor-pointer flex-1 px-4 py-2.5 rounded-xl bg-red-500 hover:bg-red-600 text-white text-sm font-semibold transition-colors">
             Yes, Delete
           </button>
         </div>
