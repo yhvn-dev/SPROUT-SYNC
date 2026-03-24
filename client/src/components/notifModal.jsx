@@ -197,13 +197,12 @@ export function Notif_Modal({ isOpen, onClose }) {
           px-4 py-3
           ${isDark ? 'border-t border-gray-700' : 'border-t border-gray-200'}
         `}>
-          <button
+         <button
             onClick={onClose}
             className="cursor-pointer w-full py-2.5 rounded-xl font-medium transition-all hover:scale-[1.02] shadow-sm
-                       bg-gradient-to-r from-blue-600 to-blue-700 
-                       hover:from-blue-700 hover:to-blue-800 
-                       text-white active:scale-95"
-          >
+                      bg-[var(--metal-dark4)] 
+                      hover:bg-gray-400  
+                      text-white active:scale-95">
             Close
           </button>
         </div>

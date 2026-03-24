@@ -117,8 +117,6 @@ export function Manage_Plants() {
     return "optimal";
   };
 
-
-
   // TrayGroup Filter + Sort
   const filteredTrayGroups = useMemo(() => {
     return sortedTrayGroups
@@ -396,11 +394,11 @@ export function Manage_Plants() {
                     onChange={e => setBatchFilters(f => ({ ...f, harvest_status: e.target.value }))}
                     className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#7BA591] bg-gray-50 appearance-none cursor-pointer">
                     <option value="">All Statuses</option>
-                    <option value="Past Due">🔴 Past Due</option>
-                    <option value="Due Now">🟠 Due Now</option>
-                    <option value="Due Tomorrow">🟡 Due Tomorrow</option>
-                    <option value="Not Ready">🟢 Not Ready</option>
-                    <option value="Harvested">✅ Harvested</option>
+                    <option value="Past Due">Past Due</option>
+                    <option value="Due Now">Due Now</option>
+                    <option value="Due Tomorrow">Due Tomorrow</option>
+                    <option value="Not Ready">Not Ready</option>
+                    <option value="Harvested">Harvested</option>
                   </select>
                 </div>
 
@@ -411,7 +409,7 @@ export function Manage_Plants() {
                     value={pbSortBy}
                     onChange={e => setPbSortBy(e.target.value)}
                     className="w-full pl-8 pr-3 py-1.5 rounded-lg border border-gray-200 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-[#7BA591] bg-gray-50 appearance-none cursor-pointer">
-                    <option value="urgency">🚨 By Urgency</option>
+                    <option value="urgency">By Urgency</option>
                     <option value="newest">Newest Planted</option>
                     <option value="oldest">Oldest Planted</option>
                   </select>

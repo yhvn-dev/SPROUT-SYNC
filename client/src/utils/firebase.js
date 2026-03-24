@@ -32,7 +32,7 @@ export const showInPageNotification = (title, body, type = "info", status = "Low
 
   const colors = getColorByStatus(status, type, isDark);
 
-  // ✅ Icon mapping
+
   const iconMap = {
     high: '🔴', medium: '🟡', low: '🟢',
     warning: '⚠️', error: '❌', success: '✅', info: 'ℹ️'

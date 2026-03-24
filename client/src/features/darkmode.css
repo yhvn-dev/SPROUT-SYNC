@@ -980,9 +980,7 @@ body.dark .hero{
         @apply stroke-[var(--metal-dark5)] border-[1px] border-gray-100 rounded-full;
     }
     
-        body.dark #notification-container{
-            @apply bg-[var(--metal-dark2)] border-2 border-[var(--main-white)];
-        }
+       
         body.dark .notifIconBg{
             @apply bg-[var(--metal-dark4)];
         }
